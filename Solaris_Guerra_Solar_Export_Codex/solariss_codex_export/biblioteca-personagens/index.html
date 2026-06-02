@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Solaris - Biblioteca de Personagens</title>
+    <link rel="icon" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"%3E%3Crect width="48" height="48" rx="8" fill="%23111417"/%3E%3Cpath d="M24 6l4.1 12 12.4 2-9 8.1L34 40l-10-6.3L14 40l2.5-11.9-9-8.1 12.4-2L24 6z" fill="%23d8a74a"/%3E%3Ccircle cx="24" cy="24" r="5" fill="%23111417"/%3E%3C/svg%3E' />
+    <link rel="stylesheet" href="./styles.css?v=20260602b" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Biblioteca Solaris">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48" role="img">
+              <path d="M24 4l4.3 12.2L41 18l-9.5 8.3L34 42 24 34.6 14 42l2.5-15.7L7 18l12.7-1.8L24 4z" />
+              <circle cx="24" cy="24" r="6" />
+            </svg>
+          </div>
+          <div>
+            <h1>Solaris</h1>
+            <p>Guerra Solar</p>
+          </div>
+        </div>
+
+        <nav class="nav-list">
+          <button class="nav-item active" type="button" data-view="personagens">
+            <span class="nav-icon" data-icon="user"></span>
+            <span>Personagens</span>
+          </button>
+          <button class="nav-item" type="button" data-view="racas">
+            <span class="nav-icon" data-icon="orbit"></span>
+            <span>Raças</span>
+          </button>
+          <button class="nav-item" type="button" data-view="profissoes">
+            <span class="nav-icon" data-icon="chip"></span>
+            <span>Profissões</span>
+          </button>
+          <button class="nav-item" type="button" data-view="magias">
+            <span class="nav-icon" data-icon="spark"></span>
+            <span>Magias</span>
+          </button>
+          <button class="nav-item" type="button" data-view="chipsMod">
+            <span class="nav-icon" data-icon="chip"></span>
+            <span>Chips mod.</span>
+          </button>
+          <button class="nav-item" type="button" data-view="armas">
+            <span class="nav-icon" data-icon="sword"></span>
+            <span>Armas</span>
+          </button>
+          <button class="nav-item" type="button" data-view="armaduras">
+            <span class="nav-icon" data-icon="shield"></span>
+            <span>Armaduras</span>
+          </button>
+          <button class="nav-item" type="button" data-view="itens">
+            <span class="nav-icon" data-icon="package"></span>
+            <span>Itens</span>
+          </button>
+          <button class="nav-item" type="button" data-view="monstros">
+            <span class="nav-icon" data-icon="skull"></span>
+            <span>Monstros</span>
+          </button>
+          <button class="nav-item" type="button" data-view="regras">
+            <span class="nav-icon" data-icon="book"></span>
+            <span>Regras</span>
+          </button>
+        </nav>
+
+        <section class="saved-panel" aria-label="Personagens salvos">
+          <div class="panel-heading">
+            <h2>Arquivo</h2>
+            <button class="icon-button" id="newCharacterSide" type="button" title="Novo personagem" aria-label="Novo personagem">
+              <span data-icon="plus"></span>
+            </button>
+          </div>
+          <label class="search-box">
+            <span data-icon="search"></span>
+            <input id="characterSearch" type="search" placeholder="Buscar ficha" autocomplete="off" />
+          </label>
+          <div class="saved-list" id="savedList"></div>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div class="topbar-title">
+            <p id="viewKicker">Ficha ativa</p>
+            <h2 id="viewTitle">Criador de personagem</h2>
+          </div>
+          <div class="toolbar">
+            <button class="ghost-button" id="importButton" type="button">
+              <span data-icon="upload"></span>
+              Importar
+            </button>
+            <input id="importInput" type="file" accept="application/json" hidden />
+            <button class="ghost-button" id="printButton" type="button">
+              <span data-icon="printer"></span>
+              Imprimir
+            </button>
+            <button class="ghost-button" id="exportButton" type="button">
+              <span data-icon="download"></span>
+              Exportar
+            </button>
+            <button class="primary-button" id="saveButton" type="button">
+              <span data-icon="save"></span>
+              Salvar ficha
+            </button>
+          </div>
+        </header>
+
+        <section class="view active" id="personagensView">
+          <div class="character-tabs" aria-label="Páginas do personagem">
+            <button class="character-tab active" type="button" data-character-page="ficha">Ficha</button>
+            <button class="character-tab" type="button" data-character-page="equipamentos">Equipamentos</button>
+            <button class="character-tab" type="button" data-character-page="cosmos">Cosmos e chips</button>
+            <button class="character-tab" type="button" data-character-page="cubo">Cubo</button>
+            <button class="character-tab" type="button" data-character-page="habilidades">Habilidades</button>
+            <button class="character-tab" type="button" data-character-page="dados">Dados</button>
+            <button class="character-tab" type="button" data-character-page="criar">Criar</button>
+          </div>
+
+          <div class="character-page active" id="characterSheetPage">
+          <div class="sheet-grid">
+            <form class="sheet" id="characterForm" autocomplete="off" spellcheck="false">
+              <section class="form-band">
+                <div class="band-title">
+                  <h3>Identidade</h3>
+                  <p id="currentSheetState">Ficha nova</p>
+                </div>
+                <div class="identity-layout">
+                  <div class="photo-panel">
+                    <button class="photo-dropzone" id="photoDropzone" type="button" aria-label="Adicionar imagem do personagem">
+                      <img id="photoPreview" alt="" hidden />
+                      <span class="photo-placeholder" id="photoPlaceholder">
+                        <span data-icon="spark"></span>
+                        <strong>Foto do personagem</strong>
+                        <small>Clique ou arraste imagem</small>
+                      </span>
+                    </button>
+                    <input id="photoInput" type="file" accept="image/*" hidden />
+                    <button class="mini-button photo-remove-button" id="removePhotoButton" type="button">Remover imagem</button>
+                  </div>
+                  <div class="field-grid identity-grid">
+                    <label>
+                      Nome
+                      <input id="name" name="name" type="text" placeholder="Nome do personagem" />
+                    </label>
+                    <label>
+                      Jogador
+                      <input id="player" name="player" type="text" placeholder="Nome do jogador" />
+                    </label>
+                    <label>
+                      Raça
+                      <select id="race" name="race"></select>
+                    </label>
+                    <label>
+                      Atributo racial
+                      <select id="racialChoice" name="racialChoice"></select>
+                    </label>
+                    <label>
+                      Chip de profissão
+                      <select id="profession" name="profession"></select>
+                    </label>
+                    <label>
+                      Nível
+                      <input id="level" name="level" type="number" min="1" max="10" step="1" />
+                    </label>
+                    <label>
+                      Origem
+                      <input id="origin" name="origin" type="text" placeholder="Tarantus, KK, colônia..." />
+                    </label>
+                  </div>
+                </div>
+              </section>
+
+              <section class="form-band">
+                <div class="band-title">
+                  <h3>Atributos</h3>
+                  <p>Bônus racial entra no total; chip dá foco/perícia.</p>
+                </div>
+                <div class="attribute-grid" id="attributeGrid"></div>
+              </section>
+
+              <section class="form-band">
+                <div class="band-title">
+                  <h3>Recursos</h3>
+                  <p>Valores atuais da sessão.</p>
+                </div>
+                <div class="field-grid resource-grid">
+                  <label class="pool-field">
+                    PV
+                    <span class="pool-input">
+                      <input id="pvCurrent" name="pvCurrent" type="number" min="0" step="1" />
+                      <span>/</span>
+                      <output id="pvMaxInline">0</output>
+                    </span>
+                  </label>
+                  <label class="pool-field">
+                    Cosmos
+                    <span class="pool-input">
+                      <input id="cosmosCurrent" name="cosmosCurrent" type="number" min="0" step="1" />
+                      <span>/</span>
+                      <output id="cosmosMaxInline">0</output>
+                    </span>
+                  </label>
+                  <label>
+                    Estresse
+                    <input id="stress" name="stress" type="number" min="0" max="12" step="1" />
+                  </label>
+                </div>
+              </section>
+
+              <section class="form-band">
+                <div class="band-title">
+                  <h3>Equipamento</h3>
+                  <p>Armas, armadura e carga rápida.</p>
+                </div>
+                <div class="field-grid equipment-grid">
+                  <label>
+                    Arma principal
+                    <input id="weapon" name="weapon" type="text" placeholder="Espada, besta, rifle..." />
+                  </label>
+                  <label>
+                    Armadura
+                    <input id="armor" name="armor" type="text" placeholder="Placas, carenagem..." />
+                  </label>
+                  <label>
+                    Cubos/carga
+                    <input id="loadUsed" name="loadUsed" type="number" min="0" step="1" />
+                  </label>
+                  <label>
+                    PO
+                    <input id="currency" name="currency" type="number" min="0" step="1" />
+                  </label>
+                </div>
+              </section>
+
+              <section class="form-band">
+                <div class="band-title">
+                  <h3>Habilidades e notas</h3>
+                  <p>Registre Cosmos, implantes, pactos e eventos marcantes.</p>
+                </div>
+                <label class="wide-field">
+                  Habilidades
+                  <textarea id="abilities" name="abilities" rows="5" placeholder="Habilidades cósmicas, passivas, talentos..."></textarea>
+                </label>
+                <label class="wide-field">
+                  Notas
+                  <textarea id="notes" name="notes" rows="5" placeholder="História, facções, objetivos, dívidas..."></textarea>
+                </label>
+              </section>
+            </form>
+
+            <aside class="inspector" aria-label="Resumo da ficha">
+              <section class="inspector-block character-card">
+                <div class="portrait">
+                  <img id="summaryPortraitImage" alt="" hidden />
+                  <span id="summaryPortraitIcon" data-icon="spark"></span>
+                </div>
+                <div>
+                  <h3 id="summaryName">Personagem sem nome</h3>
+                  <p id="summaryLine">Humanis - Sentinela de KK - Nível 1</p>
+                </div>
+              </section>
+
+              <section class="inspector-block">
+                <div class="inspector-title">
+                  <h3>Derivados</h3>
+                  <span id="stressState">Tríade estável</span>
+                </div>
+                <div class="stat-grid" id="derivedStats"></div>
+              </section>
+
+              <section class="inspector-block">
+                <div class="inspector-title">
+                  <h3>Raça e chip</h3>
+                  <span id="bonusSource">Bônus e foco</span>
+                </div>
+                <div class="bonus-list" id="bonusList"></div>
+              </section>
+
+              <section class="inspector-block">
+                <div class="inspector-title">
+                  <h3>Slots</h3>
+                  <span>Mods ativos</span>
+                </div>
+                <div class="slot-list" id="slotList"></div>
+              </section>
+            </aside>
+          </div>
+          </div>
+
+          <section class="character-page" id="characterEquipmentPage">
+            <div class="workspace-panel">
+              <div class="library-header">
+                <div>
+                  <p>Personagem</p>
+                  <h2>Equipamentos</h2>
+                </div>
+                <span class="wallet-pill" id="equipmentWallet">0 dinheiro</span>
+              </div>
+              <div class="equipment-layout" id="equipmentPageContent"></div>
+            </div>
+          </section>
+
+          <section class="character-page" id="characterCosmosPage">
+            <div class="workspace-panel">
+              <div class="library-header">
+                <div>
+                  <p>Personagem</p>
+                  <h2>Cosmos e chips</h2>
+                </div>
+              </div>
+              <div class="equipment-layout" id="cosmosPageContent"></div>
+            </div>
+          </section>
+
+          <section class="character-page" id="characterCubePage">
+            <div class="workspace-panel">
+              <div class="library-header">
+                <div>
+                  <p>Personagem</p>
+                  <h2>Cubo</h2>
+                </div>
+                <span class="wallet-pill" id="cubeUsagePill">0/0 slots</span>
+              </div>
+              <div class="equipment-layout" id="cubePageContent"></div>
+            </div>
+          </section>
+
+          <section class="character-page" id="characterAbilitiesPage">
+            <div class="workspace-panel">
+              <div class="library-header">
+                <div>
+                  <p>Personagem</p>
+                  <h2>Habilidades</h2>
+                </div>
+              </div>
+              <div class="equipment-layout" id="abilitiesPageContent"></div>
+            </div>
+          </section>
+
+          <section class="character-page" id="characterDicePage">
+            <div class="workspace-panel">
+              <div class="library-header">
+                <div>
+                  <p>Mesa</p>
+                  <h2>Rolagem de dados</h2>
+                </div>
+              </div>
+              <div class="dice-layout">
+                <section class="inventory-panel">
+                  <h3>Rolar</h3>
+                  <div class="dice-controls">
+                    <label>
+                      Dados
+                      <input id="diceCount" type="number" min="1" max="20" step="1" value="1" />
+                    </label>
+                    <label>
+                      Dado
+                      <select id="diceSides">
+                        <option value="4">d4</option>
+                        <option value="6" selected>d6</option>
+                        <option value="8">d8</option>
+                        <option value="10">d10</option>
+                        <option value="12">d12</option>
+                        <option value="20">d20</option>
+                        <option value="100">d100</option>
+                      </select>
+                    </label>
+                    <label>
+                      Bônus
+                      <input id="diceBonus" type="number" step="1" value="0" />
+                    </label>
+                    <button class="primary-button" id="rollDiceButton" type="button">
+                      <span data-icon="spark"></span>
+                      Rolar
+                    </button>
+                  </div>
+                </section>
+                <section class="inventory-panel">
+                  <h3>Resultado</h3>
+                  <div id="diceResultDisplay" class="dice-result empty-state">Nenhuma rolagem ainda.</div>
+                </section>
+                <section class="inventory-panel inventory-panel-wide">
+                  <h3>Chat de dados</h3>
+                  <div id="diceChatLog" class="dice-log"></div>
+                </section>
+              </div>
+            </div>
+          </section>
+
+          <section class="character-page" id="characterCreatePage">
+            <div class="workspace-panel">
+              <div class="library-header">
+                <div>
+                  <p>Biblioteca manual</p>
+                  <h2>Criar conteúdo</h2>
+                </div>
+              </div>
+              <form class="manual-form" id="manualCreateForm" autocomplete="off">
+                <label>
+                  Tipo
+                  <select id="manualType">
+                    <option value="item">Item</option>
+                    <option value="weapon">Arma</option>
+                    <option value="armor">Armadura</option>
+                    <option value="cosmos">Magia cósmica</option>
+                    <option value="chip-mod">Chip modificador</option>
+                    <option value="ability">Habilidade solta</option>
+                  </select>
+                </label>
+                <label>
+                  Nome
+                  <input id="manualName" type="text" placeholder="Nome do conteúdo" required />
+                </label>
+                <label>
+                  Preço
+                  <input id="manualPrice" type="number" min="0" step="1" placeholder="0" />
+                </label>
+                <label>
+                  Dano / CA / Custo
+                  <input id="manualPower" type="text" placeholder="1d6, CA 4, custo 2..." />
+                </label>
+                <label class="wide-field">
+                  Efeito
+                  <textarea id="manualEffect" rows="5" placeholder="Descreva o efeito, regra, materiais ou observações."></textarea>
+                </label>
+                <button class="primary-button" type="submit">
+                  <span data-icon="plus"></span>
+                  Adicionar
+                </button>
+              </form>
+              <div class="equipment-layout manual-created-list" id="manualCreatedContent"></div>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="libraryView">
+          <div class="library-shell">
+            <div class="library-header">
+              <div>
+                <p id="libraryKicker">Biblioteca</p>
+                <h2 id="libraryTitle">Raças</h2>
+              </div>
+              <label class="search-box library-search">
+                <span data-icon="search"></span>
+                <input id="librarySearch" type="search" placeholder="Filtrar biblioteca" autocomplete="off" />
+              </label>
+            </div>
+            <div class="library-grid" id="libraryGrid"></div>
+          </div>
+        </section>
+
+        <section class="view" id="raceDetailView">
+          <div id="raceDetail"></div>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="./app.js?v=20260602b"></script>
+  </body>
+</html>
