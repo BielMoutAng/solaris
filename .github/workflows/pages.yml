@@ -31,7 +31,7 @@ jobs:
       - name: Upload app
         uses: actions/upload-pages-artifact@v3
         with:
-          path: biblioteca-personagens
+          path: Solaris_Guerra_Solar_Export_Codex/solariss_codex_export/biblioteca-personagens
 
       - name: Deploy
         id: deployment
