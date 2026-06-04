@@ -1,8 +1,143 @@
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
+const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
 const ATTRIBUTE_BASE = 7;
 const ATTRIBUTE_MOD_BASE = 10;
 const STORAGE_KEY = "solaris.character.library.v1";
 const LEVEL_COSMOS_BASE = { 1: 1, 2: 1, 3: 1, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2, 10: 4 };
+const STRESS_MAX = 7;
+const SATURATION_MAX = 10;
+const TIER_ORDER = ["F", "E", "D", "C", "B", "A", "S"];
+
+const skillData = [
+  { name: "Atletismo", attr: "FOR", summary: "Corrida, salto, escalada, natação, abrir passagens, derrubar portas e erguer objetos." },
+  { name: "Briga", attr: "FOR", summary: "Combate desarmado, agarrões, imobilizações, quedas, arremessos e desarmes corpo a corpo. Ataque sem arma usa Briga para 1d6 base." },
+  { name: "Demolição", attr: "FOR", summary: "Força bruta contra estruturas e máquinas: derrubar paredes, arrombar cofres, quebrar grades ou arrancar cabos." },
+  { name: "Coleta", attr: "FOR", summary: "Usar força para coleta de materiais como minérios, madeira e materiais energéticos." },
+  { name: "Furtividade", attr: "REF", summary: "Esconder-se, mover-se em silêncio, camuflagem e infiltração. Para ficar furtivo, supere a percepção passiva do alvo." },
+  { name: "Mãos Leves", attr: "REF", summary: "Bater carteiras, abrir fechaduras, desarmar armadilhas e fazer manipulação delicada." },
+  { name: "Acrobacia", attr: "REF", summary: "Equilíbrio, saltos difíceis, rolamentos e quedas controladas." },
+  { name: "Pilotagem", attr: "REF", summary: "Controle de naves, veículos, exoesqueletos ou máquinas em movimento, incluindo manobras evasivas e combate veicular." },
+  { name: "Pés Ágeis", attr: "REF", summary: "Performance artística, dança, fuga e escapar de armadilhas já ativas." },
+  { name: "Cosmos", attr: "MEN", summary: "Sentir cosmos: perceber energias, presenças e distúrbios cósmicos." },
+  { name: "Memória Cósmica", attr: "MEN", summary: "História e saberes universais ligados ao cosmos, incluindo conhecimentos históricos, mitológicos ou científicos." },
+  { name: "Intuição Cósmica", attr: "MEN", summary: "Antecipar eventos e conectar informações de forma instintiva por meio de energias cósmicas." },
+  { name: "Percepção Cósmica", attr: "MEN", summary: "Perceber quando algo está errado pelas variações do cosmos. Percepção passiva racial: 10 + MOD MEN." },
+  { name: "Busca Cósmica", attr: "MEN", summary: "Procurar itens, rastros ou alvos por energia cósmica e conhecimento relacionado." },
+  { name: "Intimidação", attr: "PRE", summary: "Usar presença, voz ou postura para forçar respeito ou medo." },
+  { name: "Persuasão", attr: "PRE", summary: "Convencer, negociar, inspirar confiança ou manipular socialmente." },
+  { name: "Empatia", attr: "PRE", summary: "Perceber emoções, intenções, mentiras, medo e motivações ocultas." },
+  { name: "Acalmar Criatura", attr: "PRE", summary: "Tentar domesticar ou acalmar criatura capaz de compreender o personagem, evitando combate quando ela ataca por medo." },
+  { name: "Tecnologia", attr: "INT", summary: "Interagir com sistemas digitais, hackear e obter dados." },
+  { name: "Medicina", attr: "INT", summary: "Estancar sangramento, fazer remédios, realizar cirurgias, identificar doenças e estabilizar aliados em 1d4 turnos." },
+  { name: "Engenharia", attr: "INT", summary: "Reparar e construir equipamentos, consertar veículos e fazer modificações em oficinas de equipamentos e mods." },
+  { name: "Biologia", attr: "INT", summary: "Aprender sobre fauna e flora e descobrir propriedades de plantas e componentes animais." },
+  { name: "Culinária", attr: "INT", summary: "Preparar alimentos com os materiais disponíveis: sucesso total prepara tudo, parcial prepara metade, falha não gera alimento comestível." },
+];
+
+const protectionData = [
+  { name: "JPF", attr: "FOR", attrs: ["FOR", "CON"], summary: "JP física: integridade física, músculos e saúde. Role com MOD FOR ou MOD CON, conforme a situação pedida pelo mestre." },
+  { name: "JPV", attr: "PRE", summary: "JP de Vontade: resistir a habilidades cósmicas, efeitos de ambiente e pressão mental." },
+  { name: "JPR", attr: "REF", summary: "JP de Reflexo: tempo de reação, esquiva, explosões, quedas, armadilhas e situações rápidas." },
+];
+
+const manualCreationTemplates = {
+  item: {
+    title: "Formato de item",
+    format: "Nome | Peso | Preço | Efeito/Descrição | Tags",
+    example: "Ex.: Kit de reparo rápido | 1 Kg | 800 | Remove 1 rachadura | reparo, utilitário",
+    fields: {
+      tier: { hidden: true },
+      subtype: { hidden: true },
+      price: { label: "Preço", placeholder: "800" },
+      weight: { label: "Peso", placeholder: "1 Kg" },
+      power: { hidden: true },
+      mods: { hidden: true },
+      cosmos: { hidden: true },
+      tags: { label: "Tags", placeholder: "reparo, utilitário, luz" },
+      effect: { placeholder: "Descreva o efeito mecânico ou narrativo do item." },
+    },
+  },
+  weapon: {
+    title: "Formato de arma",
+    format: "Nome | Tier | Grupo/Tipo | Dano | Mods | Peso | Preço | Efeito",
+    example: "Ex.: Pistola de Ferrita | F | Pistola / Perfurante | 1d4 | 0 | 0,5 Kg | 1500 | Carregador com 6 munições",
+    fields: {
+      tier: { label: "Tier", placeholder: "F, E, D, C, B, A, S" },
+      subtype: { label: "Grupo / tipo", placeholder: "Pistola, rifle, espada, machado..." },
+      price: { label: "Preço", placeholder: "1500" },
+      weight: { label: "Peso", placeholder: "0,5 Kg" },
+      power: { label: "Dano", placeholder: "1d4, 1d6+1, 2d6..." },
+      mods: { label: "Mods", placeholder: "0" },
+      cosmos: { hidden: true },
+      tags: { label: "Tags", placeholder: "pistola, perfurante, 2-8 m" },
+      effect: { placeholder: "Descreva alcance, carregador, regra especial ou observações da arma." },
+    },
+  },
+  armor: {
+    title: "Formato de armadura",
+    format: "Nome | Tier | Tipo | CA | Mods | Cosmos | Peso | Preço | Efeito",
+    example: "Ex.: Colete Tático | E | Ranged | CA 6 | 1 | 0 | 12 Kg | 90 | Projetado para manobras rápidas",
+    fields: {
+      tier: { label: "Tier", placeholder: "F, E, D, C, B, A, S" },
+      subtype: { label: "Tipo", placeholder: "CaC, Ranged, Cósmica, Suporte..." },
+      price: { label: "Preço", placeholder: "90" },
+      weight: { label: "Peso", placeholder: "12 Kg" },
+      power: { label: "CA", placeholder: "6 ou CA 6" },
+      mods: { label: "Mods", placeholder: "1" },
+      cosmos: { label: "Cosmos bônus", placeholder: "0" },
+      tags: { label: "Tags", placeholder: "leve, suporte, cosmos" },
+      effect: { placeholder: "Descreva a proteção, habilidade passiva, slots ou regra da armadura." },
+    },
+  },
+  cosmos: {
+    title: "Formato de magia cósmica",
+    format: "Nome | Custo de Cosmos | Duração | Efeito | Tags",
+    example: "Ex.: Rajada Cósmica | 1 | Instantânea | 1d6 energético, ignora 1 CA | dano, alcance 10 m",
+    fields: {
+      tier: { label: "Custo de Cosmos", placeholder: "1, 2, 3, 4, 6, 8, 10" },
+      subtype: { hidden: true },
+      price: { hidden: true },
+      weight: { label: "Duração", placeholder: "Instantânea, 1 rodada, 1 cena..." },
+      power: { label: "Dano / alcance", placeholder: "1d6, cura 2d6, alcance 10 m..." },
+      mods: { hidden: true },
+      cosmos: { hidden: true },
+      tags: { label: "Tags", placeholder: "dano, cura, defesa, controle" },
+      effect: { placeholder: "Descreva o efeito completo da magia e qualquer teste exigido." },
+    },
+  },
+  "chip-mod": {
+    title: "Formato de chip modificador",
+    format: "Nome | Rank/Tier | Tipo | Efeito | Tags",
+    example: "Ex.: Equalizador de Estresse D-08 | D | Neural | Consome 1 estresse para recuperar 1d4 PV | estresse, cura",
+    fields: {
+      tier: { label: "Rank / Tier", placeholder: "F, E, D, C, B, A, S" },
+      subtype: { label: "Tipo", placeholder: "Neural, arma, armadura, suporte..." },
+      price: { hidden: true },
+      weight: { hidden: true },
+      power: { label: "Bônus / custo", placeholder: "+1, 1x/dia, consome 1..." },
+      mods: { hidden: true },
+      cosmos: { hidden: true },
+      tags: { label: "Tags", placeholder: "estresse, cura, ataque, defesa" },
+      effect: { placeholder: "Descreva o efeito do chip, limite de uso e penalidade se existir." },
+    },
+  },
+  ability: {
+    title: "Formato de habilidade solta",
+    format: "Nome | Fonte | Gatilho/Bônus | Efeito | Tags",
+    example: "Ex.: Instinto de Sobrevivência | Raça | 1x/cena | Rerrola teste de proteção física | raça, proteção",
+    fields: {
+      tier: { label: "Fonte", placeholder: "Raça, arma, armadura, evento..." },
+      subtype: { label: "Categoria", placeholder: "Passiva, reação, ação, talento..." },
+      price: { hidden: true },
+      weight: { hidden: true },
+      power: { label: "Gatilho / bônus", placeholder: "1x/cena, +2, reação..." },
+      mods: { hidden: true },
+      cosmos: { hidden: true },
+      tags: { label: "Tags", placeholder: "raça, proteção, passiva" },
+      effect: { placeholder: "Descreva a regra da habilidade e quando ela pode ser usada." },
+    },
+  },
+};
 
 const icons = {
   user: '<svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>',
@@ -636,24 +771,15 @@ const professionData = [
   },
 ];
 
-const itemData = [
-  { id: "item-vela", category: "item", name: "Vela", price: 1, weight: "0,5 Kg", tags: ["luz"], summary: "Ilumina 3 m normal e +3 m em penumbra." },
-  { id: "item-corda-10m", category: "item", name: "Corda 10 m", price: 100, weight: "2 Kg", tags: ["exploração"], summary: "Aguenta até 1200 N de pressão." },
-  { id: "item-ferramenta-multiuso", category: "item", name: "Ferramenta multiuso", price: 50, weight: "1 Kg", tags: ["ferramenta"], summary: "Substitui kit simples; pode causar dano improvisado 1d2." },
-  { id: "item-tocha", category: "item", name: "Tocha", price: 500, weight: "1 Kg", tags: ["luz", "fogo"], summary: "Ilumina 6 m normal e +6 m em penumbra por 1 h." },
-  { id: "item-cantil", category: "item", name: "Cantil (1 L)", price: 12, weight: "0,7 Kg", tags: ["sobrevivência"], summary: "Mantém água limpa por 24 h." },
-  { id: "item-mochila-couro", category: "item", name: "Mochila de couro", price: 4000, weight: "1,5 Kg", tags: ["carga"], summary: "+5 slots de carga leve." },
-  { id: "item-racao", category: "item", name: "Ração de viagem (1 dia)", price: 200, weight: "1 Kg", tags: ["comida"], summary: "Sustento básico para viagem." },
-  { id: "item-kit-escalada", category: "item", name: "Kit de escalada", price: 70, weight: "2 Kg", tags: ["exploração"], summary: "Reduz dificuldade em escalada." },
-  { id: "item-mascara-respiracao", category: "item", name: "Máscara de respiração", price: 150, weight: "1 Kg", tags: ["proteção"], summary: "10 min em ambiente tóxico." },
-  { id: "item-kit-reparo-rapido", category: "item", name: "Kit de reparo rápido", price: 800, weight: "1 Kg", tags: ["reparo"], summary: "Remove 1 rachadura como ação completa." },
-  { id: "item-kit-reparo-pesado", category: "item", name: "Kit de reparo pesado", price: 5000, weight: "5 Kg", tags: ["reparo"], summary: "Remove 2 rachaduras em 1 h." },
-  { id: "item-oleo-inflamavel", category: "item", name: "Óleo inflamável (frasco)", price: 30, weight: "0,7 Kg", tags: ["fogo"], summary: "Incendeia área pequena; dano 1d3 fogo." },
-  { id: "item-binoculo-simples", category: "item", name: "Binóculo simples", price: 90, weight: "1 Kg", tags: ["observação"], summary: "Amplia visão em até x2." },
-  { id: "item-lanterna-eletrica", category: "item", name: "Lanterna elétrica simples", price: 1800, weight: "1,2 Kg", tags: ["luz"], summary: "Alcance 12 m, dura 8 h, precisa de carga." },
-  { id: "item-bateria-portatil", category: "item", name: "Bateria portátil", price: 800, weight: "0,8 Kg", tags: ["energia"], summary: "Alimenta 1 dispositivo pequeno por 6 h." },
-  { id: "item-cinto-utilitario", category: "item", name: "Cinto utilitário", price: 150, weight: "1 Kg", tags: ["carga"], summary: "5 compartimentos de fácil acesso." },
-];
+const officialItemRows = Array.isArray(globalThis.SOLARIS_OFFICIAL_ITEMS)
+  ? globalThis.SOLARIS_OFFICIAL_ITEMS
+  : [];
+
+const itemData = officialItemRows.map((item) => ({
+  ...item,
+  category: "item",
+  tags: Array.isArray(item.tags) && item.tags.length ? item.tags : ["item"],
+}));
 
 const weaponData = [
   { id: "arma-bastao-carbonita", category: "weapon", name: "Bastão de Carbonita", tier: "F", type: "Concussão", damage: "1d4", mods: 0, weight: "2 Kg", price: 2000, tags: ["frágil"], summary: "Muito frágil; quebra rápido." },
@@ -869,6 +995,114 @@ const ruleData = [
   { name: "Level up", tags: ["espinha artificial", "evolução"], summary: "A evolução usa materiais, custo em PO, tempo de procedimento e rolagem de benefício do nível." },
 ];
 
+const actionData = [
+  { name: "Atacar", context: "Combate", tags: ["ação", "arma"], summary: "Faça uma jogada de ataque com arma, corpo a corpo ou habilidade ofensiva. Em acerto, role o dano." },
+  { name: "Mover-se", context: "Combate", tags: ["movimento"], summary: "Desloque até seu movimento atual, levando em conta terreno difícil, gravidade e efeitos ativos." },
+  { name: "Defender", context: "Combate", tags: ["reação", "CA"], summary: "Prepare defesa, cobertura ou postura. O mestre pode conceder bônus de CA ou redução de dano." },
+  { name: "Usar item", context: "Combate", tags: ["item", "cubo"], summary: "Pegue, ative ou entregue item. Itens dentro do cubo precisam estar acessíveis." },
+  { name: "Conjurar Cosmos", context: "Combate", tags: ["cosmos"], summary: "Use uma magia cósmica conhecida, gaste Cosmos e aplique a duração/alcance da habilidade." },
+  { name: "Ajudar aliado", context: "Combate", tags: ["suporte"], summary: "Crie abertura, estabilize, arraste, proteja ou dê vantagem narrativa para a ação do aliado." },
+  { name: "Investigar detalhe", context: "Cena", tags: ["percepção", "busca"], summary: "Examine pistas, pessoas, máquinas, rastros ou anomalias no ambiente da cena." },
+  { name: "Negociar", context: "Cena", tags: ["social"], summary: "Tente convencer, trocar favores, blefar, intimidar ou acalmar uma tensão social." },
+  { name: "Preparar recurso", context: "Cena", tags: ["preparação"], summary: "Carregue arma, ajuste armadura, repare rachadura simples ou organize itens antes do risco aumentar." },
+  { name: "Rastrear", context: "Cena", tags: ["sobrevivência"], summary: "Siga pegadas, sinais de máquinas, resíduos cósmicos ou comportamento de criaturas." },
+  { name: "Pesquisar", context: "Timeskip", tags: ["lore", "tecnologia"], summary: "Use tempo livre para estudar região, facções, criaturas, tecnologia ou fenômenos cósmicos." },
+  { name: "Fabricar ou modificar", context: "Timeskip", tags: ["craft", "chips"], summary: "Crie item, arma, armadura, chip ou melhoria usando materiais, custo e tempo narrativo." },
+  { name: "Treinar", context: "Timeskip", tags: ["evolução"], summary: "Justifique avanço, pratique perícia, estabilize nova técnica ou prepare evolução de nível." },
+  { name: "Descansar", context: "Timeskip", tags: ["cura", "estresse"], summary: "Recupere recursos, reduza estresse, trate ferimentos e estabilize saturação conforme a mesa." },
+  { name: "Viajar", context: "Fora de combate", tags: ["exploração"], summary: "Defina rota, marcha, vigias, suprimentos, ritmo e riscos de encontro." },
+  { name: "Comprar ou vender", context: "Fora de combate", tags: ["economia"], summary: "Negocie equipamento, venda itens do inventário e atualize dinheiro da ficha." },
+  { name: "Conversar no grupo", context: "Fora de combate", tags: ["interpretação"], summary: "Planeje, discuta objetivos, divida informações e tome decisões de personagem." },
+  { name: "Manutenção", context: "Fora de combate", tags: ["equipamento"], summary: "Revise armas, armaduras, cubos, rachaduras e munição antes da próxima cena perigosa." },
+];
+
+const characterCreationSteps = [
+  {
+    title: "Conceito",
+    summary: "Defina quem o personagem era, o que perdeu e por que aceita se arriscar.",
+    fields: "Nome, origem, notas e objetivo pessoal.",
+    tip: "Pense em função no grupo: protege, cura, hackeia, pilota, negocia, rastreia ou canaliza Cosmos.",
+  },
+  {
+    title: "Raça",
+    summary: "Escolha a origem jogável permitida pela campanha e leia cultura, traços, bônus e fraqueza.",
+    fields: "Raça e atributo racial.",
+    tip: "Raça influencia, mas não aprisiona. Use a cultura como ponto de partida, não como limite.",
+  },
+  {
+    title: "Traços raciais",
+    summary: "Anote bônus de atributo, visão, idioma, habilidade inicial, fraqueza e progressões raciais.",
+    fields: "Raça e chip, habilidades e notas.",
+    tip: "A ficha digital já soma bônus racial no atributo escolhido.",
+  },
+  {
+    title: "Atributos",
+    summary: "Role 7d6, descarte o menor dado e distribua os 6 restantes entre FOR, REF, CON, MEN, PRE e INT.",
+    fields: "Atributos base.",
+    tip: "Cada atributo começa em 7. Some o dado escolhido ao 7 para chegar ao valor final.",
+  },
+  {
+    title: "Distribuição",
+    summary: "Coloque os maiores dados nos atributos que combinam com o conceito.",
+    fields: "FOR, REF, CON, MEN, PRE e INT.",
+    tip: "Corpo a corpo usa FOR/CON; tiro e pilotagem usam REF; tecnologia e medicina usam INT; Cosmos usa MEN.",
+  },
+  {
+    title: "Modificadores",
+    summary: "Use o modificador do atributo nas rolagens, não o valor cheio.",
+    fields: "Modificadores calculados automaticamente.",
+    tip: "7 = -2, 8-9 = -1, 10-11 = 0, 12-13 = +1, 14-15 = +2, 16-17 = +3, 18-19 = +4, 20 = +5.",
+  },
+  {
+    title: "Chip de profissão",
+    summary: "Escolha o treinamento inicial: foco, talento, kit e penalidade.",
+    fields: "Chip de profissão, raça e chip.",
+    tip: "O chip não é classe fixa. Ele mostra o que o personagem sabia fazer antes da campanha.",
+  },
+  {
+    title: "Perícias e ignorâncias",
+    summary: "Escolha 2 perícias treinadas livres. O chip concede um foco profissional. O mestre pode permitir 1 ignorância para ganhar mais 1 perícia.",
+    fields: "Habilidades e notas.",
+    tip: "Perícia treinada pode dar vantagem; ignorância deve ser uma fraqueza real que aparece em jogo.",
+  },
+  {
+    title: "Derivados",
+    summary: "Confira PV, CA, Cosmos, movimento, iniciativa, proteção, carga, cubos e percepção passiva.",
+    fields: "Derivados, recursos e HUD vital.",
+    tip: "A ficha calcula os principais derivados quando raça, atributos, nível e equipamentos mudam.",
+  },
+  {
+    title: "Equipamento e história",
+    summary: "Escolha arma Tier F, armadura Tier F, kit de suprimento, kit da profissão, idiomas, objetivo pessoal e ligação com o grupo.",
+    fields: "Equipamentos, habilidades e notas.",
+    tip: "Comece simples. O personagem cresce por escolhas, cicatrizes, alianças, equipamentos e descobertas.",
+  },
+];
+
+const characterCreationFormulas = [
+  ["Atributo", "7 + dado distribuído"],
+  ["Modificador", "7: -2 | 8-9: -1 | 10-11: 0 | 12-13: +1 | 14-15: +2 | 16-17: +3 | 18-19: +4 | 20: +5"],
+  ["PV inicial", "8 + bônus de CON, com a ficha digital calculando o PV máximo atual"],
+  ["CA", "4 + MOD REF + armadura + raça + mods + cobertura"],
+  ["Cosmos", "Base do nível + MOD MEN + raça + equipamento/mod"],
+  ["Movimento", "6 m + MOD REF + ajustes raciais/equipamento"],
+  ["Iniciativa", "Rolagem de iniciativa do app usa o perfil atual de dados + REF"],
+  ["Cubos", "5 + MOD FOR + raça + profissão"],
+];
+
+const characterCreationChecklist = [
+  "Nome, conceito, origem e objetivo pessoal",
+  "Raça, atributo racial, idioma, habilidade e fraqueza",
+  "Atributos distribuídos e modificadores conferidos",
+  "Chip de profissão com foco, talento, kit e penalidade",
+  "Perícias treinadas e ignorância, se o mestre permitir",
+  "PV atual/máximo, CA, Cosmos, movimento, cubos e iniciativa",
+  "Arma inicial Tier F e armadura inicial Tier F",
+  "Kit de suprimento, kit da profissão, dinheiro inicial e anotações",
+  "Ligação com outro personagem ou com a missão inicial",
+  "Ficha salva e, se quiser compartilhar, exportada em JSON",
+];
+
 const libraryMap = {
   racas: { title: "Raças", kicker: "Povos de Tarantus", items: raceData },
   profissoes: { title: "Profissões", kicker: "Chips de função", items: professionData },
@@ -879,6 +1113,7 @@ const libraryMap = {
   itens: { title: "Itens", kicker: "Equipamentos e cubo", items: itemData, market: true },
   monstros: { title: "Monstros", kicker: "Ameaças de mesa", items: monsterData },
   regras: { title: "Regras", kicker: "Sistema base", items: ruleData },
+  acoes: { title: "Ações possíveis", kicker: "Combate, cena e downtime", items: actionData },
 };
 
 const emptyCharacter = () => ({
@@ -896,6 +1131,7 @@ const emptyCharacter = () => ({
   pvCurrent: 8,
   cosmosCurrent: 0,
   stress: 0,
+  saturation: 0,
   crackLevel: 0,
   weapon: "",
   armor: "",
@@ -905,6 +1141,12 @@ const emptyCharacter = () => ({
   knownAbilities: [],
   customItems: [],
   diceLog: [],
+  initialAttributeRoll: { rolls: [], kept: [] },
+  skillTraining: {},
+  vitalSigns: {},
+  vitalResources: {},
+  conditions: {},
+  bodyParts: {},
   equippedWeaponUid: "",
   equippedArmorUid: "",
   photoDataUrl: "",
@@ -918,19 +1160,29 @@ const state = {
   activeLibrary: "racas",
   activeRaceId: null,
   activeCharacterPage: "ficha",
+  navExpanded: false,
+  pendingTest: null,
+  manualImageDataUrl: "",
+  manualImageName: "",
   current: emptyCharacter(),
   saved: [],
 };
 
 const el = {
   form: document.querySelector("#characterForm"),
+  navList: document.querySelector(".nav-list"),
   attributeGrid: document.querySelector("#attributeGrid"),
+  quickTestGrid: document.querySelector("#quickTestGrid"),
   race: document.querySelector("#race"),
   racialChoice: document.querySelector("#racialChoice"),
   profession: document.querySelector("#profession"),
   savedList: document.querySelector("#savedList"),
   characterSearch: document.querySelector("#characterSearch"),
   librarySearch: document.querySelector("#librarySearch"),
+  libraryControls: document.querySelector("#libraryControls"),
+  libraryTierControl: document.querySelector("#libraryTierControl"),
+  libraryTierFilter: document.querySelector("#libraryTierFilter"),
+  librarySort: document.querySelector("#librarySort"),
   libraryGrid: document.querySelector("#libraryGrid"),
   libraryTitle: document.querySelector("#libraryTitle"),
   libraryKicker: document.querySelector("#libraryKicker"),
@@ -940,6 +1192,7 @@ const el = {
   raceDetail: document.querySelector("#raceDetail"),
   characterTabs: document.querySelectorAll("[data-character-page]"),
   characterPages: document.querySelectorAll(".character-page"),
+  creationGuideContent: document.querySelector("#creationGuideContent"),
   equipmentPageContent: document.querySelector("#equipmentPageContent"),
   cosmosPageContent: document.querySelector("#cosmosPageContent"),
   cubePageContent: document.querySelector("#cubePageContent"),
@@ -947,8 +1200,40 @@ const el = {
   diceResultDisplay: document.querySelector("#diceResultDisplay"),
   diceChatLog: document.querySelector("#diceChatLog"),
   rollDiceButton: document.querySelector("#rollDiceButton"),
+  rollInitiativeButton: document.querySelector("#rollInitiativeButton"),
   manualCreateForm: document.querySelector("#manualCreateForm"),
   manualCreatedContent: document.querySelector("#manualCreatedContent"),
+  manualFormatGuide: document.querySelector("#manualFormatGuide"),
+  manualType: document.querySelector("#manualType"),
+  manualName: document.querySelector("#manualName"),
+  manualTier: document.querySelector("#manualTier"),
+  manualSubtype: document.querySelector("#manualSubtype"),
+  manualPrice: document.querySelector("#manualPrice"),
+  manualWeight: document.querySelector("#manualWeight"),
+  manualPower: document.querySelector("#manualPower"),
+  manualMods: document.querySelector("#manualMods"),
+  manualCosmos: document.querySelector("#manualCosmos"),
+  manualTags: document.querySelector("#manualTags"),
+  manualEffect: document.querySelector("#manualEffect"),
+  manualImagePanel: document.querySelector("#manualImagePanel"),
+  manualImageDropzone: document.querySelector("#manualImageDropzone"),
+  manualImageInput: document.querySelector("#manualImageInput"),
+  manualImagePreview: document.querySelector("#manualImagePreview"),
+  manualImagePlaceholder: document.querySelector("#manualImagePlaceholder"),
+  removeManualImageButton: document.querySelector("#removeManualImageButton"),
+  stressHudPanel: document.querySelector("#stressHudPanel"),
+  vitalHudModal: document.querySelector("#vitalHudModal"),
+  closeVitalHud: document.querySelector("#closeVitalHud"),
+  vitalHudCharacterTrigger: document.querySelector("#vitalHudCharacterTrigger"),
+  vitalHudDerivedTrigger: document.querySelector("#vitalHudDerivedTrigger"),
+  testDialog: document.querySelector("#testDialog"),
+  testRollForm: document.querySelector("#testRollForm"),
+  closeTestDialog: document.querySelector("#closeTestDialog"),
+  testDialogKicker: document.querySelector("#testDialogKicker"),
+  testDialogTitle: document.querySelector("#testDialogTitle"),
+  testDialogFormula: document.querySelector("#testDialogFormula"),
+  testBonus: document.querySelector("#testBonus"),
+  testMode: document.querySelector("#testMode"),
   equipmentWallet: document.querySelector("#equipmentWallet"),
   cubeUsagePill: document.querySelector("#cubeUsagePill"),
   pvMaxInline: document.querySelector("#pvMaxInline"),
@@ -967,8 +1252,11 @@ const el = {
 
 function init() {
   installIcons();
+  syncNavState();
   hydrateSelects();
   hydrateAttributes();
+  hydrateQuickTests();
+  applyManualTemplate();
   loadSaved();
   bindEvents();
   renderForm();
@@ -999,23 +1287,133 @@ function hydrateRacialChoice(raceId) {
 
 function hydrateAttributes() {
   el.attributeGrid.innerHTML = ATTRIBUTES.map((attr) => `
-    <label class="attribute-cell">
+    <article class="attribute-cell">
       <header>
         <strong>${attr}</strong>
         <span class="attribute-total" id="${attr}Total">+0</span>
       </header>
-      <input id="${attr}" name="${attr}" type="number" min="0" max="20" step="1" />
-    </label>
+      <label>
+        Base
+        <input id="${attr}" name="${attr}" type="number" min="0" max="20" step="1" />
+      </label>
+      <button class="mini-button test-roll-button" type="button" data-test-roll data-test-kind="Atributo" data-test-name="${attr}" data-test-attr="${attr}">Testar ${attr}</button>
+    </article>
   `).join("");
+}
+
+function hydrateQuickTests() {
+  el.quickTestGrid.innerHTML = `
+    <section class="quick-test-section">
+      <h4>Perícias por atributo</h4>
+      <div class="skill-training-grid">
+        ${QUICK_TEST_ATTRIBUTES.map(renderSkillAttributeCard).join("")}
+      </div>
+    </section>
+    <section class="quick-test-section">
+      <h4>Jogadas de proteção</h4>
+      <div class="quick-test-list">
+        ${protectionData.map(renderProtectionTestButton).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderSkillAttributeCard(attr) {
+  const skills = skillData.filter((skill) => skill.attr === attr);
+  return `
+    <article class="skill-attribute-card">
+      <h5>${attr}</h5>
+      ${skills.length
+        ? skills.map(renderSkillTrainingRow).join("")
+        : '<p class="skill-empty-note">Nenhuma perícia cadastrada para este atributo ainda.</p>'}
+    </article>
+  `;
+}
+
+function renderSkillTrainingRow(skill) {
+  const value = state.current.skillTraining?.[skill.name] || "";
+  const modifier = attributeModifier(totalAttributes()[skill.attr] || ATTRIBUTE_BASE);
+  return `
+    <div class="skill-training-row">
+      <button class="quick-test-button skill-test-button" type="button" title="${escapeHtml(skill.summary)}" aria-label="${escapeHtml(`${skill.name} ${formatMod(modifier)}. ${skill.summary}`)}" data-test-roll data-test-kind="Perícia" data-test-name="${escapeHtml(skill.name)}" data-test-attr="${escapeHtml(skill.attr)}">
+        <strong>${escapeHtml(skill.name)} <span class="skill-modifier" data-skill-modifier="${escapeHtml(skill.name)}" data-skill-attr="${escapeHtml(skill.attr)}">${formatMod(modifier)}</span></strong>
+      </button>
+      <div class="skill-training-checks" aria-label="Treinamento em ${escapeHtml(skill.name)}">
+        <label class="skill-training-check">
+          <input type="checkbox" data-skill-training="${escapeHtml(skill.name)}" data-skill-training-value="trained" ${value === "trained" ? "checked" : ""} />
+          <span>Perito</span>
+        </label>
+        <label class="skill-training-check">
+          <input type="checkbox" data-skill-training="${escapeHtml(skill.name)}" data-skill-training-value="ignorant" ${value === "ignorant" ? "checked" : ""} />
+          <span>Ignorante</span>
+        </label>
+      </div>
+    </div>
+  `;
+}
+
+function refreshSkillTrainingModifiers(totals = totalAttributes()) {
+  document.querySelectorAll("[data-skill-modifier]").forEach((node) => {
+    const attr = node.dataset.skillAttr;
+    node.textContent = formatMod(attributeModifier(totals[attr] || ATTRIBUTE_BASE));
+  });
+}
+
+function renderQuickTestButton(kind, item) {
+  return `
+    <button class="quick-test-button" type="button" data-test-roll data-test-kind="${escapeHtml(kind)}" data-test-name="${escapeHtml(item.name)}" data-test-attr="${escapeHtml(item.attr)}">
+      <strong>${escapeHtml(item.name)}</strong>
+      <span>${escapeHtml(item.attr)} - ${escapeHtml(item.summary)}</span>
+    </button>
+  `;
+}
+
+function renderProtectionTestButton(item) {
+  const attrs = item.attrs || [item.attr];
+  if (attrs.length === 1) return renderQuickTestButton("Proteção", item);
+
+  return `
+    <article class="protection-choice-card">
+      <div>
+        <strong>${escapeHtml(item.name)}</strong>
+        <span>${escapeHtml(item.summary)}</span>
+      </div>
+      <div class="protection-choice-actions" aria-label="Escolha o atributo da ${escapeHtml(item.name)}">
+        ${attrs.map((attr) => `
+          <button class="mini-button" type="button" data-test-roll data-test-kind="Proteção" data-test-name="${escapeHtml(item.name)}" data-test-attr="${escapeHtml(attr)}">${escapeHtml(attr)}</button>
+        `).join("")}
+      </div>
+    </article>
+  `;
 }
 
 function bindEvents() {
   document.querySelectorAll(".nav-item").forEach((button) => {
-    button.addEventListener("click", () => switchView(button.dataset.view));
+    button.addEventListener("click", () => handleNavClick(button.dataset.view));
   });
 
   el.characterTabs.forEach((button) => {
     button.addEventListener("click", () => switchCharacterPage(button.dataset.characterPage));
+  });
+  el.creationGuideContent.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const pageButton = event.target.closest("[data-guide-page]");
+    if (pageButton) {
+      switchCharacterPage(pageButton.dataset.guidePage);
+      return;
+    }
+    const libraryButton = event.target.closest("[data-guide-library]");
+    if (libraryButton) {
+      switchView(libraryButton.dataset.guideLibrary);
+      return;
+    }
+    const rollAttributesButton = event.target.closest("[data-roll-initial-attributes]");
+    if (rollAttributesButton) {
+      rollInitialAttributePool();
+      return;
+    }
+    const applyAttributesButton = event.target.closest("[data-apply-initial-attributes]");
+    if (applyAttributesButton) applyInitialAttributePool();
   });
 
   el.form.addEventListener("input", () => {
@@ -1025,6 +1423,34 @@ function bindEvents() {
 
   el.form.addEventListener("change", () => {
     readForm();
+    renderSummary();
+  });
+  el.form.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const button = event.target.closest("[data-test-roll]");
+    if (!button) return;
+    event.preventDefault();
+    openTestDialog({
+      kind: button.dataset.testKind,
+      name: button.dataset.testName,
+      attr: button.dataset.testAttr,
+      mode: defaultTestModeFor(button.dataset.testKind, button.dataset.testName),
+    });
+  });
+  el.quickTestGrid.addEventListener("change", (event) => {
+    if (!(event.target instanceof HTMLInputElement) || !event.target.dataset.skillTraining) return;
+    const skillName = event.target.dataset.skillTraining;
+    const skillState = event.target.dataset.skillTrainingValue;
+    const row = event.target.closest(".skill-training-row");
+    state.current.skillTraining = state.current.skillTraining || {};
+    if (event.target.checked) {
+      row?.querySelectorAll("[data-skill-training]").forEach((input) => {
+        if (input !== event.target) input.checked = false;
+      });
+      state.current.skillTraining[skillName] = skillState;
+    } else if (state.current.skillTraining[skillName] === skillState) {
+      delete state.current.skillTraining[skillName];
+    }
     renderSummary();
   });
   el.race.addEventListener("change", () => {
@@ -1067,10 +1493,60 @@ function bindEvents() {
     showToast("Imagem removida da ficha.");
   });
   el.rollDiceButton.addEventListener("click", rollDice);
+  el.rollInitiativeButton.addEventListener("click", rollInitiative);
   el.manualCreateForm.addEventListener("submit", createManualEntry);
+  el.manualType.addEventListener("change", applyManualTemplate);
+  el.manualImageDropzone.addEventListener("click", () => el.manualImageInput.click());
+  el.manualImageInput.addEventListener("change", (event) => {
+    const file = event.target.files?.[0];
+    if (file) setManualItemImage(file);
+    event.target.value = "";
+  });
+  el.manualImageDropzone.addEventListener("dragover", (event) => {
+    event.preventDefault();
+    el.manualImageDropzone.classList.add("dragging");
+  });
+  el.manualImageDropzone.addEventListener("dragleave", () => {
+    el.manualImageDropzone.classList.remove("dragging");
+  });
+  el.manualImageDropzone.addEventListener("drop", (event) => {
+    event.preventDefault();
+    el.manualImageDropzone.classList.remove("dragging");
+    const file = event.dataTransfer?.files?.[0];
+    if (file) setManualItemImage(file);
+  });
+  el.removeManualImageButton.addEventListener("click", () => {
+    clearManualItemImage();
+    showToast("Imagem removida do conteúdo criado.");
+  });
+  el.testRollForm.addEventListener("submit", submitTestRoll);
+  el.closeTestDialog.addEventListener("click", closeTestDialog);
+  el.testDialog.addEventListener("click", (event) => {
+    if (event.target === el.testDialog) closeTestDialog();
+  });
+  [el.vitalHudCharacterTrigger, el.vitalHudDerivedTrigger].forEach((trigger) => {
+    trigger.addEventListener("click", openVitalHud);
+    trigger.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openVitalHud();
+    });
+  });
+  el.closeVitalHud.addEventListener("click", closeVitalHud);
+  el.vitalHudModal.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element) || !event.target.closest("[data-vital-hud-close]")) return;
+    closeVitalHud();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !el.vitalHudModal.hidden) closeVitalHud();
+  });
+  el.testBonus.addEventListener("input", renderPendingTestFormula);
+  el.testMode.addEventListener("change", renderPendingTestFormula);
 
   el.characterSearch.addEventListener("input", renderSavedList);
   el.librarySearch.addEventListener("input", renderLibrary);
+  el.libraryTierFilter.addEventListener("change", renderLibrary);
+  el.librarySort.addEventListener("change", renderLibrary);
   el.libraryGrid.addEventListener("click", (event) => {
     if (!(event.target instanceof Element)) return;
     const buyButton = event.target.closest("[data-buy-id]");
@@ -1091,20 +1567,61 @@ function bindEvents() {
   [el.equipmentPageContent, el.cubePageContent].forEach((container) => {
     container.addEventListener("click", (event) => {
       if (!(event.target instanceof Element)) return;
+      const equipmentRoll = event.target.closest("[data-equipment-roll]");
+      if (equipmentRoll) {
+        handleEquipmentRoll(equipmentRoll.dataset.equipmentRoll);
+        return;
+      }
       const action = event.target.closest("[data-inventory-action]");
       if (!action) return;
       handleInventoryAction(action.dataset.inventoryAction, action.dataset.uid, action);
     });
   });
 
+  el.cosmosPageContent.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const unequipChipButton = event.target.closest("[data-unequip-chip-id]");
+    if (!unequipChipButton) return;
+    unequipModifierChip(unequipChipButton.dataset.unequipChipId);
+  });
+
   el.equipmentPageContent.addEventListener("input", (event) => {
     if (!(event.target instanceof HTMLInputElement) || event.target.id !== "crackLevelInput") return;
     state.current.crackLevel = clamp(numberValue(event.target.value, 0), 0, 10);
+    updateCrackVisual();
   });
 }
 
+function handleNavClick(view) {
+  if (view === state.activeView) {
+    setNavExpanded(!state.navExpanded);
+    return;
+  }
+  switchView(view);
+}
+
+function setActiveNav(view) {
+  document.querySelectorAll(".nav-item").forEach((item) => {
+    const active = item.dataset.view === view;
+    item.classList.toggle("active", active);
+    item.setAttribute("aria-current", active ? "page" : "false");
+  });
+}
+
+function setNavExpanded(expanded) {
+  state.navExpanded = Boolean(expanded);
+  el.navList.classList.toggle("expanded", state.navExpanded);
+  el.navList.setAttribute("aria-expanded", String(state.navExpanded));
+}
+
+function syncNavState() {
+  setActiveNav(state.activeView);
+  setNavExpanded(state.navExpanded);
+}
+
 function switchView(view) {
-  document.querySelectorAll(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.view === view));
+  setActiveNav(view);
+  setNavExpanded(false);
   state.activeView = view;
   state.activeRaceId = null;
 
@@ -1124,12 +1641,15 @@ function switchView(view) {
   el.viewKicker.textContent = "Biblioteca";
   el.viewTitle.textContent = libraryMap[view].title;
   el.librarySearch.value = "";
+  el.libraryTierFilter.value = "";
+  el.librarySort.value = "default";
   renderLibrary();
 }
 
 function switchCharacterPage(page) {
   const pageIds = {
     ficha: "characterSheetPage",
+    guia: "characterGuidePage",
     equipamentos: "characterEquipmentPage",
     cosmos: "characterCosmosPage",
     cubo: "characterCubePage",
@@ -1148,7 +1668,8 @@ function openRaceDetail(raceId) {
   state.activeView = "racas";
   state.activeLibrary = "racas";
   state.activeRaceId = race.id;
-  document.querySelectorAll(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.view === "racas"));
+  setActiveNav("racas");
+  setNavExpanded(false);
   el.personagensView.classList.remove("active");
   el.libraryView.classList.remove("active");
   el.raceDetailView.classList.add("active");
@@ -1272,6 +1793,7 @@ function readForm() {
   state.current.pvCurrent = numberValue(form.get("pvCurrent"), 0);
   state.current.cosmosCurrent = numberValue(form.get("cosmosCurrent"), 0);
   state.current.stress = numberValue(form.get("stress"), 0);
+  state.current.saturation = numberValue(form.get("saturation"), 0);
   state.current.weapon = form.get("weapon").trim();
   state.current.armor = form.get("armor").trim();
   state.current.loadUsed = numberValue(form.get("loadUsed"), 0);
@@ -1295,6 +1817,7 @@ function renderForm() {
   document.querySelector("#pvCurrent").value = state.current.pvCurrent;
   document.querySelector("#cosmosCurrent").value = state.current.cosmosCurrent;
   document.querySelector("#stress").value = state.current.stress;
+  document.querySelector("#saturation").value = state.current.saturation;
   document.querySelector("#weapon").value = state.current.weapon;
   document.querySelector("#armor").value = state.current.armor;
   document.querySelector("#loadUsed").value = state.current.loadUsed;
@@ -1302,6 +1825,8 @@ function renderForm() {
   document.querySelector("#abilities").value = state.current.abilities;
   document.querySelector("#notes").value = state.current.notes;
   renderPhotoPreviews();
+  hydrateQuickTests();
+  applyManualTemplate();
   renderSummary();
 }
 
@@ -1311,6 +1836,7 @@ function renderSummary() {
   const totals = totalAttributes();
   const derived = derivedStats(totals, race, profession);
   syncResourceBounds(derived);
+  refreshSkillTrainingModifiers(totals);
 
   ATTRIBUTES.forEach((attr) => {
     const totalNode = document.querySelector(`#${attr}Total`);
@@ -1324,10 +1850,12 @@ function renderSummary() {
     ? `Salva em ${formatDate(state.current.updatedAt)}`
     : "Ficha nova";
 
-  document.querySelector("#stressState").textContent = state.current.stress >= 6 ? "Colapso: 2d6" : "Tríade: 3d6";
+  const diceProfile = currentDiceProfile();
+  document.querySelector("#stressState").textContent = diceProfile.label;
   document.querySelector("#stressState").style.color = state.current.stress >= 6 ? "var(--danger)" : "var(--teal)";
   el.pvMaxInline.textContent = derived.pvMax;
   el.cosmosMaxInline.textContent = derived.cosmosMax;
+  renderResourceMeters(derived);
 
   document.querySelector("#derivedStats").innerHTML = [
     ["PV", `${state.current.pvCurrent}/${derived.pvMax}`],
@@ -1335,7 +1863,7 @@ function renderSummary() {
     ["Mov.", `${derived.movement} m`],
     ["Cosmos", `${state.current.cosmosCurrent}/${derived.cosmosMax}`],
     ["Cubos", `${state.current.loadUsed}/${derived.cubeSlots}`],
-    ["Dados", state.current.stress >= 6 ? "2d6" : "3d6"],
+    ["Dados", `${diceProfile.count}d6`],
   ].map(([label, value]) => `
     <div class="stat-tile">
       <span>${label}</span>
@@ -1364,21 +1892,232 @@ function renderSummary() {
     ["Armadura equipada", state.current.armor || "Nenhuma"],
     ["Arma equipada", state.current.weapon || "Nenhuma"],
   ].map(([label, value]) => `<div class="row-line"><span>${label}</span><strong>${value}</strong></div>`).join("");
+  renderStressHud(diceProfile, derived);
   renderCharacterPages(derived);
 }
 
 function syncResourceBounds(derived) {
   state.current.pvCurrent = clamp(numberValue(state.current.pvCurrent, derived.pvMax), 0, derived.pvMax);
   state.current.cosmosCurrent = clamp(numberValue(state.current.cosmosCurrent, 0), 0, derived.cosmosMax);
+  state.current.stress = clamp(numberValue(state.current.stress, 0), 0, STRESS_MAX);
+  state.current.saturation = clamp(numberValue(state.current.saturation, 0), 0, SATURATION_MAX);
   const pvInput = document.querySelector("#pvCurrent");
   const cosmosInput = document.querySelector("#cosmosCurrent");
+  const stressInput = document.querySelector("#stress");
+  const saturationInput = document.querySelector("#saturation");
   pvInput.max = derived.pvMax;
   cosmosInput.max = derived.cosmosMax;
+  stressInput.max = STRESS_MAX;
+  saturationInput.max = SATURATION_MAX;
   pvInput.value = state.current.pvCurrent;
   cosmosInput.value = state.current.cosmosCurrent;
+  stressInput.value = state.current.stress;
+  saturationInput.value = state.current.saturation;
+}
+
+function renderResourceMeters(derived) {
+  const meterValues = [
+    ["#pvMeter", derived.pvMax ? state.current.pvCurrent / derived.pvMax : 0],
+    ["#cosmosMeter", derived.cosmosMax ? state.current.cosmosCurrent / derived.cosmosMax : 0],
+    ["#stressMeter", STRESS_MAX ? state.current.stress / STRESS_MAX : 0],
+    ["#saturationMeter", SATURATION_MAX ? state.current.saturation / SATURATION_MAX : 0],
+  ];
+
+  meterValues.forEach(([selector, ratio]) => {
+    const meter = document.querySelector(selector);
+    if (!meter) return;
+    meter.style.width = `${Math.round(clamp(ratio, 0, 1) * 100)}%`;
+  });
+}
+
+function currentDiceProfile() {
+  if (state.current.stress >= 6) return { count: 2, label: "Colapso: 2d6", reason: "Estresse 6+" };
+  if (state.current.saturation >= SATURATION_MAX) return { count: 4, label: "Saturação máxima: 4d6", reason: "Saturação cheia" };
+  return { count: 3, label: "Tríade: 3d6", reason: "Estável" };
+}
+
+function renderHudMetric(label, value, percent = 0, className = "") {
+  const width = Math.round(clamp(numberValue(percent, 0), 0, 100));
+  return `
+    <div class="hud-metric ${className}">
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(value)}</strong>
+      <div class="meter"><span style="width:${width}%"></span></div>
+    </div>
+  `;
+}
+
+function renderStressHud(diceProfile = currentDiceProfile(), derived = derivedStats(totalAttributes(), findRace(state.current.race), findProfession(state.current.profession))) {
+  el.stressHudPanel.className = "humanis-vital-host compact";
+  if (!document.querySelector("#hud-humanis")) {
+    el.stressHudPanel.innerHTML = '<div id="hud-humanis"></div>';
+  }
+
+  if (typeof window.renderHumanisVitalHUD !== "function") {
+    document.querySelector("#hud-humanis").innerHTML = '<div class="empty-state">HUD Humanis não carregada.</div>';
+    return;
+  }
+
+  window.renderHumanisVitalHUD("#hud-humanis", buildHumanisVitalHUDData(derived, diceProfile));
+}
+
+function buildHumanisVitalHUDData(derived, diceProfile) {
+  const race = findRace(state.current.race);
+  const equippedArmor = getEquippedMarketItem("armor");
+  const pvPercent = derived.pvMax ? (state.current.pvCurrent / derived.pvMax) * 100 : 0;
+  const injury = clamp(100 - pvPercent, 0, 100);
+  const stress = clamp(numberValue(state.current.stress, 0), 0, STRESS_MAX);
+  const saturation = clamp(numberValue(state.current.saturation, 0), 0, SATURATION_MAX);
+  const vitalSigns = state.current.vitalSigns || state.current.sinaisVitais || {};
+  const vitalResources = state.current.vitalResources || state.current.resources || state.current.recursos || {};
+  const conditions = state.current.conditions || state.current.condicoes || {};
+  const bodyParts = state.current.bodyParts || state.current.corpo || {};
+  const status = stress >= 6 || pvPercent <= 35 ? "ALERTA" : "ATIVO";
+
+  return {
+    id: formatHumanisHudId(),
+    nome: state.current.name || "Personagem sem nome",
+    raca: race.name || "Humanis",
+    status,
+    modelUrl: humanisHudModelUrl(),
+    onBodyPartClick: (partName, value) => {
+      showToast(`${humanisHudBodyPartLabel(partName)}: ${Math.round(value)}%`);
+    },
+    pv: {
+      atual: state.current.pvCurrent,
+      maximo: derived.pvMax,
+    },
+    estresse: {
+      atual: stress,
+      maximo: STRESS_MAX,
+    },
+    cosmos: {
+      atual: state.current.cosmosCurrent,
+      maximo: derived.cosmosMax,
+    },
+    saturacao: {
+      atual: saturation,
+      maximo: SATURATION_MAX,
+    },
+    defesa: buildHumanisDefenseData(derived, race, equippedArmor),
+    sinaisVitais: {
+      frequenciaCardiaca: optionalNumber(vitalSigns, ["frequenciaCardiaca", "heartRate", "batimentos"], inferHeartRate(pvPercent, stress)),
+      pressaoArterial: vitalSigns.pressaoArterial || vitalSigns.bloodPressure || inferBloodPressure(pvPercent, stress),
+      frequenciaRespiratoria: optionalNumber(vitalSigns, ["frequenciaRespiratoria", "respirationRate", "respiracao"], inferRespiration(stress)),
+      temperatura: optionalNumber(vitalSigns, ["temperatura", "temperature"], inferTemperature(stress, saturation)).toFixed(1),
+      saturacaoOxigenio: optionalNumber(vitalSigns, ["saturacaoOxigenio", "oxygen", "oxigenio"], inferOxygen(pvPercent, saturation)),
+    },
+    recursos: {
+      hidratacao: optionalNumber(vitalResources, ["hidratacao", "hydration"], clamp(100 - saturation * 2 - stress * 2, 0, 100)),
+      nutricao: optionalNumber(vitalResources, ["nutricao", "nutrition"], clamp(88 - Math.max(0, state.current.loadUsed - 2) * 3, 35, 100)),
+    },
+    condicoes: {
+      sangramento: conditions.sangramento || conditions.bleeding || inferBleeding(pvPercent),
+      alerta: conditions.alerta || conditions.alert || inferHudAlert(pvPercent, stress, saturation, diceProfile),
+    },
+    corpo: {
+      cabeca: optionalNumber(bodyParts, ["cabeca", "head"], inferBodyPart(100, injury, stress)),
+      pescoco: optionalNumber(bodyParts, ["pescoco", "neck"], inferBodyPart(98, injury, stress)),
+      torax: optionalNumber(bodyParts, ["torax", "chest"], inferBodyPart(100, injury * 0.85, stress)),
+      abdomen: optionalNumber(bodyParts, ["abdomen", "abdômen"], inferBodyPart(100, injury * 0.75, stress)),
+      bracoDireito: optionalNumber(bodyParts, ["bracoDireito", "braçoDireito", "rightArm"], inferBodyPart(100, injury * 0.55, stress)),
+      bracoEsquerdo: optionalNumber(bodyParts, ["bracoEsquerdo", "braçoEsquerdo", "leftArm"], inferBodyPart(100, injury * 0.55, stress)),
+      pernaDireita: optionalNumber(bodyParts, ["pernaDireita", "rightLeg"], inferBodyPart(100, injury * 0.6, stress)),
+      pernaEsquerda: optionalNumber(bodyParts, ["pernaEsquerda", "leftLeg"], inferBodyPart(100, injury * 0.6, stress)),
+    },
+    equipamento: {
+      nome: "Equipamento Biometrico",
+      sistema: equippedArmor ? equippedArmor.name : "Sistema Integrado",
+      versao: "3.7.2",
+    },
+  };
+}
+
+function optionalNumber(source, keys, fallback) {
+  const foundKey = keys.find((key) => source[key] !== undefined && source[key] !== "");
+  return foundKey ? numberValue(source[foundKey], fallback) : fallback;
+}
+
+function formatHumanisHudId() {
+  const raw = state.current.id || "humanis";
+  return `H-${String(raw).replace(/[^a-z0-9]/gi, "").slice(0, 6).toUpperCase().padEnd(6, "0")}`;
+}
+
+function humanisHudModelUrl() {
+  if (state.current.humanisModelUrl) return state.current.humanisModelUrl;
+  if (state.current.modelUrl) return state.current.modelUrl;
+  return window.location.protocol === "file:" ? "./assets/models/humanis.glb" : "/assets/models/humanis.glb";
+}
+
+function humanisHudBodyPartLabel(partName) {
+  const labels = {
+    cabeca: "Cabeca",
+    pescoco: "Pescoco",
+    torax: "Torax",
+    abdomen: "Abdomen",
+    bracoDireito: "Braco direito",
+    bracoEsquerdo: "Braco esquerdo",
+    pernaDireita: "Perna direita",
+    pernaEsquerda: "Perna esquerda",
+  };
+
+  return labels[partName] || "Regiao corporal";
+}
+
+function inferHeartRate(pvPercent, stress) {
+  return Math.round(clamp(72 + stress * 6 + (pvPercent < 50 ? 10 : 0), 55, 150));
+}
+
+function inferBloodPressure(pvPercent, stress) {
+  const systolic = Math.round(clamp(120 + stress * 4 - (pvPercent < 30 ? 14 : 0), 80, 180));
+  const diastolic = Math.round(clamp(80 + stress * 2 - (pvPercent < 30 ? 8 : 0), 50, 120));
+  return `${systolic}/${diastolic}`;
+}
+
+function inferRespiration(stress) {
+  return Math.round(clamp(16 + stress, 10, 32));
+}
+
+function inferTemperature(stress, saturation) {
+  return clamp(36.7 + stress * 0.05 + saturation * 0.02, 35, 41);
+}
+
+function inferOxygen(pvPercent, saturation) {
+  return Math.round(clamp(99 - saturation * 2 - (pvPercent < 35 ? 5 : 0), 70, 99));
+}
+
+function inferBleeding(pvPercent) {
+  if (pvPercent <= 0) return "CRITICO";
+  if (pvPercent < 30) return "RISCO";
+  return "NENHUM";
+}
+
+function inferHudAlert(pvPercent, stress, saturation, diceProfile) {
+  if (pvPercent <= 0) return "PV ESGOTADO";
+  if (pvPercent < 35) return "PV EM RISCO";
+  if (stress >= 6) return "COLAPSO POR ESTRESSE";
+  if (saturation >= SATURATION_MAX) return "SATURAÇÃO MÁXIMA";
+  return diceProfile.reason === "Estável" ? "NENHUM ALERTA" : diceProfile.reason.toUpperCase();
+}
+
+function inferBodyPart(base, injury, stress) {
+  return Math.round(clamp(base - injury * 0.62 - stress * 1.5, 0, 100));
+}
+
+function buildHumanisDefenseData(derived, race, equippedArmor) {
+  const armorText = [equippedArmor?.name, equippedArmor?.kind, equippedArmor?.summary, ...(equippedArmor?.tags || [])].join(" ").toLowerCase();
+  const armorBonus = numberValue(derived.armorCa, 0);
+  return {
+    ca: derived.ca,
+    fisica: Math.round(clamp(derived.ca * 7 + armorBonus * 5, 0, 100)),
+    termica: Math.round(clamp(10 + armorBonus * 4 + (/term|fogo|calor|frio/.test(armorText) ? 22 : 0), 0, 100)),
+    eletrica: Math.round(clamp(10 + armorBonus * 4 + (/eletr|energia|condutor/.test(armorText) ? 22 : 0), 0, 100)),
+    cosmica: Math.round(clamp(10 + (race.cosmos || 0) * 12 + numberValue(derived.equipmentCosmosBonus, 0) * 18 + (/cosm/.test(armorText) ? 20 : 0), 0, 100)),
+  };
 }
 
 function renderCharacterPages(derived = derivedStats(totalAttributes(), findRace(state.current.race), findProfession(state.current.profession))) {
+  renderCreationGuidePage(derived);
   renderEquipmentPage(derived);
   renderCosmosPage(derived);
   renderCubePage(derived);
@@ -1387,11 +2126,171 @@ function renderCharacterPages(derived = derivedStats(totalAttributes(), findRace
   renderManualCreatedPage();
 }
 
+function renderCreationGuidePage(derived) {
+  const race = findRace(state.current.race);
+  const profession = findProfession(state.current.profession);
+  const totals = totalAttributes();
+  const modifierSummary = ATTRIBUTES
+    .map((attr) => `${attr} ${totals[attr]} (${formatMod(attributeModifier(totals[attr]))})`)
+    .join(" | ");
+
+  el.creationGuideContent.innerHTML = `
+    <div class="creation-guide-layout">
+      <section class="guide-hero">
+        <div>
+          <span class="ability-source">Solaris - criação em 10 passos</span>
+          <h3>Crie um sobrevivente pronto para jogar</h3>
+          <p>Use este roteiro junto da ficha. A ficha digital calcula boa parte dos números, mas o guia mostra por que cada escolha existe.</p>
+        </div>
+        <div class="guide-current-card">
+          <strong>${escapeHtml(state.current.name || "Personagem sem nome")}</strong>
+          <span>${escapeHtml(race.name)} - ${escapeHtml(profession.name)} - Nível ${escapeHtml(state.current.level)}</span>
+          <small>${escapeHtml(modifierSummary)}</small>
+        </div>
+      </section>
+
+      <section class="guide-action-strip">
+        <button class="mini-button" type="button" data-guide-page="ficha">Abrir ficha</button>
+        <button class="mini-button" type="button" data-guide-library="racas">Ver raças</button>
+        <button class="mini-button" type="button" data-guide-library="profissoes">Ver profissões</button>
+        <button class="mini-button" type="button" data-guide-page="equipamentos">Escolher equipamentos</button>
+      </section>
+
+      ${renderInitialAttributeRoller()}
+
+      <section class="guide-step-grid">
+        ${characterCreationSteps.map((step, index) => `
+          <article class="guide-step-card">
+            <span class="guide-step-number">${String(index + 1).padStart(2, "0")}</span>
+            <h4>${escapeHtml(step.title)}</h4>
+            <p>${escapeHtml(step.summary)}</p>
+            <strong>${escapeHtml(step.fields)}</strong>
+            <small>${escapeHtml(step.tip)}</small>
+          </article>
+        `).join("")}
+      </section>
+
+      <section class="guide-panel">
+          <h3>Fórmulas rápidas</h3>
+          <div class="guide-formula-list">
+            ${characterCreationFormulas.map(([label, formula]) => `
+              <div class="row-line">
+                <span>${escapeHtml(label)}</span>
+                <strong>${escapeHtml(formula)}</strong>
+              </div>
+            `).join("")}
+          </div>
+      </section>
+
+      <section class="guide-example-card">
+        <h3>Exemplo rápido</h3>
+        <p>Um Humanis Hacker pode priorizar REF e INT, escolher Tecnologia como ponto forte, usar uma pistola Tier F, uma armadura utilitária Tier F, 4 cubos e um objetivo como descobrir o que causou a explosão de Falaris.</p>
+        <p>O importante é sair com uma função clara no grupo, uma fraqueza interessante e uma razão pessoal para entrar em ruínas, zonas hostis e conflitos.</p>
+      </section>
+
+      <section class="guide-panel guide-checklist-panel">
+        <h3>Checklist final</h3>
+        <div class="guide-checklist">
+          ${characterCreationChecklist.map((item) => `
+            <label>
+              <input type="checkbox" />
+              <span>${escapeHtml(item)}</span>
+            </label>
+          `).join("")}
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function renderInitialAttributeRoller() {
+  const rollState = state.current.initialAttributeRoll || { rolls: [], kept: [] };
+  const rolls = Array.isArray(rollState.rolls) ? rollState.rolls : [];
+  const kept = Array.isArray(rollState.kept) ? rollState.kept : [];
+  const discardedIndex = Number.isInteger(rollState.discardedIndex) ? rollState.discardedIndex : -1;
+  const hasRoll = rolls.length === 7 && kept.length === ATTRIBUTES.length;
+
+  return `
+    <section class="guide-roller-card">
+      <div class="guide-roller-header">
+        <div>
+          <span class="ability-source">Atributos iniciais</span>
+          <h3>Role 7d6, descarte o menor e distribua</h3>
+          <p>O resultado aplicado em cada atributo é sempre 7 + o dado escolhido. Use cada dado restante uma única vez.</p>
+        </div>
+        <button class="primary-button" type="button" data-roll-initial-attributes>Rolar 7d6</button>
+      </div>
+      ${hasRoll ? `
+        <div class="initial-dice-row" aria-label="Dados de atributos iniciais">
+          ${rolls.map((value, index) => `
+            <span class="initial-die ${index === discardedIndex ? "discarded" : ""}" title="${index === discardedIndex ? "Dado descartado" : "Dado disponível"}">${value}</span>
+          `).join("")}
+        </div>
+        <div class="attribute-assignment-grid">
+          ${ATTRIBUTES.map((attr, attrIndex) => `
+            <label>
+              <span>${attr}</span>
+              <select data-attribute-assignment="${attr}">
+                ${kept.map((value, index) => `
+                  <option value="${index}" ${index === attrIndex ? "selected" : ""}>Dado ${index + 1}: ${value} -> ${ATTRIBUTE_BASE + value}</option>
+                `).join("")}
+              </select>
+            </label>
+          `).join("")}
+        </div>
+        <button class="ghost-button" type="button" data-apply-initial-attributes>Aplicar atributos na ficha</button>
+      ` : `
+        <p class="inventory-note">Nenhuma rolagem feita ainda. Clique em Rolar 7d6 para gerar os valores iniciais.</p>
+      `}
+    </section>
+  `;
+}
+
+function rollInitialAttributePool() {
+  readForm();
+  const rolls = Array.from({ length: 7 }, () => Math.floor(Math.random() * 6) + 1);
+  const discardedIndex = rolls.reduce((lowestIndex, value, index) => (
+    value < rolls[lowestIndex] ? index : lowestIndex
+  ), 0);
+  const kept = rolls.filter((_, index) => index !== discardedIndex);
+  state.current.initialAttributeRoll = { rolls, kept, discardedIndex };
+  renderCharacterPages();
+  showToast(`Atributos: ${rolls.join(", ")} | descartado ${rolls[discardedIndex]}`);
+}
+
+function applyInitialAttributePool() {
+  readForm();
+  const kept = state.current.initialAttributeRoll?.kept || [];
+  if (kept.length !== ATTRIBUTES.length) {
+    showToast("Role 7d6 antes de aplicar os atributos.");
+    return;
+  }
+
+  const selects = [...el.creationGuideContent.querySelectorAll("[data-attribute-assignment]")];
+  const selectedIndexes = selects.map((select) => Number(select.value));
+  if (new Set(selectedIndexes).size !== ATTRIBUTES.length) {
+    showToast("Use cada dado restante uma única vez.");
+    return;
+  }
+
+  selects.forEach((select) => {
+    const attr = select.dataset.attributeAssignment;
+    state.current.attributes[attr] = ATTRIBUTE_BASE + kept[Number(select.value)];
+  });
+  renderForm();
+  switchCharacterPage("ficha");
+  showToast("Atributos iniciais aplicados na ficha.");
+}
+
 function renderEquipmentPage(derived) {
   const equippedWeapon = getEquippedMarketItem("weapon");
   const equippedArmor = getEquippedMarketItem("armor");
   el.equipmentWallet.textContent = `${state.current.currency} dinheiro`;
   el.equipmentPageContent.innerHTML = `
+    <section class="inventory-panel inventory-panel-wide">
+      <h3>Painel de combate</h3>
+      ${renderEquipmentCombatPanel(equippedWeapon)}
+    </section>
     <section class="inventory-panel inventory-panel-wide">
       <h3>Equipado</h3>
       <div class="detail-list">
@@ -1410,6 +2309,60 @@ function renderEquipmentPage(derived) {
       ${renderInventoryCards(state.current.inventory, { showCubeAction: true, showEquipAction: true })}
     </section>
   `;
+}
+
+function renderEquipmentCombatPanel(equippedWeapon) {
+  const group = classifyWeapon(equippedWeapon);
+  const crack = clamp(numberValue(state.current.crackLevel, 0), 0, 10);
+  const broken = crack >= 10;
+  const attackAttr = weaponAttackAttribute(group);
+  return `
+    <div class="combat-panel">
+      <div class="equipment-visual ${broken ? "broken" : ""}">
+        ${renderWeaponSketch(group)}
+        <div>
+          <span class="ability-source">${escapeHtml(group.label)}</span>
+          <h4>${escapeHtml(equippedWeapon?.name || "Nenhuma arma equipada")}</h4>
+          <p>${escapeHtml(equippedWeapon ? marketMeta(equippedWeapon) : "Equipe uma arma para habilitar ataque e dano.")}</p>
+          <div class="crack-track" aria-label="Graus de rachadura">
+            ${Array.from({ length: 10 }, (_, index) => `<span class="${index < crack ? "filled" : ""}"></span>`).join("")}
+          </div>
+          <p class="inventory-note" id="equipmentCrackNote">${broken ? "Equipamento quebrado: o esboço entra em estado crítico." : `Rachadura ${crack}/10.`}</p>
+        </div>
+      </div>
+      <div class="combat-actions">
+        <button class="primary-button" type="button" data-equipment-roll="attack" ${equippedWeapon ? "" : "disabled"}>Ataque (${attackAttr})</button>
+        <button class="ghost-button" type="button" data-equipment-roll="damage" ${equippedWeapon?.damage ? "" : "disabled"}>Dano ${escapeHtml(equippedWeapon?.damage || "")}</button>
+      </div>
+    </div>
+  `;
+}
+
+function updateCrackVisual() {
+  const crack = clamp(numberValue(state.current.crackLevel, 0), 0, 10);
+  const visual = el.equipmentPageContent.querySelector(".equipment-visual");
+  if (!visual) return;
+  visual.classList.toggle("broken", crack >= 10);
+  el.equipmentPageContent.querySelectorAll(".crack-track span").forEach((node, index) => {
+    node.classList.toggle("filled", index < crack);
+  });
+  const note = el.equipmentPageContent.querySelector("#equipmentCrackNote");
+  if (note) note.textContent = crack >= 10 ? "Equipamento quebrado: o esboço entra em estado crítico." : `Rachadura ${crack}/10.`;
+}
+
+function renderWeaponSketch(group) {
+  const sketches = {
+    firearm: '<svg viewBox="0 0 180 96"><path d="M22 35h92l13 9h31v13h-34l-12 9H77l-10 22H47l9-22H22z"/><path d="M116 44v21M41 35v31"/></svg>',
+    rifle: '<svg viewBox="0 0 220 96"><path d="M18 42h126l18-12h38v16h-32l-18 11H66l-15 21H31l12-21H18z"/><path d="M146 31v35M78 38v24"/></svg>',
+    blade: '<svg viewBox="0 0 180 96"><path d="M20 52h42l78-32 20 7-72 42H20z"/><path d="M58 38v30M34 42v22"/></svg>',
+    axe: '<svg viewBox="0 0 180 96"><path d="M75 20h16v58H75z"/><path d="M89 18c38 4 54 19 51 39-21-6-36-5-51 8z"/><path d="M75 18c-28 5-40 17-36 36 15-5 25-3 36 9z"/></svg>',
+    polearm: '<svg viewBox="0 0 220 96"><path d="M18 53h142"/><path d="M158 25l44 28-44 18 14-18z"/><path d="M44 45v16"/></svg>',
+    blunt: '<svg viewBox="0 0 180 96"><path d="M30 66 112 24"/><path d="M105 16h34v24h-34z"/><path d="m44 59 12 18"/></svg>',
+    launcher: '<svg viewBox="0 0 220 96"><path d="M22 38h128l42 18-42 18H22z"/><path d="M64 38v36M126 38v36"/><path d="M83 74 72 88H51l11-14z"/></svg>',
+    unarmed: '<svg viewBox="0 0 160 96"><path d="M44 28h18v28H44zM65 18h18v38H65zM86 22h18v34H86zM107 32h16v36H61c-23 0-33-14-30-31l13 2z"/></svg>',
+    generic: '<svg viewBox="0 0 180 96"><path d="M24 54h98l30-20 12 14-34 28H24z"/><path d="M54 42v26M92 42v26"/></svg>',
+  };
+  return `<div class="weapon-sketch" aria-hidden="true">${sketches[group.key] || sketches.generic}</div>`;
 }
 
 function renderCosmosPage(derived) {
@@ -1443,7 +2396,7 @@ function renderCosmosPage(derived) {
     </section>
     <section class="inventory-panel inventory-panel-wide">
       <h3>Habilidades registradas</h3>
-      ${learnedCosmosAndChips.length ? `<div class="ability-grid">${learnedCosmosAndChips.map(renderAbilityCard).join("")}</div>` : `<p class="inventory-note">${escapeHtml(state.current.abilities || "Nenhuma habilidade cósmica, chip modificador ou talento extra registrado ainda.")}</p>`}
+      ${learnedCosmosAndChips.length ? `<div class="ability-grid">${learnedCosmosAndChips.map(renderKnownAbilityCard).join("")}</div>` : `<p class="inventory-note">${escapeHtml(state.current.abilities || "Nenhuma habilidade cósmica, chip modificador ou talento extra registrado ainda.")}</p>`}
     </section>
   `;
 }
@@ -1483,20 +2436,22 @@ function renderDicePage() {
   el.diceResultDisplay.classList.toggle("empty-state", !latest);
   el.diceResultDisplay.innerHTML = latest ? `
     <div class="dice-total">
-      <span>${escapeHtml(latest.formula)}</span>
+      <span>${escapeHtml(latest.label || latest.formula)}</span>
       <strong>${latest.total}</strong>
     </div>
     <div class="die-row">
       ${latest.rolls.map((roll) => `<span class="die-face" aria-label="Dado rolado ${roll}">${roll}</span>`).join("")}
     </div>
-    ${latest.bonus ? `<p>Bônus aplicado: ${formatMod(latest.bonus)}</p>` : ""}
+    <p>${escapeHtml(latest.formula)}</p>
+    ${latest.alternateRolls?.length ? `<p>Alternativas: ${escapeHtml(latest.alternateRolls.map((rolls) => `[${rolls.join(", ")}]`).join(" / "))}</p>` : ""}
+    ${latest.modifier || latest.bonus ? `<p>Modificador: ${formatMod(latest.modifier || 0)} | Bônus: ${formatMod(latest.bonus || 0)}</p>` : ""}
   ` : "Nenhuma rolagem ainda.";
 
   el.diceChatLog.innerHTML = log.length ? log.map((entry) => `
     <article class="dice-log-entry">
       <div>
-        <strong>${escapeHtml(entry.formula)} = ${entry.total}</strong>
-        <span>${escapeHtml(entry.rolls.join(", "))}${entry.bonus ? ` ${formatMod(entry.bonus)}` : ""}</span>
+        <strong>${escapeHtml(entry.label || entry.formula)} = ${entry.total}</strong>
+        <span>${escapeHtml(entry.formula)} | ${escapeHtml(entry.rolls.join(", "))}${entry.modifier ? ` ${formatMod(entry.modifier)}` : ""}${entry.bonus ? ` ${formatMod(entry.bonus)}` : ""}${entry.mode && entry.mode !== "normal" ? ` | ${entry.mode === "advantage" ? "vantagem" : "desvantagem"}` : ""}</span>
       </div>
       <time>${escapeHtml(formatShortTime(entry.createdAt))}</time>
     </article>
@@ -1516,6 +2471,8 @@ function renderManualCreatedPage() {
             source: marketCategoryLabel(item.category),
             effect: item.summary,
             meta: marketMeta(item),
+            imageDataUrl: item.imageDataUrl,
+            imageName: item.imageName,
           })).join("")}
           ${customAbilities.map(renderAbilityCard).join("")}
         </div>
@@ -1526,14 +2483,52 @@ function renderManualCreatedPage() {
 
 function renderAbilityCard(entry) {
   return `
-    <article class="inventory-card ability-card">
-      <div>
-        <span class="ability-source">${escapeHtml(entry.source)}</span>
+    <article class="inventory-card ability-card compact-card ${entry.imageDataUrl ? "with-image" : ""}" tabindex="0">
+      ${renderCardImage(entry)}
+      <div class="card-face">
+        <span class="ability-source">${escapeHtml(entry.source || "Manual")}</span>
         <h4>${escapeHtml(entry.name)}</h4>
+        ${entry.meta ? `<p class="card-meta-line">${escapeHtml(entry.meta)}</p>` : ""}
+      </div>
+      <div class="card-hover-popover" role="tooltip">
+        <strong>${escapeHtml(entry.name)}</strong>
         ${entry.meta ? `<p>${escapeHtml(entry.meta)}</p>` : ""}
         <p>${escapeHtml(entry.effect || "Sem efeito registrado.")}</p>
       </div>
     </article>
+  `;
+}
+
+function renderKnownAbilityCard(entry) {
+  const canUnequipChip = entry.source === "Chip modificador";
+  return `
+    <article class="inventory-card ability-card compact-card ${canUnequipChip ? "with-actions" : ""} ${entry.imageDataUrl ? "with-image" : ""}" tabindex="0">
+      ${renderCardImage(entry)}
+      <div class="card-face">
+        <span class="ability-source">${escapeHtml(entry.source || "Manual")}</span>
+        <h4>${escapeHtml(entry.name)}</h4>
+        ${entry.meta ? `<p class="card-meta-line">${escapeHtml(entry.meta)}</p>` : ""}
+      </div>
+      ${canUnequipChip ? `
+        <div class="inventory-actions">
+          <button class="mini-button danger-mini-button" type="button" data-unequip-chip-id="${escapeHtml(entry.id)}">Desequipar chip</button>
+        </div>
+      ` : ""}
+      <div class="card-hover-popover" role="tooltip">
+        <strong>${escapeHtml(entry.name)}</strong>
+        ${entry.meta ? `<p>${escapeHtml(entry.meta)}</p>` : ""}
+        <p>${escapeHtml(entry.effect || "Sem efeito registrado.")}</p>
+      </div>
+    </article>
+  `;
+}
+
+function renderCardImage(entry) {
+  if (!entry?.imageDataUrl) return "";
+  return `
+    <div class="item-card-image">
+      <img src="${escapeHtml(entry.imageDataUrl)}" alt="${escapeHtml(entry.imageName || entry.name || "Imagem do item")}" />
+    </div>
   `;
 }
 
@@ -1546,23 +2541,31 @@ function renderInventoryCards(entries, options = {}) {
         if (!item) return "";
         const equipped = isInventoryEquipped(entry);
         const cubeLabel = entry.inCube ? "Tirar do cubo" : "Guardar no cubo";
-        const equipLabel = equipped ? "Equipado" : "Equipar";
+        const equipAction = equipped ? "unequip" : "equip";
+        const equipLabel = equipped ? "Desequipar" : "Equipar";
         const salePrice = Number.isFinite(item.price) ? item.price : 0;
         return `
-          <article class="inventory-card">
-            <div>
+          <article class="inventory-card compact-card ${item.imageDataUrl ? "with-image" : ""}" tabindex="0">
+            ${renderCardImage(item)}
+            <div class="card-face">
+              <span class="ability-source">${escapeHtml(marketCategoryLabel(item.category))}</span>
               <h4>${escapeHtml(item.name)}</h4>
-              <p>${escapeHtml(marketMeta(item))}</p>
-              <p>${escapeHtml(item.summary || "Sem descrição.")}</p>
+              <p class="card-meta-line">${escapeHtml(compactMarketMeta(item))}</p>
             </div>
-            <label class="sell-field">
-              Valor de venda
-              <input type="number" min="0" step="1" value="${salePrice}" data-sell-value />
-            </label>
             <div class="inventory-actions">
-              ${options.showEquipAction && item.category !== "item" ? `<button class="mini-button" type="button" data-inventory-action="equip" data-uid="${entry.uid}" ${equipped ? "disabled" : ""}>${equipLabel}</button>` : ""}
+              ${options.showEquipAction && item.category !== "item" ? `<button class="mini-button" type="button" data-inventory-action="${equipAction}" data-uid="${entry.uid}">${equipLabel}</button>` : ""}
               ${options.showCubeAction && item.category === "item" ? `<button class="mini-button" type="button" data-inventory-action="cube" data-uid="${entry.uid}">${cubeLabel}</button>` : ""}
               <button class="mini-button danger-mini-button" type="button" data-inventory-action="sell" data-uid="${entry.uid}">Vender</button>
+            </div>
+            <div class="card-hover-popover" role="tooltip">
+              <strong>${escapeHtml(item.name)}</strong>
+              <p>${escapeHtml(marketMeta(item))}</p>
+              <p>${escapeHtml(item.summary || "Sem descrição.")}</p>
+              ${(item.tags || []).length ? `<div class="tag-row">${item.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
+              <label class="sell-field">
+                Valor de venda
+                <input type="number" min="0" step="1" value="${salePrice}" data-sell-value />
+              </label>
             </div>
           </article>
         `;
@@ -1615,6 +2618,14 @@ function learnLibraryAbility(itemId) {
   showToast(`${item.name} adicionado às habilidades.`);
 }
 
+function unequipModifierChip(abilityId) {
+  const ability = (state.current.knownAbilities || []).find((entry) => entry.id === abilityId);
+  if (!ability) return;
+  state.current.knownAbilities = (state.current.knownAbilities || []).filter((entry) => entry.id !== abilityId);
+  renderSummary();
+  showToast(`${ability.name} desequipado da ficha.`);
+}
+
 function rollDice() {
   readForm();
   const count = clamp(numberValue(document.querySelector("#diceCount").value, 1), 1, 20);
@@ -1623,51 +2634,329 @@ function rollDice() {
   const rolls = Array.from({ length: count }, () => Math.floor(Math.random() * sides) + 1);
   const total = rolls.reduce((sum, roll) => sum + roll, 0) + bonus;
   const formula = `${count}d${sides}${bonus ? formatMod(bonus) : ""}`;
-  state.current.diceLog = [
-    {
-      id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
-      count,
-      sides,
-      bonus,
-      rolls,
-      total,
-      formula,
-      createdAt: new Date().toISOString(),
-    },
-    ...(state.current.diceLog || []),
-  ].slice(0, 50);
-  renderDicePage();
+  pushDiceLog({ count, sides, bonus, rolls, total, formula, label: "Rolagem livre" });
   showToast(`${formula}: ${total}`);
+}
+
+function rollInitiative() {
+  readForm();
+  const diceProfile = currentDiceProfile();
+  const totals = totalAttributes();
+  const modifier = attributeModifier(totals.REF);
+  const pool = rollDicePool(diceProfile.count, 6);
+  const total = pool.raw + modifier;
+  const formula = `Iniciativa: ${diceProfile.count}d6${formatMod(modifier)}`;
+  pushDiceLog({
+    kind: "initiative",
+    label: "Iniciativa",
+    count: diceProfile.count,
+    sides: 6,
+    bonus: 0,
+    modifier,
+    attribute: "REF",
+    rolls: pool.rolls,
+    total,
+    formula,
+    foundry: {
+      type: "combatant-initiative",
+      system: "solaris",
+      attribute: "REF",
+      diceProfile: diceProfile.reason,
+    },
+  });
+  showToast(`Iniciativa: ${total}`);
+}
+
+function openVitalHud() {
+  readForm();
+  renderStressHud(currentDiceProfile(), derivedStats(totalAttributes(), findRace(state.current.race), findProfession(state.current.profession)));
+  el.vitalHudModal.hidden = false;
+  document.body.classList.add("modal-open");
+  el.closeVitalHud.focus({ preventScroll: true });
+}
+
+function closeVitalHud() {
+  el.vitalHudModal.hidden = true;
+  document.body.classList.remove("modal-open");
+}
+
+function defaultTestModeFor(kind, name) {
+  if (kind !== "Perícia") return "normal";
+  const stateValue = state.current.skillTraining?.[name] || "";
+  if (stateValue === "trained") return "advantage";
+  if (stateValue === "ignorant") return "disadvantage";
+  return "normal";
+}
+
+function openTestDialog({ kind = "Teste", name = "Rolagem", attr = "FOR", modifier = null, mode = "normal" } = {}) {
+  readForm();
+  const totals = totalAttributes();
+  const testModifier = modifier ?? attributeModifier(totals[attr] || ATTRIBUTE_BASE);
+  state.pendingTest = { kind, name, attr, modifier: testModifier };
+  el.testDialogKicker.textContent = kind;
+  el.testDialogTitle.textContent = `${name} (${attr})`;
+  el.testBonus.value = "0";
+  el.testMode.value = mode;
+  renderPendingTestFormula();
+  el.testDialog.hidden = false;
+  el.testBonus.focus();
+}
+
+function closeTestDialog() {
+  el.testDialog.hidden = true;
+  state.pendingTest = null;
+}
+
+function renderPendingTestFormula() {
+  if (!state.pendingTest) return;
+  const diceProfile = currentDiceProfile();
+  const bonus = numberValue(el.testBonus.value, 0);
+  const modeLabel = el.testMode.value === "advantage" ? "vantagem" : el.testMode.value === "disadvantage" ? "desvantagem" : "normal";
+  el.testDialogFormula.textContent = `${diceProfile.count}d6 ${formatMod(state.pendingTest.modifier)} ${bonus ? formatMod(bonus) : ""} (${modeLabel})`;
+}
+
+function submitTestRoll(event) {
+  event.preventDefault();
+  if (!state.pendingTest) return;
+  const testName = state.pendingTest.name;
+  const bonus = numberValue(el.testBonus.value, 0);
+  const mode = el.testMode.value;
+  const result = rollCharacterTest(state.pendingTest, bonus, mode);
+  closeTestDialog();
+  showToast(`${testName}: ${result.total}`);
+}
+
+function rollCharacterTest(test, situationalBonus = 0, mode = "normal") {
+  const diceProfile = currentDiceProfile();
+  const pools = [rollDicePool(diceProfile.count, 6)];
+  if (mode !== "normal") pools.push(rollDicePool(diceProfile.count, 6));
+  const chosen = mode === "advantage"
+    ? pools.reduce((best, pool) => pool.raw > best.raw ? pool : best, pools[0])
+    : mode === "disadvantage"
+      ? pools.reduce((worst, pool) => pool.raw < worst.raw ? pool : worst, pools[0])
+      : pools[0];
+  const total = chosen.raw + test.modifier + situationalBonus;
+  const formula = `${test.name}: ${diceProfile.count}d6${formatMod(test.modifier)}${situationalBonus ? formatMod(situationalBonus) : ""}`;
+  pushDiceLog({
+    label: `${test.kind} - ${test.name}`,
+    count: diceProfile.count,
+    sides: 6,
+    bonus: situationalBonus,
+    modifier: test.modifier,
+    rolls: chosen.rolls,
+    alternateRolls: pools.length > 1 ? pools.map((pool) => pool.rolls) : [],
+    mode,
+    total,
+    formula,
+  });
+  return { total, rolls: chosen.rolls };
+}
+
+function rollDicePool(count, sides) {
+  const rolls = Array.from({ length: count }, () => Math.floor(Math.random() * sides) + 1);
+  return { rolls, raw: rolls.reduce((sum, roll) => sum + roll, 0) };
+}
+
+function pushDiceLog(entry) {
+  const logEntry = {
+    id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+    schemaVersion: 1,
+    system: "solaris",
+    createdAt: new Date().toISOString(),
+    ...entry,
+  };
+  state.current.diceLog = [logEntry, ...(state.current.diceLog || [])].slice(0, 50);
+  renderDicePage();
+  showHolographicDiceOverlay(logEntry);
+}
+
+function showHolographicDiceOverlay(entry) {
+  const rolls = Array.isArray(entry.rolls) ? entry.rolls.slice(0, 20) : [];
+  if (!rolls.length) return;
+
+  clearTimeout(diceOverlayTimer);
+  document.querySelector(".holo-dice-overlay")?.remove();
+
+  const sides = numberValue(entry.sides, 6);
+  const hiddenCount = Math.max(0, (entry.rolls?.length || 0) - rolls.length);
+  const diceMarkup = rolls.map((roll, index) => {
+    const spread = Math.round((index - (rolls.length - 1) / 2) * 18);
+    const drift = Math.round((Math.random() - 0.5) * 70);
+    const rotate = Math.round(240 + Math.random() * 300);
+    return `
+      <span class="holo-die" style="--die-delay:${index * 70}ms; --die-x:${spread + drift}px; --die-rot-x:${rotate}deg; --die-rot-y:${-rotate}deg; --die-mid-x:${Math.round(rotate * -0.38)}deg; --die-mid-y:${Math.round(rotate * 0.44)}deg;">
+        <span>D${escapeHtml(sides)}</span>
+        <strong>${escapeHtml(roll)}</strong>
+      </span>
+    `;
+  }).join("");
+
+  const overlay = document.createElement("div");
+  overlay.className = "holo-dice-overlay";
+  overlay.setAttribute("aria-hidden", "true");
+  overlay.innerHTML = `
+    <div class="holo-dice-stage">
+      <p>${escapeHtml(entry.label || "Rolagem")}</p>
+      <div class="holo-dice-row">${diceMarkup}</div>
+      ${hiddenCount ? `<small>+${hiddenCount} dados no chat</small>` : ""}
+      <strong class="holo-dice-total">${escapeHtml(entry.total)}</strong>
+      <span>${escapeHtml(entry.formula || "")}</span>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  diceOverlayTimer = setTimeout(() => overlay.remove(), 2400);
+}
+
+function handleEquipmentRoll(kind) {
+  const weapon = getEquippedMarketItem("weapon");
+  if (!weapon) {
+    showToast("Equipe uma arma antes de rolar.");
+    return;
+  }
+  const group = classifyWeapon(weapon);
+  if (kind === "attack") {
+    const attr = weaponAttackAttribute(group);
+    const modifier = attributeModifier(totalAttributes()[attr]);
+    openTestDialog({ kind: "Ataque", name: weapon.name, attr, modifier });
+    return;
+  }
+  if (kind === "damage") rollWeaponDamage(weapon);
+}
+
+function rollWeaponDamage(weapon) {
+  const expression = parseDiceExpression(weapon.damage);
+  if (!expression) {
+    showToast("Essa arma não tem dano em formato de dado.");
+    return;
+  }
+  const rolls = Array.from({ length: expression.count }, () => Math.floor(Math.random() * expression.sides) + 1);
+  const total = rolls.reduce((sum, roll) => sum + roll, 0) + expression.bonus;
+  const formula = `Dano ${weapon.name}: ${expression.count}d${expression.sides}${expression.bonus ? formatMod(expression.bonus) : ""}`;
+  pushDiceLog({
+    label: `Dano - ${weapon.name}`,
+    count: expression.count,
+    sides: expression.sides,
+    bonus: expression.bonus,
+    rolls,
+    total,
+    formula,
+  });
+  showToast(`${formula}: ${total}`);
+}
+
+function applyManualTemplate() {
+  if (!el.manualType) return;
+  const template = manualCreationTemplates[el.manualType.value] || manualCreationTemplates.item;
+  const allowsImage = ["item", "weapon", "armor"].includes(el.manualType.value);
+  el.manualFormatGuide.innerHTML = `
+    <strong>${escapeHtml(template.title)}</strong>
+    <span>${escapeHtml(template.format)}</span>
+    <small>${escapeHtml(template.example)}</small>
+  `;
+
+  el.manualImagePanel.hidden = !allowsImage;
+  renderManualImagePreview();
+  ["tier", "subtype", "price", "weight", "power", "mods", "cosmos", "tags"].forEach((field) => {
+    setManualField(field, template.fields[field] || {});
+  });
+  el.manualEffect.placeholder = template.fields.effect?.placeholder || "Descreva o efeito, regra ou observações.";
+}
+
+function setManualField(field, config = {}) {
+  const wrapper = el.manualCreateForm.querySelector(`[data-manual-field="${field}"]`);
+  const input = wrapper?.querySelector("input");
+  const label = wrapper?.querySelector(".manual-field-label");
+  if (!wrapper || !input || !label) return;
+  const hidden = Boolean(config.hidden);
+  wrapper.hidden = hidden;
+  input.disabled = hidden;
+  if (config.label) label.textContent = config.label;
+  input.placeholder = config.placeholder || "";
+}
+
+function readManualEntry() {
+  const type = el.manualType.value;
+  const template = manualCreationTemplates[type] || manualCreationTemplates.item;
+  const visible = (field) => !template.fields[field]?.hidden;
+  const textValue = (field, node) => visible(field) ? node.value.trim() : "";
+  const numberIfVisible = (field, node) => {
+    if (!visible(field) || node.value === "") return "";
+    return Math.max(0, numberValue(node.value, 0));
+  };
+  return {
+    type,
+    name: el.manualName.value.trim(),
+    tier: textValue("tier", el.manualTier),
+    subtype: textValue("subtype", el.manualSubtype),
+    price: visible("price") ? Math.max(0, numberValue(el.manualPrice.value, 0)) : 0,
+    weight: textValue("weight", el.manualWeight),
+    power: textValue("power", el.manualPower),
+    mods: numberIfVisible("mods", el.manualMods),
+    cosmos: numberIfVisible("cosmos", el.manualCosmos),
+    tags: parseTagList(textValue("tags", el.manualTags)),
+    effect: el.manualEffect.value.trim(),
+    imageDataUrl: ["item", "weapon", "armor"].includes(type) ? state.manualImageDataUrl : "",
+    imageName: ["item", "weapon", "armor"].includes(type) ? state.manualImageName : "",
+  };
+}
+
+function parseTagList(value) {
+  return String(value || "")
+    .split(/[,;|\n]/)
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+}
+
+function uniqueTags(tags) {
+  return tags.filter((tag, index, list) => list.findIndex((item) => item.toLowerCase() === tag.toLowerCase()) === index);
+}
+
+function buildManualAbilityMeta(type, entry) {
+  const parts = [];
+  if (type === "cosmos" && entry.tier) parts.push(`Custo ${entry.tier} Cosmos`);
+  else if (entry.tier) parts.push(entry.tier);
+  if (entry.subtype) parts.push(entry.subtype);
+  if (entry.weight) parts.push(type === "cosmos" ? `Duração ${entry.weight}` : entry.weight);
+  if (entry.power) parts.push(entry.power);
+  if (entry.tags.length) parts.push(entry.tags.join(", "));
+  return parts.join(" - ");
 }
 
 function createManualEntry(event) {
   event.preventDefault();
   readForm();
-  const type = document.querySelector("#manualType").value;
-  const name = document.querySelector("#manualName").value.trim();
-  const price = numberValue(document.querySelector("#manualPrice").value, 0);
-  const power = document.querySelector("#manualPower").value.trim();
-  const effect = document.querySelector("#manualEffect").value.trim();
-  if (!name) return;
+  const manual = readManualEntry();
+  if (!manual.name) return;
 
-  const id = `custom-${type}-${dataSlug(name)}-${Date.now()}`;
-  if (["item", "weapon", "armor"].includes(type)) {
+  const id = `custom-${manual.type}-${dataSlug(manual.name)}-${Date.now()}`;
+  const tags = uniqueTags(["manual", ...manual.tags]);
+  const summary = manual.effect || manual.power || "Criado manualmente.";
+  if (["item", "weapon", "armor"].includes(manual.type)) {
     state.current.customItems = state.current.customItems || [];
     const item = {
       id,
-      category: type,
-      name,
-      price: Math.max(0, price),
-      tier: "Custom",
-      type: type === "weapon" ? "Criada" : "",
-      kind: type === "armor" ? "Criada" : "",
-      damage: type === "weapon" ? power : "",
-      ca: type === "armor" ? parseFirstNumber(power) : undefined,
-      mods: "",
-      weight: "",
-      tags: ["manual"],
-      summary: effect || power || "Criado manualmente.",
+      category: manual.type,
+      name: manual.name,
+      price: manual.price,
+      weight: manual.weight,
+      tags,
+      summary,
+      imageDataUrl: manual.imageDataUrl,
+      imageName: manual.imageName,
     };
+    if (manual.type === "weapon") {
+      item.tier = manual.tier || "Custom";
+      item.type = manual.subtype || "Criada";
+      item.damage = manual.power;
+      item.mods = manual.mods;
+    }
+    if (manual.type === "armor") {
+      item.tier = manual.tier || "Custom";
+      item.kind = manual.subtype || "Criada";
+      item.ca = parseFirstNumber(manual.power);
+      item.mods = manual.mods;
+      if (manual.cosmos !== "") item.cosmos = manual.cosmos;
+    }
     state.current.customItems.unshift(item);
     state.current.inventory.unshift({
       uid: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
@@ -1676,8 +2965,10 @@ function createManualEntry(event) {
       inCube: item.category === "item",
     });
     event.currentTarget.reset();
+    clearManualItemImage();
+    applyManualTemplate();
     renderForm();
-    showToast(`${name} criado e colocado nos equipamentos.`);
+    showToast(`${manual.name} criado e colocado nos equipamentos.`);
     return;
   }
 
@@ -1689,15 +2980,18 @@ function createManualEntry(event) {
   state.current.knownAbilities = state.current.knownAbilities || [];
   state.current.knownAbilities.unshift({
     id,
-    name,
-    source: sourceMap[type] || "Manual",
-    effect: effect || "Sem efeito registrado.",
-    meta: power || "",
+    name: manual.name,
+    source: manual.type === "ability" ? manual.tier || "Manual" : sourceMap[manual.type] || "Manual",
+    effect: manual.effect || "Sem efeito registrado.",
+    meta: buildManualAbilityMeta(manual.type, manual),
+    tags,
     custom: true,
   });
   event.currentTarget.reset();
+  clearManualItemImage();
+  applyManualTemplate();
   renderSummary();
-  showToast(`${name} criado e adicionado às habilidades.`);
+  showToast(`${manual.name} criado e adicionado às habilidades.`);
 }
 
 function handleInventoryAction(action, uid, trigger = null) {
@@ -1735,6 +3029,20 @@ function handleInventoryAction(action, uid, trigger = null) {
     }
     renderForm();
     showToast(`${item.name} equipado.`);
+    return;
+  }
+
+  if (action === "unequip") {
+    if (item.category === "weapon" && state.current.equippedWeaponUid === uid) {
+      state.current.equippedWeaponUid = "";
+      state.current.weapon = "";
+    }
+    if (item.category === "armor" && state.current.equippedArmorUid === uid) {
+      state.current.equippedArmorUid = "";
+      state.current.armor = "";
+    }
+    renderForm();
+    showToast(`${item.name} desequipado.`);
     return;
   }
 
@@ -1805,20 +3113,20 @@ function renderSavedList() {
 
 function renderLibrary() {
   const library = libraryMap[state.activeLibrary];
-  const query = el.librarySearch.value.trim().toLowerCase();
+  const selectedGroup = syncLibraryFilterOptions(library, state.activeLibrary);
+  const sortMode = el.librarySort.value || "default";
+  const query = normalizeSearch(el.librarySearch.value.trim());
   const isRaceLibrary = state.activeLibrary === "racas";
   const isMarketLibrary = Boolean(library.market);
   const isLearnLibrary = Boolean(library.learn);
   el.libraryTitle.textContent = library.title;
   el.libraryKicker.textContent = library.kicker;
 
-  const filtered = library.items.filter((item) => {
-    return [item.name, item.tier, item.type, item.kind, item.damage, item.summary, item.price, item.cost, item.rank, item.duration, ...(item.tags || [])]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase()
-      .includes(query);
-  });
+  const filtered = sortLibraryItems(library.items.filter((item) => {
+    const matchesSearch = itemSearchText(item).includes(query);
+    const matchesGroup = !selectedGroup || getLibraryGroupValues(item, state.activeLibrary).includes(selectedGroup);
+    return matchesSearch && matchesGroup;
+  }), sortMode, state.activeLibrary);
 
   if (!filtered.length) {
     el.libraryGrid.innerHTML = '<div class="empty-state">Nada encontrado na biblioteca.</div>';
@@ -1830,22 +3138,188 @@ function renderLibrary() {
     const bonus = item.bonus ? Object.entries(item.bonus).map(([key, value]) => `${key} ${formatMod(value)}`).join("  ") : "";
     const tags = (item.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
     const cardOpen = isRaceLibrary
-      ? `<button class="library-card race-card" type="button" data-race-id="${escapeHtml(item.id)}" aria-label="Abrir página da raça ${escapeHtml(item.name)}">`
-      : '<article class="library-card">';
+      ? `<button class="library-card race-card compact-card" type="button" data-race-id="${escapeHtml(item.id)}" aria-label="Abrir página da raça ${escapeHtml(item.name)}">`
+      : `<article class="library-card compact-card ${item.imageDataUrl ? "with-image" : ""}" tabindex="0">`;
     const cardClose = isRaceLibrary ? "</button>" : "</article>";
     return `
       ${cardOpen}
-        <div>
+        ${renderCardImage(item)}
+        <div class="card-face">
           <h3>${escapeHtml(item.name)}</h3>
-          ${meta || bonus ? `<p>${escapeHtml(meta || bonus)}</p>` : ""}
+          ${meta || bonus ? `<p class="card-meta-line">${escapeHtml(meta || bonus)}</p>` : ""}
         </div>
-        <p>${escapeHtml(item.summary)}</p>
-        ${tags ? `<div class="tag-row">${tags}</div>` : ""}
         ${isMarketLibrary ? `<button class="primary-button shop-button" type="button" data-buy-id="${escapeHtml(item.id)}">Comprar</button>` : ""}
         ${isLearnLibrary ? `<button class="primary-button shop-button" type="button" data-learn-id="${escapeHtml(item.id)}">${library.learn === "cosmos" ? "Adicionar magia" : "Adicionar chip"}</button>` : ""}
+        <div class="card-hover-popover" role="tooltip">
+          <strong>${escapeHtml(item.name)}</strong>
+          ${meta || bonus ? `<p>${escapeHtml(meta || bonus)}</p>` : ""}
+          <p>${escapeHtml(item.summary)}</p>
+          ${tags ? `<div class="tag-row">${tags}</div>` : ""}
+        </div>
       ${cardClose}
     `;
   }).join("");
+}
+
+function syncLibraryFilterOptions(library, view) {
+  const config = getLibraryFilterConfig(view);
+  if (!config) {
+    el.libraryTierControl.hidden = true;
+    el.libraryTierFilter.innerHTML = '<option value="">Todos</option>';
+    el.libraryTierFilter.value = "";
+    return "";
+  }
+
+  const previousValue = el.libraryTierFilter.value;
+  const options = [...new Set(library.items.flatMap((item) => getLibraryGroupValues(item, view)).filter(Boolean))]
+    .sort((a, b) => compareGroupValues(a, b, config));
+
+  if (!options.length) {
+    el.libraryTierControl.hidden = true;
+    el.libraryTierFilter.innerHTML = '<option value="">Todos</option>';
+    el.libraryTierFilter.value = "";
+    return "";
+  }
+
+  el.libraryTierControl.hidden = false;
+  el.libraryTierFilter.innerHTML = [
+    `<option value="">${escapeHtml(config.allLabel)}</option>`,
+    ...options.map((option) => `<option value="${escapeHtml(option)}">${escapeHtml(formatLibraryFilterOption(option, config))}</option>`),
+  ].join("");
+
+  const selectedValue = options.includes(previousValue) ? previousValue : "";
+  el.libraryTierFilter.value = selectedValue;
+  return selectedValue;
+}
+
+function getLibraryFilterConfig(view) {
+  const configs = {
+    armas: { allLabel: "Todos os tiers", prefix: "Tier", type: "tier" },
+    armaduras: { allLabel: "Todos os tiers", prefix: "Tier", type: "tier" },
+    chipsMod: { allLabel: "Todos os ranks", prefix: "Rank", type: "tier" },
+    magias: { allLabel: "Todos os custos", prefix: "Custo", type: "number" },
+    itens: { allLabel: "Todas as categorias", prefix: "", type: "text" },
+  };
+  return configs[view] || null;
+}
+
+function getLibraryGroupValues(item, view) {
+  if (view === "magias") return item.cost !== undefined && item.cost !== "" ? [String(item.cost)] : [];
+  if (view === "chipsMod") return item.rank || item.tier ? [String(item.rank || item.tier)] : [];
+  if (view === "armas" || view === "armaduras") return item.tier ? [String(item.tier)] : [];
+  if (view === "itens") return Array.isArray(item.tags) ? item.tags.map(String) : [];
+  return [];
+}
+
+function formatLibraryFilterOption(value, config) {
+  if (!config.prefix) return value;
+  return `${config.prefix} ${value}`;
+}
+
+function sortLibraryItems(items, sortMode, view) {
+  const sorted = [...items];
+  const config = getLibraryFilterConfig(view);
+
+  if (sortMode === "az") {
+    return sorted.sort(compareLibraryNames);
+  }
+
+  if (sortMode === "za") {
+    return sorted.sort((a, b) => compareLibraryNames(b, a));
+  }
+
+  if (sortMode === "price-asc") {
+    return sorted.sort((a, b) => compareLibraryPrices(a, b, "asc") || compareLibraryNames(a, b));
+  }
+
+  if (sortMode === "price-desc") {
+    return sorted.sort((a, b) => compareLibraryPrices(a, b, "desc") || compareLibraryNames(a, b));
+  }
+
+  if (sortMode === "tier") {
+    return sorted.sort((a, b) => compareLibraryGroups(a, b, view, config) || compareLibraryPrices(a, b, "asc") || compareLibraryNames(a, b));
+  }
+
+  return sorted;
+}
+
+function compareLibraryGroups(a, b, view, config) {
+  if (!config) return 0;
+  const aValue = getLibraryGroupValues(a, view)[0] || "";
+  const bValue = getLibraryGroupValues(b, view)[0] || "";
+  return compareGroupValues(aValue, bValue, config);
+}
+
+function compareGroupValues(a, b, config) {
+  if (config.type === "number") {
+    return toSortableNumber(a) - toSortableNumber(b);
+  }
+
+  if (config.type === "tier") {
+    const tierDiff = tierSortValue(a) - tierSortValue(b);
+    if (tierDiff) return tierDiff;
+  }
+
+  return String(a).localeCompare(String(b), "pt-BR", { sensitivity: "base", numeric: true });
+}
+
+function compareLibraryNames(a, b) {
+  return String(a.name || "").localeCompare(String(b.name || ""), "pt-BR", { sensitivity: "base", numeric: true });
+}
+
+function compareLibraryPrices(a, b, direction) {
+  const aPrice = getLibraryPrice(a);
+  const bPrice = getLibraryPrice(b);
+  if (aPrice === null && bPrice === null) return 0;
+  if (aPrice === null) return 1;
+  if (bPrice === null) return -1;
+  return direction === "desc" ? bPrice - aPrice : aPrice - bPrice;
+}
+
+function getLibraryPrice(item) {
+  const price = Number(item.price);
+  return Number.isFinite(price) ? price : null;
+}
+
+function toSortableNumber(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : Number.POSITIVE_INFINITY;
+}
+
+function tierSortValue(value) {
+  const index = TIER_ORDER.indexOf(String(value).trim().toUpperCase());
+  return index >= 0 ? index : TIER_ORDER.length + 1;
+}
+
+function itemSearchText(item) {
+  return normalizeSearch([
+    item.name,
+    item.context,
+    item.tier,
+    item.type,
+    item.kind,
+    item.damage,
+    item.summary,
+    item.price,
+    item.cost,
+    item.rank,
+    item.duration,
+    item.weight,
+    item.ca,
+    item.mods,
+    item.cosmos,
+    item.focus,
+    item.skill,
+    item.category,
+    ...(item.tags || []),
+  ].filter((value) => value !== undefined && value !== null && value !== "").join(" "));
+}
+
+function normalizeSearch(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
 }
 
 function saveCurrent() {
@@ -1971,12 +3445,34 @@ async function setCharacterPhoto(file) {
   }
 }
 
-async function imageFileToDataUrl(file) {
+async function setManualItemImage(file) {
+  const looksLikeImage = file.type.startsWith("image/") || /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(file.name);
+  if (!looksLikeImage) {
+    showToast("Escolha um arquivo de imagem.");
+    return;
+  }
+
+  try {
+    state.manualImageDataUrl = await imageFileToDataUrl(file, 720);
+    state.manualImageName = file.name;
+    renderManualImagePreview();
+    showToast("Imagem adicionada ao conteúdo criado.");
+  } catch (error) {
+    showToast("Não foi possível carregar essa imagem.");
+  }
+}
+
+function clearManualItemImage() {
+  state.manualImageDataUrl = "";
+  state.manualImageName = "";
+  renderManualImagePreview();
+}
+
+async function imageFileToDataUrl(file, maxSide = 900) {
   const rawDataUrl = await readFileAsDataUrl(file);
   if (file.type === "image/svg+xml") return rawDataUrl;
 
   const image = await loadImage(rawDataUrl);
-  const maxSide = 900;
   const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
   const width = Math.max(1, Math.round(image.naturalWidth * scale));
   const height = Math.max(1, Math.round(image.naturalHeight * scale));
@@ -2023,6 +3519,20 @@ function renderPhotoPreviews() {
   } else {
     el.photoPreview.removeAttribute("src");
     el.summaryPortraitImage.removeAttribute("src");
+  }
+}
+
+function renderManualImagePreview() {
+  if (!el.manualImageDropzone) return;
+  const hasImage = Boolean(state.manualImageDataUrl);
+  el.manualImageDropzone.classList.toggle("has-image", hasImage);
+  el.removeManualImageButton.classList.toggle("visible", hasImage);
+  el.manualImagePreview.hidden = !hasImage;
+
+  if (hasImage) {
+    el.manualImagePreview.src = state.manualImageDataUrl;
+  } else {
+    el.manualImagePreview.removeAttribute("src");
   }
 }
 
@@ -2139,6 +3649,38 @@ function collectAbilityEntries() {
   return entries;
 }
 
+function classifyWeapon(weapon) {
+  if (!weapon) return { key: "generic", label: "Sem arma", family: "nenhuma" };
+  const text = [weapon.name, weapon.type, weapon.kind, weapon.summary, ...(weapon.tags || [])].join(" ").toLowerCase();
+  if (/pistola|rev[óo]lver|revolver/.test(text)) return { key: "firearm", label: "Pistola / revólver", family: "pistola" };
+  if (/rifle|fuzil|carabina|sniper/.test(text)) return { key: "rifle", label: "Rifle / fuzil", family: "rifle" };
+  if (/lan[çc]ador|granada|bazuca|canh[ãa]o/.test(text)) return { key: "launcher", label: "Lançador", family: "lançador" };
+  if (/espada|adaga|faca|l[âa]mina/.test(text)) return { key: "blade", label: "Espada / lâmina", family: "espada" };
+  if (/machado|foice/.test(text)) return { key: "axe", label: "Machado", family: "machado" };
+  if (/lan[çc]a|alabarda|tridente/.test(text)) return { key: "polearm", label: "Lança / haste", family: "lança" };
+  if (/martelo|ma[çc]a|bast[ãa]o|clava/.test(text)) return { key: "blunt", label: "Impacto", family: "concussão" };
+  if (/manopla|garra|desarmado|punho/.test(text)) return { key: "unarmed", label: "Manoplas / briga", family: "briga" };
+  if (/arco|besta/.test(text)) return { key: "rifle", label: "Arco / besta", family: "arco" };
+  return { key: "generic", label: "Arma", family: "arma" };
+}
+
+function weaponAttackAttribute(group) {
+  if (["firearm", "rifle", "launcher"].includes(group.key)) return "REF";
+  if (group.family === "arco") return "REF";
+  if (group.key === "blade" && /adaga|faca/.test(group.family)) return "REF";
+  return "FOR";
+}
+
+function parseDiceExpression(value) {
+  const match = String(value || "").match(/(\d*)d(\d+)\s*([+-]\s*\d+)?/i);
+  if (!match) return null;
+  return {
+    count: clamp(numberValue(match[1] || 1, 1), 1, 20),
+    sides: clamp(numberValue(match[2], 6), 2, 100),
+    bonus: match[3] ? numberValue(match[3].replace(/\s+/g, ""), 0) : 0,
+  };
+}
+
 function findRace(id) {
   return raceData.find((race) => race.id === id) || raceData[0];
 }
@@ -2183,6 +3725,17 @@ function marketMeta(item) {
   return parts.join(" - ");
 }
 
+function compactMarketMeta(item) {
+  const parts = [
+    item.tier ? `Tier ${item.tier}` : "",
+    item.type || item.kind || "",
+    item.damage ? `Dano ${item.damage}` : "",
+    item.ca ? `CA ${item.ca}` : "",
+    Number.isFinite(item.price) ? formatCurrency(item.price) : "",
+  ].filter(Boolean);
+  return parts.slice(0, 3).join(" - ") || marketCategoryLabel(item.category);
+}
+
 function marketLine(item) {
   return `${item.name} (${marketMeta(item)})`;
 }
@@ -2192,6 +3745,7 @@ function libraryMeta(item) {
     item.cost ? `Custo ${item.cost} Cosmos` : "",
     item.rank ? `Rank ${item.rank}` : "",
     item.duration ? `Duração ${item.duration}` : "",
+    item.context || "",
     item.focus || "",
     item.skill || "",
     item.tier || "",
@@ -2260,6 +3814,7 @@ function normalizeCharacter(character) {
     pvCurrent: numberValue(character.pvCurrent, 0),
     cosmosCurrent: numberValue(character.cosmosCurrent, 0),
     stress: numberValue(character.stress, 0),
+    saturation: numberValue(character.saturation, 0),
     crackLevel: numberValue(character.crackLevel, 0),
     loadUsed: numberValue(character.loadUsed, 0),
     currency: numberValue(character.currency, 0),
@@ -2267,6 +3822,10 @@ function normalizeCharacter(character) {
     knownAbilities: Array.isArray(character.knownAbilities) ? character.knownAbilities : [],
     customItems: Array.isArray(character.customItems) ? character.customItems : [],
     diceLog: Array.isArray(character.diceLog) ? character.diceLog : [],
+    initialAttributeRoll: character.initialAttributeRoll && Array.isArray(character.initialAttributeRoll.rolls)
+      ? character.initialAttributeRoll
+      : { rolls: [], kept: [] },
+    skillTraining: character.skillTraining && typeof character.skillTraining === "object" ? character.skillTraining : {},
     equippedWeaponUid: character.equippedWeaponUid || "",
     equippedArmorUid: character.equippedArmorUid || "",
   };
@@ -2335,6 +3894,7 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+let diceOverlayTimer = null;
 let toastTimer = null;
 function showToast(message) {
   clearTimeout(toastTimer);
@@ -2343,4 +3903,15 @@ function showToast(message) {
   toastTimer = setTimeout(() => el.toast.classList.remove("show"), 2200);
 }
 
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator) || !["http:", "https:"].includes(window.location.protocol)) {
+    return;
+  }
+
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+
 init();
+registerServiceWorker();

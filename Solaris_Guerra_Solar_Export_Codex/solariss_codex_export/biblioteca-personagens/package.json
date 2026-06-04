@@ -22,10 +22,15 @@
     },
     "files": [
       "index.html",
+      "manifest.webmanifest",
       "styles.css",
       "app.js",
+      "sw.js",
+      "HumanisVitalHUD.js",
+      "official-items.js",
       "electron-main.cjs",
-      "README.md"
+      "README.md",
+      "assets/**/*"
     ],
     "win": {
       "signAndEditExecutable": false,
@@ -51,5 +56,8 @@
       "createStartMenuShortcut": true,
       "shortcutName": "Solaris Biblioteca"
     }
+  },
+  "dependencies": {
+    "three": "^0.184.0"
   }
 }

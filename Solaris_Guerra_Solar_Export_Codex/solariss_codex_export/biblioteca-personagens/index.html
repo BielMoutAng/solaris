@@ -3,9 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#06131f" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Solaris" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Solaris - Biblioteca de Personagens</title>
-    <link rel="icon" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"%3E%3Crect width="48" height="48" rx="8" fill="%23111417"/%3E%3Cpath d="M24 6l4.1 12 12.4 2-9 8.1L34 40l-10-6.3L14 40l2.5-11.9-9-8.1 12.4-2L24 6z" fill="%23d8a74a"/%3E%3Ccircle cx="24" cy="24" r="5" fill="%23111417"/%3E%3C/svg%3E' />
-    <link rel="stylesheet" href="./styles.css?v=20260602b" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./assets/icons/solaris-icon.svg" />
+    <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./styles.css?v=20260604h" />
   </head>
   <body>
     <div class="app-shell">
@@ -23,7 +30,7 @@
           </div>
         </div>
 
-        <nav class="nav-list">
+        <nav class="nav-list" aria-label="Menu principal" aria-expanded="false">
           <button class="nav-item active" type="button" data-view="personagens">
             <span class="nav-icon" data-icon="user"></span>
             <span>Personagens</span>
@@ -63,6 +70,10 @@
           <button class="nav-item" type="button" data-view="regras">
             <span class="nav-icon" data-icon="book"></span>
             <span>Regras</span>
+          </button>
+          <button class="nav-item" type="button" data-view="acoes">
+            <span class="nav-icon" data-icon="spark"></span>
+            <span>Ações</span>
           </button>
         </nav>
 
@@ -117,6 +128,7 @@
             <button class="character-tab" type="button" data-character-page="habilidades">Habilidades</button>
             <button class="character-tab" type="button" data-character-page="dados">Dados</button>
             <button class="character-tab" type="button" data-character-page="criar">Criar</button>
+            <button class="character-tab" type="button" data-character-page="guia">Guia</button>
           </div>
 
           <div class="character-page active" id="characterSheetPage">
@@ -183,29 +195,57 @@
 
               <section class="form-band">
                 <div class="band-title">
+                  <h3>Perícias e proteção</h3>
+                  <p>Testes rápidos com Estresse/Saturação atuais.</p>
+                </div>
+                <div class="test-grid" id="quickTestGrid"></div>
+              </section>
+
+              <section class="form-band">
+                <div class="band-title">
                   <h3>Recursos</h3>
                   <p>Valores atuais da sessão.</p>
                 </div>
-                <div class="field-grid resource-grid">
-                  <label class="pool-field">
-                    PV
+                <div class="field-grid resource-grid resource-card-grid">
+                  <label class="pool-field resource-card resource-pv">
+                    <span class="resource-head">
+                      <span class="resource-glyph" data-icon="plus"></span>
+                      <span>PV</span>
+                    </span>
                     <span class="pool-input">
                       <input id="pvCurrent" name="pvCurrent" type="number" min="0" step="1" />
                       <span>/</span>
                       <output id="pvMaxInline">0</output>
                     </span>
+                    <span class="resource-meter"><span id="pvMeter"></span></span>
                   </label>
-                  <label class="pool-field">
-                    Cosmos
+                  <label class="pool-field resource-card resource-cosmos">
+                    <span class="resource-head">
+                      <span class="resource-glyph" data-icon="orbit"></span>
+                      <span>Cosmos</span>
+                    </span>
                     <span class="pool-input">
                       <input id="cosmosCurrent" name="cosmosCurrent" type="number" min="0" step="1" />
                       <span>/</span>
                       <output id="cosmosMaxInline">0</output>
                     </span>
+                    <span class="resource-meter"><span id="cosmosMeter"></span></span>
                   </label>
-                  <label>
-                    Estresse
-                    <input id="stress" name="stress" type="number" min="0" max="12" step="1" />
+                  <label class="resource-card resource-stress">
+                    <span class="resource-head">
+                      <span class="resource-glyph" data-icon="spark"></span>
+                      <span>Estresse</span>
+                    </span>
+                    <input id="stress" name="stress" type="number" min="0" max="7" step="1" />
+                    <span class="resource-meter"><span id="stressMeter"></span></span>
+                  </label>
+                  <label class="resource-card resource-saturation">
+                    <span class="resource-head">
+                      <span class="resource-glyph" data-icon="chip"></span>
+                      <span>Saturação</span>
+                    </span>
+                    <input id="saturation" name="saturation" type="number" min="0" max="10" step="1" />
+                    <span class="resource-meter"><span id="saturationMeter"></span></span>
                   </label>
                 </div>
               </section>
@@ -252,7 +292,7 @@
             </form>
 
             <aside class="inspector" aria-label="Resumo da ficha">
-              <section class="inspector-block character-card">
+              <section class="inspector-block character-card vital-hud-trigger" id="vitalHudCharacterTrigger" role="button" tabindex="0" aria-label="Abrir HUD vital Humanis">
                 <div class="portrait">
                   <img id="summaryPortraitImage" alt="" hidden />
                   <span id="summaryPortraitIcon" data-icon="spark"></span>
@@ -263,14 +303,13 @@
                 </div>
               </section>
 
-              <section class="inspector-block">
+              <section class="inspector-block vital-hud-trigger" id="vitalHudDerivedTrigger" role="button" tabindex="0" aria-label="Abrir HUD vital Humanis">
                 <div class="inspector-title">
                   <h3>Derivados</h3>
                   <span id="stressState">Tríade estável</span>
                 </div>
                 <div class="stat-grid" id="derivedStats"></div>
               </section>
-
               <section class="inspector-block">
                 <div class="inspector-title">
                   <h3>Raça e chip</h3>
@@ -289,6 +328,18 @@
             </aside>
           </div>
           </div>
+
+          <section class="character-page" id="characterGuidePage">
+            <div class="workspace-panel">
+              <div class="library-header">
+                <div>
+                  <p>Criação de personagem</p>
+                  <h2>Guia do jogador</h2>
+                </div>
+              </div>
+              <div id="creationGuideContent"></div>
+            </div>
+          </section>
 
           <section class="character-page" id="characterEquipmentPage">
             <div class="workspace-panel">
@@ -376,6 +427,10 @@
                       <span data-icon="spark"></span>
                       Rolar
                     </button>
+                    <button class="ghost-button initiative-button" id="rollInitiativeButton" type="button">
+                      <span data-icon="spark"></span>
+                      Iniciativa
+                    </button>
                   </div>
                 </section>
                 <section class="inventory-panel">
@@ -399,6 +454,19 @@
                 </div>
               </div>
               <form class="manual-form" id="manualCreateForm" autocomplete="off">
+                <div class="manual-template-card" id="manualFormatGuide" aria-live="polite"></div>
+                <div class="manual-image-panel" id="manualImagePanel">
+                  <button class="manual-image-dropzone" id="manualImageDropzone" type="button" aria-label="Adicionar imagem do conteúdo criado">
+                    <img id="manualImagePreview" alt="" hidden />
+                    <span class="manual-image-placeholder" id="manualImagePlaceholder">
+                      <span data-icon="spark"></span>
+                      <strong>Imagem do item</strong>
+                      <small>Clique ou arraste imagem</small>
+                    </span>
+                  </button>
+                  <input id="manualImageInput" type="file" accept="image/*" hidden />
+                  <button class="mini-button manual-image-remove" id="removeManualImageButton" type="button">Remover imagem</button>
+                </div>
                 <label>
                   Tipo
                   <select id="manualType">
@@ -414,13 +482,37 @@
                   Nome
                   <input id="manualName" type="text" placeholder="Nome do conteúdo" required />
                 </label>
-                <label>
-                  Preço
+                <label class="manual-field" data-manual-field="tier">
+                  <span class="manual-field-label" id="manualTierLabel">Tier</span>
+                  <input id="manualTier" type="text" placeholder="F, E, D..." />
+                </label>
+                <label class="manual-field" data-manual-field="subtype">
+                  <span class="manual-field-label" id="manualSubtypeLabel">Tipo / grupo</span>
+                  <input id="manualSubtype" type="text" placeholder="Cortante, suporte, cura..." />
+                </label>
+                <label class="manual-field" data-manual-field="price">
+                  <span class="manual-field-label" id="manualPriceLabel">Preço</span>
                   <input id="manualPrice" type="number" min="0" step="1" placeholder="0" />
                 </label>
-                <label>
-                  Dano / CA / Custo
+                <label class="manual-field" data-manual-field="weight">
+                  <span class="manual-field-label" id="manualWeightLabel">Peso</span>
+                  <input id="manualWeight" type="text" placeholder="1 Kg" />
+                </label>
+                <label class="manual-field" data-manual-field="power">
+                  <span class="manual-field-label" id="manualPowerLabel">Dano / CA / custo</span>
                   <input id="manualPower" type="text" placeholder="1d6, CA 4, custo 2..." />
+                </label>
+                <label class="manual-field" data-manual-field="mods">
+                  <span class="manual-field-label" id="manualModsLabel">Mods</span>
+                  <input id="manualMods" type="number" min="0" step="1" placeholder="0" />
+                </label>
+                <label class="manual-field" data-manual-field="cosmos">
+                  <span class="manual-field-label" id="manualCosmosLabel">Cosmos</span>
+                  <input id="manualCosmos" type="number" min="0" step="1" placeholder="0" />
+                </label>
+                <label class="manual-field" data-manual-field="tags">
+                  <span class="manual-field-label" id="manualTagsLabel">Tags</span>
+                  <input id="manualTags" type="text" placeholder="manual, suporte" />
                 </label>
                 <label class="wide-field">
                   Efeito
@@ -443,10 +535,29 @@
                 <p id="libraryKicker">Biblioteca</p>
                 <h2 id="libraryTitle">Raças</h2>
               </div>
-              <label class="search-box library-search">
-                <span data-icon="search"></span>
-                <input id="librarySearch" type="search" placeholder="Filtrar biblioteca" autocomplete="off" />
-              </label>
+              <div class="library-controls" id="libraryControls">
+                <label class="search-box library-search">
+                  <span data-icon="search"></span>
+                  <input id="librarySearch" type="search" placeholder="Filtrar biblioteca" autocomplete="off" />
+                </label>
+                <label class="library-select-control" id="libraryTierControl">
+                  Filtro
+                  <select id="libraryTierFilter">
+                    <option value="">Todos</option>
+                  </select>
+                </label>
+                <label class="library-select-control">
+                  Ordenar
+                  <select id="librarySort">
+                    <option value="default">Padrão</option>
+                    <option value="tier">Tier / custo / categoria</option>
+                    <option value="az">A-Z</option>
+                    <option value="za">Z-A</option>
+                    <option value="price-asc">Preço menor</option>
+                    <option value="price-desc">Preço maior</option>
+                  </select>
+                </label>
+              </div>
             </div>
             <div class="library-grid" id="libraryGrid"></div>
           </div>
@@ -458,8 +569,69 @@
       </main>
     </div>
 
+    <div class="vital-hud-modal" id="vitalHudModal" hidden>
+      <div class="vital-hud-backdrop" data-vital-hud-close></div>
+      <section class="vital-hud-window" role="dialog" aria-modal="true" aria-labelledby="vitalHudTitle">
+        <div class="vital-hud-window-header">
+          <div>
+            <p>Monitoramento biométrico</p>
+            <h2 id="vitalHudTitle">HUD vital</h2>
+          </div>
+          <button class="icon-button" id="closeVitalHud" type="button" aria-label="Fechar HUD vital">
+            <span data-icon="plus"></span>
+          </button>
+        </div>
+        <section class="humanis-vital-host compact" id="stressHudPanel" aria-label="Monitoramento Vital - Humanis">
+          <div id="hud-humanis"></div>
+        </section>
+      </section>
+    </div>
+
+    <div class="test-dialog" id="testDialog" hidden>
+      <div class="test-dialog-card" role="dialog" aria-modal="true" aria-labelledby="testDialogTitle">
+        <div class="library-header">
+          <div>
+            <p id="testDialogKicker">Teste</p>
+            <h2 id="testDialogTitle">Rolagem</h2>
+          </div>
+          <button class="icon-button" id="closeTestDialog" type="button" aria-label="Fechar teste">
+            <span data-icon="plus"></span>
+          </button>
+        </div>
+        <form id="testRollForm" class="test-roll-form">
+          <div class="test-formula" id="testDialogFormula">3d6 + 0</div>
+          <label>
+            Bônus situacional
+            <input id="testBonus" type="number" step="1" value="0" />
+          </label>
+          <label>
+            Condição
+            <select id="testMode">
+              <option value="normal">Normal</option>
+              <option value="advantage">Vantagem</option>
+              <option value="disadvantage">Desvantagem</option>
+            </select>
+          </label>
+          <button class="primary-button" type="submit">
+            <span data-icon="spark"></span>
+            Rolar teste
+          </button>
+        </form>
+      </div>
+    </div>
+
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="./app.js?v=20260602b"></script>
+    <script src="./official-items.js?v=20260603b"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./assets/vendor/three/build/three.module.js",
+          "three/addons/": "./assets/vendor/three/examples/jsm/"
+        }
+      }
+    </script>
+    <script src="./HumanisVitalHUD.js?v=20260603d"></script>
+    <script src="./app.js?v=20260604h"></script>
   </body>
 </html>
