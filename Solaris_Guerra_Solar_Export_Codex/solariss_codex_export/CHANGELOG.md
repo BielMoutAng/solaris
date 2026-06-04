@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- Gerada versao Windows 0.1.1 com instalador e executavel portatil em `downloads/windows/v0.1.1/`.
+- Incluida a correcao dos detalhes dos cards abrindo por clique no nome, sem cobrir Comprar/Adicionar.
+
 ## Publicacao mobile
 
 - Adicionado suporte PWA com manifest, service worker, icones e deploy automatico pelo GitHub Pages para uso em celulares.

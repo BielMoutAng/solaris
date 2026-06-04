@@ -22,8 +22,10 @@ Esta biblioteca também pode virar um aplicativo de Windows com Electron.
 
 Arquivos gerados:
 
-- `dist/Solaris Biblioteca Setup 0.1.0.exe`: instalador para enviar aos jogadores.
-- `dist/Solaris Biblioteca 0.1.0.exe`: versão portátil, abre direto sem instalar.
+- `dist/Solaris Biblioteca Setup 0.1.1.exe`: instalador para enviar aos jogadores.
+- `dist/Solaris Biblioteca 0.1.1.exe`: versão portátil, abre direto sem instalar.
+
+Versões prontas para download também podem ser colocadas em `downloads/windows/v0.1.1/`.
 
 Cada computador salva as próprias fichas localmente. Para mover uma ficha entre PCs, use `Exportar` e `Importar`.
 
