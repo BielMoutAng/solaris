@@ -3562,6 +3562,36 @@ textarea:focus {
   -webkit-line-clamp: 2;
 }
 
+.card-title-button {
+  display: -webkit-box;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.card-title-button:hover,
+.card-title-button:focus-visible,
+.card-title-button[aria-expanded="true"] {
+  color: var(--accent);
+  text-shadow: 0 0 14px rgba(100, 217, 201, 0.28);
+}
+
+.card-title-button:focus-visible {
+  outline: 2px solid rgba(100, 217, 201, 0.45);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
 .card-meta-line {
   display: -webkit-box;
   overflow: hidden;
@@ -3626,13 +3656,12 @@ textarea:focus {
 .ability-card.compact-card:focus,
 .library-card.compact-card:focus-within,
 .inventory-card.compact-card:focus-within,
-.ability-card.compact-card:focus-within {
+.ability-card.compact-card:focus-within,
+.compact-card.details-open {
   z-index: 40;
 }
 
-.compact-card:hover .card-hover-popover,
-.compact-card:focus .card-hover-popover,
-.compact-card:focus-within .card-hover-popover {
+.compact-card.details-open .card-hover-popover {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0) scale(1);

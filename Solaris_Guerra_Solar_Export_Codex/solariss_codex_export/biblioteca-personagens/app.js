@@ -1547,6 +1547,10 @@ function bindEvents() {
   el.librarySearch.addEventListener("input", renderLibrary);
   el.libraryTierFilter.addEventListener("change", renderLibrary);
   el.librarySort.addEventListener("change", renderLibrary);
+  document.addEventListener("click", handleCardDetailsClick);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeCardDetails();
+  });
   el.libraryGrid.addEventListener("click", (event) => {
     if (!(event.target instanceof Element)) return;
     const buyButton = event.target.closest("[data-buy-id]");
@@ -2487,7 +2491,7 @@ function renderAbilityCard(entry) {
       ${renderCardImage(entry)}
       <div class="card-face">
         <span class="ability-source">${escapeHtml(entry.source || "Manual")}</span>
-        <h4>${escapeHtml(entry.name)}</h4>
+        <h4>${renderCardTitleButton(entry.name)}</h4>
         ${entry.meta ? `<p class="card-meta-line">${escapeHtml(entry.meta)}</p>` : ""}
       </div>
       <div class="card-hover-popover" role="tooltip">
@@ -2506,7 +2510,7 @@ function renderKnownAbilityCard(entry) {
       ${renderCardImage(entry)}
       <div class="card-face">
         <span class="ability-source">${escapeHtml(entry.source || "Manual")}</span>
-        <h4>${escapeHtml(entry.name)}</h4>
+        <h4>${renderCardTitleButton(entry.name)}</h4>
         ${entry.meta ? `<p class="card-meta-line">${escapeHtml(entry.meta)}</p>` : ""}
       </div>
       ${canUnequipChip ? `
@@ -2532,6 +2536,49 @@ function renderCardImage(entry) {
   `;
 }
 
+function renderCardTitleButton(name) {
+  return `
+    <button class="card-title-button" type="button" data-card-details-toggle aria-expanded="false" aria-label="Ver detalhes de ${escapeHtml(name)}">
+      ${escapeHtml(name)}
+    </button>
+  `;
+}
+
+function handleCardDetailsClick(event) {
+  if (!(event.target instanceof Element)) return;
+
+  const trigger = event.target.closest("[data-card-details-toggle]");
+  if (trigger) {
+    const card = trigger.closest(".compact-card");
+    if (!card) return;
+    event.preventDefault();
+    event.stopPropagation();
+    toggleCardDetails(card);
+    return;
+  }
+
+  if (!event.target.closest(".card-hover-popover")) {
+    closeCardDetails();
+  }
+}
+
+function toggleCardDetails(card) {
+  const shouldOpen = !card.classList.contains("details-open");
+  closeCardDetails(card);
+  card.classList.toggle("details-open", shouldOpen);
+  const trigger = card.querySelector("[data-card-details-toggle]");
+  if (trigger) trigger.setAttribute("aria-expanded", String(shouldOpen));
+}
+
+function closeCardDetails(exceptCard = null) {
+  document.querySelectorAll(".compact-card.details-open").forEach((card) => {
+    if (card === exceptCard) return;
+    card.classList.remove("details-open");
+    const trigger = card.querySelector("[data-card-details-toggle]");
+    if (trigger) trigger.setAttribute("aria-expanded", "false");
+  });
+}
+
 function renderInventoryCards(entries, options = {}) {
   if (!entries.length) return '<div class="empty-state">Nenhum item nesta lista.</div>';
   return `
@@ -2549,7 +2596,7 @@ function renderInventoryCards(entries, options = {}) {
             ${renderCardImage(item)}
             <div class="card-face">
               <span class="ability-source">${escapeHtml(marketCategoryLabel(item.category))}</span>
-              <h4>${escapeHtml(item.name)}</h4>
+              <h4>${renderCardTitleButton(item.name)}</h4>
               <p class="card-meta-line">${escapeHtml(compactMarketMeta(item))}</p>
             </div>
             <div class="inventory-actions">
@@ -3145,7 +3192,7 @@ function renderLibrary() {
       ${cardOpen}
         ${renderCardImage(item)}
         <div class="card-face">
-          <h3>${escapeHtml(item.name)}</h3>
+          <h3>${isRaceLibrary ? escapeHtml(item.name) : renderCardTitleButton(item.name)}</h3>
           ${meta || bonus ? `<p class="card-meta-line">${escapeHtml(meta || bonus)}</p>` : ""}
         </div>
         ${isMarketLibrary ? `<button class="primary-button shop-button" type="button" data-buy-id="${escapeHtml(item.id)}">Comprar</button>` : ""}
