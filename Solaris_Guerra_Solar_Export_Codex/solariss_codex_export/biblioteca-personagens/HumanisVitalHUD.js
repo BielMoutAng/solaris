@@ -7,9 +7,8 @@
     raca: "Humanis",
     status: "ATIVO",
     pv: { atual: 26, maximo: 26 },
-    estresse: { atual: 2, maximo: 7 },
+    estresse: { atual: 2, maximo: 6 },
     cosmos: { atual: 0, maximo: 0 },
-    saturacao: { atual: 0, maximo: 10 },
     defesa: { ca: 12, fisica: 35, termica: 20, eletrica: 25, cosmica: 15 },
     sinaisVitais: {
       frequenciaCardiaca: 72,
@@ -1410,12 +1409,9 @@
     const pvPercent = percentHud(data.pv.atual, data.pv.maximo);
     const stressPercent = percentHud(data.estresse.atual, data.estresse.maximo);
     const cosmosPercent = percentHud(data.cosmos.atual, data.cosmos.maximo);
-    const saturationPercent = percentHud(data.saturacao.atual, data.saturacao.maximo);
     const pvColor = colorForCondition(pvPercent);
     const stressColor = stressPercent >= 60 ? "var(--hvh-red)" : stressPercent >= 30 ? "var(--hvh-orange)" : "var(--hvh-yellow)";
     const cosmosColor = "var(--hvh-purple)";
-    const saturationColor = saturationPercent >= 100 ? "var(--hvh-cyan)" : saturationPercent >= 65 ? "var(--hvh-blue)" : "var(--hvh-green)";
-    const saturationStatus = saturationPercent >= 100 ? "Saturacao maxima" : saturationPercent >= 65 ? "Fluxo alto" : "Fluxo estavel";
     container.innerHTML = `
       <div class="hvh-root">
         <header class="hvh-header">
@@ -1503,19 +1499,6 @@
                 <div class="hvh-metric"><span>Sat. Oxigênio</span><strong>${escapeHud(data.sinaisVitais.saturacaoOxigenio)}%</strong></div>
               </div>
             `)}
-
-            ${createPanel("Saturação", "SA", `
-              <div class="hvh-big-stat">
-                <div class="hvh-icon-box" style="color:${saturationColor}">SA</div>
-                <div>
-                  <div class="hvh-value" style="color:${saturationColor}; text-shadow:0 0 14px ${saturationColor};">
-                    ${escapeHud(data.saturacao.atual)}<small> / ${escapeHud(data.saturacao.maximo)}</small>
-                  </div>
-                  ${createSegmentBar(data.saturacao.atual, data.saturacao.maximo, saturationColor)}
-                  <div class="hvh-substatus" style="color:${saturationColor};">${escapeHud(saturationStatus)}</div>
-                </div>
-              </div>
-            `, "cyan")}
 
             ${createPanel(data.equipamento.nome, "EQ", `
               <div class="hvh-equipment">

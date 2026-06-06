@@ -44,25 +44,30 @@ Na biblioteca de raças, clique em qualquer card para abrir uma página interna 
 - Atributos iniciais da ficha: `7`
 - Limite dos atributos no campo numérico: `0` a `20`
 - MOD de atributo: `INT((valor final - 10) / 2)`
-- PV máximo: `8 * nível + MAX(0, MOD CON) * nível`
+- PV inicial: `8 + vida adicional por MOD CON + bônus racial`, usando o valor máximo dos dados no nível 1
+- PV depois do nível 1: cálculo provisório mantido enquanto os Livros 1 e 2 não consolidam uma fórmula única
 - PV atual: campo editável exibido como `PV atual / PV máximo`
 - Cosmos máximo: `Cosmos base do nível + MOD MEN + bônus racial + bônus de equipamento`
-- CA: `CA da raça + MOD REF + armadura equipada`
+- CA: `4 + MOD REF + armadura equipada + mods`
 - Movimento: `6 + MOD REF + bônus racial/equipamento`
 - Slots de cubo: `5 + MOD FOR + bônus racial + bônus do chip`
-- Estresse máximo na ficha: `7`
-- Testes: `3d6 + MOD + bônus situacional`; com Estresse 6+ usa `2d6`; com Saturação 10 e Estresse menor que 6 usa `4d6`
+- Carga máxima: `metade do peso corporal + MOD FOR * 10 kg`
+- Estresse máximo padrão na ficha: `6`
+- Testes comuns: `3d6 + MOD + bônus situacional`; com Estresse 6 usa `2d6`
+- Ataques: `1d20 + modificador`; 20 natural é crítico e 1 natural é erro crítico
+- Iniciativa: `1d20 + MOD REF`
+- Rachaduras: cada item possui sua própria trilha e colapsa em `5`
 
-As bibliotecas de armas, armaduras e itens permitem comprar com o dinheiro da ficha. A compra debita o valor e coloca o equipamento no inventário do personagem, onde armas e armaduras podem ser equipadas e itens podem ser guardados no cubo. As bibliotecas também têm busca, filtro por tier/rank/custo/categoria conforme o tipo de conteúdo, e ordenação por tier, preço ou ordem alfabética.
+As bibliotecas de armas, armaduras e itens permitem comprar com os Luzentis (ℓ) da ficha. A compra debita o valor e coloca o equipamento no inventário do personagem, onde armas e armaduras podem ser equipadas e itens podem ser guardados no cubo. As bibliotecas também têm busca, filtro por tier/rank/custo/categoria conforme o tipo de conteúdo, e ordenação por tier, preço ou ordem alfabética.
 
 A biblioteca de itens é carregada de `official-items.js`, com 175 itens extraídos da aba `tabela de itens` da planilha central `Tabela Solaris V2.xlsx`. Dados de crafting ainda não foram importados para o app.
 
 Também há bibliotecas laterais de Magias cósmicas e Chips modificadores. Ao adicionar uma magia ou chip, ele aparece na página Habilidades da ficha com nome, fonte e efeito.
 
-Na página do personagem, as abas Habilidades, Dados e Criar permitem revisar todas as habilidades atuais, rolar dados com histórico em chat e inserir manualmente itens, armas, armaduras, magias, chips ou habilidades personalizadas. Toda rolagem também exibe uma animação holográfica de dados sobre a tela. A aba Criar muda o formato do formulário conforme o tipo selecionado, seguindo o padrão das bibliotecas oficiais. Itens, armas e armaduras criados manualmente podem receber imagem por clique ou arrastar e soltar. Itens no inventário podem ser vendidos com valor editável, e a aba Equipamentos tem um campo de nível de Rachadura.
+Na página do personagem, as abas Habilidades, Dados e Criar permitem revisar todas as habilidades atuais, rolar dados com histórico em chat e inserir manualmente itens, armas, armaduras, magias, chips ou habilidades personalizadas. Toda rolagem também exibe uma animação holográfica de dados sobre a tela. A aba Criar muda o formato do formulário conforme o tipo selecionado, seguindo o padrão das bibliotecas oficiais. Itens, armas e armaduras criados manualmente podem receber imagem por clique ou arrastar e soltar. Itens no inventário podem ser vendidos com valor editável, e armas, armaduras, cubos e itens possuem Rachaduras individuais.
 
 A ficha também tem testes rápidos por atributo, perícia e jogada de proteção, HUD visual de estresse, biblioteca de ações possíveis e painel de combate com esboço da arma equipada, ataque, dano e estado de rachadura.
 
-Para uma futura migração ao Foundry VTT, novas rolagens e conteúdos manuais devem manter categorias e metadados estruturados. A rolagem de iniciativa já é registrada como `kind: "initiative"` e usa `3d6 + MOD REF`, ajustando para `2d6` em colapso ou `4d6` com saturação máxima.
+Para uma futura migração ao Foundry VTT, novas rolagens e conteúdos manuais devem manter categorias e metadados estruturados. A rolagem de iniciativa já é registrada como `kind: "initiative"` e usa `1d20 + MOD REF`.
 
 Essas fórmulas são uma primeira versão para ferramenta de mesa e podem ser ajustadas conforme o sistema Solaris for consolidado.

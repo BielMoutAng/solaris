@@ -12,7 +12,7 @@
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./assets/icons/solaris-icon.svg" />
     <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./styles.css?v=20260604i" />
+    <link rel="stylesheet" href="./styles.css?v=20260606b" />
   </head>
   <body>
     <div class="app-shell">
@@ -196,7 +196,7 @@
               <section class="form-band">
                 <div class="band-title">
                   <h3>Perícias e proteção</h3>
-                  <p>Testes rápidos com Estresse/Saturação atuais.</p>
+                  <p>Testes rápidos com o Estresse atual.</p>
                 </div>
                 <div class="test-grid" id="quickTestGrid"></div>
               </section>
@@ -239,14 +239,6 @@
                     <input id="stress" name="stress" type="number" min="0" max="7" step="1" />
                     <span class="resource-meter"><span id="stressMeter"></span></span>
                   </label>
-                  <label class="resource-card resource-saturation">
-                    <span class="resource-head">
-                      <span class="resource-glyph" data-icon="chip"></span>
-                      <span>Saturação</span>
-                    </span>
-                    <input id="saturation" name="saturation" type="number" min="0" max="10" step="1" />
-                    <span class="resource-meter"><span id="saturationMeter"></span></span>
-                  </label>
                 </div>
               </section>
 
@@ -265,11 +257,15 @@
                     <input id="armor" name="armor" type="text" placeholder="Placas, carenagem..." />
                   </label>
                   <label>
-                    Cubos/carga
+                    Unidades armazenadas
                     <input id="loadUsed" name="loadUsed" type="number" min="0" step="1" />
                   </label>
                   <label>
-                    PO
+                    Peso corporal (kg)
+                    <input id="bodyWeightKg" name="bodyWeightKg" type="number" min="1" step="0.1" />
+                  </label>
+                  <label>
+                    Luzentis (ℓ)
                     <input id="currency" name="currency" type="number" min="0" step="1" />
                   </label>
                 </div>
@@ -309,6 +305,7 @@
                   <span id="stressState">Tríade estável</span>
                 </div>
                 <div class="stat-grid" id="derivedStats"></div>
+                <div class="cube-load-monitor" id="cubeLoadMonitor" aria-live="polite"></div>
               </section>
               <section class="inspector-block">
                 <div class="inspector-title">
@@ -348,7 +345,7 @@
                   <p>Personagem</p>
                   <h2>Equipamentos</h2>
                 </div>
-                <span class="wallet-pill" id="equipmentWallet">0 dinheiro</span>
+                <span class="wallet-pill" id="equipmentWallet">0 ℓ</span>
               </div>
               <div class="equipment-layout" id="equipmentPageContent"></div>
             </div>
@@ -631,7 +628,7 @@
         }
       }
     </script>
-    <script src="./HumanisVitalHUD.js?v=20260603d"></script>
-    <script src="./app.js?v=20260604i"></script>
+    <script src="./HumanisVitalHUD.js?v=20260606b"></script>
+    <script src="./app.js?v=20260606b"></script>
   </body>
 </html>

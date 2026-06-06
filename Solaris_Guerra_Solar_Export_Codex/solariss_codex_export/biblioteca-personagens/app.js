@@ -4,9 +4,59 @@ const ATTRIBUTE_BASE = 7;
 const ATTRIBUTE_MOD_BASE = 10;
 const STORAGE_KEY = "solaris.character.library.v1";
 const LEVEL_COSMOS_BASE = { 1: 1, 2: 1, 3: 1, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2, 10: 4 };
-const STRESS_MAX = 7;
-const SATURATION_MAX = 10;
+const STRESS_MAX = 6;
+const STARTING_CURRENCY = 2000;
+const BASE_CA = 4;
+const ITEM_CRACK_MAX = 5;
 const TIER_ORDER = ["F", "E", "D", "C", "B", "A", "S"];
+const CUBE_WEIGHT_KG = 1;
+const CURRENCY_NAME = "Luzentis";
+const CURRENCY_SYMBOL = "ℓ";
+const PASSIVE_ATTRIBUTE_ALIASES = { ESP: "PRE" };
+const COSMIC_SPELL_SLOT_RULE_SUMMARY = "Cada magia cósmica conhecida ocupa 1 espaço de magia. Espaços podem vir de equipamentos canalizadores, chips modificadores, treino durante timeskip e grimórios encontrados na campanha.";
+const CUBE_TYPE_DEFINITIONS = {
+  simple: {
+    label: "Cubo simples",
+    summary: "Carrega 1 unidade de material de um único tipo. Não possui variações.",
+    fixedCapacity: 1,
+    materialMode: "single",
+  },
+  cargo: {
+    label: "Cubo de cargas",
+    summary: "Carrega várias unidades do item exato definido pelo primeiro item guardado.",
+    fixedCapacity: null,
+    materialMode: "exact-first-item",
+  },
+  specialized: {
+    label: "Cubo especializado",
+    summary: "Carrega várias unidades do tipo definido pelo primeiro item guardado.",
+    fixedCapacity: null,
+    materialMode: "family-first-item",
+  },
+};
+const EXTERNAL_SUPPORT_TYPES = [
+  {
+    id: "gancho",
+    label: "Ganchos",
+    singular: "Gancho",
+    keywords: ["gancho", "ganchos"],
+    accepts: ["item", "weapon"],
+  },
+  {
+    id: "coldre",
+    label: "Coldres",
+    singular: "Coldre",
+    keywords: ["coldre", "coldres"],
+    accepts: ["weapon"],
+  },
+  {
+    id: "bandoleira",
+    label: "Bandoleiras",
+    singular: "Bandoleira",
+    keywords: ["bandoleira", "bandoleiras"],
+    accepts: ["weapon"],
+  },
+];
 
 const skillData = [
   { name: "Atletismo", attr: "FOR", summary: "Corrida, salto, escalada, natação, abrir passagens, derrubar portas e erguer objetos." },
@@ -17,7 +67,7 @@ const skillData = [
   { name: "Mãos Leves", attr: "REF", summary: "Bater carteiras, abrir fechaduras, desarmar armadilhas e fazer manipulação delicada." },
   { name: "Acrobacia", attr: "REF", summary: "Equilíbrio, saltos difíceis, rolamentos e quedas controladas." },
   { name: "Pilotagem", attr: "REF", summary: "Controle de naves, veículos, exoesqueletos ou máquinas em movimento, incluindo manobras evasivas e combate veicular." },
-  { name: "Pés Ágeis", attr: "REF", summary: "Performance artística, dança, fuga e escapar de armadilhas já ativas." },
+  { name: "Pés Ágeis", attr: "REF", summary: "Movimentos rápidos de fuga, dança corporal, deslocamento em combate e escapar de armadilhas já ativas." },
   { name: "Cosmos", attr: "MEN", summary: "Sentir cosmos: perceber energias, presenças e distúrbios cósmicos." },
   { name: "Memória Cósmica", attr: "MEN", summary: "História e saberes universais ligados ao cosmos, incluindo conhecimentos históricos, mitológicos ou científicos." },
   { name: "Intuição Cósmica", attr: "MEN", summary: "Antecipar eventos e conectar informações de forma instintiva por meio de energias cósmicas." },
@@ -27,17 +77,20 @@ const skillData = [
   { name: "Persuasão", attr: "PRE", summary: "Convencer, negociar, inspirar confiança ou manipular socialmente." },
   { name: "Empatia", attr: "PRE", summary: "Perceber emoções, intenções, mentiras, medo e motivações ocultas." },
   { name: "Acalmar Criatura", attr: "PRE", summary: "Tentar domesticar ou acalmar criatura capaz de compreender o personagem, evitando combate quando ela ataca por medo." },
+  { name: "Performance", attr: "PRE", summary: "Música, dança, canto, discurso público, expressão artística e apresentações que influenciam o ambiente social ou emocional." },
+  { name: "Atuação", attr: "PRE", summary: "Fingimento, interpretação de papel, disfarce emocional, blefe social e sustentação de uma identidade falsa." },
   { name: "Tecnologia", attr: "INT", summary: "Interagir com sistemas digitais, hackear e obter dados." },
   { name: "Medicina", attr: "INT", summary: "Estancar sangramento, fazer remédios, realizar cirurgias, identificar doenças e estabilizar aliados em 1d4 turnos." },
   { name: "Engenharia", attr: "INT", summary: "Reparar e construir equipamentos, consertar veículos e fazer modificações em oficinas de equipamentos e mods." },
   { name: "Biologia", attr: "INT", summary: "Aprender sobre fauna e flora e descobrir propriedades de plantas e componentes animais." },
   { name: "Culinária", attr: "INT", summary: "Preparar alimentos com os materiais disponíveis: sucesso total prepara tudo, parcial prepara metade, falha não gera alimento comestível." },
+  { name: "Busca", attr: "INT", summary: "Examinar rastros, marcas, mapas físicos, passagens, documentos, objetos, sucata e detalhes materiais do ambiente." },
 ];
 
 const protectionData = [
   { name: "JPF", attr: "FOR", attrs: ["FOR", "CON"], summary: "JP física: integridade física, músculos e saúde. Role com MOD FOR ou MOD CON, conforme a situação pedida pelo mestre." },
-  { name: "JPV", attr: "PRE", summary: "JP de Vontade: resistir a habilidades cósmicas, efeitos de ambiente e pressão mental." },
   { name: "JPR", attr: "REF", summary: "JP de Reflexo: tempo de reação, esquiva, explosões, quedas, armadilhas e situações rápidas." },
+  { name: "JPC", attr: "MEN", attrs: ["MEN", "PRE"], summary: "JP Cósmica: use MEN contra energia, distorção e interferência; use PRE contra medo, possessão emocional e pressão espiritual." },
 ];
 
 const manualCreationTemplates = {
@@ -164,139 +217,103 @@ const raceData = [
     bonus: {},
     choice: { label: "Atributo racial", options: ATTRIBUTES, amount: 1 },
     ca: 4,
+    pvBonus: 0,
     cosmos: 0,
     movement: 0,
     cubeBonus: 0,
     tags: ["adaptável", "explorador", "+1 atributo"],
-    summary: "Adaptáveis, curiosos e exploradores. Escolhem qualquer atributo para receber +1 e uma sub-habilidade ligada a essa escolha.",
+    summary: "Adaptáveis e versáteis. Escolhem qualquer atributo para receber +1 e dependem de treinamento, profissão e equipamento para se especializar.",
     profile: {
       age: "100-120 anos / maturidade aos 18",
       build: "1,75m / 70-90 kg",
       attributeBonus: "+1 em qualquer atributo",
-      documentCosmos: "Tabela V2: 1; ficha padrão: 0",
+      documentCosmos: "0",
       culture: "Adaptáveis, curiosos e exploradores.",
-      baseAbility: "Entendem tom de voz; 1x por descanso rápido podem receber vantagem em teste social ou narrativo ligado à leitura de intenção.",
-      weakness: "Vulneráveis a doenças alienígenas: -1 em testes de resistência contra doenças e contaminações.",
-      skill: "Escolhem 1 sub-habilidade do atributo escolhido e recebem +1 nela.",
-      note: "Boa raça flexível para jogadores novos.",
+      baseAbility: "Adaptabilidade Humana: 1x por cena, recebe +1 em um teste de perícia na qual não seja treinado. Gente de Sistema: +1 em testes sociais simples para negociar trabalho, comida, abrigo ou informação com comunidades civilizadas.",
+      weakness: "Sem Especialização Natural: não recebe resistência natural, visão especial ou afinidade cósmica automática.",
+      skill: "A especialização vem das perícias treinadas e do Chip de Profissão.",
+      note: "Visão comum, com 3 m de visão no escuro pelo padrão do sistema. Idioma Comum.",
     },
-    progression: [
-      { level: "LV1", title: "Experte", text: "Escolhe 1 perícia para dobrar o valor 1x por dia." },
-      { level: "LV3", title: "Apego à Vida", text: "1x por descanso longo, faz teste contra morte com vantagem." },
-      { level: "LV5", title: "Olhar de Radiação", text: "Passa a enxergar calor emitido por seres vivos." },
-      { level: "LV7", title: "Experte", text: "Escolhe 1 atributo para dobrar o valor em situação específica definida pelo mestre." },
-      { level: "LV9", title: "Trapaça", text: "Pode rerrolar teste em atributo treinado 1x por descanso curto." },
-      { level: "LV10", title: "Evolução Cósmica", text: "Transforma uma falha em sucesso gastando todos os pontos de Cosmos." },
-    ],
-    documentNotes: [
-      "A Tabela Solaris V2 registra Cosmos racial 1 para Humanis, mas a ficha padrão automática registra bônus de Cosmos 0. O cálculo atual da ficha usa 0.",
-      "A própria tabela recomenda evitar atributo dobrado permanente; o efeito foi mantido como uso limitado por descanso ou situação do mestre.",
-    ],
+    progression: [],
+    documentNotes: ["Regras raciais atualizadas conforme o Livro 1. Progressões raciais antigas foram removidas por não aparecerem nos Livros 1 e 2."],
   },
   {
     id: "veyrkan",
     name: "Veyrkan",
     bonus: {},
-    choice: { label: "Atributo racial", options: ["PRE", "REF"], amount: 1 },
+    choice: { label: "Atributo racial", options: ["MEN", "INT"], amount: 1 },
     ca: 4,
+    pvBonus: 0,
     cosmos: 0,
     movement: 0,
     cubeBonus: 0,
-    tags: ["anfíbio", "cooperação", "PRE ou REF"],
-    summary: "Anfíbios e cooperativos, com memória coletiva. Ficam 10 minutos sem oxigênio e escolhem PRE ou REF para receber +1.",
+    tags: ["anfíbio", "padrões", "MEN ou INT"],
+    summary: "Anfíbios sensíveis a padrões, energia e frequências. Escolhem MEN ou INT para receber +1.",
     profile: {
       age: "Até 150 anos / maturidade aos 16",
       build: "1,80m / ~80 kg",
-      attributeBonus: "+1 PRE ou +1 REF",
+      attributeBonus: "+1 MEN ou +1 INT",
       documentCosmos: "0",
-      culture: "Anfíbios, cooperativos, com memória coletiva e adaptação ao grupo.",
-      baseAbility: "Ficam 10 minutos sem oxigênio.",
-      weakness: "Troca de pele: em algum momento do dia precisam de 1 turno para trocar a pele.",
-      skill: "Escolhem 1 perícia de PRE ou REF.",
-      note: "Use PRE no lugar do antigo ESP.",
+      culture: "Anfíbios, científicos e atentos a padrões, energia, vibração e fluxo.",
+      baseAbility: "Leitura de Padrões: 1x por cena, recebe +1 em Tecnologia, Engenharia, Percepção Cósmica, Busca Cósmica ou análise energética. Anfíbio Parcial: +1 em testes adequados de locomoção, resistência ou percepção em água e umidade.",
+      weakness: "Secura Corporal: em ambiente extremamente seco, quente ou desidratante, sofre -1 em testes de CON até se reidratar ou descansar adequadamente.",
+      skill: "A escolha racial favorece perícias de MEN ou INT.",
+      note: "Visão infravermelha limitada a 10 m. Idiomas Comum e Veyrkan, se usados na campanha.",
     },
-    progression: [
-      { level: "LV1", title: "Amigável", text: "Torna-se o alvo menos perigoso; se estiver ao lado de aliado, inimigos priorizam outro." },
-      { level: "LV3", title: "Secreção da Pele", text: "1x por descanso curto, usa secreção para estancar feridas." },
-      { level: "LV5", title: "Coaxar Hipnótico", text: "Aliados recebem +1d4 no ataque por 10 turnos." },
-      { level: "LV7", title: "Liso", text: "Todo dano de concussão é reduzido pela metade." },
-      { level: "LV9", title: "Membro Extra", text: "Pode manifestar tentáculos, pernas de sapo ou olhos precisos." },
-      { level: "LV10", title: "Perfeitamente Liso", text: "Não recebe dano de concussão." },
-    ],
-    documentNotes: [
-      "A Tabela Solaris V2 trata o bônus como escolha entre PRE ou REF; a ficha padrão fixa +1 PRE e +1 REF. O app mantém a versão de escolha para criação de personagem.",
-      "Olhos precisos com +5 aparece como ponto sensível de balanceamento; sugestão oficial: limitar a +2 ou 1x/cena.",
-    ],
+    progression: [],
+    documentNotes: ["Regras raciais atualizadas conforme o Livro 1. Progressões raciais antigas foram removidas por não aparecerem nos Livros 1 e 2."],
   },
   {
     id: "zerak",
     name: "Zerak",
-    bonus: { REF: -1 },
-    choice: { label: "Atributo racial", options: ["FOR", "CON"], amount: 2 },
-    ca: 6,
+    bonus: {},
+    choice: { label: "Atributo racial", options: ["FOR", "CON"], amount: 1 },
+    ca: 4,
+    pvBonus: 2,
     cosmos: 0,
     movement: 0,
     cubeBonus: 0,
-    tags: ["força", "disciplina", "+2 FOR/CON"],
-    summary: "Disciplina, hierarquia e força como status. Escolhem FOR ou CON para receber +2 e sofrem -1 em REF.",
+    tags: ["força", "disciplina", "+1 FOR/CON", "+2 PV"],
+    summary: "A muralha viva. Escolhem FOR ou CON para receber +1 e começam com +2 PV.",
     profile: {
       age: "Até 120 anos / maturidade aos 15",
       build: "1,85m / 110-130 kg",
-      attributeBonus: "+2 FOR ou +2 CON, -1 REF",
+      attributeBonus: "+1 FOR ou +1 CON",
       documentCosmos: "0",
       culture: "Disciplina, hierarquia, força como status e resistência física.",
-      baseAbility: "Não sofrem penalidade por carga até 150%.",
-      weakness: "Recebem +1 de dano contra ataques cósmicos e energéticos.",
-      skill: "Escolhem 1 perícia de FOR. A antiga ignorância em REF pode ser opcional do mestre.",
-      note: "Boa raça tanque/brutamontes.",
+      baseAbility: "Corpo de Rocha: +2 PV no nível 1. Promessa de Rocha: 1x por descanso curto, transforma em sucesso parcial uma falha apropriada de JPF, JPR ou JPC que o faria abandonar uma posição defensiva.",
+      weakness: "Peso da Pedra: -1 em Furtividade com armadura média ou pesada ou ao atravessar áreas frágeis, silenciosas ou instáveis.",
+      skill: "A escolha racial favorece perícias de FOR ou resistência por CON.",
+      note: "Visão de penumbra até 10 m. Idiomas Comum e Zerakhul, se usados na campanha.",
     },
-    progression: [
-      { level: "LV1", title: "Duro como Pedra", text: "Se não se mover no turno, ganha +1 CA até se mover ou ser movido." },
-      { level: "LV3", title: "Energia da Rocha", text: "1x por descanso longo, ao cair a 0 PV fica desacordado por 4h em vez de morrer imediatamente." },
-      { level: "LV5", title: "Sentir a Terra", text: "Não é pego em turno surpresa." },
-      { level: "LV7", title: "Bom de Briga", text: "Ataques desarmados recebem +1d8 de dano." },
-      { level: "LV9", title: "Força Motriz", text: "Move 3 m e realiza 2 ataques com +1d4 por ataque." },
-      { level: "LV10", title: "Carne de Pedra", text: "Imune a dano perfurante e sangramento." },
-    ],
-    documentNotes: [
-      "A Tabela Solaris V2 permite escolher +2 FOR ou +2 CON com -1 REF; a ficha padrão fixa +2 FOR e -1 REF. O app mantém a escolha FOR/CON.",
-      "A imunidade total do LV10 é forte, mas a nota organizada indica que condiz com fim de campanha.",
-    ],
+    progression: [],
+    documentNotes: ["Regras raciais atualizadas conforme o Livro 1. Progressões raciais antigas foram removidas por não aparecerem nos Livros 1 e 2."],
   },
   {
     id: "kairi",
     name: "Kairi",
     bonus: {},
-    choice: { label: "Atributo racial", options: ["REF", "MEN"], amount: 1 },
-    ca: 3,
-    cosmos: 2,
+    choice: { label: "Atributo racial", options: ["MEN", "PRE"], amount: 1 },
+    ca: 4,
+    pvBonus: 0,
+    cosmos: 0,
     movement: 0,
     cubeBonus: 0,
-    tags: ["cosmos", "suporte", "REF ou MEN"],
-    summary: "Espirituais e ligados ao equilíbrio do Cosmos. Escolhem REF ou MEN para receber +1 e têm +2 Cosmos racial.",
+    tags: ["cosmos", "mediação", "MEN ou PRE"],
+    summary: "Ligados aos ciclos naturais e aos sinais de Tarantus. Escolhem MEN ou PRE para receber +1.",
     profile: {
       age: "Até 180 anos / maturidade aos 20",
       build: "1,70m / 60-75 kg",
-      attributeBonus: "+1 REF ou +1 MEN",
-      documentCosmos: "Tabela V2: 2; ficha padrão: 0",
+      attributeBonus: "+1 MEN ou +1 PRE",
+      documentCosmos: "0",
       culture: "Espirituais, ligados ao equilíbrio do Cosmos.",
-      baseAbility: "Sentem variações energéticas no ambiente.",
-      weakness: "Consomem 2x mais saciedade por fase do dia.",
-      skill: "Escolhem 1 perícia de REF ou MEN.",
-      note: "Boa raça para cosmos, suporte e sensibilidade.",
+      baseAbility: "Escutar o Mundo: 1x por cena, recebe do mestre uma impressão sensorial sobre perigo, desequilíbrio ou segurança. Freio do Ciclo: 1x por descanso curto, um sucesso parcial apropriado pode reduzir em 1 o Estresse de um aliado.",
+      weakness: "Peso do Desrespeito: agressão ecológica ou profanação gratuita pode causar +1 Estresse ou desvantagem no próximo teste de MEN ou PRE.",
+      skill: "A escolha racial favorece perícias cósmicas e sociais de MEN ou PRE.",
+      note: "Visão de penumbra até 10 m. Idiomas Comum e Kairi.",
     },
-    progression: [
-      { level: "LV1", title: "Ser Cósmico", text: "Pode usar uma habilidade sem gastar Cosmos entre Golpe de Energia ou Sono." },
-      { level: "LV3", title: "Proficiência Cósmica", text: "Habilidades cósmicas Tier F são conjuradas com 1 ponto de Cosmos acima." },
-      { level: "LV5", title: "Sono Cósmico", text: "Recupera metade dos pontos de Cosmos em descanso curto." },
-      { level: "LV7", title: "Clone", text: "Ao chegar à metade da vida, cria clone com 15 PV." },
-      { level: "LV9", title: "Proficiência Cósmica", text: "Habilidades Tier F são usadas com máximo de pontos gastando 1 Cosmos." },
-      { level: "LV10", title: "Onipresença Cósmica", text: "Ataques aliados dão +4 de dano cósmico." },
-    ],
-    documentNotes: [
-      "A Tabela Solaris V2 registra +2 Cosmos e escolha entre REF ou MEN; a ficha padrão fixa +1 REF, +1 MEN e registra bônus de Cosmos 0. O app mantém a versão organizada: escolha REF/MEN e +2 Cosmos.",
-      "A nota organizada pede monitorar o dano em grupo; Onipresença Cósmica pode virar aura 1x/cena para balancear.",
-    ],
+    progression: [],
+    documentNotes: ["Regras raciais atualizadas conforme o Livro 1. Progressões raciais antigas foram removidas por não aparecerem nos Livros 1 e 2."],
   },
 ];
 
@@ -319,7 +336,7 @@ const professionData = [
     name: "Médico",
     focus: "+1 em Medicina",
     skill: "Medicina",
-    talent: "Estabilizar Rápido — estabiliza um aliado como ação bônus e cura +1d4 PV 1×/cena.",
+    talent: "Estabilizar Rápido — 1×/cena, tenta estabilizar um aliado como ação simples; em sucesso, ele também recupera +1d4 PV.",
     kit: "Cubo de medicina — permite carregar 2 kits de medicina.",
     penalty: "Juramento Prioritário — desvantagem no primeiro ataque.",
     notes: "",
@@ -358,7 +375,7 @@ const professionData = [
     name: "Eletricista",
     focus: "+1 em Engenharia",
     skill: "Engenharia",
-    talent: "Desjam — remove Jammed de 1 arma/console como ação bônus 1×/cena.",
+    talent: "Desjam — 1×/cena, remove Jammed de uma arma, console, porta, dispositivo ou sistema simples como ação simples.",
     kit: "Detector IR simples + 10 m de cabo condutor.",
     penalty: "Corrente de Fuga — ao falhar em Engenharia, recebe 1 dano elétrico.",
     notes: "",
@@ -434,9 +451,9 @@ const professionData = [
   {
     id: "medium",
     name: "Médium",
-    focus: "+1 em Presença/presságios",
+    focus: "+1 em Intuição Cósmica ou Percepção Cósmica",
     skill: "Intuição Cósmica",
-    talent: "Eco Cósmico — 1×/cena, converte +1 Estresse que receberia em +1 no próximo teste de PRE.",
+    talent: "Eco Cósmico — 1×/cena, converte +1 Estresse que receberia em +1 no próximo teste de MEN ou PRE ligado ao fenômeno.",
     kit: "Talismã — permite canalização cósmica pelo talismã.",
     penalty: "Paranoia Cósmica — sucesso parcial em percepção pode trazer informações confusas.",
     notes: "Ajustável para Empatia/Percepção Cósmica conforme a campanha.",
@@ -460,8 +477,8 @@ const professionData = [
   {
     id: "atirador-elite",
     name: "Atirador de Elite",
-    focus: "+1 em Mãos Leves",
-    skill: "Mãos Leves",
+    focus: "+1 em ataques com armas longas de precisão",
+    skill: "",
     talent: "Respiração Controlada — ignora distância mínima e dobra alcance máximo.",
     kit: "Visor de estabilização — +1 no 1º ataque do combate com arma longa.",
     penalty: "Lento para Mudar — −2 no próximo ataque após andar.",
@@ -486,8 +503,8 @@ const professionData = [
   {
     id: "guarda-interestelar",
     name: "Guarda Interestelar",
-    focus: "+1 em Percepção",
-    skill: "Percepção Cósmica",
+    focus: "+1 em Busca para risco, patrulha, ameaça e segurança",
+    skill: "Busca",
     talent: "Comando Legal — 1×/cena, impõe −1 no primeiro teste social hostil contra você.",
     kit: "Algemas inteligentes — 1 uso.",
     penalty: "Procedimental — gasta 1 ação avaliando protocolos ou sofre −1 no 1º teste social.",
@@ -503,7 +520,7 @@ const professionData = [
     skill: "Biologia",
     talent: "Soro Rápido — cria 1 antídoto básico em 10 min 1×/sessão.",
     kit: "Misturador portátil + tubos.",
-    penalty: "Curiosidade Perigosa — ao ver criatura/material novo, falha em MEN CD 10 perde ação bônus.",
+    penalty: "Curiosidade Perigosa — ao ver criatura ou material novo, falha em MEN CD 10 perde a ação simples.",
     notes: "",
     cubeBonus: 0,
     tags: ["biologia", "antídoto"],
@@ -526,11 +543,11 @@ const professionData = [
     id: "musico",
     name: "Músico",
     focus: "+1 em Performance/moral",
-    skill: "Pés Ágeis",
+    skill: "Performance",
     talent: "Ritmo de Guerra — 1×/cena, aliados a 6 m ganham +1 no próximo teste por 5 rodadas.",
     kit: "Instrumento compacto.",
     penalty: "Ritmo Visado — enquanto tocar, sofre −1 CA.",
-    notes: "Como não há perícia Performance fixa, foi mapeado para Pés Ágeis.",
+    notes: "",
     cubeBonus: 0,
     tags: ["moral", "suporte"],
     summary: "Chip de moral, ritmo de combate e suporte de grupo.",
@@ -539,11 +556,11 @@ const professionData = [
     id: "artista",
     name: "Artista",
     focus: "+1 em Atuação/Enganar",
-    skill: "Persuasão",
+    skill: "Atuação",
     talent: "Máscara Social — 1×/cena, vantagem numa interação social curta.",
     kit: "Tintas/patches para marcações discretas.",
     penalty: "Ego Performático — após sucesso completo social, −1 em outro teste social no turno seguinte.",
-    notes: "Como não há perícia Atuação fixa, foi mapeado para Persuasão.",
+    notes: "O foco pode ser trocado para Performance ao escolher a profissão.",
     cubeBonus: 0,
     tags: ["social", "persuasão"],
     summary: "Chip social para atuação, enganação e presença em cena.",
@@ -552,7 +569,7 @@ const professionData = [
     id: "catador-sucatas",
     name: "Catador de Sucatas",
     focus: "+1 em Busca",
-    skill: "Busca Cósmica",
+    skill: "Busca",
     talent: "Desmonta & Leva — ao destruir máquina, extrai 1 peça comum 1×/cena.",
     kit: "Cubo de sucatas — capacidade 3 sucatas pequenas.",
     penalty: "Barulho de Ferragens — −1 em Furtividade usando o cubo.",
@@ -579,7 +596,7 @@ const professionData = [
     name: "Perito em Fuzil",
     focus: "+1 em ataques com fuzis",
     skill: "",
-    talent: "Troca Tática — 1×/cena, recarrega como ação bônus.",
+    talent: "Troca Tática — 1×/cena, recarrega usando apenas 1 ação simples.",
     kit: "Coldre de coxa.",
     penalty: "Recuo Conhecido — ao trocar para arma que não seja fuzil, 1º ataque tem desvantagem.",
     notes: "Bônus deve ser lançado na aba Combate, não em Perícias.",
@@ -592,7 +609,7 @@ const professionData = [
     name: "Perito em Pistolas",
     focus: "+1 em ataques com pistolas",
     skill: "",
-    talent: "Troca Tática — 1×/cena, recarrega como ação bônus.",
+    talent: "Troca Tática — 1×/cena, recarrega usando apenas 1 ação simples.",
     kit: "Coldre de coxa.",
     penalty: "Alcance Curto — a >18 m, ataques de pistola têm −1.",
     notes: "Bônus deve ser lançado na aba Combate.",
@@ -618,9 +635,9 @@ const professionData = [
     name: "Perito em Rifles de Precisão",
     focus: "+1 em snipers",
     skill: "",
-    talent: "Flow — acertar no alcance máximo dá +3 no próximo ataque.",
-    kit: "Coldre de coxa.",
-    penalty: "Foco Estático — se mover, −1 em Percepção para localizar alvos.",
+    talent: "Flow de Longo Alcance — 1×/cena, acertar no alcance máximo efetivo concede +1 na próxima jogada de ataque com rifle de precisão na mesma cena.",
+    kit: "Capa ou suporte de transporte para rifle.",
+    penalty: "Foco Estático — se mover no turno, sofre −1 em Busca para localizar alvos até o início do próximo turno.",
     notes: "Bônus deve ser lançado na aba Combate.",
     cubeBonus: 0,
     tags: ["sniper", "precisão"],
@@ -631,7 +648,7 @@ const professionData = [
     name: "Perito em Metralhadora",
     focus: "+1 com metralhadoras",
     skill: "",
-    talent: "Troca Tática — 1×/cena, recarrega como ação bônus.",
+    talent: "Troca Tática — 1×/cena, recarrega usando apenas 1 ação simples.",
     kit: "Coldre de coxa.",
     penalty: "Espalhamento — 1ª rajada da cena tem −1 para acertar.",
     notes: "Bônus deve ser lançado na aba Combate.",
@@ -644,7 +661,7 @@ const professionData = [
     name: "Perito em Submetralhadoras",
     focus: "+1 com SMGs",
     skill: "",
-    talent: "Troca Tática — 1×/cena, recarrega como ação bônus.",
+    talent: "Troca Tática — 1×/cena, recarrega usando apenas 1 ação simples.",
     kit: "Coldre de coxa.",
     penalty: "Spray & Pray — contra alvos a >12 m, −1 no ataque.",
     notes: "Bônus deve ser lançado na aba Combate.",
@@ -709,9 +726,9 @@ const professionData = [
     name: "Perito em Martelos",
     focus: "+1 com martelos",
     skill: "",
-    talent: "Atordoar — 1×/combate, alvo testa MEN CD 12 ou fica Atordoado e −2 CA.",
+    talent: "Atordoar — 1×/combate, ao acertar com martelo, o alvo faz JPF com CON CD 12; em falha, fica Atordoado e sofre −2 CA até o fim do próximo turno.",
     kit: "Correia de pulso.",
-    penalty: "Retorno Lento — após usar Atordoar, inimigos têm vantagem para acertá-lo.",
+    penalty: "Retorno Lento — após usar Atordoar, inimigos recebem +1 para acertá-lo até o início do próximo turno.",
     notes: "Bônus deve ser lançado na aba Combate.",
     cubeBonus: 0,
     tags: ["martelos", "atordoar"],
@@ -737,7 +754,7 @@ const professionData = [
     skill: "",
     talent: "Mão Dupla — 1×/cena, ataque extra com a outra mão sem mods.",
     kit: "Bainha dupla.",
-    penalty: "Pressa de Mão Dupla — se atacar com outra mão, JR de FOR −1 até próximo turno.",
+    penalty: "Pressa de Mão Dupla — se atacar com a outra mão, suas JPF com FOR ou CON sofrem −1 até o próximo turno.",
     notes: "Bônus deve ser lançado na aba Combate.",
     cubeBonus: 0,
     tags: ["adagas", "mão dupla"],
@@ -781,8 +798,24 @@ const itemData = officialItemRows.map((item) => ({
   tags: Array.isArray(item.tags) && item.tags.length ? item.tags : ["item"],
 }));
 
+const cubeData = [
+  {
+    id: "cubo-simples",
+    category: "cube",
+    name: "Cubo simples",
+    tier: "F",
+    cubeKind: "simple",
+    cubeCapacity: 1,
+    cubeMaterialMode: "single",
+    weight: `${CUBE_WEIGHT_KG} Kg`,
+    price: 0,
+    tags: ["cubo", "simples", "material"],
+    summary: "Cubo básico que carrega 1 unidade de material ou item. Não possui variações.",
+  },
+];
+
 const weaponData = [
-  { id: "arma-bastao-carbonita", category: "weapon", name: "Bastão de Carbonita", tier: "F", type: "Concussão", damage: "1d4", mods: 0, weight: "2 Kg", price: 2000, tags: ["frágil"], summary: "Muito frágil; quebra rápido." },
+  { id: "arma-bastao-carbonita", category: "weapon", name: "Bastão de Carbonita", tier: "F", type: "Concussão", damage: "1d4", mods: 0, weight: "2 Kg", price: 5000, tags: ["frágil"], summary: "Muito frágil; quebra rápido." },
   { id: "arma-bastao-ferrita", category: "weapon", name: "Bastão de Ferrita", tier: "F", type: "Concussão", damage: "1d4", mods: 0, weight: "4 Kg", price: 5000, tags: ["pesado"], summary: "Pesado para dano baixo." },
   { id: "arma-bastao-paralatum", category: "weapon", name: "Bastão de poeira estelar com Paralatum", tier: "F", type: "Concussão", damage: "1d4", mods: 1, weight: "2 Kg", price: 10000, tags: ["canalizador"], summary: "Serve como canalizador cósmico e permite escolher 3 habilidades de 1 Cosmos." },
   { id: "arma-espada-ferrita", category: "weapon", name: "Espada de Ferrita", tier: "F", type: "Cortante", damage: "1d6", mods: 1, weight: "3 Kg", price: 12000, tags: ["simples"], summary: "Arma comum em colônias." },
@@ -795,8 +828,8 @@ const weaponData = [
   { id: "arma-espada-longa-pralatum", category: "weapon", name: "Espada Longa de Pralatum", tier: "E", type: "Cortante", damage: "1d6", mods: 2, weight: "4 Kg", price: 7000, tags: ["oficial"], summary: "Arma padrão de oficiais." },
   { id: "arma-martelo-guerra", category: "weapon", name: "Martelo de Guerra Reforçado", tier: "E", type: "Concussão", damage: "1d10", mods: 1, weight: "8 Kg", price: 10000, tags: ["crítico"], summary: "Derruba inimigos em críticos por 1 rodada." },
   { id: "arma-lanca-krun-ferrita", category: "weapon", name: "Lança Laminada Krun-Ferrita", tier: "E", type: "Perfurante", damage: "1d10", mods: 2, weight: "3,5 Kg", price: 12000, tags: ["canalizador"], summary: "Permite escolher 1 habilidade de 2 Cosmos e pode canalizar Cosmos." },
-  { id: "arma-pistola-ferrita", category: "weapon", name: "Pistola de Ferrita", tier: "F", type: "Perfurante", damage: "1d4", mods: 0, weight: "0,5 Kg", price: 1500, tags: ["2-8 m"], summary: "Carregador com 6 munições." },
-  { id: "arma-revolver-sucata", category: "weapon", name: "Revólver de Sucata Seis-Fendas", tier: "F", type: "Perfurante", damage: "1d4", mods: 0, weight: "0,9 Kg", price: 3000, tags: ["2-8 m"], summary: "Tambor com 6 munições." },
+  { id: "arma-pistola-ferrita", category: "weapon", name: "Pistola de Ferrita", tier: "F", type: "Perfurante", damage: "1d4", mods: 0, weight: "0,5 Kg", price: 5000, tags: ["2-8 m"], summary: "Carregador com 6 munições." },
+  { id: "arma-revolver-sucata", category: "weapon", name: "Revólver de Sucata Seis-Fendas", tier: "F", type: "Perfurante", damage: "1d4", mods: 0, weight: "0,9 Kg", price: 5000, tags: ["2-8 m"], summary: "Tambor com 6 munições." },
   { id: "arma-rifle-olho-nyx", category: "weapon", name: "Rifle de Precisão Olho de Nyx", tier: "E", type: "Perfurante", damage: "2d6", mods: 2, weight: "4,2 Kg", price: 15000, tags: ["4-20 m"], summary: "Carregador 5; entre 12 e 16 m, +1 dano." },
 ];
 
@@ -837,7 +870,7 @@ const cosmicSpellRows = [
   [3, "Tempestade de Energia", "3d8 de dano energético em área de 5 m.", "Instantânea"],
   [3, "Regeneração Cósmica", "Cura 3d6 PV e remove 2 Estresse de 1 aliado.", "Instantânea"],
   [3, "Campo de Gravidade", "Área de 6 m: inimigos têm movimento reduzido à metade.", "1 rodada"],
-  [3, "Dominação Mental", "Alvo em até 10 m faz ESP CD 15; em falha, fica sob influência por 1 turno.", "1 turno"],
+  [3, "Dominação Mental", "Alvo em até 10 m faz JPC com PRE CD 15; em falha, fica sob influência por 1 turno.", "1 turno"],
   [3, "Armadura Estelar", "+4 CA e resistência a 1d4 por ataque, dura 3 turnos.", "3 turnos"],
   [3, "Invocação da Fera Abatida", "Ritual prévio com sangue. Invoca fera F/E/D já abatida, com metade do PV, por 1d4 turnos.", "1d4 turnos"],
   [4, "Nova de Ruína", "4d8 dano energético em área raio 6 m. Ignora 2 CA.", "Instantânea"],
@@ -863,9 +896,9 @@ const cosmicSpellRows = [
   [8, "Colapso de Singularidade", "Área raio 8 m: puxa inimigos 3 m ao centro e causa 8d8 concussão/energético.", "Instantânea"],
   [8, "Cúpula de Estase", "Domo raio 4 m: inimigos ficam Lentos, com 1 ação ou 1 movimento por turno.", "2 turnos"],
   [8, "Ressonância Blindada", "Você e 2 aliados ganham +4 CA e redução de dano 1d6 por acerto.", "3 turnos"],
-  [8, "Cadeia de Julgamento", "1 alvo disputa MEN/JRC; falha atordoa e causa 4d8, parcial aplica -2 CA.", "1 turno"],
+  [8, "Cadeia de Julgamento", "1 alvo faz JPC com MEN; falha atordoa e causa 4d8, parcial aplica -2 CA.", "1 turno"],
   [8, "Portal de Extração", "Teleporta você e até 2 aliados a 3 m para um ponto visto a 60 m.", "Instantânea"],
-  [8, "Reanimação de Campo", "Alvo a 10 m em 0 PV volta com 2d12 PV e fica Saturado por 1 cena.", "Instantânea"],
+  [8, "Reanimação de Campo", "Alvo a 10 m em 0 PV volta com 2d12 PV e sofre uma consequência definida pelo mestre por 1 cena.", "Instantânea"],
   [8, "Chuva Prismática", "Área raio 10 m: 6d10 energético. Falha em REF CD 14 deixa Cego até o próximo turno.", "Instantânea"],
   [8, "Vínculo de Comando", "Assume comando de 1 drone, torreta ou robô por 3 turnos.", "3 turnos"],
   [8, "Reescrita de Probabilidade", "3 aliados a 10 m podem rerrolar 1 teste e ficar com o melhor.", "1 cena"],
@@ -879,7 +912,7 @@ const cosmicSpellRows = [
   [10, "Dilúvio Antimatéria", "Linha 30 m: 8d12 energético + perfurante, ignora 5 CA e atravessa cobertura média.", "Instantânea"],
   [10, "Pacto do Guardião Ancestral", "Invoca guardião maior CA 15, PV 10d8, 2 ataques por turno e proteção +3 CA.", "3 turnos"],
   [10, "Rasgo de Realidade", "Abre fenda de 8 m; quem atravessa sai em ponto visto a 100 m.", "2 turnos"],
-  [10, "Apagamento do Medo", "Até 4 aliados removem Medo/Terror, reduzem -4 Estresse e ganham vantagem em JRE.", "1 cena"],
+  [10, "Apagamento do Medo", "Até 4 aliados removem Medo/Terror, reduzem -4 Estresse e ganham vantagem em JPC com PRE.", "1 cena"],
 ];
 
 const cosmicSpellData = cosmicSpellRows.map(([cost, name, summary, duration]) => ({
@@ -959,12 +992,12 @@ const modifierChipRows = [
   ["D", "Equalizador de Estresse D-08", "1x/dia consome 1 de estresse para 1d4 pontos de vida"],
   ["D", "Condutor Fino D-09", "+1 para ataques com cosmos"],
   ["D", "Servo de Precisão D-10", "+1d4 de dano no primeiro ataque da cena"],
-  ["C", "Matriz Autônoma C-01", "1x/combate, converta uma ação simples em ação bônus"],
+  ["C", "Matriz Autônoma C-01", "1x/combate, receba 1 ação simples adicional"],
   ["C", "Campo Inercial C-02", "1x/combate, reduza 1d6 de dano recebido"],
   ["C", "Nó de Consistência C-03", "Ao conseguir sucesso total em teste, ganha vantagem no próximo teste"],
   ["C", "Foco de Guerra C-04", "+1 em ataques e CA enquanto PV <= 50%"],
   ["C", "Regulador Neural C-05", "Estresse máximo aumenta em +1"],
-  ["C", "Eco Tático C-06", "1x/combate, como ação bônus, repita um ataque falho"],
+  ["C", "Eco Tático C-06", "1x/combate, como ação simples, repita um ataque falho"],
   ["C", "Canalizador Avançado C-07", "+1 ponto/lvl de Cosmos total"],
   ["C", "Lente Predatória C-08", "Vantagem 1x/descanso rápido em Percepção ou Busca"],
   ["C", "Blindagem Sináptica C-09", "1x/descanso rápido, ignore efeito mental recebido"],
@@ -977,6 +1010,7 @@ const modifierChipData = modifierChipRows.map(([rank, name, summary]) => ({
   name,
   rank,
   summary,
+  passiveEffects: inferModifierChipPassiveEffects({ name, effect: summary }),
   tags: ["chip modificador", `rank ${rank}`],
 }));
 
@@ -989,10 +1023,17 @@ const monsterData = [
 
 const ruleData = [
   { name: "Rolagem padrão", tags: ["3d6", "modificador"], summary: "Role 3d6 + atributo/perícia + modificador situacional. 3 a 9 falha, 10 a 14 sucesso parcial, 15 a 18 sucesso completo." },
+  { name: "Ataques", tags: ["1d20", "CA", "crítico"], summary: "Ataques usam 1d20 + atributo contra a CA. Corpo a corpo normalmente usa FOR, distância usa REF e ataques cósmicos usam MEN. 20 natural é crítico; 1 natural é erro crítico." },
+  { name: "Iniciativa", tags: ["1d20", "REF"], summary: "A iniciativa usa 1d20 + MOD REF." },
+  { name: "Jogadas de Proteção", tags: ["JPF", "JPR", "JPC"], summary: "JPF usa FOR ou CON, JPR usa REF e JPC usa MEN ou PRE conforme a ameaça." },
   { name: "Estresse e colapso", tags: ["estresse", "2d6"], summary: "Enquanto o Estresse fica em 5 ou menos, a Tríade usa 3d6. Em 6 ou mais, a rolagem cai para 2d6 + modificadores." },
   { name: "Bênção Cósmica", tags: ["4-5-6", "bônus"], summary: "Com 3d6 ativos, a sequência 4, 5, 6 gera +1d4 futuro. Apenas um bônus fica guardado por vez." },
   { name: "Falha Cósmica", tags: ["3-2-1", "risco"], summary: "Com 3d6 ativos, a sequência 3, 2, 1 aplica -1d4 na próxima rolagem e pode causar rachadura ou Estresse." },
-  { name: "Level up", tags: ["espinha artificial", "evolução"], summary: "A evolução usa materiais, custo em PO, tempo de procedimento e rolagem de benefício do nível." },
+  { name: "Rachaduras", tags: ["equipamento", "colapso"], summary: "Armas, armaduras e equipamentos acumulam rachaduras individualmente. Ao chegar a 5 rachaduras, o item colapsa e deixa de funcionar até ser reparado." },
+  { name: "Carga", tags: ["peso", "sobrecarga"], summary: "Carga máxima: metade do peso corporal + MOD FOR × 10 kg. Acima de 100%, o movimento cai pela metade; acima de 150%, o movimento fica 0." },
+  { name: "Equipamento inicial", tags: ["criação", "Luzentis"], summary: "Cada personagem começa com 2.000 Luzentis, cubos simples iguais a 5 + MOD FOR, uma arma Tier F, uma armadura Tier F, kit de suprimento e kit da profissão." },
+  { name: "Espaços de magia cósmica", tags: ["cosmos", "magias", "grimórios"], summary: `${COSMIC_SPELL_SLOT_RULE_SUMMARY} Equipamentos e chips são calculados automaticamente quando equipados/adicionados; treino e grimórios são registrados na aba Cosmos e chips.` },
+  { name: "Level up", tags: ["espinha artificial", "evolução"], summary: "A evolução usa materiais, custo em ℓ, tempo de procedimento e rolagem de benefício do nível." },
 ];
 
 const actionData = [
@@ -1009,9 +1050,9 @@ const actionData = [
   { name: "Pesquisar", context: "Timeskip", tags: ["lore", "tecnologia"], summary: "Use tempo livre para estudar região, facções, criaturas, tecnologia ou fenômenos cósmicos." },
   { name: "Fabricar ou modificar", context: "Timeskip", tags: ["craft", "chips"], summary: "Crie item, arma, armadura, chip ou melhoria usando materiais, custo e tempo narrativo." },
   { name: "Treinar", context: "Timeskip", tags: ["evolução"], summary: "Justifique avanço, pratique perícia, estabilize nova técnica ou prepare evolução de nível." },
-  { name: "Descansar", context: "Timeskip", tags: ["cura", "estresse"], summary: "Recupere recursos, reduza estresse, trate ferimentos e estabilize saturação conforme a mesa." },
+  { name: "Descansar", context: "Timeskip", tags: ["cura", "estresse"], summary: "Recupere recursos, reduza Estresse e trate ferimentos conforme o tipo de descanso usado pela mesa." },
   { name: "Viajar", context: "Fora de combate", tags: ["exploração"], summary: "Defina rota, marcha, vigias, suprimentos, ritmo e riscos de encontro." },
-  { name: "Comprar ou vender", context: "Fora de combate", tags: ["economia"], summary: "Negocie equipamento, venda itens do inventário e atualize dinheiro da ficha." },
+  { name: "Comprar ou vender", context: "Fora de combate", tags: ["economia"], summary: "Negocie equipamento, venda itens do inventário e atualize os Luzentis da ficha." },
   { name: "Conversar no grupo", context: "Fora de combate", tags: ["interpretação"], summary: "Planeje, discuta objetivos, divida informações e tome decisões de personagem." },
   { name: "Manutenção", context: "Fora de combate", tags: ["equipamento"], summary: "Revise armas, armaduras, cubos, rachaduras e munição antes da próxima cena perigosa." },
 ];
@@ -1082,12 +1123,13 @@ const characterCreationSteps = [
 const characterCreationFormulas = [
   ["Atributo", "7 + dado distribuído"],
   ["Modificador", "7: -2 | 8-9: -1 | 10-11: 0 | 12-13: +1 | 14-15: +2 | 16-17: +3 | 18-19: +4 | 20: +5"],
-  ["PV inicial", "8 + bônus de CON, com a ficha digital calculando o PV máximo atual"],
+  ["PV inicial", "8 + vida adicional por MOD CON + bônus racial; dados usam o valor máximo no nível 1"],
   ["CA", "4 + MOD REF + armadura + raça + mods + cobertura"],
   ["Cosmos", "Base do nível + MOD MEN + raça + equipamento/mod"],
   ["Movimento", "6 m + MOD REF + ajustes raciais/equipamento"],
-  ["Iniciativa", "Rolagem de iniciativa do app usa o perfil atual de dados + REF"],
+  ["Iniciativa", "1d20 + MOD REF"],
   ["Cubos", "5 + MOD FOR + raça + profissão"],
+  ["Carga máxima", "Metade do peso corporal + (MOD FOR × 10 kg)"],
 ];
 
 const characterCreationChecklist = [
@@ -1098,7 +1140,7 @@ const characterCreationChecklist = [
   "Perícias treinadas e ignorância, se o mestre permitir",
   "PV atual/máximo, CA, Cosmos, movimento, cubos e iniciativa",
   "Arma inicial Tier F e armadura inicial Tier F",
-  "Kit de suprimento, kit da profissão, dinheiro inicial e anotações",
+  "Kit de suprimento, kit da profissão, Luzentis iniciais e anotações",
   "Ligação com outro personagem ou com a missão inicial",
   "Ficha salva e, se quiser compartilhar, exportada em JSON",
 ];
@@ -1110,7 +1152,7 @@ const libraryMap = {
   chipsMod: { title: "Chips modificadores", kicker: "Mods por ranking", items: modifierChipData, learn: "chip-mod" },
   armas: { title: "Armas", kicker: "Tiers e dano", items: weaponData, market: true },
   armaduras: { title: "Armaduras", kicker: "CA e mods", items: armorData, market: true },
-  itens: { title: "Itens", kicker: "Equipamentos e cubo", items: itemData, market: true },
+  itens: { title: "Itens", kicker: "Equipamentos e cubo", items: [...cubeData, ...itemData], market: true },
   monstros: { title: "Monstros", kicker: "Ameaças de mesa", items: monsterData },
   regras: { title: "Regras", kicker: "Sistema base", items: ruleData },
   acoes: { title: "Ações possíveis", kicker: "Combate, cena e downtime", items: actionData },
@@ -1131,18 +1173,21 @@ const emptyCharacter = () => ({
   pvCurrent: 8,
   cosmosCurrent: 0,
   stress: 0,
-  saturation: 0,
   crackLevel: 0,
   weapon: "",
   armor: "",
   loadUsed: 0,
-  currency: 0,
+  bodyWeightKg: 70,
+  currency: STARTING_CURRENCY,
   inventory: [],
   knownAbilities: [],
+  cosmicTrainingSlots: 0,
+  cosmicGrimoireSlots: 0,
   customItems: [],
   diceLog: [],
   initialAttributeRoll: { rolls: [], kept: [] },
   skillTraining: {},
+  pendingCosmicEffect: "",
   vitalSigns: {},
   vitalResources: {},
   conditions: {},
@@ -1160,6 +1205,7 @@ const state = {
   activeLibrary: "racas",
   activeRaceId: null,
   activeCharacterPage: "ficha",
+  openCubeUid: "",
   navExpanded: false,
   pendingTest: null,
   manualImageDataUrl: "",
@@ -1236,6 +1282,7 @@ const el = {
   testMode: document.querySelector("#testMode"),
   equipmentWallet: document.querySelector("#equipmentWallet"),
   cubeUsagePill: document.querySelector("#cubeUsagePill"),
+  cubeLoadMonitor: document.querySelector("#cubeLoadMonitor"),
   pvMaxInline: document.querySelector("#pvMaxInline"),
   cosmosMaxInline: document.querySelector("#cosmosMaxInline"),
   viewTitle: document.querySelector("#viewTitle"),
@@ -1332,7 +1379,7 @@ function renderSkillAttributeCard(attr) {
 
 function renderSkillTrainingRow(skill) {
   const value = state.current.skillTraining?.[skill.name] || "";
-  const modifier = attributeModifier(totalAttributes()[skill.attr] || ATTRIBUTE_BASE);
+  const modifier = skillModifier(skill);
   return `
     <div class="skill-training-row">
       <button class="quick-test-button skill-test-button" type="button" title="${escapeHtml(skill.summary)}" aria-label="${escapeHtml(`${skill.name} ${formatMod(modifier)}. ${skill.summary}`)}" data-test-roll data-test-kind="Perícia" data-test-name="${escapeHtml(skill.name)}" data-test-attr="${escapeHtml(skill.attr)}">
@@ -1355,7 +1402,8 @@ function renderSkillTrainingRow(skill) {
 function refreshSkillTrainingModifiers(totals = totalAttributes()) {
   document.querySelectorAll("[data-skill-modifier]").forEach((node) => {
     const attr = node.dataset.skillAttr;
-    node.textContent = formatMod(attributeModifier(totals[attr] || ATTRIBUTE_BASE));
+    const skill = skillData.find((item) => item.name === node.dataset.skillModifier);
+    node.textContent = formatMod(attributeModifier(totals[attr] || ATTRIBUTE_BASE) + passiveSkillBonus(skill?.name || ""));
   });
 }
 
@@ -1444,11 +1492,33 @@ function bindEvents() {
     const row = event.target.closest(".skill-training-row");
     state.current.skillTraining = state.current.skillTraining || {};
     if (event.target.checked) {
+      const selections = Object.values(state.current.skillTraining);
+      const trainedCount = selections.filter((value) => value === "trained").length;
+      const ignorantCount = selections.filter((value) => value === "ignorant").length;
+      const previousState = state.current.skillTraining[skillName] || "";
+      if (skillState === "ignorant" && ignorantCount >= 1 && previousState !== "ignorant") {
+        event.target.checked = false;
+        showToast("A criação padrão permite uma Ignorância opcional.");
+        return;
+      }
+      const remainingIgnorantCount = ignorantCount - (previousState === "ignorant" ? 1 : 0);
+      const trainedLimit = 2 + (remainingIgnorantCount > 0 ? 1 : 0);
+      if (skillState === "trained" && trainedCount >= trainedLimit && previousState !== "trained") {
+        event.target.checked = false;
+        showToast(`Limite atual: ${trainedLimit} perícias treinadas.`);
+        return;
+      }
       row?.querySelectorAll("[data-skill-training]").forEach((input) => {
         if (input !== event.target) input.checked = false;
       });
       state.current.skillTraining[skillName] = skillState;
     } else if (state.current.skillTraining[skillName] === skillState) {
+      const trainedCount = Object.values(state.current.skillTraining).filter((value) => value === "trained").length;
+      if (skillState === "ignorant" && trainedCount > 2) {
+        event.target.checked = true;
+        showToast("Remova a perícia treinada adicional antes de retirar a Ignorância.");
+        return;
+      }
       delete state.current.skillTraining[skillName];
     }
     renderSummary();
@@ -1553,6 +1623,11 @@ function bindEvents() {
   });
   el.libraryGrid.addEventListener("click", (event) => {
     if (!(event.target instanceof Element)) return;
+    const blockedSlotButton = event.target.closest("[data-slot-blocked]");
+    if (blockedSlotButton) {
+      showSlotLimitFeedback(blockedSlotButton.dataset.slotBlocked);
+      return;
+    }
     const buyButton = event.target.closest("[data-buy-id]");
     if (buyButton) {
       buyMarketItem(buyButton.dataset.buyId);
@@ -1582,6 +1657,45 @@ function bindEvents() {
     });
   });
 
+  el.cubePageContent.addEventListener("submit", (event) => {
+    if (!(event.target instanceof HTMLFormElement) || !event.target.matches("[data-cube-create-form]")) return;
+    createCubeFromForm(event);
+  });
+  el.cubePageContent.addEventListener("change", (event) => {
+    if (!(event.target instanceof HTMLSelectElement) || !event.target.matches("[data-cube-create-type]")) return;
+    syncCubeCreatorFields(event.target.closest("[data-cube-create-form]"));
+  });
+  el.cubePageContent.addEventListener("dblclick", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const cubeCard = event.target.closest("[data-cube-drop-uid]");
+    if (!cubeCard) return;
+    openCubeInterior(cubeCard.dataset.cubeDropUid);
+  });
+  el.cubePageContent.addEventListener("dragstart", (event) => {
+    const card = event.target instanceof Element ? event.target.closest("[data-drag-inventory-uid]") : null;
+    if (!card || !event.dataTransfer) return;
+    event.dataTransfer.setData("text/solaris-inventory-uid", card.dataset.dragInventoryUid);
+    event.dataTransfer.effectAllowed = "move";
+  });
+  el.cubePageContent.addEventListener("dragover", (event) => {
+    const cubeCard = event.target instanceof Element ? event.target.closest("[data-cube-drop-uid]") : null;
+    if (!cubeCard) return;
+    event.preventDefault();
+    cubeCard.classList.add("drag-over");
+    if (event.dataTransfer) event.dataTransfer.dropEffect = "move";
+  });
+  el.cubePageContent.addEventListener("dragleave", (event) => {
+    const cubeCard = event.target instanceof Element ? event.target.closest("[data-cube-drop-uid]") : null;
+    if (cubeCard) cubeCard.classList.remove("drag-over");
+  });
+  el.cubePageContent.addEventListener("drop", (event) => {
+    const cubeCard = event.target instanceof Element ? event.target.closest("[data-cube-drop-uid]") : null;
+    if (!cubeCard || !event.dataTransfer) return;
+    event.preventDefault();
+    cubeCard.classList.remove("drag-over");
+    moveInventoryItemToCube(event.dataTransfer.getData("text/solaris-inventory-uid"), cubeCard.dataset.cubeDropUid);
+  });
+
   el.cosmosPageContent.addEventListener("click", (event) => {
     if (!(event.target instanceof Element)) return;
     const unequipChipButton = event.target.closest("[data-unequip-chip-id]");
@@ -1589,10 +1703,33 @@ function bindEvents() {
     unequipModifierChip(unequipChipButton.dataset.unequipChipId);
   });
 
-  el.equipmentPageContent.addEventListener("input", (event) => {
-    if (!(event.target instanceof HTMLInputElement) || event.target.id !== "crackLevelInput") return;
-    state.current.crackLevel = clamp(numberValue(event.target.value, 0), 0, 10);
-    updateCrackVisual();
+  el.cosmosPageContent.addEventListener("change", (event) => {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    const source = event.target.dataset.cosmicSlotSource;
+    if (!source) return;
+    const value = Math.max(0, numberValue(event.target.value, 0));
+    if (source === "training") state.current.cosmicTrainingSlots = value;
+    if (source === "grimoires") state.current.cosmicGrimoireSlots = value;
+    renderSummary();
+  });
+
+  [el.equipmentPageContent, el.cubePageContent].forEach((container) => {
+    container.addEventListener("change", (event) => {
+      if (!(event.target instanceof HTMLInputElement)) return;
+      if (event.target.id === "crackLevelInput") {
+        const entry = getEquippedInventoryEntry("weapon");
+        if (!entry) return;
+        entry.crackLevel = clamp(numberValue(event.target.value, 0), 0, ITEM_CRACK_MAX);
+        renderSummary();
+        return;
+      }
+      if (event.target.dataset.itemCrack) {
+        const entry = getInventoryEntry(event.target.dataset.itemCrack);
+        if (!entry) return;
+        entry.crackLevel = clamp(numberValue(event.target.value, 0), 0, ITEM_CRACK_MAX);
+        renderSummary();
+      }
+    });
   });
 }
 
@@ -1797,13 +1934,26 @@ function readForm() {
   state.current.pvCurrent = numberValue(form.get("pvCurrent"), 0);
   state.current.cosmosCurrent = numberValue(form.get("cosmosCurrent"), 0);
   state.current.stress = numberValue(form.get("stress"), 0);
-  state.current.saturation = numberValue(form.get("saturation"), 0);
   state.current.weapon = form.get("weapon").trim();
   state.current.armor = form.get("armor").trim();
   state.current.loadUsed = numberValue(form.get("loadUsed"), 0);
+  state.current.bodyWeightKg = Math.max(1, numberValue(form.get("bodyWeightKg"), 70));
+  syncLoadUsedFromCubeStorage();
   state.current.currency = numberValue(form.get("currency"), 0);
   state.current.abilities = form.get("abilities").trim();
   state.current.notes = form.get("notes").trim();
+  readCosmicSlotInputs();
+}
+
+function readCosmicSlotInputs() {
+  const trainingInput = el.cosmosPageContent?.querySelector('[data-cosmic-slot-source="training"]');
+  const grimoireInput = el.cosmosPageContent?.querySelector('[data-cosmic-slot-source="grimoires"]');
+  if (trainingInput instanceof HTMLInputElement) {
+    state.current.cosmicTrainingSlots = Math.max(0, numberValue(trainingInput.value, 0));
+  }
+  if (grimoireInput instanceof HTMLInputElement) {
+    state.current.cosmicGrimoireSlots = Math.max(0, numberValue(grimoireInput.value, 0));
+  }
 }
 
 function renderForm() {
@@ -1821,10 +1971,11 @@ function renderForm() {
   document.querySelector("#pvCurrent").value = state.current.pvCurrent;
   document.querySelector("#cosmosCurrent").value = state.current.cosmosCurrent;
   document.querySelector("#stress").value = state.current.stress;
-  document.querySelector("#saturation").value = state.current.saturation;
   document.querySelector("#weapon").value = state.current.weapon;
   document.querySelector("#armor").value = state.current.armor;
+  syncLoadUsedFromCubeStorage();
   document.querySelector("#loadUsed").value = state.current.loadUsed;
+  document.querySelector("#bodyWeightKg").value = state.current.bodyWeightKg;
   document.querySelector("#currency").value = state.current.currency;
   document.querySelector("#abilities").value = state.current.abilities;
   document.querySelector("#notes").value = state.current.notes;
@@ -1839,6 +1990,9 @@ function renderSummary() {
   const profession = findProfession(state.current.profession);
   const totals = totalAttributes();
   const derived = derivedStats(totals, race, profession);
+  const cubeStorage = syncLoadUsedFromCubeStorage(cubeStorageStats(derived));
+  const cubeLoad = cubeLoadStats(derived);
+  syncLoadUsedInput();
   syncResourceBounds(derived);
   refreshSkillTrainingModifiers(totals);
 
@@ -1860,14 +2014,18 @@ function renderSummary() {
   el.pvMaxInline.textContent = derived.pvMax;
   el.cosmosMaxInline.textContent = derived.cosmosMax;
   renderResourceMeters(derived);
+  renderCubeLoadMonitor(cubeLoad);
+  const modSlots = modifierSlotState();
+  const cosmicSpellSlots = cosmicSpellSlotState();
 
   document.querySelector("#derivedStats").innerHTML = [
     ["PV", `${state.current.pvCurrent}/${derived.pvMax}`],
     ["CA", derived.ca],
     ["Mov.", `${derived.movement} m`],
     ["Cosmos", `${state.current.cosmosCurrent}/${derived.cosmosMax}`],
-    ["Cubos", `${state.current.loadUsed}/${derived.cubeSlots}`],
+    ["Cubos", `${state.current.loadUsed}/${cubeStorage.totalUnits}`],
     ["Dados", `${diceProfile.count}d6`],
+    ["Percepção", derived.passivePerception],
   ].map(([label, value]) => `
     <div class="stat-tile">
       <span>${label}</span>
@@ -1878,10 +2036,12 @@ function renderSummary() {
   const racialBonus = raceEffectiveBonus(race, state.current.racialChoice);
   document.querySelector("#bonusList").innerHTML = [
     ["Bônus racial", formatBonusSummary(racialBonus)],
-    ["CA raça", race.ca],
+    ["Passivos de mods", formatPassiveEffectSummary(activeModifierPassiveEffects({ includeConditional: true }), { includeConditional: true })],
+    ["CA base", BASE_CA],
     ["CA armadura equipada", derived.armorCa],
+    ["CA mods", derived.passiveBonuses.ca || 0],
     ["Cosmos racial", race.cosmos || 0],
-    ["Cosmos equipamento", derived.equipmentCosmosBonus],
+    ["Cosmos equipamento/mods", derived.equipmentCosmosBonus + derived.passiveBonuses.cosmosMax + derived.passiveBonuses.cosmosPerLevel * state.current.level],
     ["Foco", profession.focus || "—"],
     ["Perícia foco", profession.skill || "Combate/equipamento"],
     ["Talento", profession.talent || "—"],
@@ -1890,9 +2050,13 @@ function renderSummary() {
   ].map(([label, value]) => renderDetailRow(label, value)).join("");
 
   document.querySelector("#slotList").innerHTML = [
-    ["Slots de cubo", derived.cubeSlots],
-    ["Mods de arma", "Pelo tier da arma"],
-    ["Mods de armadura", "Pela peça equipada"],
+    ["Capacidade de cubos", `${cubeLoad.maxCubes} cubo${cubeLoad.maxCubes === 1 ? "" : "s"}`],
+    ["Carga total", `${formatWeight(cubeLoad.weightKg)}/${formatWeight(cubeLoad.capacityKg)} Kg`],
+    ["Percepção passiva", derived.passivePerception],
+    ["Interferência cósmica", cosmicEffectLabel(state.current.pendingCosmicEffect)],
+    ["Mods ocupados", `${modSlots.used}/${modSlots.total}`],
+    ["Mods livres", modSlots.over > 0 ? `Excedente ${modSlots.over}` : modSlots.free],
+    ["Magias cósmicas", `${cosmicSpellSlots.used}/${cosmicSpellSlots.total}`],
     ["Armadura equipada", state.current.armor || "Nenhuma"],
     ["Arma equipada", state.current.weapon || "Nenhuma"],
   ].map(([label, value]) => `<div class="row-line"><span>${label}</span><strong>${value}</strong></div>`).join("");
@@ -1903,28 +2067,23 @@ function renderSummary() {
 function syncResourceBounds(derived) {
   state.current.pvCurrent = clamp(numberValue(state.current.pvCurrent, derived.pvMax), 0, derived.pvMax);
   state.current.cosmosCurrent = clamp(numberValue(state.current.cosmosCurrent, 0), 0, derived.cosmosMax);
-  state.current.stress = clamp(numberValue(state.current.stress, 0), 0, STRESS_MAX);
-  state.current.saturation = clamp(numberValue(state.current.saturation, 0), 0, SATURATION_MAX);
+  state.current.stress = clamp(numberValue(state.current.stress, 0), 0, derived.stressMax || STRESS_MAX);
   const pvInput = document.querySelector("#pvCurrent");
   const cosmosInput = document.querySelector("#cosmosCurrent");
   const stressInput = document.querySelector("#stress");
-  const saturationInput = document.querySelector("#saturation");
   pvInput.max = derived.pvMax;
   cosmosInput.max = derived.cosmosMax;
-  stressInput.max = STRESS_MAX;
-  saturationInput.max = SATURATION_MAX;
+  stressInput.max = derived.stressMax || STRESS_MAX;
   pvInput.value = state.current.pvCurrent;
   cosmosInput.value = state.current.cosmosCurrent;
   stressInput.value = state.current.stress;
-  saturationInput.value = state.current.saturation;
 }
 
 function renderResourceMeters(derived) {
   const meterValues = [
     ["#pvMeter", derived.pvMax ? state.current.pvCurrent / derived.pvMax : 0],
     ["#cosmosMeter", derived.cosmosMax ? state.current.cosmosCurrent / derived.cosmosMax : 0],
-    ["#stressMeter", STRESS_MAX ? state.current.stress / STRESS_MAX : 0],
-    ["#saturationMeter", SATURATION_MAX ? state.current.saturation / SATURATION_MAX : 0],
+    ["#stressMeter", derived.stressMax ? state.current.stress / derived.stressMax : 0],
   ];
 
   meterValues.forEach(([selector, ratio]) => {
@@ -1936,7 +2095,6 @@ function renderResourceMeters(derived) {
 
 function currentDiceProfile() {
   if (state.current.stress >= 6) return { count: 2, label: "Colapso: 2d6", reason: "Estresse 6+" };
-  if (state.current.saturation >= SATURATION_MAX) return { count: 4, label: "Saturação máxima: 4d6", reason: "Saturação cheia" };
   return { count: 3, label: "Tríade: 3d6", reason: "Estável" };
 }
 
@@ -1970,8 +2128,8 @@ function buildHumanisVitalHUDData(derived, diceProfile) {
   const equippedArmor = getEquippedMarketItem("armor");
   const pvPercent = derived.pvMax ? (state.current.pvCurrent / derived.pvMax) * 100 : 0;
   const injury = clamp(100 - pvPercent, 0, 100);
-  const stress = clamp(numberValue(state.current.stress, 0), 0, STRESS_MAX);
-  const saturation = clamp(numberValue(state.current.saturation, 0), 0, SATURATION_MAX);
+  const stressMax = derived.stressMax || STRESS_MAX;
+  const stress = clamp(numberValue(state.current.stress, 0), 0, stressMax);
   const vitalSigns = state.current.vitalSigns || state.current.sinaisVitais || {};
   const vitalResources = state.current.vitalResources || state.current.resources || state.current.recursos || {};
   const conditions = state.current.conditions || state.current.condicoes || {};
@@ -1993,31 +2151,27 @@ function buildHumanisVitalHUDData(derived, diceProfile) {
     },
     estresse: {
       atual: stress,
-      maximo: STRESS_MAX,
+      maximo: stressMax,
     },
     cosmos: {
       atual: state.current.cosmosCurrent,
       maximo: derived.cosmosMax,
-    },
-    saturacao: {
-      atual: saturation,
-      maximo: SATURATION_MAX,
     },
     defesa: buildHumanisDefenseData(derived, race, equippedArmor),
     sinaisVitais: {
       frequenciaCardiaca: optionalNumber(vitalSigns, ["frequenciaCardiaca", "heartRate", "batimentos"], inferHeartRate(pvPercent, stress)),
       pressaoArterial: vitalSigns.pressaoArterial || vitalSigns.bloodPressure || inferBloodPressure(pvPercent, stress),
       frequenciaRespiratoria: optionalNumber(vitalSigns, ["frequenciaRespiratoria", "respirationRate", "respiracao"], inferRespiration(stress)),
-      temperatura: optionalNumber(vitalSigns, ["temperatura", "temperature"], inferTemperature(stress, saturation)).toFixed(1),
-      saturacaoOxigenio: optionalNumber(vitalSigns, ["saturacaoOxigenio", "oxygen", "oxigenio"], inferOxygen(pvPercent, saturation)),
+      temperatura: optionalNumber(vitalSigns, ["temperatura", "temperature"], inferTemperature(stress)).toFixed(1),
+      saturacaoOxigenio: optionalNumber(vitalSigns, ["saturacaoOxigenio", "oxygen", "oxigenio"], inferOxygen(pvPercent)),
     },
     recursos: {
-      hidratacao: optionalNumber(vitalResources, ["hidratacao", "hydration"], clamp(100 - saturation * 2 - stress * 2, 0, 100)),
+      hidratacao: optionalNumber(vitalResources, ["hidratacao", "hydration"], clamp(100 - stress * 2, 0, 100)),
       nutricao: optionalNumber(vitalResources, ["nutricao", "nutrition"], clamp(88 - Math.max(0, state.current.loadUsed - 2) * 3, 35, 100)),
     },
     condicoes: {
       sangramento: conditions.sangramento || conditions.bleeding || inferBleeding(pvPercent),
-      alerta: conditions.alerta || conditions.alert || inferHudAlert(pvPercent, stress, saturation, diceProfile),
+      alerta: conditions.alerta || conditions.alert || inferHudAlert(pvPercent, stress, diceProfile),
     },
     corpo: {
       cabeca: optionalNumber(bodyParts, ["cabeca", "head"], inferBodyPart(100, injury, stress)),
@@ -2082,12 +2236,12 @@ function inferRespiration(stress) {
   return Math.round(clamp(16 + stress, 10, 32));
 }
 
-function inferTemperature(stress, saturation) {
-  return clamp(36.7 + stress * 0.05 + saturation * 0.02, 35, 41);
+function inferTemperature(stress) {
+  return clamp(36.7 + stress * 0.05, 35, 41);
 }
 
-function inferOxygen(pvPercent, saturation) {
-  return Math.round(clamp(99 - saturation * 2 - (pvPercent < 35 ? 5 : 0), 70, 99));
+function inferOxygen(pvPercent) {
+  return Math.round(clamp(99 - (pvPercent < 35 ? 5 : 0), 70, 99));
 }
 
 function inferBleeding(pvPercent) {
@@ -2096,11 +2250,10 @@ function inferBleeding(pvPercent) {
   return "NENHUM";
 }
 
-function inferHudAlert(pvPercent, stress, saturation, diceProfile) {
+function inferHudAlert(pvPercent, stress, diceProfile) {
   if (pvPercent <= 0) return "PV ESGOTADO";
   if (pvPercent < 35) return "PV EM RISCO";
   if (stress >= 6) return "COLAPSO POR ESTRESSE";
-  if (saturation >= SATURATION_MAX) return "SATURAÇÃO MÁXIMA";
   return diceProfile.reason === "Estável" ? "NENHUM ALERTA" : diceProfile.reason.toUpperCase();
 }
 
@@ -2289,7 +2442,11 @@ function applyInitialAttributePool() {
 function renderEquipmentPage(derived) {
   const equippedWeapon = getEquippedMarketItem("weapon");
   const equippedArmor = getEquippedMarketItem("armor");
-  el.equipmentWallet.textContent = `${state.current.currency} dinheiro`;
+  const equippedWeaponEntry = getEquippedInventoryEntry("weapon");
+  const equippedArmorEntry = getEquippedInventoryEntry("armor");
+  const modSlots = modifierSlotState();
+  const supportState = externalSupportState();
+  el.equipmentWallet.textContent = formatCurrency(state.current.currency);
   el.equipmentPageContent.innerHTML = `
     <section class="inventory-panel inventory-panel-wide">
       <h3>Painel de combate</h3>
@@ -2300,25 +2457,80 @@ function renderEquipmentPage(derived) {
       <div class="detail-list">
         ${renderDetailRow("Arma", equippedWeapon ? marketLine(equippedWeapon) : "Nenhuma")}
         ${renderDetailRow("Armadura", equippedArmor ? `${marketLine(equippedArmor)} - CA ${equippedArmor.ca}` : "Nenhuma")}
+        ${renderDetailRow("Rachaduras da arma", equippedWeaponEntry ? `${itemCrackLevel(equippedWeaponEntry)}/${ITEM_CRACK_MAX}` : "—")}
+        ${renderDetailRow("Rachaduras da armadura", equippedArmorEntry ? `${itemCrackLevel(equippedArmorEntry)}/${ITEM_CRACK_MAX}` : "—")}
         ${renderDetailRow("CA total", derived.ca)}
-        ${renderDetailRow("Dinheiro", state.current.currency)}
+        ${renderDetailRow("Mods ocupados", `${modSlots.used}/${modSlots.total}`)}
+        ${renderDetailRow("Suportes externos", `${supportState.totalUsed}/${supportState.totalCapacity}`)}
+        ${renderDetailRow(CURRENCY_NAME, formatCurrency(state.current.currency))}
       </div>
       <label class="crack-control">
-        Rachadura
-        <input id="crackLevelInput" type="number" min="0" max="10" step="1" value="${state.current.crackLevel || 0}" />
+        Rachaduras da arma equipada
+        <input id="crackLevelInput" type="number" min="0" max="${ITEM_CRACK_MAX}" step="1" value="${itemCrackLevel(equippedWeaponEntry)}" ${equippedWeaponEntry ? "" : "disabled"} />
       </label>
     </section>
     <section class="inventory-panel inventory-panel-wide">
-      <h3>Inventário comprado</h3>
-      ${renderInventoryCards(state.current.inventory, { showCubeAction: true, showEquipAction: true })}
+      <h3>Suportes externos</h3>
+      ${renderExternalSupportPanel(supportState)}
     </section>
+    <section class="inventory-panel inventory-panel-wide">
+      <h3>Inventário comprado</h3>
+      ${renderInventoryCards(state.current.inventory, { showCubeAction: true, showEquipAction: true, showSupportAction: true, supportState })}
+    </section>
+  `;
+}
+
+function renderExternalSupportPanel(supportState = externalSupportState()) {
+  return `
+    <div class="external-support-summary">
+      <div>
+        <span class="ability-source">Acesso rápido</span>
+        <p class="inventory-note">Itens presos em ganchos, coldres e bandoleiras ficam fora dos cubos. Suportes de armadura só contam quando a armadura está equipada.</p>
+      </div>
+      <strong>${supportState.totalUsed}/${supportState.totalCapacity}</strong>
+    </div>
+    <div class="external-support-grid">
+      ${supportState.types.map((typeState) => {
+        const percent = typeState.capacity ? clamp(Math.round((typeState.used / typeState.capacity) * 100), 0, 100) : typeState.used ? 100 : 0;
+        const sources = supportState.providers
+          .filter((provider) => provider.counts[typeState.id] > 0)
+          .map((provider) => `${provider.name} +${provider.counts[typeState.id]}`);
+        return `
+          <article class="external-support-card ${typeState.over > 0 ? "over-limit" : ""}">
+            <div class="support-card-head">
+              <span>${escapeHtml(typeState.label)}</span>
+              <strong>${typeState.used}/${typeState.capacity}</strong>
+            </div>
+            <div class="support-meter" aria-label="Uso de ${escapeHtml(typeState.label)}">
+              <span style="width:${percent}%"></span>
+            </div>
+            <p class="inventory-note">${escapeHtml(sources.length ? sources.join(" - ") : "Nenhum suporte deste tipo.")}</p>
+            ${typeState.assigned.length ? `
+              <div class="support-assigned-list">
+                ${typeState.assigned.map((entry) => {
+                  const item = findMarketItem(entry.itemId);
+                  return item ? `
+                    <div class="support-assigned-row">
+                      <span>${escapeHtml(item.name)}</span>
+                      <button class="mini-button" type="button" data-inventory-action="support-remove" data-uid="${escapeHtml(entry.uid)}">Soltar</button>
+                    </div>
+                  ` : "";
+                }).join("")}
+              </div>
+            ` : '<p class="inventory-note">Nada preso aqui.</p>'}
+            ${typeState.over > 0 ? `<p class="inventory-note support-warning">Excedente: solte ${typeState.over} item${typeState.over === 1 ? "" : "s"} ou equipe mais suporte.</p>` : ""}
+          </article>
+        `;
+      }).join("")}
+    </div>
   `;
 }
 
 function renderEquipmentCombatPanel(equippedWeapon) {
   const group = classifyWeapon(equippedWeapon);
-  const crack = clamp(numberValue(state.current.crackLevel, 0), 0, 10);
-  const broken = crack >= 10;
+  const equippedWeaponEntry = getEquippedInventoryEntry("weapon");
+  const crack = itemCrackLevel(equippedWeaponEntry);
+  const broken = crack >= ITEM_CRACK_MAX;
   const attackAttr = weaponAttackAttribute(group);
   return `
     <div class="combat-panel">
@@ -2329,29 +2541,29 @@ function renderEquipmentCombatPanel(equippedWeapon) {
           <h4>${escapeHtml(equippedWeapon?.name || "Nenhuma arma equipada")}</h4>
           <p>${escapeHtml(equippedWeapon ? marketMeta(equippedWeapon) : "Equipe uma arma para habilitar ataque e dano.")}</p>
           <div class="crack-track" aria-label="Graus de rachadura">
-            ${Array.from({ length: 10 }, (_, index) => `<span class="${index < crack ? "filled" : ""}"></span>`).join("")}
+            ${Array.from({ length: ITEM_CRACK_MAX }, (_, index) => `<span class="${index < crack ? "filled" : ""}"></span>`).join("")}
           </div>
-          <p class="inventory-note" id="equipmentCrackNote">${broken ? "Equipamento quebrado: o esboço entra em estado crítico." : `Rachadura ${crack}/10.`}</p>
+          <p class="inventory-note" id="equipmentCrackNote">${broken ? "Arma colapsada: precisa ser reparada antes de funcionar." : `Rachaduras ${crack}/${ITEM_CRACK_MAX}.`}</p>
         </div>
       </div>
       <div class="combat-actions">
-        <button class="primary-button" type="button" data-equipment-roll="attack" ${equippedWeapon ? "" : "disabled"}>Ataque (${attackAttr})</button>
-        <button class="ghost-button" type="button" data-equipment-roll="damage" ${equippedWeapon?.damage ? "" : "disabled"}>Dano ${escapeHtml(equippedWeapon?.damage || "")}</button>
+        <button class="primary-button" type="button" data-equipment-roll="attack" ${equippedWeapon && !broken ? "" : "disabled"}>Ataque (${attackAttr})</button>
+        <button class="ghost-button" type="button" data-equipment-roll="damage" ${equippedWeapon?.damage && !broken ? "" : "disabled"}>Dano ${escapeHtml(equippedWeapon?.damage || "")}</button>
       </div>
     </div>
   `;
 }
 
 function updateCrackVisual() {
-  const crack = clamp(numberValue(state.current.crackLevel, 0), 0, 10);
+  const crack = itemCrackLevel(getEquippedInventoryEntry("weapon"));
   const visual = el.equipmentPageContent.querySelector(".equipment-visual");
   if (!visual) return;
-  visual.classList.toggle("broken", crack >= 10);
+  visual.classList.toggle("broken", crack >= ITEM_CRACK_MAX);
   el.equipmentPageContent.querySelectorAll(".crack-track span").forEach((node, index) => {
     node.classList.toggle("filled", index < crack);
   });
   const note = el.equipmentPageContent.querySelector("#equipmentCrackNote");
-  if (note) note.textContent = crack >= 10 ? "Equipamento quebrado: o esboço entra em estado crítico." : `Rachadura ${crack}/10.`;
+  if (note) note.textContent = crack >= ITEM_CRACK_MAX ? "Arma colapsada: precisa ser reparada antes de funcionar." : `Rachaduras ${crack}/${ITEM_CRACK_MAX}.`;
 }
 
 function renderWeaponSketch(group) {
@@ -2374,6 +2586,8 @@ function renderCosmosPage(derived) {
   const equippedWeapon = getEquippedMarketItem("weapon");
   const equippedArmor = getEquippedMarketItem("armor");
   const learnedCosmosAndChips = (state.current.knownAbilities || []).filter((ability) => ["Cosmos", "Chip modificador"].includes(ability.source));
+  const modSlots = modifierSlotState();
+  const cosmicSpellSlots = cosmicSpellSlotState();
   const channelers = [equippedWeapon, equippedArmor]
     .filter((item) => item && /cosmos|canalizador|cósmic/i.test([item.summary, ...(item.tags || [])].join(" ")))
     .map(marketLine)
@@ -2398,6 +2612,14 @@ function renderCosmosPage(derived) {
         ${renderDetailRow("Penalidade", profession.penalty || "—")}
       </div>
     </section>
+    <section class="inventory-panel">
+      <h3>Espaços de mods</h3>
+      ${renderModifierSlotPanel(modSlots)}
+    </section>
+    <section class="inventory-panel inventory-panel-wide">
+      <h3>Espaços de magia cósmica</h3>
+      ${renderCosmicSpellSlotPanel(cosmicSpellSlots)}
+    </section>
     <section class="inventory-panel inventory-panel-wide">
       <h3>Habilidades registradas</h3>
       ${learnedCosmosAndChips.length ? `<div class="ability-grid">${learnedCosmosAndChips.map(renderKnownAbilityCard).join("")}</div>` : `<p class="inventory-note">${escapeHtml(state.current.abilities || "Nenhuma habilidade cósmica, chip modificador ou talento extra registrado ainda.")}</p>`}
@@ -2405,23 +2627,268 @@ function renderCosmosPage(derived) {
   `;
 }
 
+function renderCosmicSpellSlotPanel(slots = cosmicSpellSlotState()) {
+  const status = slots.over > 0
+    ? `${slots.over} magia${slots.over > 1 ? "s" : ""} acima do limite`
+    : `${slots.free} livre${slots.free === 1 ? "" : "s"}`;
+  const percent = slots.total ? Math.min(100, Math.round((slots.used / slots.total) * 100)) : 0;
+  return `
+    <div class="mod-slot-panel cosmic-slot-panel ${slots.over > 0 ? "over-limit" : ""}">
+      <div class="mod-slot-head">
+        <span>Magias conhecidas</span>
+        <strong>${slots.used}/${slots.total}</strong>
+      </div>
+      <div class="mod-slot-meter cosmic-slot-meter" aria-label="Uso dos espaços de magia cósmica">
+        <span style="width:${percent}%"></span>
+      </div>
+      <p class="inventory-note">${escapeHtml(COSMIC_SPELL_SLOT_RULE_SUMMARY)}</p>
+      <div class="slot-source-controls">
+        <label>
+          <span>Treino</span>
+          <input type="number" min="0" step="1" value="${slots.training}" data-cosmic-slot-source="training" aria-label="Espaços de magia por treino" />
+        </label>
+        <label>
+          <span>Grimórios</span>
+          <input type="number" min="0" step="1" value="${slots.grimoires}" data-cosmic-slot-source="grimoires" aria-label="Espaços de magia por grimórios" />
+        </label>
+      </div>
+      <div class="detail-list">
+        ${renderDetailRow("Espaços livres", status)}
+        ${slots.sources.map((source) => renderDetailRow(source.label, `${source.slots} espaço${source.slots === 1 ? "" : "s"}`)).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderModifierSlotPanel(modSlots = modifierSlotState()) {
+  const status = modSlots.over > 0
+    ? `${modSlots.over} chip${modSlots.over > 1 ? "s" : ""} acima do limite`
+    : `${modSlots.free} livre${modSlots.free === 1 ? "" : "s"}`;
+  const percent = modSlots.total ? Math.min(100, Math.round((modSlots.used / modSlots.total) * 100)) : 0;
+  return `
+    <div class="mod-slot-panel ${modSlots.over > 0 ? "over-limit" : ""}">
+      <div class="mod-slot-head">
+        <span>Chips modificadores</span>
+        <strong>${modSlots.used}/${modSlots.total}</strong>
+      </div>
+      <div class="mod-slot-meter" aria-label="Uso dos espaços de mods">
+        <span style="width:${percent}%"></span>
+      </div>
+      <p class="inventory-note">Cada chip modificador ocupa 1 espaço de mod. O total vem da arma e da armadura equipadas.</p>
+      <div class="detail-list">
+        ${renderDetailRow("Espaços livres", status)}
+        ${modSlots.sources.map((source) => renderDetailRow(source.label, `${source.mods} mod${source.mods === 1 ? "" : "s"}`)).join("")}
+      </div>
+    </div>
+  `;
+}
+
 function renderCubePage(derived) {
-  const cubeItems = state.current.inventory.filter((entry) => entry.inCube);
-  el.cubeUsagePill.textContent = `${cubeItems.length}/${derived.cubeSlots} slots`;
+  const storage = syncLoadUsedFromCubeStorage(cubeStorageStats(derived));
+  const { cubes, usedUnits, totalUnits, looseItems, legacyCubeItems } = storage;
+  const load = cubeLoadStats(derived);
+  const openCube = cubes.find((entry) => entry.uid === state.openCubeUid) || cubes[0] || null;
+  if (openCube && state.openCubeUid !== openCube.uid) state.openCubeUid = openCube.uid;
+  const openCubeItems = openCube ? cubeContainedEntries(openCube.uid) : [];
+  syncLoadUsedInput();
+  el.cubeUsagePill.textContent = `${usedUnits}/${totalUnits} unidades`;
   el.cubePageContent.innerHTML = `
     <section class="inventory-panel">
-      <h3>Uso do cubo</h3>
+      <h3>Sistema de cubos</h3>
       <div class="detail-list">
-        ${renderDetailRow("Slots usados", `${cubeItems.length}/${derived.cubeSlots}`)}
-        ${renderDetailRow("Regra atual", "5 + MOD FOR + bônus racial + bônus do chip")}
-        ${renderDetailRow("Observação", "Com atributo 7, o MOD segue a ficha: INT((valor - 10) / 2).")}
+        ${renderDetailRow("Cubos físicos", cubes.length)}
+        ${renderDetailRow("Unidades armazenadas", `${usedUnits}/${totalUnits}`)}
+        ${renderDetailRow("Capacidade base da ficha", derived.cubeSlots)}
+        ${renderDetailRow("Carga total", `${load.carriedCubes}/${load.maxCubes} cubo${load.maxCubes === 1 ? "" : "s"} - ${formatWeight(load.weightKg)}/${formatWeight(load.capacityKg)} Kg`)}
+        ${renderDetailRow("Status", load.statusLabel)}
+        ${renderDetailRow("Arrastar", "Arraste um item solto para dentro de um cubo.")}
       </div>
     </section>
-    <section class="inventory-panel inventory-panel-wide">
-      <h3>Dentro do cubo</h3>
-      ${renderInventoryCards(cubeItems, { showCubeAction: true, showEquipAction: false })}
+    <section class="inventory-panel">
+      <h3>Criar cubo</h3>
+      ${renderCubeCreatorForm()}
     </section>
+    <section class="inventory-panel inventory-panel-wide">
+      <h3>Cubos do personagem</h3>
+      ${cubes.length ? `<div class="cube-grid">${cubes.map(renderCubeCard).join("")}</div>` : '<div class="empty-state">Nenhum cubo criado. Crie um cubo aqui ou compre o Cubo simples na biblioteca de Itens.</div>'}
+    </section>
+    <section class="inventory-panel inventory-panel-wide">
+      <h3>Itens soltos</h3>
+      ${renderInventoryCards(looseItems, { showCubeAction: false, showEquipAction: false, draggable: true })}
+    </section>
+    <section class="inventory-panel inventory-panel-wide">
+      <h3>${openCube ? `Interior: ${escapeHtml(cubeDisplayName(openCube))}` : "Interior do cubo"}</h3>
+      ${openCube ? `
+        <p class="inventory-note">Duplo clique em outro cubo para abrir o interior dele. Para tirar um item, use o botão abaixo.</p>
+        ${renderInventoryCards(openCubeItems, { showCubeAction: true, showEquipAction: false })}
+      ` : '<div class="empty-state">Nenhum cubo selecionado.</div>'}
+    </section>
+    ${legacyCubeItems.length ? `
+      <section class="inventory-panel inventory-panel-wide">
+        <h3>Cubo antigo da ficha</h3>
+        <p class="inventory-note">Itens salvos no formato antigo aparecem aqui até serem retirados e colocados em um cubo físico.</p>
+        ${renderInventoryCards(legacyCubeItems, { showCubeAction: true, showEquipAction: false })}
+      </section>
+    ` : ""}
   `;
+}
+
+function renderCubeCreatorForm() {
+  return `
+    <form class="cube-create-form" data-cube-create-form>
+      <label>
+        Tipo
+        <select data-cube-create-type>
+          <option value="simple">Cubo simples</option>
+          <option value="cargo">Cubo de cargas</option>
+          <option value="specialized">Cubo especializado</option>
+        </select>
+      </label>
+      <label>
+        Nome
+        <input type="text" data-cube-create-name placeholder="Ex.: Cubo de minério" />
+      </label>
+      <label data-cube-variation-field hidden>
+        Capacidade
+        <input type="number" min="1" max="99" step="1" value="1" data-cube-create-capacity disabled />
+      </label>
+      <p class="inventory-note" data-cube-create-summary>${escapeHtml(CUBE_TYPE_DEFINITIONS.simple.summary)}</p>
+      <button class="primary-button" type="submit">Criar cubo</button>
+    </form>
+  `;
+}
+
+function renderCubeCard(entry) {
+  const item = findMarketItem(entry.itemId);
+  const capacity = cubeCapacity(entry);
+  const contents = cubeContainedEntries(entry.uid);
+  const ratio = capacity ? clamp(contents.length / capacity, 0, 1) : 1;
+  const hue = Math.round(128 - ratio * 128);
+  const status = contents.length >= capacity ? "Cheio" : contents.length === 0 ? "Vazio" : "Parcial";
+  const selected = state.openCubeUid === entry.uid;
+  return `
+    <article class="cube-card compact-card ${selected ? "selected" : ""}" tabindex="0" data-cube-drop-uid="${escapeHtml(entry.uid)}" style="--cube-hue:${hue}; --cube-fill:${Math.round(ratio * 100)}%">
+      <div class="cube-core" aria-hidden="true">
+        <span></span>
+      </div>
+      <div class="cube-card-body">
+        <span class="ability-source">${escapeHtml(cubeTypeLabel(entry))}</span>
+        <h4>${escapeHtml(cubeDisplayName(entry))}</h4>
+        <p class="card-meta-line">${contents.length}/${capacity} unidades - ${escapeHtml(status)}</p>
+        <p class="inventory-note">${escapeHtml(cubeRuleText(entry))}</p>
+      </div>
+      <div class="inventory-actions">
+        <button class="mini-button" type="button" data-inventory-action="open-cube" data-uid="${escapeHtml(entry.uid)}">Abrir</button>
+        <button class="mini-button danger-mini-button" type="button" data-inventory-action="sell" data-uid="${escapeHtml(entry.uid)}">Vender</button>
+      </div>
+      <div class="card-hover-popover" role="tooltip">
+        <strong>${escapeHtml(cubeDisplayName(entry))}</strong>
+        <p>${escapeHtml(cubeRuleText(entry))}</p>
+        <p>${escapeHtml(item?.summary || "Cubo criado na ficha.")}</p>
+      </div>
+    </article>
+  `;
+}
+
+function syncCubeCreatorFields(form) {
+  if (!form) return;
+  const type = form.querySelector("[data-cube-create-type]")?.value || "simple";
+  const definition = CUBE_TYPE_DEFINITIONS[type] || CUBE_TYPE_DEFINITIONS.simple;
+  form.querySelectorAll("[data-cube-variation-field]").forEach((field) => {
+    field.hidden = type === "simple";
+  });
+  const capacityInput = form.querySelector("[data-cube-create-capacity]");
+  if (capacityInput instanceof HTMLInputElement) {
+    const wasFixed = capacityInput.disabled;
+    capacityInput.disabled = type === "simple";
+    if (type === "simple") capacityInput.value = "1";
+    else if (wasFixed || !capacityInput.value) capacityInput.value = "4";
+  }
+  const summary = form.querySelector("[data-cube-create-summary]");
+  if (summary) {
+    summary.textContent = type === "simple"
+      ? definition.summary
+      : `${definition.summary} Ajuste a capacidade; o vínculo será definido pelo primeiro item guardado.`;
+  }
+}
+
+function createCubeFromForm(event) {
+  event.preventDefault();
+  readForm();
+  if (!canAddPhysicalCube()) return;
+  const form = event.target;
+  const type = form.querySelector("[data-cube-create-type]")?.value || "simple";
+  const definition = CUBE_TYPE_DEFINITIONS[type] || CUBE_TYPE_DEFINITIONS.simple;
+  const nameInput = form.querySelector("[data-cube-create-name]");
+  const capacityInput = form.querySelector("[data-cube-create-capacity]");
+  const capacity = definition.fixedCapacity || clamp(numberValue(capacityInput?.value, 4), 1, 99);
+  const id = `custom-cube-${type}-${dataSlug(nameInput?.value || definition.label)}-${Date.now()}`;
+  const item = {
+    id,
+    category: "cube",
+    name: String(nameInput?.value || "").trim() || definition.label,
+    tier: "Custom",
+    cubeKind: type,
+    cubeCapacity: capacity,
+    cubeMaterialMode: definition.materialMode,
+    price: 0,
+    weight: `${CUBE_WEIGHT_KG} Kg`,
+    tags: uniqueTags(["cubo", type]),
+    summary: type === "simple"
+      ? definition.summary
+      : `${definition.summary} Capacidade: ${capacity} unidade${capacity === 1 ? "" : "s"}. O vínculo é definido pelo primeiro item guardado.`,
+  };
+  state.current.customItems = state.current.customItems || [];
+  state.current.customItems.unshift(item);
+  const uid = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
+  state.current.inventory.unshift({
+    uid,
+    itemId: item.id,
+    category: "cube",
+    inCube: false,
+    cubeUid: "",
+    supportSlot: "",
+    crackLevel: 0,
+  });
+  state.openCubeUid = uid;
+  form.reset();
+  renderSummary();
+  showToast(`${item.name} criado.`);
+}
+
+function openCubeInterior(uid) {
+  if (!uid || !getCubeEntries().some((entry) => entry.uid === uid)) return;
+  state.openCubeUid = uid;
+  renderSummary();
+}
+
+function moveInventoryItemToCube(itemUid, cubeUid) {
+  const itemEntry = getInventoryEntry(itemUid);
+  const cubeEntry = getInventoryEntry(cubeUid);
+  if (!itemEntry || !cubeEntry || !isCubeEntry(cubeEntry)) return;
+  const item = findMarketItem(itemEntry.itemId);
+  if (!item || !canStoreEntryInPhysicalCube(itemEntry)) {
+    showToast("Apenas itens soltos podem entrar em cubos.");
+    return;
+  }
+  if (!canDisableExternalSupportProvider(itemEntry)) return;
+  if (itemEntry.uid === cubeEntry.uid) return;
+  const capacity = cubeCapacity(cubeEntry);
+  const contents = cubeContainedEntries(cubeEntry.uid);
+  if (contents.length >= capacity) {
+    showToast(`${cubeDisplayName(cubeEntry)} está cheio.`);
+    return;
+  }
+  if (!cubeAcceptsItem(cubeEntry, itemEntry)) {
+    showToast(cubeRejectText(cubeEntry));
+    return;
+  }
+  itemEntry.cubeUid = cubeEntry.uid;
+  itemEntry.inCube = false;
+  itemEntry.supportSlot = "";
+  state.openCubeUid = cubeEntry.uid;
+  renderSummary();
+  showToast(`${item.name} guardado em ${cubeDisplayName(cubeEntry)}.`);
 }
 
 function renderAbilitiesPage() {
@@ -2447,6 +2914,9 @@ function renderDicePage() {
       ${latest.rolls.map((roll) => `<span class="die-face" aria-label="Dado rolado ${roll}">${roll}</span>`).join("")}
     </div>
     <p>${escapeHtml(latest.formula)}</p>
+    ${latest.resultLabel ? `<p><strong>${escapeHtml(latest.resultLabel)}</strong></p>` : ""}
+    ${latest.cosmicEffect ? `<p>${escapeHtml(latest.cosmicEffect)}</p>` : ""}
+    ${latest.triggeredCosmicEffect && latest.triggeredCosmicEffect !== "Nenhuma" ? `<p>${escapeHtml(latest.triggeredCosmicEffect)}</p>` : ""}
     ${latest.alternateRolls?.length ? `<p>Alternativas: ${escapeHtml(latest.alternateRolls.map((rolls) => `[${rolls.join(", ")}]`).join(" / "))}</p>` : ""}
     ${latest.modifier || latest.bonus ? `<p>Modificador: ${formatMod(latest.modifier || 0)} | Bônus: ${formatMod(latest.bonus || 0)}</p>` : ""}
   ` : "Nenhuma rolagem ainda.";
@@ -2455,7 +2925,7 @@ function renderDicePage() {
     <article class="dice-log-entry">
       <div>
         <strong>${escapeHtml(entry.label || entry.formula)} = ${entry.total}</strong>
-        <span>${escapeHtml(entry.formula)} | ${escapeHtml(entry.rolls.join(", "))}${entry.modifier ? ` ${formatMod(entry.modifier)}` : ""}${entry.bonus ? ` ${formatMod(entry.bonus)}` : ""}${entry.mode && entry.mode !== "normal" ? ` | ${entry.mode === "advantage" ? "vantagem" : "desvantagem"}` : ""}</span>
+        <span>${escapeHtml(entry.formula)} | ${escapeHtml(entry.rolls.join(", "))}${entry.modifier ? ` ${formatMod(entry.modifier)}` : ""}${entry.bonus ? ` ${formatMod(entry.bonus)}` : ""}${entry.mode && entry.mode !== "normal" ? ` | ${entry.mode === "advantage" ? "vantagem" : "desvantagem"}` : ""}${entry.resultLabel ? ` | ${escapeHtml(entry.resultLabel)}` : ""}</span>
       </div>
       <time>${escapeHtml(formatShortTime(entry.createdAt))}</time>
     </article>
@@ -2486,6 +2956,7 @@ function renderManualCreatedPage() {
 }
 
 function renderAbilityCard(entry) {
+  const passiveSummary = formatPassiveEffectSummary(entry.passiveEffects, { includeConditional: true, empty: "" });
   return `
     <article class="inventory-card ability-card compact-card ${entry.imageDataUrl ? "with-image" : ""}" tabindex="0">
       ${renderCardImage(entry)}
@@ -2497,6 +2968,7 @@ function renderAbilityCard(entry) {
       <div class="card-hover-popover" role="tooltip">
         <strong>${escapeHtml(entry.name)}</strong>
         ${entry.meta ? `<p>${escapeHtml(entry.meta)}</p>` : ""}
+        ${passiveSummary ? `<p><strong>Passivo automático:</strong> ${escapeHtml(passiveSummary)}</p>` : ""}
         <p>${escapeHtml(entry.effect || "Sem efeito registrado.")}</p>
       </div>
     </article>
@@ -2505,6 +2977,7 @@ function renderAbilityCard(entry) {
 
 function renderKnownAbilityCard(entry) {
   const canUnequipChip = entry.source === "Chip modificador";
+  const passiveSummary = formatPassiveEffectSummary(entry.passiveEffects, { includeConditional: true, empty: "" });
   return `
     <article class="inventory-card ability-card compact-card ${canUnequipChip ? "with-actions" : ""} ${entry.imageDataUrl ? "with-image" : ""}" tabindex="0">
       ${renderCardImage(entry)}
@@ -2521,6 +2994,7 @@ function renderKnownAbilityCard(entry) {
       <div class="card-hover-popover" role="tooltip">
         <strong>${escapeHtml(entry.name)}</strong>
         ${entry.meta ? `<p>${escapeHtml(entry.meta)}</p>` : ""}
+        ${passiveSummary ? `<p><strong>Passivo automático:</strong> ${escapeHtml(passiveSummary)}</p>` : ""}
         <p>${escapeHtml(entry.effect || "Sem efeito registrado.")}</p>
       </div>
     </article>
@@ -2587,28 +3061,52 @@ function renderInventoryCards(entries, options = {}) {
         const item = findMarketItem(entry.itemId);
         if (!item) return "";
         const equipped = isInventoryEquipped(entry);
-        const cubeLabel = entry.inCube ? "Tirar do cubo" : "Guardar no cubo";
+        const cubeLabel = entry.cubeUid || entry.inCube ? "Tirar do cubo" : "Guardar no cubo";
+        const cubeAction = entry.cubeUid ? "cube-remove" : "cube";
         const equipAction = equipped ? "unequip" : "equip";
         const equipLabel = equipped ? "Desequipar" : "Equipar";
         const salePrice = Number.isFinite(item.price) ? item.price : 0;
+        const draggableAttrs = options.draggable && canStoreEntryInPhysicalCube(entry) ? ` draggable="true" data-drag-inventory-uid="${escapeHtml(entry.uid)}"` : "";
+        const supportState = options.supportState || externalSupportState();
+        const supportTarget = options.showSupportAction && !entry.supportSlot ? findAvailableExternalSupport(entry, supportState) : null;
+        const canAttachSupport = options.showSupportAction && canAttachToExternalSupport(entry);
+        const supportLabel = entry.supportSlot ? `Suporte: ${externalSupportTypeLabel(entry.supportSlot)}` : "";
+        const providerCounts = supportProviderCounts(entry);
+        const providerLabel = EXTERNAL_SUPPORT_TYPES
+          .filter((type) => providerCounts[type.id] > 0)
+          .map((type) => `${type.singular} +${providerCounts[type.id]}`)
+          .join(", ");
+        const cardMeta = [compactMarketMeta(item), supportLabel, providerLabel ? `Fornece: ${providerLabel}` : ""].filter(Boolean).join(" - ");
+        const tracksCracks = ["item", "weapon", "armor", "cube"].includes(item.category);
+        const crackLevel = itemCrackLevel(entry);
         return `
-          <article class="inventory-card compact-card ${item.imageDataUrl ? "with-image" : ""}" tabindex="0">
+          <article class="inventory-card compact-card ${item.imageDataUrl ? "with-image" : ""}" tabindex="0"${draggableAttrs}>
             ${renderCardImage(item)}
             <div class="card-face">
               <span class="ability-source">${escapeHtml(marketCategoryLabel(item.category))}</span>
               <h4>${renderCardTitleButton(item.name)}</h4>
-              <p class="card-meta-line">${escapeHtml(compactMarketMeta(item))}</p>
+              <p class="card-meta-line">${escapeHtml(cardMeta)}</p>
             </div>
             <div class="inventory-actions">
-              ${options.showEquipAction && item.category !== "item" ? `<button class="mini-button" type="button" data-inventory-action="${equipAction}" data-uid="${entry.uid}">${equipLabel}</button>` : ""}
-              ${options.showCubeAction && item.category === "item" ? `<button class="mini-button" type="button" data-inventory-action="cube" data-uid="${entry.uid}">${cubeLabel}</button>` : ""}
+              ${options.showEquipAction && ["weapon", "armor"].includes(item.category) ? `<button class="mini-button" type="button" data-inventory-action="${equipAction}" data-uid="${entry.uid}">${equipLabel}</button>` : ""}
+              ${options.showCubeAction && item.category === "item" && (entry.cubeUid || entry.inCube) ? `<button class="mini-button" type="button" data-inventory-action="${cubeAction}" data-uid="${entry.uid}">${cubeLabel}</button>` : ""}
+              ${entry.supportSlot ? `<button class="mini-button" type="button" data-inventory-action="support-remove" data-uid="${entry.uid}">Soltar suporte</button>` : ""}
+              ${canAttachSupport && !entry.supportSlot ? `<button class="mini-button" type="button" data-inventory-action="support-attach" data-uid="${entry.uid}" ${supportTarget ? "" : "disabled"}>${supportTarget ? `Prender em ${supportTarget.singular}` : "Sem suporte"}</button>` : ""}
               <button class="mini-button danger-mini-button" type="button" data-inventory-action="sell" data-uid="${entry.uid}">Vender</button>
             </div>
             <div class="card-hover-popover" role="tooltip">
               <strong>${escapeHtml(item.name)}</strong>
               <p>${escapeHtml(marketMeta(item))}</p>
               <p>${escapeHtml(item.summary || "Sem descrição.")}</p>
+              ${supportLabel || providerLabel ? `<p>${escapeHtml([supportLabel, providerLabel ? `Fornece: ${providerLabel}` : ""].filter(Boolean).join(" - "))}</p>` : ""}
               ${(item.tags || []).length ? `<div class="tag-row">${item.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
+              ${tracksCracks ? `
+                <label class="sell-field">
+                  Rachaduras
+                  <input type="number" min="0" max="${ITEM_CRACK_MAX}" step="1" value="${crackLevel}" data-item-crack="${escapeHtml(entry.uid)}" />
+                </label>
+                ${crackLevel >= ITEM_CRACK_MAX ? '<p><strong>Item colapsado.</strong></p>' : ""}
+              ` : ""}
               <label class="sell-field">
                 Valor de venda
                 <input type="number" min="0" step="1" value="${salePrice}" data-sell-value />
@@ -2629,8 +3127,9 @@ function buyMarketItem(itemId) {
     showToast("Este item não tem preço definido.");
     return;
   }
+  if (item.category === "cube" && !canAddPhysicalCube()) return;
   if (state.current.currency < item.price) {
-    showToast("Dinheiro insuficiente para comprar.");
+    showToast("Luzentis insuficientes para comprar.");
     return;
   }
   state.current.currency -= item.price;
@@ -2638,7 +3137,10 @@ function buyMarketItem(itemId) {
     uid: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
     itemId: item.id,
     category: item.category,
-    inCube: item.category === "item",
+    inCube: false,
+    cubeUid: "",
+    supportSlot: "",
+    crackLevel: 0,
   });
   renderForm();
   showToast(`${item.name} comprado e adicionado aos equipamentos.`);
@@ -2653,12 +3155,23 @@ function learnLibraryAbility(itemId) {
     showToast("Essa habilidade já está na ficha.");
     return;
   }
+  if (source === "Cosmos" && !canAddCosmicSpell()) {
+    const slots = cosmicSpellSlotState();
+    showToast(`Sem espaços de magia cósmica: ${slots.used}/${slots.total}.`, "cosmic-error");
+    return;
+  }
+  if (source === "Chip modificador" && !canAddModifierChip()) {
+    const slots = modifierSlotState();
+    showToast(`Sem espaço de mods para chip: ${slots.used}/${slots.total}.`, "tech-error");
+    return;
+  }
   state.current.knownAbilities.unshift({
     id: item.id,
     name: item.name,
     source,
     effect: item.summary,
     meta: libraryMeta(item),
+    passiveEffects: source === "Chip modificador" ? normalizePassiveEffects(item.passiveEffects || inferModifierChipPassiveEffects(item)) : [],
     custom: false,
   });
   renderSummary();
@@ -2668,6 +3181,7 @@ function learnLibraryAbility(itemId) {
 function unequipModifierChip(abilityId) {
   const ability = (state.current.knownAbilities || []).find((entry) => entry.id === abilityId);
   if (!ability) return;
+  if (!canUseCosmicSpellSlotLayout({ excludedAbilityId: abilityId })) return;
   state.current.knownAbilities = (state.current.knownAbilities || []).filter((entry) => entry.id !== abilityId);
   renderSummary();
   showToast(`${ability.name} desequipado da ficha.`);
@@ -2687,17 +3201,16 @@ function rollDice() {
 
 function rollInitiative() {
   readForm();
-  const diceProfile = currentDiceProfile();
   const totals = totalAttributes();
   const modifier = attributeModifier(totals.REF);
-  const pool = rollDicePool(diceProfile.count, 6);
+  const pool = rollDicePool(1, 20);
   const total = pool.raw + modifier;
-  const formula = `Iniciativa: ${diceProfile.count}d6${formatMod(modifier)}`;
+  const formula = `Iniciativa: 1d20${formatMod(modifier)}`;
   pushDiceLog({
     kind: "initiative",
     label: "Iniciativa",
-    count: diceProfile.count,
-    sides: 6,
+    count: 1,
+    sides: 20,
     bonus: 0,
     modifier,
     attribute: "REF",
@@ -2708,7 +3221,7 @@ function rollInitiative() {
       type: "combatant-initiative",
       system: "solaris",
       attribute: "REF",
-      diceProfile: diceProfile.reason,
+      diceProfile: "1d20 + MOD REF",
     },
   });
   showToast(`Iniciativa: ${total}`);
@@ -2738,8 +3251,9 @@ function defaultTestModeFor(kind, name) {
 function openTestDialog({ kind = "Teste", name = "Rolagem", attr = "FOR", modifier = null, mode = "normal" } = {}) {
   readForm();
   const totals = totalAttributes();
-  const testModifier = modifier ?? attributeModifier(totals[attr] || ATTRIBUTE_BASE);
-  state.pendingTest = { kind, name, attr, modifier: testModifier };
+  const passiveBonus = kind === "Perícia" ? passiveSkillBonus(name) : kind === "Proteção" ? passiveProtectionBonus(name) : 0;
+  const testModifier = modifier ?? (attributeModifier(totals[attr] || ATTRIBUTE_BASE) + passiveBonus);
+  state.pendingTest = { kind, name, attr, modifier: testModifier, diceType: kind === "Ataque" ? "d20" : "d6-pool" };
   el.testDialogKicker.textContent = kind;
   el.testDialogTitle.textContent = `${name} (${attr})`;
   el.testBonus.value = "0";
@@ -2756,10 +3270,10 @@ function closeTestDialog() {
 
 function renderPendingTestFormula() {
   if (!state.pendingTest) return;
-  const diceProfile = currentDiceProfile();
   const bonus = numberValue(el.testBonus.value, 0);
   const modeLabel = el.testMode.value === "advantage" ? "vantagem" : el.testMode.value === "disadvantage" ? "desvantagem" : "normal";
-  el.testDialogFormula.textContent = `${diceProfile.count}d6 ${formatMod(state.pendingTest.modifier)} ${bonus ? formatMod(bonus) : ""} (${modeLabel})`;
+  const diceFormula = state.pendingTest.diceType === "d20" ? "1d20" : `${currentDiceProfile().count}d6`;
+  el.testDialogFormula.textContent = `${diceFormula} ${formatMod(state.pendingTest.modifier)} ${bonus ? formatMod(bonus) : ""} (${modeLabel})`;
 }
 
 function submitTestRoll(event) {
@@ -2770,10 +3284,14 @@ function submitTestRoll(event) {
   const mode = el.testMode.value;
   const result = rollCharacterTest(state.pendingTest, bonus, mode);
   closeTestDialog();
-  showToast(`${testName}: ${result.total}`);
+  showToast(`${testName}: ${result.total}${result.resultLabel ? ` - ${result.resultLabel}` : ""}`);
 }
 
 function rollCharacterTest(test, situationalBonus = 0, mode = "normal") {
+  if (test.diceType === "d20" || test.kind === "Ataque") {
+    return rollD20CharacterTest(test, situationalBonus, mode);
+  }
+
   const diceProfile = currentDiceProfile();
   const pools = [rollDicePool(diceProfile.count, 6)];
   if (mode !== "normal") pools.push(rollDicePool(diceProfile.count, 6));
@@ -2782,8 +3300,12 @@ function rollCharacterTest(test, situationalBonus = 0, mode = "normal") {
     : mode === "disadvantage"
       ? pools.reduce((worst, pool) => pool.raw < worst.raw ? pool : worst, pools[0])
       : pools[0];
-  const total = chosen.raw + test.modifier + situationalBonus;
-  const formula = `${test.name}: ${diceProfile.count}d6${formatMod(test.modifier)}${situationalBonus ? formatMod(situationalBonus) : ""}`;
+  const cosmicEffect = consumePendingCosmicEffect();
+  const total = chosen.raw + test.modifier + situationalBonus + cosmicEffect.value;
+  const resultLabel = classifyCommonTestResult(total, chosen.rolls);
+  const formula = `${test.name}: ${diceProfile.count}d6${formatMod(test.modifier)}${situationalBonus ? formatMod(situationalBonus) : ""}${cosmicEffect.value ? formatMod(cosmicEffect.value) : ""}`;
+  const triggeredCosmicEffect = detectCosmicSequence(chosen.rolls);
+  if (triggeredCosmicEffect) state.current.pendingCosmicEffect = triggeredCosmicEffect;
   pushDiceLog({
     label: `${test.kind} - ${test.name}`,
     count: diceProfile.count,
@@ -2795,8 +3317,74 @@ function rollCharacterTest(test, situationalBonus = 0, mode = "normal") {
     mode,
     total,
     formula,
+    resultLabel,
+    cosmicEffect: cosmicEffect.label,
+    triggeredCosmicEffect: cosmicEffectLabel(triggeredCosmicEffect),
   });
-  return { total, rolls: chosen.rolls };
+  renderSummary();
+  return { total, rolls: chosen.rolls, resultLabel };
+}
+
+function rollD20CharacterTest(test, situationalBonus = 0, mode = "normal") {
+  const pools = [rollDicePool(1, 20)];
+  if (mode !== "normal") pools.push(rollDicePool(1, 20));
+  const chosen = mode === "advantage"
+    ? pools.reduce((best, pool) => pool.raw > best.raw ? pool : best, pools[0])
+    : mode === "disadvantage"
+      ? pools.reduce((worst, pool) => pool.raw < worst.raw ? pool : worst, pools[0])
+      : pools[0];
+  const natural = chosen.rolls[0];
+  const total = natural + test.modifier + situationalBonus;
+  const resultLabel = natural === 20 ? "Crítico de ataque" : natural === 1 ? "Erro crítico de ataque" : "";
+  const formula = `${test.name}: 1d20${formatMod(test.modifier)}${situationalBonus ? formatMod(situationalBonus) : ""}`;
+  pushDiceLog({
+    kind: "attack",
+    label: `${test.kind} - ${test.name}`,
+    count: 1,
+    sides: 20,
+    bonus: situationalBonus,
+    modifier: test.modifier,
+    rolls: chosen.rolls,
+    alternateRolls: pools.length > 1 ? pools.map((pool) => pool.rolls) : [],
+    mode,
+    total,
+    formula,
+    resultLabel,
+  });
+  return { total, rolls: chosen.rolls, resultLabel };
+}
+
+function classifyCommonTestResult(total, rolls) {
+  if (rolls.length === 3 && rolls.every((roll) => roll === 6)) return "Crítico: triplo 6";
+  if (rolls.length === 3 && rolls.every((roll) => roll === 1)) return "Erro crítico: triplo 1";
+  if (rolls.length === 2 && rolls.every((roll) => roll === 6)) return "Superação extrema em Colapso";
+  if (total >= 15) return "Sucesso completo";
+  if (total >= 10) return "Sucesso parcial";
+  return "Falha";
+}
+
+function detectCosmicSequence(rolls) {
+  if (rolls.length !== 3) return "";
+  const sequence = rolls.join(",");
+  if (sequence === "4,5,6") return "blessing";
+  if (sequence === "3,2,1") return "failure";
+  return "";
+}
+
+function consumePendingCosmicEffect() {
+  const effect = state.current.pendingCosmicEffect;
+  if (!effect) return { value: 0, label: "" };
+  const roll = Math.floor(Math.random() * 4) + 1;
+  state.current.pendingCosmicEffect = "";
+  return effect === "blessing"
+    ? { value: roll, label: `Bênção Cósmica +${roll}` }
+    : { value: -roll, label: `Falha Cósmica -${roll}` };
+}
+
+function cosmicEffectLabel(effect) {
+  if (effect === "blessing") return "Bênção guardada (+1d4)";
+  if (effect === "failure") return "Falha guardada (-1d4)";
+  return "Nenhuma";
 }
 
 function rollDicePool(count, sides) {
@@ -2860,10 +3448,14 @@ function handleEquipmentRoll(kind) {
     showToast("Equipe uma arma antes de rolar.");
     return;
   }
+  if (itemCrackLevel(getEquippedInventoryEntry("weapon")) >= ITEM_CRACK_MAX) {
+    showToast("A arma está colapsada e precisa ser reparada.");
+    return;
+  }
   const group = classifyWeapon(weapon);
   if (kind === "attack") {
     const attr = weaponAttackAttribute(group);
-    const modifier = attributeModifier(totalAttributes()[attr]);
+    const modifier = attributeModifier(totalAttributes()[attr]) + passiveAttackBonus(weapon, group);
     openTestDialog({ kind: "Ataque", name: weapon.name, attr, modifier });
     return;
   }
@@ -3009,7 +3601,10 @@ function createManualEntry(event) {
       uid: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
       itemId: item.id,
       category: item.category,
-      inCube: item.category === "item",
+      inCube: false,
+      cubeUid: "",
+      supportSlot: "",
+      crackLevel: 0,
     });
     event.currentTarget.reset();
     clearManualItemImage();
@@ -3024,6 +3619,16 @@ function createManualEntry(event) {
     "chip-mod": "Chip modificador",
     ability: "Manual",
   };
+  if (manual.type === "cosmos" && !canAddCosmicSpell()) {
+    const slots = cosmicSpellSlotState();
+    showToast(`Sem espaços de magia cósmica: ${slots.used}/${slots.total}.`, "cosmic-error");
+    return;
+  }
+  if (manual.type === "chip-mod" && !canAddModifierChip()) {
+    const slots = modifierSlotState();
+    showToast(`Sem espaço de mods para chip: ${slots.used}/${slots.total}.`, "tech-error");
+    return;
+  }
   state.current.knownAbilities = state.current.knownAbilities || [];
   state.current.knownAbilities.unshift({
     id,
@@ -3031,6 +3636,7 @@ function createManualEntry(event) {
     source: manual.type === "ability" ? manual.tier || "Manual" : sourceMap[manual.type] || "Manual",
     effect: manual.effect || "Sem efeito registrado.",
     meta: buildManualAbilityMeta(manual.type, manual),
+    passiveEffects: manual.type === "chip-mod" ? inferModifierChipPassiveEffects({ name: manual.name, effect: manual.effect, tags }) : [],
     tags,
     custom: true,
   });
@@ -3047,11 +3653,47 @@ function handleInventoryAction(action, uid, trigger = null) {
   const item = findMarketItem(entry.itemId);
   if (!item) return;
 
+  if (action === "open-cube") {
+    openCubeInterior(uid);
+    return;
+  }
+
+  if (action === "cube-remove") {
+    entry.cubeUid = "";
+    entry.inCube = false;
+    renderSummary();
+    showToast(`${item.name} removido do cubo.`);
+    return;
+  }
+
+  if (action === "support-attach") {
+    attachEntryToExternalSupport(entry);
+    return;
+  }
+
+  if (action === "support-remove") {
+    entry.supportSlot = "";
+    renderSummary();
+    showToast(`${item.name} solto do suporte.`);
+    return;
+  }
+
   if (action === "sell") {
+    if (isCubeEntry(entry) && cubeContainedEntries(uid).length) {
+      showToast("Esvazie o cubo antes de vender.");
+      return;
+    }
+    if (!canDisableExternalSupportProvider(entry)) return;
+    const nextWeaponUid = item.category === "weapon" && state.current.equippedWeaponUid === uid ? "" : state.current.equippedWeaponUid;
+    const nextArmorUid = item.category === "armor" && state.current.equippedArmorUid === uid ? "" : state.current.equippedArmorUid;
+    const removesModSource = nextWeaponUid !== state.current.equippedWeaponUid || nextArmorUid !== state.current.equippedArmorUid;
+    if (removesModSource && !canUseModifierSlotLayout({ weaponUid: nextWeaponUid, armorUid: nextArmorUid })) return;
+    if (removesModSource && !canUseCosmicSpellSlotLayout({ weaponUid: nextWeaponUid, armorUid: nextArmorUid })) return;
     const input = trigger?.closest(".inventory-card")?.querySelector("[data-sell-value]");
     const saleValue = Math.max(0, numberValue(input?.value, 0));
     state.current.currency += saleValue;
     state.current.inventory = state.current.inventory.filter((inventoryItem) => inventoryItem.uid !== uid);
+    if (state.openCubeUid === uid) state.openCubeUid = "";
     if (state.current.equippedWeaponUid === uid) {
       state.current.equippedWeaponUid = "";
       state.current.weapon = "";
@@ -3061,11 +3703,15 @@ function handleInventoryAction(action, uid, trigger = null) {
       state.current.armor = "";
     }
     renderForm();
-    showToast(`${item.name} vendido por ${saleValue} dinheiro.`);
+    showToast(`${item.name} vendido por ${formatCurrency(saleValue)}.`);
     return;
   }
 
   if (action === "equip") {
+    const nextWeaponUid = item.category === "weapon" ? uid : state.current.equippedWeaponUid;
+    const nextArmorUid = item.category === "armor" ? uid : state.current.equippedArmorUid;
+    if (!canUseModifierSlotLayout({ weaponUid: nextWeaponUid, armorUid: nextArmorUid })) return;
+    if (!canUseCosmicSpellSlotLayout({ weaponUid: nextWeaponUid, armorUid: nextArmorUid })) return;
     if (item.category === "weapon") {
       state.current.equippedWeaponUid = uid;
       state.current.weapon = item.name;
@@ -3080,6 +3726,11 @@ function handleInventoryAction(action, uid, trigger = null) {
   }
 
   if (action === "unequip") {
+    if (!canDisableExternalSupportProvider(entry)) return;
+    const nextWeaponUid = item.category === "weapon" && state.current.equippedWeaponUid === uid ? "" : state.current.equippedWeaponUid;
+    const nextArmorUid = item.category === "armor" && state.current.equippedArmorUid === uid ? "" : state.current.equippedArmorUid;
+    if (!canUseModifierSlotLayout({ weaponUid: nextWeaponUid, armorUid: nextArmorUid })) return;
+    if (!canUseCosmicSpellSlotLayout({ weaponUid: nextWeaponUid, armorUid: nextArmorUid })) return;
     if (item.category === "weapon" && state.current.equippedWeaponUid === uid) {
       state.current.equippedWeaponUid = "";
       state.current.weapon = "";
@@ -3094,6 +3745,14 @@ function handleInventoryAction(action, uid, trigger = null) {
   }
 
   if (action === "cube") {
+    if (entry.cubeUid) {
+      entry.cubeUid = "";
+      entry.inCube = false;
+      renderSummary();
+      showToast(`${item.name} removido do cubo.`);
+      return;
+    }
+    if (!canDisableExternalSupportProvider(entry)) return;
     const derived = derivedStats(totalAttributes(), findRace(state.current.race), findProfession(state.current.profession));
     const cubeCount = state.current.inventory.filter((inventoryItem) => inventoryItem.inCube).length;
     if (!entry.inCube && cubeCount >= derived.cubeSlots) {
@@ -3101,6 +3760,7 @@ function handleInventoryAction(action, uid, trigger = null) {
       return;
     }
     entry.inCube = !entry.inCube;
+    if (entry.inCube) entry.supportSlot = "";
     renderSummary();
     showToast(entry.inCube ? "Item guardado no cubo." : "Item removido do cubo.");
   }
@@ -3164,8 +3824,14 @@ function renderLibrary() {
   const sortMode = el.librarySort.value || "default";
   const query = normalizeSearch(el.librarySearch.value.trim());
   const isRaceLibrary = state.activeLibrary === "racas";
+  const showsInlineSummary = state.activeLibrary === "regras";
   const isMarketLibrary = Boolean(library.market);
   const isLearnLibrary = Boolean(library.learn);
+  const isModifierChipLibrary = library.learn === "chip-mod";
+  const isCosmicSpellLibrary = library.learn === "cosmos";
+  const modSlots = modifierSlotState();
+  const cosmicSpellSlots = cosmicSpellSlotState();
+  const learnedAbilityIds = new Set((state.current.knownAbilities || []).map((ability) => ability.id));
   el.libraryTitle.textContent = library.title;
   el.libraryKicker.textContent = library.kicker;
 
@@ -3184,6 +3850,16 @@ function renderLibrary() {
     const meta = isMarketLibrary ? marketMeta(item) : libraryMeta(item);
     const bonus = item.bonus ? Object.entries(item.bonus).map(([key, value]) => `${key} ${formatMod(value)}`).join("  ") : "";
     const tags = (item.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
+    const alreadyLearned = isLearnLibrary && learnedAbilityIds.has(item.id);
+    const lacksModSlot = isModifierChipLibrary && !alreadyLearned && modSlots.free <= 0;
+    const lacksCosmicSpellSlot = isCosmicSpellLibrary && !alreadyLearned && cosmicSpellSlots.free <= 0;
+    const slotBlocked = lacksModSlot ? "tech" : lacksCosmicSpellSlot ? "cosmic" : "";
+    const learnDisabled = alreadyLearned;
+    const learnLabel = alreadyLearned
+      ? "Na ficha"
+      : slotBlocked
+        ? "Sem slot livre"
+        : library.learn === "cosmos" ? "Adicionar magia" : "Adicionar chip";
     const cardOpen = isRaceLibrary
       ? `<button class="library-card race-card compact-card" type="button" data-race-id="${escapeHtml(item.id)}" aria-label="Abrir página da raça ${escapeHtml(item.name)}">`
       : `<article class="library-card compact-card ${item.imageDataUrl ? "with-image" : ""}" tabindex="0">`;
@@ -3194,9 +3870,10 @@ function renderLibrary() {
         <div class="card-face">
           <h3>${isRaceLibrary ? escapeHtml(item.name) : renderCardTitleButton(item.name)}</h3>
           ${meta || bonus ? `<p class="card-meta-line">${escapeHtml(meta || bonus)}</p>` : ""}
+          ${showsInlineSummary ? `<p class="library-inline-summary">${escapeHtml(item.summary)}</p>` : ""}
         </div>
         ${isMarketLibrary ? `<button class="primary-button shop-button" type="button" data-buy-id="${escapeHtml(item.id)}">Comprar</button>` : ""}
-        ${isLearnLibrary ? `<button class="primary-button shop-button" type="button" data-learn-id="${escapeHtml(item.id)}">${library.learn === "cosmos" ? "Adicionar magia" : "Adicionar chip"}</button>` : ""}
+        ${isLearnLibrary ? `<button class="primary-button shop-button" type="button" data-learn-id="${escapeHtml(item.id)}" ${learnDisabled ? "disabled" : ""} ${slotBlocked ? `data-slot-blocked="${slotBlocked}" aria-disabled="true"` : ""}>${learnLabel}</button>` : ""}
         <div class="card-hover-popover" role="tooltip">
           <strong>${escapeHtml(item.name)}</strong>
           ${meta || bonus ? `<p>${escapeHtml(meta || bonus)}</p>` : ""}
@@ -3387,6 +4064,7 @@ function saveCurrent() {
 
 function newCharacter() {
   state.current = emptyCharacter();
+  state.openCubeUid = "";
   renderForm();
   renderSavedList();
   switchView("personagens");
@@ -3397,6 +4075,7 @@ function loadCharacter(id) {
   const character = state.saved.find((item) => item.id === id);
   if (!character) return;
   state.current = normalizeCharacter(character);
+  state.openCubeUid = "";
   renderForm();
   renderSavedList();
   switchView("personagens");
@@ -3418,6 +4097,7 @@ function handleSavedAction(action, id) {
       createdAt: new Date().toISOString(),
       updatedAt: null,
     };
+    state.openCubeUid = "";
     renderForm();
     switchView("personagens");
     showToast("Ficha duplicada.");
@@ -3426,7 +4106,10 @@ function handleSavedAction(action, id) {
 
   if (action === "delete") {
     state.saved = state.saved.filter((item) => item.id !== id);
-    if (state.current.id === id) state.current = emptyCharacter();
+    if (state.current.id === id) {
+      state.current = emptyCharacter();
+      state.openCubeUid = "";
+    }
     persistSaved();
     renderForm();
     renderSavedList();
@@ -3464,6 +4147,7 @@ async function importCharacter(event) {
       id: data.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
       updatedAt: null,
     });
+    state.openCubeUid = "";
     renderForm();
     renderSavedList();
     switchView("personagens");
@@ -3599,27 +4283,69 @@ function persistSaved() {
 function totalAttributes() {
   const race = findRace(state.current.race);
   const racialBonus = raceEffectiveBonus(race, state.current.racialChoice);
+  const passives = modifierPassiveTotals();
   return ATTRIBUTES.reduce((acc, attr) => {
-    acc[attr] = numberValue(state.current.attributes[attr], ATTRIBUTE_BASE) + (racialBonus[attr] || 0);
+    acc[attr] = numberValue(state.current.attributes[attr], ATTRIBUTE_BASE) + (racialBonus[attr] || 0) + (passives.attributes[attr] || 0);
     return acc;
   }, {});
 }
 
 function derivedStats(attrs, race, profession) {
   const level = numberValue(state.current.level, 1);
+  const passives = modifierPassiveTotals();
   const modFOR = attributeModifier(attrs.FOR);
   const modREF = attributeModifier(attrs.REF);
   const modCON = attributeModifier(attrs.CON);
   const modMEN = attributeModifier(attrs.MEN);
   const equippedArmor = getEquippedMarketItem("armor");
-  const armorCa = equippedArmor?.ca || 0;
+  const equippedArmorEntry = getEquippedInventoryEntry("armor");
+  const armorCollapsed = itemCrackLevel(equippedArmorEntry) >= ITEM_CRACK_MAX;
+  const armorCa = armorCollapsed ? 0 : equippedArmor?.ca || 0;
   const equipmentCosmosBonus = equippedArmor?.cosmos || 0;
-  const pvMax = Math.max(1, 8 * level + Math.max(0, modCON) * level);
-  const cosmosMax = Math.max(0, (LEVEL_COSMOS_BASE[level] || 1) + modMEN + equipmentCosmosBonus + (race.cosmos || 0));
-  const ca = Math.max(1, (race.ca || 0) + modREF + armorCa);
-  const movement = Math.max(1, 6 + modREF + (race.movement || 0));
-  const cubeSlots = Math.max(0, 5 + modFOR + (race.cubeBonus || 0) + (profession.cubeBonus || 0));
-  return { pvMax, cosmosMax, ca, movement, cubeSlots, armorCa, equipmentCosmosBonus };
+  const officialInitialPv = Math.max(1, 8 + initialLifeBonus(modCON) + numberValue(race.pvBonus, 0));
+  const pvMax = level === 1
+    ? officialInitialPv
+    : Math.max(officialInitialPv, 8 * level + Math.max(0, modCON) * level + numberValue(race.pvBonus, 0));
+  const cosmosMax = Math.max(0, (LEVEL_COSMOS_BASE[level] || 1) + modMEN + equipmentCosmosBonus + (race.cosmos || 0) + passives.cosmosMax + passives.cosmosPerLevel * level);
+  const ca = Math.max(1, BASE_CA + modREF + armorCa + passives.ca);
+  const baseMovement = Math.max(1, 6 + modREF + (race.movement || 0) + passives.movement);
+  const cubeSlots = Math.max(0, 5 + modFOR + (race.cubeBonus || 0) + (profession.cubeBonus || 0) + passives.cubeSlots);
+  const passivePerception = 10 + modMEN;
+  const stressMax = STRESS_MAX;
+  const loadCapacityKg = Math.max(0, numberValue(state.current.bodyWeightKg, 70) / 2 + modFOR * 10);
+  const carriedWeightKg = carriedLoadWeightKg();
+  const loadRatio = loadCapacityKg > 0 ? carriedWeightKg / loadCapacityKg : carriedWeightKg > 0 ? Number.POSITIVE_INFINITY : 0;
+  const movement = loadRatio > 1.5 ? 0 : loadRatio > 1 ? Math.floor(baseMovement / 2) : baseMovement;
+  return {
+    pvMax,
+    cosmosMax,
+    ca,
+    movement,
+    baseMovement,
+    cubeSlots,
+    passivePerception,
+    armorCa,
+    equipmentCosmosBonus,
+    stressMax,
+    loadCapacityKg,
+    carriedWeightKg,
+    loadRatio,
+    passiveBonuses: passives,
+  };
+}
+
+function initialLifeBonus(modCON) {
+  const table = {
+    "-2": -2,
+    "-1": -1,
+    "0": 0,
+    "1": 4,
+    "2": 6,
+    "3": 8,
+    "4": 10,
+    "5": 12,
+  };
+  return table[String(clamp(modCON, -2, 5))] ?? 0;
 }
 
 function collectAbilityEntries() {
@@ -3742,11 +4468,415 @@ function findAbilityLibraryItem(id) {
 
 function findMarketItem(id) {
   const customItems = state.current?.customItems || [];
-  return [...itemData, ...weaponData, ...armorData, ...customItems].find((item) => item.id === id);
+  return [...cubeData, ...itemData, ...weaponData, ...armorData, ...customItems].find((item) => item.id === id);
 }
 
 function getInventoryEntry(uid) {
   return state.current.inventory.find((entry) => entry.uid === uid);
+}
+
+function isCubeEntry(entry) {
+  if (!entry) return false;
+  const item = findMarketItem(entry.itemId);
+  return entry.category === "cube" || item?.category === "cube";
+}
+
+function getCubeEntries() {
+  return (state.current.inventory || []).filter(isCubeEntry);
+}
+
+function emptySupportCounts() {
+  return EXTERNAL_SUPPORT_TYPES.reduce((counts, type) => {
+    counts[type.id] = 0;
+    return counts;
+  }, {});
+}
+
+function externalSupportType(id) {
+  return EXTERNAL_SUPPORT_TYPES.find((type) => type.id === id) || null;
+}
+
+function externalSupportTypeLabel(id, plural = false) {
+  const type = externalSupportType(id);
+  if (!type) return "Suporte";
+  return plural ? type.label : type.singular;
+}
+
+function supportSearchText(item) {
+  return normalizeSearch([
+    item?.name,
+    item?.summary,
+    item?.type,
+    item?.kind,
+    item?.category,
+    ...(item?.tags || []),
+  ].filter(Boolean).join(" "));
+}
+
+function escapedPattern(value) {
+  return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function supportCountsFromItem(item) {
+  const counts = emptySupportCounts();
+  const text = supportSearchText(item);
+  if (!text) return counts;
+  EXTERNAL_SUPPORT_TYPES.forEach((type) => {
+    const pattern = type.keywords.map(escapedPattern).join("|");
+    if (!new RegExp(`\\b(?:${pattern})\\b`).test(text)) return;
+    const numbered = text.match(new RegExp(`(\\d+)\\s*(?:${pattern})\\b`));
+    counts[type.id] = Math.max(1, numbered ? numberValue(numbered[1], 1) : 1);
+  });
+  return counts;
+}
+
+function supportProviderCounts(entry) {
+  const counts = emptySupportCounts();
+  if (!entry || entry.cubeUid || entry.inCube || entry.supportSlot) return counts;
+  const item = findMarketItem(entry.itemId);
+  if (!item || isCubeEntry(entry)) return counts;
+  const itemCounts = supportCountsFromItem(item);
+  const hasAnySupport = EXTERNAL_SUPPORT_TYPES.some((type) => itemCounts[type.id] > 0);
+  if (!hasAnySupport) return counts;
+  const looseSupportItem = item.category === "item";
+  const equippedSupportEquipment = ["weapon", "armor"].includes(item.category) && isInventoryEquipped(entry);
+  if (!looseSupportItem && !equippedSupportEquipment) return counts;
+  return itemCounts;
+}
+
+function isSupportProviderEntry(entry) {
+  const counts = supportProviderCounts(entry);
+  return EXTERNAL_SUPPORT_TYPES.some((type) => counts[type.id] > 0);
+}
+
+function supportTypesForEntry(entry) {
+  const item = findMarketItem(entry?.itemId);
+  if (!item || isCubeEntry(entry) || entry.cubeUid || entry.inCube || isSupportProviderEntry(entry)) return [];
+  if (item.category === "item") return [externalSupportType("gancho")].filter(Boolean);
+  if (item.category !== "weapon") return [];
+  const group = classifyWeapon(item);
+  if (["firearm", "blade", "unarmed"].includes(group.key)) {
+    return ["coldre", "gancho"].map(externalSupportType).filter(Boolean);
+  }
+  if (["rifle", "launcher", "polearm", "blunt", "axe"].includes(group.key)) {
+    return ["bandoleira", "gancho"].map(externalSupportType).filter(Boolean);
+  }
+  return ["bandoleira", "coldre", "gancho"].map(externalSupportType).filter(Boolean);
+}
+
+function canAttachToExternalSupport(entry) {
+  return supportTypesForEntry(entry).length > 0;
+}
+
+function externalSupportState() {
+  const capacities = emptySupportCounts();
+  const used = emptySupportCounts();
+  const assignedByType = EXTERNAL_SUPPORT_TYPES.reduce((map, type) => {
+    map[type.id] = [];
+    return map;
+  }, {});
+  const providers = [];
+
+  (state.current.inventory || []).forEach((entry) => {
+    const counts = supportProviderCounts(entry);
+    const providedTypes = EXTERNAL_SUPPORT_TYPES.filter((type) => counts[type.id] > 0);
+    if (providedTypes.length) {
+      providedTypes.forEach((type) => {
+        capacities[type.id] += counts[type.id];
+      });
+      const item = findMarketItem(entry.itemId);
+      providers.push({ uid: entry.uid, name: item?.name || "Suporte", counts });
+    }
+
+    if (entry.supportSlot && !entry.cubeUid && !entry.inCube && assignedByType[entry.supportSlot]) {
+      assignedByType[entry.supportSlot].push(entry);
+      used[entry.supportSlot] += 1;
+    }
+  });
+
+  const types = EXTERNAL_SUPPORT_TYPES.map((type) => ({
+    ...type,
+    capacity: capacities[type.id],
+    used: used[type.id],
+    free: Math.max(0, capacities[type.id] - used[type.id]),
+    over: Math.max(0, used[type.id] - capacities[type.id]),
+    assigned: assignedByType[type.id],
+  }));
+
+  return {
+    capacities,
+    used,
+    providers,
+    types,
+    totalCapacity: types.reduce((sum, type) => sum + type.capacity, 0),
+    totalUsed: types.reduce((sum, type) => sum + type.used, 0),
+  };
+}
+
+function findAvailableExternalSupport(entry, supportState = externalSupportState()) {
+  const compatible = supportTypesForEntry(entry);
+  return compatible.find((type) => supportState.used[type.id] < supportState.capacities[type.id]) || null;
+}
+
+function canDisableExternalSupportProvider(entry) {
+  const counts = supportProviderCounts(entry);
+  const supportState = externalSupportState();
+  const blockingType = EXTERNAL_SUPPORT_TYPES.find((type) => (
+    counts[type.id] > 0 && supportState.used[type.id] > Math.max(0, supportState.capacities[type.id] - counts[type.id])
+  ));
+  if (!blockingType) return true;
+  showToast(`Solte itens em ${blockingType.label.toLowerCase()} antes de remover esse suporte.`);
+  return false;
+}
+
+function attachEntryToExternalSupport(entry) {
+  const item = findMarketItem(entry?.itemId);
+  if (!item) return;
+  if (entry.cubeUid || entry.inCube) {
+    showToast("Tire o item do cubo antes de prender em um suporte.");
+    return;
+  }
+  if (isSupportProviderEntry(entry)) {
+    showToast("Esse equipamento já funciona como suporte externo.");
+    return;
+  }
+  const target = findAvailableExternalSupport(entry);
+  if (!target) {
+    const labels = supportTypesForEntry(entry).map((type) => type.label.toLowerCase()).join(", ") || "suporte compatível";
+    showToast(`Sem ${labels} livre para este item.`);
+    return;
+  }
+  entry.supportSlot = target.id;
+  renderSummary();
+  showToast(`${item.name} preso em ${target.singular.toLowerCase()}.`);
+}
+
+function cubeContainedEntries(cubeUid) {
+  return (state.current.inventory || []).filter((entry) => entry.cubeUid === cubeUid && !isCubeEntry(entry));
+}
+
+function legacyCubeEntries() {
+  return (state.current.inventory || []).filter((entry) => entry.inCube && !entry.cubeUid && !isCubeEntry(entry));
+}
+
+function cubeStorageStats(derived = null) {
+  const cubes = getCubeEntries();
+  const physicalUsedUnits = cubes.reduce((sum, cube) => sum + cubeContainedEntries(cube.uid).length, 0);
+  const physicalTotalUnits = cubes.reduce((sum, cube) => sum + cubeCapacity(cube), 0);
+  const legacyCubeItems = legacyCubeEntries();
+  const legacyUsedUnits = legacyCubeItems.length;
+  const baseCapacity = Math.max(0, numberValue(derived?.cubeSlots, 0));
+  const hasTrackedStorage = physicalTotalUnits > 0 || physicalUsedUnits > 0 || legacyUsedUnits > 0;
+  const usedUnits = hasTrackedStorage
+    ? physicalUsedUnits + legacyUsedUnits
+    : Math.max(0, numberValue(state.current.loadUsed, 0));
+  const legacyCapacity = legacyUsedUnits > 0 ? baseCapacity : 0;
+  const totalUnits = Math.max(usedUnits, physicalTotalUnits + legacyCapacity || baseCapacity);
+  return {
+    cubes,
+    looseItems: (state.current.inventory || []).filter((entry) => canStoreEntryInPhysicalCube(entry) && !entry.cubeUid && !entry.inCube && !entry.supportSlot),
+    legacyCubeItems,
+    physicalUsedUnits,
+    physicalTotalUnits,
+    legacyUsedUnits,
+    usedUnits,
+    totalUnits,
+    hasTrackedStorage,
+  };
+}
+
+function syncLoadUsedFromCubeStorage(stats = cubeStorageStats()) {
+  if (stats.hasTrackedStorage) state.current.loadUsed = stats.usedUnits;
+  return stats;
+}
+
+function syncLoadUsedInput() {
+  const input = document.querySelector("#loadUsed");
+  if (input instanceof HTMLInputElement) input.value = String(Math.max(0, numberValue(state.current.loadUsed, 0)));
+}
+
+function parseWeightKg(value) {
+  const match = String(value || "").replace(",", ".").match(/-?\d+(?:\.\d+)?/);
+  return match ? Math.max(0, numberValue(match[0], 0)) : 0;
+}
+
+function carriedLoadWeightKg() {
+  return (state.current.inventory || []).reduce((total, entry) => {
+    if (entry.cubeUid || entry.inCube) return total;
+    const item = findMarketItem(entry.itemId);
+    if (!item) return total;
+    return total + (isCubeEntry(entry) ? CUBE_WEIGHT_KG : parseWeightKg(item.weight));
+  }, 0);
+}
+
+function formatWeight(value) {
+  return numberValue(value, 0).toLocaleString("pt-BR", { maximumFractionDigits: 1 });
+}
+
+function cubeLoadStats(derived = null) {
+  const maxCubes = Math.max(0, numberValue(derived?.cubeSlots, 0));
+  const carriedCubes = getCubeEntries().length;
+  const weightKg = numberValue(derived?.carriedWeightKg, carriedLoadWeightKg());
+  const capacityKg = Math.max(0, numberValue(derived?.loadCapacityKg, 0));
+  const overCubes = Math.max(0, carriedCubes - maxCubes);
+  const overKg = Math.max(0, weightKg - capacityKg);
+  const ratio = capacityKg > 0 ? weightKg / capacityKg : weightKg > 0 ? Number.POSITIVE_INFINITY : 0;
+  const immobile = ratio > 1.5;
+  const overloaded = ratio > 1 || overCubes > 0;
+  const atLimit = !overloaded && (ratio >= 0.9 || (maxCubes > 0 && carriedCubes >= maxCubes));
+  const statusLabel = immobile
+    ? "SOBRECARGA GRAVE: MOV. 0"
+    : ratio > 1
+      ? "SOBRECARGA: MOV. PELA METADE"
+      : overCubes > 0
+        ? `CUBOS EXCEDENTES: +${overCubes}`
+        : atLimit
+          ? "PRÓXIMO DO LIMITE"
+          : "CARGA ESTÁVEL";
+  const meterPercent = capacityKg > 0 ? clamp(Math.round(ratio * 100), 0, 100) : weightKg > 0 ? 100 : 0;
+  return { maxCubes, carriedCubes, weightKg, capacityKg, overCubes, overKg, ratio, immobile, overloaded, atLimit, statusLabel, meterPercent };
+}
+
+function renderCubeLoadMonitor(load = cubeLoadStats(derivedStats(totalAttributes(), findRace(state.current.race), findProfession(state.current.profession)))) {
+  if (!el.cubeLoadMonitor) return;
+  const stateClass = load.overloaded ? "overloaded" : load.atLimit || load.maxCubes <= 0 ? "at-limit" : "stable";
+  el.cubeLoadMonitor.className = `cube-load-monitor ${stateClass}`;
+  el.cubeLoadMonitor.innerHTML = `
+    <div class="cube-load-head">
+      <span>Carga de cubos</span>
+      <strong>${escapeHtml(load.statusLabel)}</strong>
+    </div>
+    <div class="cube-load-meter" aria-label="Carga de cubos">
+      <span style="width:${load.meterPercent}%"></span>
+    </div>
+    <div class="cube-load-readout">
+      <span>${load.carriedCubes}/${load.maxCubes} cubo${load.maxCubes === 1 ? "" : "s"}</span>
+      <span>${formatWeight(load.weightKg)}/${formatWeight(load.capacityKg)} Kg</span>
+    </div>
+  `;
+}
+
+function canAddPhysicalCube() {
+  const derived = derivedStats(totalAttributes(), findRace(state.current.race), findProfession(state.current.profession));
+  const load = cubeLoadStats(derived);
+  if (load.carriedCubes >= load.maxCubes || load.overloaded) {
+    renderCubeLoadMonitor(load);
+    showToast("O cubo será adicionado, mas o personagem ficará acima da capacidade indicada.", "tech-error");
+  }
+  return true;
+}
+
+function cubeCapacity(entry) {
+  const item = findMarketItem(entry?.itemId);
+  return Math.max(1, numberValue(entry?.cubeCapacity ?? item?.cubeCapacity, 1));
+}
+
+function cubeKind(entry) {
+  const item = findMarketItem(entry?.itemId);
+  return entry?.cubeKind || item?.cubeKind || "simple";
+}
+
+function cubeDisplayName(entry) {
+  const item = findMarketItem(entry?.itemId);
+  return item?.name || "Cubo";
+}
+
+function cubeTypeLabel(entry) {
+  const definition = CUBE_TYPE_DEFINITIONS[cubeKind(entry)] || CUBE_TYPE_DEFINITIONS.simple;
+  return definition.label;
+}
+
+function cubeRuleText(entry) {
+  const kind = cubeKind(entry);
+  const definition = CUBE_TYPE_DEFINITIONS[kind] || CUBE_TYPE_DEFINITIONS.simple;
+  const capacity = cubeCapacity(entry);
+  if (kind === "simple") return definition.summary;
+  const lockLabel = cubeLockLabel(entry);
+  const lockPrefix = kind === "cargo" ? "Item aceito" : "Tipo aceito";
+  return `${definition.summary} Capacidade: ${capacity} unidade${capacity === 1 ? "" : "s"}. ${lockPrefix}: ${lockLabel}.`;
+}
+
+function canStoreEntryInPhysicalCube(entry) {
+  if (!entry || isCubeEntry(entry)) return false;
+  const item = findMarketItem(entry.itemId);
+  return item?.category === "item";
+}
+
+function cubeFirstContent(entry) {
+  return cubeContainedEntries(entry?.uid)[0] || null;
+}
+
+function cubeItemIdentity(entry) {
+  const item = findMarketItem(entry?.itemId);
+  return {
+    id: item?.id || entry?.itemId || "",
+    name: normalizeSearch(item?.name || entry?.itemId || ""),
+    label: item?.name || "Item",
+  };
+}
+
+function sameExactCubeItem(firstEntry, nextEntry) {
+  const first = cubeItemIdentity(firstEntry);
+  const next = cubeItemIdentity(nextEntry);
+  if (first.id && next.id && first.id === next.id) return true;
+  return Boolean(first.name && next.name && first.name === next.name);
+}
+
+function labelFromTag(tag) {
+  const clean = String(tag || "").trim();
+  return clean ? `${clean.charAt(0).toUpperCase()}${clean.slice(1)}` : "Itens";
+}
+
+function classifyCubeItemFamily(entry) {
+  const item = findMarketItem(entry?.itemId);
+  if (!item) return { key: "desconhecido", label: "Itens sem categoria" };
+  const tags = Array.isArray(item.tags) ? item.tags : [];
+  const text = normalizeSearch([item.name, item.summary, item.type, item.kind, item.category, ...tags].join(" "));
+  if (/granad/.test(text)) return { key: "granada", label: "Granadas" };
+  if (/munic|bala|cartucho|carregador/.test(text)) return { key: "municao", label: "Munições" };
+  if (/minerio|metal|ferro|aco|carbonita|ferrita|pralatum|cristal|pedra/.test(text)) return { key: "minerais", label: "Minerais e metais" };
+  if (/organico|biologico|flora|fauna|carne|couro|osso|madeira|planta|animal/.test(text)) return { key: "organicos", label: "Orgânicos" };
+  if (/energia|energetico|cosmos|cosmico|bateria|plasma|luz|celula/.test(text)) return { key: "energeticos", label: "Energéticos" };
+  if (/chip|circuito|rede|digital|mecanico|peca|sucata|sensor|modulo/.test(text)) return { key: "tecnologicos", label: "Tecnológicos" };
+  if (/quimico|acido|remedio|toxina|veneno|reagente|medicina/.test(text)) return { key: "quimicos", label: "Químicos" };
+  if (/kit|ferramenta|suporte|utilitario/.test(text)) return { key: "suporte", label: "Suporte" };
+  const tag = tags.find(Boolean);
+  if (tag) return { key: dataSlug(tag), label: labelFromTag(tag) };
+  return { key: dataSlug(item.category || "item"), label: marketCategoryLabel(item.category || "item") };
+}
+
+function cubeLockLabel(entry) {
+  const kind = cubeKind(entry);
+  const firstEntry = cubeFirstContent(entry);
+  if (kind === "simple") return "1 unidade";
+  if (!firstEntry) {
+    return kind === "cargo"
+      ? "livre, o primeiro item define o item exato"
+      : "livre, o primeiro item define o tipo";
+  }
+  if (kind === "cargo") return cubeItemIdentity(firstEntry).label;
+  if (kind === "specialized") return classifyCubeItemFamily(firstEntry).label;
+  return "Livre";
+}
+
+function cubeRejectText(cubeEntry) {
+  const kind = cubeKind(cubeEntry);
+  if (kind === "cargo") return `Este cubo de carga só aceita ${cubeLockLabel(cubeEntry)}.`;
+  if (kind === "specialized") return `Este cubo especializado só aceita ${cubeLockLabel(cubeEntry)}.`;
+  return `${cubeDisplayName(cubeEntry)} não aceita esse item.`;
+}
+
+function cubeAcceptsItem(cubeEntry, itemEntry) {
+  const kind = cubeKind(cubeEntry);
+  const contents = cubeContainedEntries(cubeEntry.uid);
+  if (kind === "simple") return contents.length < 1;
+  if (!contents.length) return true;
+  const firstEntry = contents[0];
+  if (kind === "cargo") return sameExactCubeItem(firstEntry, itemEntry);
+  if (kind === "specialized") {
+    return classifyCubeItemFamily(firstEntry).key === classifyCubeItemFamily(itemEntry).key;
+  }
+  return true;
 }
 
 function getEquippedMarketItem(category) {
@@ -3755,11 +4885,156 @@ function getEquippedMarketItem(category) {
   return entry ? findMarketItem(entry.itemId) : null;
 }
 
+function getEquippedInventoryEntry(category) {
+  const uid = category === "weapon" ? state.current.equippedWeaponUid : state.current.equippedArmorUid;
+  return uid ? getInventoryEntry(uid) : null;
+}
+
+function itemCrackLevel(entry) {
+  return clamp(numberValue(entry?.crackLevel, 0), 0, ITEM_CRACK_MAX);
+}
+
+function getMarketItemByInventoryUid(uid) {
+  const entry = uid ? getInventoryEntry(uid) : null;
+  return entry ? findMarketItem(entry.itemId) : null;
+}
+
+function modifierChipEntries() {
+  return (state.current.knownAbilities || []).filter((ability) => ability.source === "Chip modificador");
+}
+
+function cosmicSpellEntries({ abilities = state.current.knownAbilities } = {}) {
+  return (abilities || []).filter((ability) => ability.source === "Cosmos");
+}
+
+function cosmicSpellSlotState({
+  weaponUid = state.current.equippedWeaponUid,
+  armorUid = state.current.equippedArmorUid,
+  abilities = state.current.knownAbilities,
+  excludedAbilityId = "",
+} = {}) {
+  const activeAbilities = (abilities || []).filter((ability) => ability.id !== excludedAbilityId);
+  const equipped = [
+    { label: "Arma equipada", item: getMarketItemByInventoryUid(weaponUid) },
+    { label: "Armadura equipada", item: getMarketItemByInventoryUid(armorUid) },
+  ].map((entry) => ({
+    ...entry,
+    slots: cosmicSpellSlotValueFromItem(entry.item),
+    name: entry.item?.name || "Nenhuma",
+  }));
+  const chipSources = activeAbilities
+    .filter((ability) => ability.source === "Chip modificador")
+    .map((ability) => ({ name: ability.name, slots: cosmicSpellSlotValueFromAbility(ability) }))
+    .filter((source) => source.slots > 0);
+  const chipSlots = chipSources.reduce((sum, source) => sum + source.slots, 0);
+  const training = Math.max(0, numberValue(state.current.cosmicTrainingSlots, 0));
+  const grimoires = Math.max(0, numberValue(state.current.cosmicGrimoireSlots, 0));
+  const total = equipped.reduce((sum, entry) => sum + entry.slots, 0) + chipSlots + training + grimoires;
+  const used = cosmicSpellEntries({ abilities: activeAbilities }).length;
+  return {
+    total,
+    used,
+    free: Math.max(0, total - used),
+    over: Math.max(0, used - total),
+    training,
+    grimoires,
+    chipSources,
+    sources: [
+      ...equipped.map((entry) => ({ label: `${entry.label}: ${entry.name}`, slots: entry.slots })),
+      { label: "Chips modificadores", slots: chipSlots },
+      { label: "Treino registrado", slots: training },
+      { label: "Grimórios encontrados", slots: grimoires },
+    ],
+  };
+}
+
+function cosmicSpellSlotValueFromItem(item) {
+  if (!item) return 0;
+  const explicit = numberValue(item.cosmicSpellSlots ?? item.spellSlots ?? item.magicSlots, NaN);
+  if (Number.isFinite(explicit)) return Math.max(0, explicit);
+  const parsed = parseCosmicSpellSlotText([item.name, item.summary, item.type, item.kind, ...(item.tags || [])].join(" "));
+  if (parsed > 0) return parsed;
+  const cosmos = Math.max(0, numberValue(item.cosmos, 0));
+  const text = normalizeSearch([item.name, item.summary, item.type, item.kind, ...(item.tags || [])].join(" "));
+  return cosmos > 0 && /cosm|canalizador|habilidade/.test(text) ? cosmos : 0;
+}
+
+function cosmicSpellSlotValueFromAbility(ability) {
+  if (!ability) return 0;
+  const explicit = numberValue(ability.cosmicSpellSlots ?? ability.spellSlots ?? ability.magicSlots, NaN);
+  if (Number.isFinite(explicit)) return Math.max(0, explicit);
+  return parseCosmicSpellSlotText([ability.name, ability.effect, ability.meta, ...(ability.tags || [])].join(" "));
+}
+
+function parseCosmicSpellSlotText(value) {
+  const text = normalizeSearch(value);
+  const match = text.match(/(?:permite escolher|escolhe|escolher|escolha|aprende|aprender|conhece)\s+(\d+)\s+(?:magias?|habilidades?)(?:\s+\S+){0,6}\s+(?:cosm|cosmos)/);
+  return match ? Math.max(0, numberValue(match[1], 0)) : 0;
+}
+
+function canAddCosmicSpell() {
+  const slots = cosmicSpellSlotState();
+  return slots.free > 0;
+}
+
+function canUseCosmicSpellSlotLayout(nextSlots) {
+  const slots = cosmicSpellSlotState(nextSlots);
+  if (slots.used <= slots.total) return true;
+  showToast(`Sem espaços de magia cósmica: ${slots.used}/${slots.total}. Libere magias ou registre treino/grimórios.`, "cosmic-error");
+  return false;
+}
+
+function modifierSlotState({ weaponUid = state.current.equippedWeaponUid, armorUid = state.current.equippedArmorUid } = {}) {
+  const equipped = [
+    { label: "Arma equipada", item: getMarketItemByInventoryUid(weaponUid) },
+    { label: "Armadura equipada", item: getMarketItemByInventoryUid(armorUid) },
+  ].map((entry) => ({
+    ...entry,
+    mods: Math.max(0, numberValue(entry.item?.mods, 0)),
+    name: entry.item?.name || "Nenhuma",
+  }));
+  const total = equipped.reduce((sum, entry) => sum + entry.mods, 0);
+  const used = modifierChipEntries().length;
+  return {
+    total,
+    used,
+    free: Math.max(0, total - used),
+    over: Math.max(0, used - total),
+    sources: equipped.map((entry) => ({
+      label: `${entry.label}: ${entry.name}`,
+      mods: entry.mods,
+    })),
+  };
+}
+
+function canAddModifierChip() {
+  const slots = modifierSlotState();
+  return slots.free > 0;
+}
+
+function canUseModifierSlotLayout(nextSlots) {
+  const slots = modifierSlotState(nextSlots);
+  if (slots.used <= slots.total) return true;
+  showToast(`Sem espaço de mods: ${slots.used}/${slots.total}. Desequipe chips modificadores antes.`, "tech-error");
+  return false;
+}
+
 function isInventoryEquipped(entry) {
   return entry.uid === state.current.equippedWeaponUid || entry.uid === state.current.equippedArmorUid;
 }
 
 function marketMeta(item) {
+  if (item.category === "cube") {
+    const definition = CUBE_TYPE_DEFINITIONS[item.cubeKind || "simple"] || CUBE_TYPE_DEFINITIONS.simple;
+    const capacity = Math.max(1, numberValue(item.cubeCapacity, 1));
+    return [
+      definition.label,
+      `${capacity} unidade${capacity === 1 ? "" : "s"}`,
+      item.cubeKind === "simple" ? "Sem variação" : "Vínculo pelo primeiro item",
+      item.weight || "",
+      formatCurrency(item.price),
+    ].filter(Boolean).join(" - ");
+  }
   const parts = [
     item.tier ? `Tier ${item.tier}` : "",
     item.type || item.kind || "",
@@ -3773,6 +5048,11 @@ function marketMeta(item) {
 }
 
 function compactMarketMeta(item) {
+  if (item.category === "cube") {
+    const definition = CUBE_TYPE_DEFINITIONS[item.cubeKind || "simple"] || CUBE_TYPE_DEFINITIONS.simple;
+    const capacity = Math.max(1, numberValue(item.cubeCapacity, 1));
+    return `${definition.label} - ${capacity} unidade${capacity === 1 ? "" : "s"}`;
+  }
   const parts = [
     item.tier ? `Tier ${item.tier}` : "",
     item.type || item.kind || "",
@@ -3790,6 +5070,7 @@ function marketLine(item) {
 function libraryMeta(item) {
   const parts = [
     item.cost ? `Custo ${item.cost} Cosmos` : "",
+    item.category === "cosmos" ? "Ocupa 1 espaço de magia" : "",
     item.rank ? `Rank ${item.rank}` : "",
     item.duration ? `Duração ${item.duration}` : "",
     item.context || "",
@@ -3804,6 +5085,7 @@ function libraryMeta(item) {
 function marketCategoryLabel(category) {
   const labels = {
     item: "Item",
+    cube: "Cubo",
     weapon: "Arma",
     armor: "Armadura",
   };
@@ -3828,6 +5110,253 @@ function attributeModifier(value) {
   return Math.floor((numberValue(value, ATTRIBUTE_BASE) - ATTRIBUTE_MOD_BASE) / 2);
 }
 
+function parsePassiveNumber(value) {
+  return numberValue(String(value || "0").replace(",", "."), 0);
+}
+
+function passiveTextPayload(entry = {}) {
+  return [entry.name, entry.effect, entry.summary, entry.meta, ...(entry.tags || [])].filter(Boolean).join(" ");
+}
+
+function isConditionalPassiveText(value) {
+  const text = normalizeSearch(value);
+  return /\b(1x|primeiro|enquanto|quando|apos|ao chegar|ao conseguir|ao usar|ao trocar|ao destruir|se mover|contra|alvo|inimig|aliad|por descanso|por dia|por combate|por cena|ate \d|para armaduras|para detectar|em areas|em sombras)\b/.test(text);
+}
+
+function passiveEffectKey(effect) {
+  return [effect.target, effect.key || "", effect.value, effect.conditional ? "c" : "p"].join(":");
+}
+
+function normalizePassiveEffects(effects = []) {
+  if (!Array.isArray(effects)) return [];
+  return effects
+    .map((effect) => ({
+      target: effect.target || "note",
+      key: effect.key || "",
+      value: numberValue(effect.value, 0),
+      label: effect.label || "Passivo",
+      conditional: Boolean(effect.conditional),
+    }))
+    .filter((effect) => effect.label && (effect.target === "note" || effect.value !== 0));
+}
+
+function addPassiveEffect(effects, effect) {
+  const normalized = normalizePassiveEffects([effect])[0];
+  if (!normalized) return;
+  if (effects.some((item) => passiveEffectKey(item) === passiveEffectKey(normalized))) return;
+  effects.push(normalized);
+}
+
+function inferModifierChipPassiveEffects(entry = {}) {
+  const raw = passiveTextPayload(entry);
+  const text = normalizeSearch(raw).replace(/[−–—]/g, "-");
+  const effects = [];
+  const defaultConditional = isConditionalPassiveText(raw);
+
+  for (const match of text.matchAll(/([+-]\d+(?:[,.]\d+)?)\s*(for|ref|con|men|pre|int|esp)\b/g)) {
+    const attr = (PASSIVE_ATTRIBUTE_ALIASES[match[2].toUpperCase()] || match[2].toUpperCase());
+    addPassiveEffect(effects, {
+      target: "attribute",
+      key: attr,
+      value: parsePassiveNumber(match[1]),
+      label: `${attr} ${formatMod(parsePassiveNumber(match[1]))}`,
+      conditional: defaultConditional,
+    });
+  }
+
+  for (const match of text.matchAll(/([+-]\d+(?:[,.]\d+)?)\s*(?:de\s*)?ca\b/g)) {
+    addPassiveEffect(effects, {
+      target: "ca",
+      value: parsePassiveNumber(match[1]),
+      label: `CA ${formatMod(parsePassiveNumber(match[1]))}`,
+      conditional: defaultConditional,
+    });
+  }
+
+  const movementMatches = [
+    ...text.matchAll(/deslocamento\s*([+-]\d+(?:[,.]\d+)?)\s*m/g),
+    ...text.matchAll(/([+-]\d+(?:[,.]\d+)?)\s*m\s*(?:extra\s*)?por rodada/g),
+    ...text.matchAll(/([+-]\d+(?:[,.]\d+)?)\s*m\s+de deslocamento/g),
+  ];
+  movementMatches.forEach((match) => {
+    addPassiveEffect(effects, {
+      target: "movement",
+      value: parsePassiveNumber(match[1]),
+      label: `Movimento ${formatMod(parsePassiveNumber(match[1]))} m`,
+      conditional: defaultConditional,
+    });
+  });
+
+  for (const match of text.matchAll(/(?:carrega\s*)?([+-]\d+(?:[,.]\d+)?)\s*cubos?\b/g)) {
+    addPassiveEffect(effects, {
+      target: "cubeSlots",
+      value: parsePassiveNumber(match[1]),
+      label: `Cubos ${formatMod(parsePassiveNumber(match[1]))}`,
+      conditional: defaultConditional,
+    });
+  }
+
+  const stressMatch = text.match(/estresse maximo.*?([+-]\d+(?:[,.]\d+)?)/);
+  if (stressMatch) {
+    addPassiveEffect(effects, {
+      target: "stressMax",
+      value: parsePassiveNumber(stressMatch[1]),
+      label: `Estresse máximo ${formatMod(parsePassiveNumber(stressMatch[1]))}`,
+      conditional: defaultConditional,
+    });
+  }
+
+  const cosmosLevelMatch = text.match(/([+-]\d+(?:[,.]\d+)?)\s*ponto\s*\/\s*lvl\s*de cosmos total/);
+  if (cosmosLevelMatch) {
+    addPassiveEffect(effects, {
+      target: "cosmosPerLevel",
+      value: parsePassiveNumber(cosmosLevelMatch[1]),
+      label: `Cosmos máximo ${formatMod(parsePassiveNumber(cosmosLevelMatch[1]))}/nível`,
+      conditional: defaultConditional,
+    });
+  }
+
+  addPassiveSkillEffects(effects, text, raw, defaultConditional);
+  addPassiveProtectionEffects(effects, text, defaultConditional);
+  addPassiveAttackEffects(effects, text, defaultConditional);
+
+  return effects;
+}
+
+function addPassiveSkillEffects(effects, text, raw, defaultConditional) {
+  skillData.forEach((skill) => {
+    const variants = skillNameVariants(skill.name);
+    variants.forEach((variant) => {
+      const regex = new RegExp(`([+-]\\d+(?:[,.]\\d+)?)\\s*(?:em\\s*(?:testes?\\s*de\\s*)?|na\\s*)?${escapeRegExp(variant)}\\b`, "g");
+      for (const match of text.matchAll(regex)) {
+        addPassiveEffect(effects, {
+          target: "skill",
+          key: skill.name,
+          value: parsePassiveNumber(match[1]),
+          label: `${skill.name} ${formatMod(parsePassiveNumber(match[1]))}`,
+          conditional: defaultConditional,
+        });
+      }
+    });
+  });
+
+  const buscarMatch = text.match(/([+-]\d+(?:[,.]\d+)?)\s*(?:procurar|buscar|busca)/);
+  if (buscarMatch) {
+    addPassiveEffect(effects, {
+      target: "skill",
+      key: "Busca Cósmica",
+      value: parsePassiveNumber(buscarMatch[1]),
+      label: `Busca Cósmica ${formatMod(parsePassiveNumber(buscarMatch[1]))}`,
+      conditional: defaultConditional || isConditionalPassiveText(raw),
+    });
+  }
+}
+
+function addPassiveProtectionEffects(effects, text, defaultConditional) {
+  for (const match of text.matchAll(/([+-]\d+(?:[,.]\d+)?)\s*(?:em\s*)?(jpf|jrf|jpv|jpr)\b/g)) {
+    const key = match[2] === "jrf" ? "JPF" : match[2].toUpperCase();
+    addPassiveEffect(effects, {
+      target: "protection",
+      key,
+      value: parsePassiveNumber(match[1]),
+      label: `${key} ${formatMod(parsePassiveNumber(match[1]))}`,
+      conditional: defaultConditional,
+    });
+  }
+}
+
+function addPassiveAttackEffects(effects, text, defaultConditional) {
+  for (const match of text.matchAll(/([+-]\d+(?:[,.]\d+)?)\s*(?:em\s*)?(?:jogadas?\s*de\s*)?ataques?\b/g)) {
+    addPassiveEffect(effects, {
+      target: "attack",
+      value: parsePassiveNumber(match[1]),
+      label: `Ataques ${formatMod(parsePassiveNumber(match[1]))}`,
+      conditional: defaultConditional,
+    });
+  }
+}
+
+function skillNameVariants(name) {
+  const base = normalizeSearch(name);
+  const variants = new Set([base]);
+  variants.add(base.replace(/\s+cosmic[ao]$/, ""));
+  if (base === "percepcao cosmica") variants.add("percepcao");
+  if (base === "busca cosmica") variants.add("busca");
+  return [...variants].filter(Boolean).sort((a, b) => b.length - a.length);
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function abilityPassiveEffects(ability) {
+  const saved = normalizePassiveEffects(ability?.passiveEffects);
+  if (saved.length) return saved;
+  if (ability?.source !== "Chip modificador") return [];
+  return inferModifierChipPassiveEffects(ability);
+}
+
+function activeModifierPassiveEffects({ includeConditional = false } = {}) {
+  return modifierChipEntries()
+    .flatMap((ability) => abilityPassiveEffects(ability))
+    .filter((effect) => includeConditional || !effect.conditional);
+}
+
+function modifierPassiveTotals({ includeConditional = false } = {}) {
+  const totals = {
+    attributes: ATTRIBUTES.reduce((acc, attr) => ({ ...acc, [attr]: 0 }), {}),
+    skills: {},
+    protections: {},
+    ca: 0,
+    movement: 0,
+    cubeSlots: 0,
+    stressMax: 0,
+    cosmosMax: 0,
+    cosmosPerLevel: 0,
+    attack: 0,
+  };
+
+  activeModifierPassiveEffects({ includeConditional }).forEach((effect) => {
+    if (effect.target === "attribute" && ATTRIBUTES.includes(effect.key)) totals.attributes[effect.key] += effect.value;
+    else if (effect.target === "skill") totals.skills[effect.key] = (totals.skills[effect.key] || 0) + effect.value;
+    else if (effect.target === "protection") totals.protections[effect.key] = (totals.protections[effect.key] || 0) + effect.value;
+    else if (effect.target in totals) totals[effect.target] += effect.value;
+  });
+
+  return totals;
+}
+
+function passiveSkillBonus(skillName) {
+  const skills = modifierPassiveTotals().skills;
+  if (skills[skillName]) return skills[skillName];
+  const normalizedName = normalizeSearch(skillName);
+  const match = Object.entries(skills).find(([key]) => normalizeSearch(key) === normalizedName);
+  return match ? match[1] : 0;
+}
+
+function skillModifier(skill) {
+  if (!skill) return 0;
+  return attributeModifier(totalAttributes()[skill.attr] || ATTRIBUTE_BASE) + passiveSkillBonus(skill.name);
+}
+
+function passiveProtectionBonus(name) {
+  const protections = modifierPassiveTotals().protections;
+  if (protections[name]) return protections[name];
+  const normalizedName = normalizeSearch(name);
+  const match = Object.entries(protections).find(([key]) => normalizeSearch(key) === normalizedName);
+  return match ? match[1] : 0;
+}
+
+function passiveAttackBonus() {
+  return modifierPassiveTotals().attack || 0;
+}
+
+function formatPassiveEffectSummary(effects, { includeConditional = false, empty = "Nenhum" } = {}) {
+  const entries = normalizePassiveEffects(effects).filter((effect) => includeConditional || !effect.conditional);
+  if (!entries.length) return empty;
+  return entries.map((effect) => `${effect.label}${effect.conditional ? " (condicional)" : ""}`).join(", ");
+}
+
 function formatBonusSummary(bonus) {
   const parts = ATTRIBUTES
     .filter((attr) => bonus[attr])
@@ -3837,6 +5366,16 @@ function formatBonusSummary(bonus) {
 
 function renderDetailRow(label, value) {
   return `<div class="detail-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`;
+}
+
+function normalizeKnownAbility(ability) {
+  const normalized = { ...ability };
+  if (normalized.source === "Chip modificador") {
+    normalized.passiveEffects = abilityPassiveEffects(normalized);
+  } else {
+    normalized.passiveEffects = normalizePassiveEffects(normalized.passiveEffects);
+  }
+  return normalized;
 }
 
 function normalizeCharacter(character) {
@@ -3861,18 +5400,27 @@ function normalizeCharacter(character) {
     pvCurrent: numberValue(character.pvCurrent, 0),
     cosmosCurrent: numberValue(character.cosmosCurrent, 0),
     stress: numberValue(character.stress, 0),
-    saturation: numberValue(character.saturation, 0),
     crackLevel: numberValue(character.crackLevel, 0),
     loadUsed: numberValue(character.loadUsed, 0),
-    currency: numberValue(character.currency, 0),
-    inventory: Array.isArray(character.inventory) ? character.inventory : [],
-    knownAbilities: Array.isArray(character.knownAbilities) ? character.knownAbilities : [],
+    bodyWeightKg: Math.max(1, numberValue(character.bodyWeightKg, 70)),
+    currency: character.currency === undefined ? STARTING_CURRENCY : numberValue(character.currency, 0),
+    inventory: Array.isArray(character.inventory) ? character.inventory.map((entry) => ({
+      ...entry,
+      cubeUid: entry.cubeUid || "",
+      inCube: Boolean(entry.inCube),
+      supportSlot: entry.cubeUid || entry.inCube ? "" : entry.supportSlot || "",
+      crackLevel: clamp(numberValue(entry.crackLevel, entry.uid === character.equippedWeaponUid ? character.crackLevel : 0), 0, ITEM_CRACK_MAX),
+    })) : [],
+    knownAbilities: Array.isArray(character.knownAbilities) ? character.knownAbilities.map(normalizeKnownAbility) : [],
+    cosmicTrainingSlots: Math.max(0, numberValue(character.cosmicTrainingSlots, 0)),
+    cosmicGrimoireSlots: Math.max(0, numberValue(character.cosmicGrimoireSlots, 0)),
     customItems: Array.isArray(character.customItems) ? character.customItems : [],
     diceLog: Array.isArray(character.diceLog) ? character.diceLog : [],
     initialAttributeRoll: character.initialAttributeRoll && Array.isArray(character.initialAttributeRoll.rolls)
       ? character.initialAttributeRoll
       : { rolls: [], kept: [] },
     skillTraining: character.skillTraining && typeof character.skillTraining === "object" ? character.skillTraining : {},
+    pendingCosmicEffect: ["blessing", "failure"].includes(character.pendingCosmicEffect) ? character.pendingCosmicEffect : "",
     equippedWeaponUid: character.equippedWeaponUid || "",
     equippedArmorUid: character.equippedArmorUid || "",
   };
@@ -3899,7 +5447,7 @@ function formatMod(value) {
 
 function formatCurrency(value) {
   if (!Number.isFinite(value)) return "Sem preço";
-  return `${value.toLocaleString("pt-BR")} dinheiro`;
+  return `${value.toLocaleString("pt-BR")} ${CURRENCY_SYMBOL}`;
 }
 
 function formatDate(value) {
@@ -3943,11 +5491,27 @@ function escapeHtml(value) {
 
 let diceOverlayTimer = null;
 let toastTimer = null;
-function showToast(message) {
+function showSlotLimitFeedback(type) {
+  if (type === "cosmic") {
+    const slots = cosmicSpellSlotState();
+    showToast(`Sem espaços de magia cósmica disponíveis: ${slots.used}/${slots.total}.`, "cosmic-error");
+    return;
+  }
+  if (type === "tech") {
+    const slots = modifierSlotState();
+    showToast(`Sem espaço de mods para chip: ${slots.used}/${slots.total}.`, "tech-error");
+  }
+}
+
+function showToast(message, variant = "") {
   clearTimeout(toastTimer);
   el.toast.textContent = message;
+  el.toast.classList.remove("toast-cosmic-error", "toast-tech-error");
+  if (variant) el.toast.classList.add(`toast-${variant}`);
   el.toast.classList.add("show");
-  toastTimer = setTimeout(() => el.toast.classList.remove("show"), 2200);
+  toastTimer = setTimeout(() => {
+    el.toast.classList.remove("show", "toast-cosmic-error", "toast-tech-error");
+  }, 2600);
 }
 
 function registerServiceWorker() {
