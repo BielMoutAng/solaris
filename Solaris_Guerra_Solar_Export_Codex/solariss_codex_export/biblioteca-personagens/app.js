@@ -1,8 +1,21 @@
+import {
+  Character as DomainCharacter,
+  ENTITY_TYPES,
+  LOCATION_KINDS,
+  MonsterDefinition,
+  MonsterSheet,
+  definitionFromLegacyItem,
+  migrateLegacyCharacterData,
+} from "./src/domain/solaris-domain-architecture.js";
+
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
 const ATTRIBUTE_BASE = 7;
 const ATTRIBUTE_MOD_BASE = 10;
 const STORAGE_KEY = "solaris.character.library.v1";
+const MONSTER_STORAGE_KEY = "solaris.monster.library.v1";
+const MONSTER_SESSION_STORAGE_KEY = "solaris.monster.session.v1";
+const PAGE_SIZE = 20;
 const LEVEL_COSMOS_BASE = { 1: 1, 2: 1, 3: 1, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2, 10: 4 };
 const STRESS_MAX = 6;
 const STARTING_CURRENCY = 2000;
@@ -12,6 +25,30 @@ const TIER_ORDER = ["F", "E", "D", "C", "B", "A", "S"];
 const CUBE_WEIGHT_KG = 1;
 const CURRENCY_NAME = "Luzentis";
 const CURRENCY_SYMBOL = "ℓ";
+const OFFICIAL_BOOKS = globalThis.SOLARIS_OFFICIAL_BOOKS || {
+  templates: [],
+  catalog: { weapons: [], armors: [], items: [], mods: [] },
+  bestiary: [],
+  rules: [],
+};
+const OFFICIAL_TEMPLATE_TYPE_MAP = {
+  item: "equipment",
+  weapon: "weapon",
+  armor: "armor",
+  mod: "mod",
+  cube: "cube",
+  "special-item": "special-item",
+  crafting: "crafting",
+  vehicle: "vehicle",
+  pursuit: "pursuit",
+  drone: "drone",
+  turret: "turret",
+  robot: "robot",
+  hacking: "hacking",
+  network: "network",
+  shop: "shop",
+  "black-market": "black-market",
+};
 const PASSIVE_ATTRIBUTE_ALIASES = { ESP: "PRE" };
 const COSMIC_SPELL_SLOT_RULE_SUMMARY = "Cada magia cósmica conhecida ocupa 1 espaço de magia. Espaços podem vir de equipamentos canalizadores, chips modificadores, treino durante timeskip e grimórios encontrados na campanha.";
 const CUBE_TYPE_DEFINITIONS = {
@@ -792,11 +829,13 @@ const officialItemRows = Array.isArray(globalThis.SOLARIS_OFFICIAL_ITEMS)
   ? globalThis.SOLARIS_OFFICIAL_ITEMS
   : [];
 
-const itemData = officialItemRows.map((item) => ({
+const spreadsheetItemData = officialItemRows.map((item) => ({
   ...item,
   category: "item",
   tags: Array.isArray(item.tags) && item.tags.length ? item.tags : ["item"],
 }));
+
+const itemData = mergeCatalogByName(OFFICIAL_BOOKS.catalog.items, spreadsheetItemData);
 
 const cubeData = [
   {
@@ -814,7 +853,20 @@ const cubeData = [
   },
 ];
 
-const weaponData = [
+function isStorageMarketItem(item) {
+  const text = normalizeSearch([
+    item?.name,
+    item?.category,
+    item?.summary,
+    ...(item?.tags || []),
+  ].filter(Boolean).join(" "));
+  return item?.category === "cube" || /\b(cubo|gancho|coldre|bandoleira)\b/.test(text);
+}
+
+const storageMarketData = [...cubeData, ...itemData.filter(isStorageMarketItem)];
+const commonItemData = itemData.filter((item) => !isStorageMarketItem(item));
+
+const legacyWeaponData = [
   { id: "arma-bastao-carbonita", category: "weapon", name: "Bastão de Carbonita", tier: "F", type: "Concussão", damage: "1d4", mods: 0, weight: "2 Kg", price: 5000, tags: ["frágil"], summary: "Muito frágil; quebra rápido." },
   { id: "arma-bastao-ferrita", category: "weapon", name: "Bastão de Ferrita", tier: "F", type: "Concussão", damage: "1d4", mods: 0, weight: "4 Kg", price: 5000, tags: ["pesado"], summary: "Pesado para dano baixo." },
   { id: "arma-bastao-paralatum", category: "weapon", name: "Bastão de poeira estelar com Paralatum", tier: "F", type: "Concussão", damage: "1d4", mods: 1, weight: "2 Kg", price: 10000, tags: ["canalizador"], summary: "Serve como canalizador cósmico e permite escolher 3 habilidades de 1 Cosmos." },
@@ -833,7 +885,7 @@ const weaponData = [
   { id: "arma-rifle-olho-nyx", category: "weapon", name: "Rifle de Precisão Olho de Nyx", tier: "E", type: "Perfurante", damage: "2d6", mods: 2, weight: "4,2 Kg", price: 15000, tags: ["4-20 m"], summary: "Carregador 5; entre 12 e 16 m, +1 dano." },
 ];
 
-const armorData = [
+const legacyArmorData = [
   { id: "armadura-malha-carbonita", category: "armor", name: "Armadura de Malha Carbonita", tier: "F", kind: "CaC", ca: 8, mods: 1, weight: "25 Kg", price: 60, tags: ["corpo a corpo"], summary: "Proteção reforçada para linha de frente." },
   { id: "armadura-peitoral-kudrog", category: "armor", name: "Peitoral de Couro de Kudrog", tier: "F", kind: "Ranged", ca: 5, mods: 1, weight: "10 Kg", price: 40, tags: ["leve"], summary: "Projetado para atiradores; aumenta mobilidade." },
   { id: "armadura-sucatas", category: "armor", name: "Armadura de Sucatas", tier: "F", kind: "Suporte", ca: 6, mods: 2, weight: "20 Kg", price: 15, tags: ["utilitária"], summary: "2 ganchos fixos e interface de rede com 1 RAM." },
@@ -846,6 +898,10 @@ const armorData = [
   { id: "armadura-manto-falaris", category: "armor", name: "Manto de Falaris", tier: "S", kind: "Cósmica", ca: 6, mods: 5, cosmos: 4, weight: "12 Kg", price: 10000000, tags: ["cosmos"], summary: "Disparo potencializado e alto suporte cósmico." },
   { id: "armadura-serafim", category: "armor", name: "Armadura Serafim de Emergência", tier: "S", kind: "Suporte", ca: 8, mods: 6, weight: "38 Kg", price: 10000000, tags: ["suporte"], summary: "Intercepta ataques, cura aliados e opera itens por braços mecânicos." },
 ];
+
+const weaponData = mergeCatalogByName(OFFICIAL_BOOKS.catalog.weapons, legacyWeaponData);
+const armorData = mergeCatalogByName(OFFICIAL_BOOKS.catalog.armors, legacyArmorData);
+const equipmentModData = mergeCatalogByName(OFFICIAL_BOOKS.catalog.mods, []);
 
 const cosmicSpellRows = [
   [1, "Rajada Cósmica", "1d6 de dano energético, ignora 1 CA. Alcance 10 m.", "Instantânea"],
@@ -1014,14 +1070,100 @@ const modifierChipData = modifierChipRows.map(([rank, name, summary]) => ({
   tags: ["chip modificador", `rank ${rank}`],
 }));
 
-const monsterData = [
-  { name: "Predador territorial", tier: "Baixo", type: "Besta", tags: ["emboscada", "rastros"], summary: "Ameaça de exploração externa, normalmente foge quando ferida demais." },
-  { name: "Drone batedor", tier: "Baixo", type: "Máquina", tags: ["rede", "alarme"], summary: "Vigia rotas, marca alvos e aumenta o risco de patrulhas próximas." },
-  { name: "Sombra no escuro", tier: "Médio", type: "Anomalia", tags: ["medo", "surpresa"], summary: "Aparece em locais instáveis e pressiona MEN antes do ataque." },
-  { name: "Enxame", tier: "Variável", type: "Criatura", tags: ["grupo", "movimento"], summary: "Várias criaturas pequenas que atrapalham deslocamento e concentração." },
-];
+const monsterData = Array.isArray(OFFICIAL_BOOKS.bestiary) && OFFICIAL_BOOKS.bestiary.length
+  ? OFFICIAL_BOOKS.bestiary
+  : [
+      { id: "fallback-predador", name: "Predador territorial", tier: "E", type: "Besta", tags: ["emboscada", "rastros"], summary: "Ameaça de exploração externa, normalmente foge quando ferida demais.", assets: [] },
+    ];
 
-const ruleData = [
+const monsterSheetTemplates = {
+  full: {
+    label: "Monstro comum",
+    source: "Livro 3, 1.1 e 5.1",
+    fields: [
+      ["name", "Nome", "text"],
+      ["tier", "Tier", "text"],
+      ["type", "Tipo", "text"],
+      ["imageDataUrl", "Imagem (URL ou data URL)", "text"],
+      ["role", "Papel", "text"],
+      ["size", "Tamanho", "text"],
+      ["habitat", "Habitat", "textarea"],
+      ["behavior", "Comportamento", "textarea"],
+      ["pv", "PV", "number"],
+      ["ca", "CA", "number"],
+      ["movement", "Movimento", "text"],
+      ["cosmos", "Cosmos máximo", "number"],
+      ["stressMax", "Estresse máximo", "number"],
+      ["cracksMax", "Rachaduras máximas", "number"],
+      ["attributes", "Atributos importantes", "textarea"],
+      ["attacks", "Ataques", "textarea"],
+      ["abilities", "Habilidades", "textarea"],
+      ["conditionsApplied", "Condições que aplica", "textarea"],
+      ["resistances", "Resistências", "textarea"],
+      ["weaknesses", "Fraquezas", "textarea"],
+      ["senses", "Sentidos", "textarea"],
+      ["moral", "Moral", "textarea"],
+      ["resources", "Recursos coletáveis", "textarea"],
+      ["reward", "Recompensa sugerida", "textarea"],
+      ["campaign", "Ganchos e uso em campanha", "textarea"],
+      ["quickRolls", "Rolagens rápidas", "textarea"],
+      ["gmNotes", "Notas do mestre", "textarea"],
+    ],
+  },
+  quick: {
+    label: "Ficha curta",
+    source: "Livro 3, 1.2 e 5.2",
+    fields: [
+      ["name", "Nome", "text"],
+      ["tier", "Tier", "text"],
+      ["type", "Tipo", "text"],
+      ["imageDataUrl", "Imagem (URL ou data URL)", "text"],
+      ["pv", "PV", "number"],
+      ["ca", "CA", "number"],
+      ["attack", "Ataque", "text"],
+      ["damage", "Dano", "text"],
+      ["movement", "Movimento", "text"],
+      ["abilities", "Habilidade especial", "textarea"],
+      ["behavior", "Comportamento", "textarea"],
+      ["resources", "Recurso coletável", "textarea"],
+      ["gmNotes", "Notas do mestre", "textarea"],
+    ],
+  },
+  boss: {
+    label: "Chefe",
+    source: "Livro 3, Capítulos 3 e 5.3",
+    fields: [
+      ["name", "Nome", "text"],
+      ["tier", "Tier", "text"],
+      ["type", "Tipo", "text"],
+      ["imageDataUrl", "Imagem (URL ou data URL)", "text"],
+      ["role", "Papel", "text"],
+      ["size", "Tamanho", "text"],
+      ["pv", "PV", "number"],
+      ["ca", "CA", "number"],
+      ["movement", "Movimento", "text"],
+      ["cosmos", "Cosmos máximo", "number"],
+      ["stressMax", "Estresse máximo", "number"],
+      ["cracksMax", "Rachaduras máximas", "number"],
+      ["attributes", "Atributos importantes", "textarea"],
+      ["signs", "Sinais antes do encontro", "textarea"],
+      ["attacks", "Ataques", "textarea"],
+      ["abilities", "Habilidades principais", "textarea"],
+      ["bossActions", "Ações de chefe", "textarea"],
+      ["reactions", "Reações", "textarea"],
+      ["phases", "Fases", "textarea"],
+      ["resistances", "Resistências", "textarea"],
+      ["weaknesses", "Fraquezas", "textarea"],
+      ["conditionsApplied", "Condições que aplica", "textarea"],
+      ["resources", "Recursos coletáveis", "textarea"],
+      ["campaign", "Soluções e consequências", "textarea"],
+      ["quickRolls", "Rolagens rápidas", "textarea"],
+      ["gmNotes", "Notas do mestre", "textarea"],
+    ],
+  },
+};
+
+const legacyRuleData = [
   { name: "Rolagem padrão", tags: ["3d6", "modificador"], summary: "Role 3d6 + atributo/perícia + modificador situacional. 3 a 9 falha, 10 a 14 sucesso parcial, 15 a 18 sucesso completo." },
   { name: "Ataques", tags: ["1d20", "CA", "crítico"], summary: "Ataques usam 1d20 + atributo contra a CA. Corpo a corpo normalmente usa FOR, distância usa REF e ataques cósmicos usam MEN. 20 natural é crítico; 1 natural é erro crítico." },
   { name: "Iniciativa", tags: ["1d20", "REF"], summary: "A iniciativa usa 1d20 + MOD REF." },
@@ -1035,6 +1177,8 @@ const ruleData = [
   { name: "Espaços de magia cósmica", tags: ["cosmos", "magias", "grimórios"], summary: `${COSMIC_SPELL_SLOT_RULE_SUMMARY} Equipamentos e chips são calculados automaticamente quando equipados/adicionados; treino e grimórios são registrados na aba Cosmos e chips.` },
   { name: "Level up", tags: ["espinha artificial", "evolução"], summary: "A evolução usa materiais, custo em ℓ, tempo de procedimento e rolagem de benefício do nível." },
 ];
+
+const ruleData = mergeCatalogByName(OFFICIAL_BOOKS.rules, legacyRuleData);
 
 const actionData = [
   { name: "Atacar", context: "Combate", tags: ["ação", "arma"], summary: "Faça uma jogada de ataque com arma, corpo a corpo ou habilidade ofensiva. Em acerto, role o dano." },
@@ -1148,13 +1292,15 @@ const characterCreationChecklist = [
 const libraryMap = {
   racas: { title: "Raças", kicker: "Povos de Tarantus", items: raceData },
   profissoes: { title: "Profissões", kicker: "Chips de função", items: professionData },
-  magias: { title: "Magias cósmicas", kicker: "Tabela Cósmica", items: cosmicSpellData, learn: "cosmos" },
-  chipsMod: { title: "Chips modificadores", kicker: "Mods por ranking", items: modifierChipData, learn: "chip-mod" },
-  armas: { title: "Armas", kicker: "Tiers e dano", items: weaponData, market: true },
+  magias: { title: "Magias cósmicas", kicker: "Tabela Cósmica", items: cosmicSpellData, learn: "cosmos", monsterAsset: "cosmos" },
+  chipsMod: { title: "Chips modificadores", kicker: "Chips por ranking", items: modifierChipData, learn: "chip-mod", monsterAsset: "ability" },
+  mods: { title: "Mods", kicker: "Livro 5 - melhorias", items: equipmentModData, monsterAsset: "mod" },
+  armazenamento: { title: "Armazenamento", kicker: "Cubos e acesso rápido", items: storageMarketData, market: true },
+  armas: { title: "Armas", kicker: "Livro 5 - tiers e dano", items: weaponData, market: true, monsterAsset: "weapon" },
   armaduras: { title: "Armaduras", kicker: "CA e mods", items: armorData, market: true },
-  itens: { title: "Itens", kicker: "Equipamentos e cubo", items: [...cubeData, ...itemData], market: true },
-  monstros: { title: "Monstros", kicker: "Ameaças de mesa", items: monsterData },
-  regras: { title: "Regras", kicker: "Sistema base", items: ruleData },
+  itens: { title: "Itens comuns", kicker: "Utilidades e suprimentos", items: commonItemData, market: true },
+  monstros: { title: "Monstros", kicker: "Livro 3 - Bestiário", items: monsterData },
+  regras: { title: "Regras", kicker: "Livros 1, 2 e 5", items: ruleData },
   acoes: { title: "Ações possíveis", kicker: "Combate, cena e downtime", items: actionData },
 };
 
@@ -1181,9 +1327,11 @@ const emptyCharacter = () => ({
   currency: STARTING_CURRENCY,
   inventory: [],
   knownAbilities: [],
+  installedMods: [],
   cosmicTrainingSlots: 0,
   cosmicGrimoireSlots: 0,
   customItems: [],
+  customRecords: [],
   diceLog: [],
   initialAttributeRoll: { rolls: [], kept: [] },
   skillTraining: {},
@@ -1194,6 +1342,7 @@ const emptyCharacter = () => ({
   bodyParts: {},
   equippedWeaponUid: "",
   equippedArmorUid: "",
+  domainCharacter: null,
   photoDataUrl: "",
   photoName: "",
   abilities: "",
@@ -1210,6 +1359,13 @@ const state = {
   pendingTest: null,
   manualImageDataUrl: "",
   manualImageName: "",
+  monsterSheets: {},
+  monsterSession: [],
+  activeMonsterId: "",
+  activeMonsterAssetCategory: "weapon",
+  pagination: {},
+  pendingLocationEntityId: "",
+  pendingLocationReason: "",
   current: emptyCharacter(),
   saved: [],
 };
@@ -1230,6 +1386,8 @@ const el = {
   libraryTierFilter: document.querySelector("#libraryTierFilter"),
   librarySort: document.querySelector("#librarySort"),
   libraryGrid: document.querySelector("#libraryGrid"),
+  libraryPagination: document.querySelector("#libraryPagination"),
+  monsterSessionPanel: document.querySelector("#monsterSessionPanel"),
   libraryTitle: document.querySelector("#libraryTitle"),
   libraryKicker: document.querySelector("#libraryKicker"),
   personagensView: document.querySelector("#personagensView"),
@@ -1261,6 +1419,7 @@ const el = {
   manualCosmos: document.querySelector("#manualCosmos"),
   manualTags: document.querySelector("#manualTags"),
   manualEffect: document.querySelector("#manualEffect"),
+  manualOfficialFields: document.querySelector("#manualOfficialFields"),
   manualImagePanel: document.querySelector("#manualImagePanel"),
   manualImageDropzone: document.querySelector("#manualImageDropzone"),
   manualImageInput: document.querySelector("#manualImageInput"),
@@ -1294,6 +1453,27 @@ const el = {
   removePhotoButton: document.querySelector("#removePhotoButton"),
   summaryPortraitImage: document.querySelector("#summaryPortraitImage"),
   summaryPortraitIcon: document.querySelector("#summaryPortraitIcon"),
+  createMonsterButton: document.querySelector("#createMonsterButton"),
+  monsterEditorModal: document.querySelector("#monsterEditorModal"),
+  monsterEditorForm: document.querySelector("#monsterEditorForm"),
+  monsterEditorTitle: document.querySelector("#monsterEditorTitle"),
+  monsterSheetType: document.querySelector("#monsterSheetType"),
+  monsterEditorFields: document.querySelector("#monsterEditorFields"),
+  closeMonsterEditor: document.querySelector("#closeMonsterEditor"),
+  deleteMonsterButton: document.querySelector("#deleteMonsterButton"),
+  monsterAssetsModal: document.querySelector("#monsterAssetsModal"),
+  monsterAssetsTitle: document.querySelector("#monsterAssetsTitle"),
+  closeMonsterAssets: document.querySelector("#closeMonsterAssets"),
+  monsterAssetSearch: document.querySelector("#monsterAssetSearch"),
+  monsterAssetCategory: document.querySelector("#monsterAssetCategory"),
+  monsterAssetGrid: document.querySelector("#monsterAssetGrid"),
+  exportMonsterButton: document.querySelector("#exportMonsterButton"),
+  inventoryLocationModal: document.querySelector("#inventoryLocationModal"),
+  inventoryLocationTitle: document.querySelector("#inventoryLocationTitle"),
+  inventoryLocationMessage: document.querySelector("#inventoryLocationMessage"),
+  inventoryLocationForm: document.querySelector("#inventoryLocationForm"),
+  inventoryLocationSelect: document.querySelector("#inventoryLocationSelect"),
+  closeInventoryLocation: document.querySelector("#closeInventoryLocation"),
   toast: document.querySelector("#toast"),
 };
 
@@ -1305,6 +1485,8 @@ function init() {
   hydrateQuickTests();
   applyManualTemplate();
   loadSaved();
+  loadMonsterSheets();
+  loadMonsterSession();
   bindEvents();
   renderForm();
   renderSavedList();
@@ -1461,7 +1643,16 @@ function bindEvents() {
       return;
     }
     const applyAttributesButton = event.target.closest("[data-apply-initial-attributes]");
-    if (applyAttributesButton) applyInitialAttributePool();
+    if (applyAttributesButton) {
+      applyInitialAttributePool();
+      return;
+    }
+    if (event.target.closest("[data-create-random-character]")) {
+      createRandomLevel1Character();
+      return;
+    }
+    const bulkDeleteButton = event.target.closest("[data-bulk-delete]");
+    if (bulkDeleteButton) bulkDeleteCharacterContent(bulkDeleteButton.dataset.bulkDelete);
   });
 
   el.form.addEventListener("input", () => {
@@ -1566,6 +1757,36 @@ function bindEvents() {
   el.rollInitiativeButton.addEventListener("click", rollInitiative);
   el.manualCreateForm.addEventListener("submit", createManualEntry);
   el.manualType.addEventListener("change", applyManualTemplate);
+  el.createMonsterButton.addEventListener("click", () => openMonsterEditor());
+  el.monsterSheetType.addEventListener("change", () => renderMonsterEditorFields({}, el.monsterSheetType.value));
+  el.monsterEditorForm.addEventListener("submit", saveMonsterSheet);
+  el.closeMonsterEditor.addEventListener("click", closeMonsterEditor);
+  el.monsterEditorModal.addEventListener("click", (event) => {
+    if (event.target instanceof Element && event.target.closest("[data-monster-editor-close]")) closeMonsterEditor();
+  });
+  el.deleteMonsterButton.addEventListener("click", deleteActiveMonsterSheet);
+  el.closeMonsterAssets.addEventListener("click", closeMonsterAssets);
+  el.monsterAssetsModal.addEventListener("click", (event) => {
+    if (event.target instanceof Element && event.target.closest("[data-monster-assets-close]")) closeMonsterAssets();
+  });
+  el.monsterAssetSearch.addEventListener("input", renderMonsterAssetManager);
+  el.monsterAssetCategory.addEventListener("change", () => {
+    state.activeMonsterAssetCategory = el.monsterAssetCategory.value;
+    renderMonsterAssetManager();
+  });
+  el.monsterAssetGrid.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const button = event.target.closest("[data-monster-asset-toggle]");
+    if (button) toggleMonsterAsset(button.dataset.monsterAssetToggle, button.dataset.assetCategory);
+  });
+  el.exportMonsterButton.addEventListener("click", exportActiveMonster);
+  el.inventoryLocationForm.addEventListener("submit", applyPendingInventoryLocation);
+  el.closeInventoryLocation.addEventListener("click", closeInventoryLocationDialog);
+  el.inventoryLocationModal.addEventListener("click", (event) => {
+    if (event.target instanceof Element && event.target.closest("[data-inventory-location-close]")) {
+      closeInventoryLocationDialog();
+    }
+  });
   el.manualImageDropzone.addEventListener("click", () => el.manualImageInput.click());
   el.manualImageInput.addEventListener("change", (event) => {
     const file = event.target.files?.[0];
@@ -1608,21 +1829,51 @@ function bindEvents() {
     closeVitalHud();
   });
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !el.vitalHudModal.hidden) closeVitalHud();
+    if (event.key !== "Escape") return;
+    if (!el.vitalHudModal.hidden) closeVitalHud();
+    if (!el.monsterEditorModal.hidden) closeMonsterEditor();
+    if (!el.monsterAssetsModal.hidden) closeMonsterAssets();
+    if (!el.inventoryLocationModal.hidden) closeInventoryLocationDialog();
   });
   el.testBonus.addEventListener("input", renderPendingTestFormula);
   el.testMode.addEventListener("change", renderPendingTestFormula);
 
   el.characterSearch.addEventListener("input", renderSavedList);
-  el.librarySearch.addEventListener("input", renderLibrary);
-  el.libraryTierFilter.addEventListener("change", renderLibrary);
-  el.librarySort.addEventListener("change", renderLibrary);
+  el.librarySearch.addEventListener("input", () => resetLibraryPaginationAndRender());
+  el.libraryTierFilter.addEventListener("change", () => resetLibraryPaginationAndRender());
+  el.librarySort.addEventListener("change", () => resetLibraryPaginationAndRender());
   document.addEventListener("click", handleCardDetailsClick);
+  document.addEventListener("click", handlePaginationClick);
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeCardDetails();
   });
   el.libraryGrid.addEventListener("click", (event) => {
     if (!(event.target instanceof Element)) return;
+    const addSessionButton = event.target.closest("[data-monster-session-add]");
+    if (addSessionButton) {
+      addMonsterToSession(addSessionButton.dataset.monsterSessionAdd);
+      return;
+    }
+    const playableButton = event.target.closest("[data-monster-playable]");
+    if (playableButton) {
+      addMonsterToSession(playableButton.dataset.monsterPlayable, { openEditor: true });
+      return;
+    }
+    const deleteMonsterCardButton = event.target.closest("[data-monster-delete]");
+    if (deleteMonsterCardButton) {
+      deleteMonsterSheetById(deleteMonsterCardButton.dataset.monsterDelete);
+      return;
+    }
+    const editMonsterButton = event.target.closest("[data-monster-edit]");
+    if (editMonsterButton) {
+      openMonsterEditor(editMonsterButton.dataset.monsterEdit);
+      return;
+    }
+    const monsterAssetsButton = event.target.closest("[data-monster-assets]");
+    if (monsterAssetsButton) {
+      openMonsterAssets(monsterAssetsButton.dataset.monsterAssets);
+      return;
+    }
     const blockedSlotButton = event.target.closest("[data-slot-blocked]");
     if (blockedSlotButton) {
       showSlotLimitFeedback(blockedSlotButton.dataset.slotBlocked);
@@ -1641,6 +1892,36 @@ function bindEvents() {
     const raceCard = event.target.closest("[data-race-id]");
     if (!raceCard || state.activeLibrary !== "racas") return;
     openRaceDetail(raceCard.dataset.raceId);
+  });
+
+  el.monsterSessionPanel.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const action = event.target.closest("[data-monster-session-action]");
+    if (!action) return;
+    handleMonsterSessionAction(action.dataset.monsterSessionAction, action.dataset.monsterSessionId, action);
+  });
+
+  [el.cosmosPageContent, el.abilitiesPageContent, el.manualCreatedContent].forEach((container) => {
+    container.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) return;
+      const abilityAction = event.target.closest("[data-ability-action]");
+      if (abilityAction) {
+        handleAbilityAction(abilityAction.dataset.abilityAction, abilityAction.dataset.abilityId);
+        return;
+      }
+      const professionAction = event.target.closest("[data-profession-action]");
+      if (professionAction) {
+        removeProfessionChip();
+        return;
+      }
+      const modAction = event.target.closest("[data-installed-mod-action]");
+      if (modAction) {
+        removeInstalledMod(modAction.dataset.modId);
+        return;
+      }
+      const customAction = event.target.closest("[data-custom-content-delete]");
+      if (customAction) deleteCustomContent(customAction.dataset.customContentDelete, customAction.dataset.customContentType);
+    });
   });
 
   [el.equipmentPageContent, el.cubePageContent].forEach((container) => {
@@ -2311,6 +2592,7 @@ function renderCreationGuidePage(derived) {
         <button class="mini-button" type="button" data-guide-library="racas">Ver raças</button>
         <button class="mini-button" type="button" data-guide-library="profissoes">Ver profissões</button>
         <button class="mini-button" type="button" data-guide-page="equipamentos">Escolher equipamentos</button>
+        <button class="primary-button" type="button" data-create-random-character>Criar personagem aleatório nível 1</button>
       </section>
 
       ${renderInitialAttributeRoller()}
@@ -2343,6 +2625,25 @@ function renderCreationGuidePage(derived) {
         <h3>Exemplo rápido</h3>
         <p>Um Humanis Hacker pode priorizar REF e INT, escolher Tecnologia como ponto forte, usar uma pistola Tier F, uma armadura utilitária Tier F, 4 cubos e um objetivo como descobrir o que causou a explosão de Falaris.</p>
         <p>O importante é sair com uma função clara no grupo, uma fraqueza interessante e uma razão pessoal para entrar em ruínas, zonas hostis e conflitos.</p>
+      </section>
+
+      <section class="guide-panel danger-zone">
+        <div>
+          <span class="ability-source">Gerenciamento da ficha</span>
+          <h3>Exclusão em massa</h3>
+          <p>Estas ações removem conteúdo sem devolver Luzentis.</p>
+        </div>
+        <div class="bulk-delete-grid">
+          <button class="mini-button danger-mini-button" type="button" data-bulk-delete="items">Excluir todos os itens comuns</button>
+          <button class="mini-button danger-mini-button" type="button" data-bulk-delete="weapons">Excluir todas as armas</button>
+          <button class="mini-button danger-mini-button" type="button" data-bulk-delete="armors">Excluir todas as armaduras</button>
+          <button class="mini-button danger-mini-button" type="button" data-bulk-delete="equipment">Excluir todos os equipamentos</button>
+          <button class="mini-button danger-mini-button" type="button" data-bulk-delete="chips">Excluir todos os chips modificadores</button>
+          <button class="mini-button danger-mini-button" type="button" data-bulk-delete="spells">Excluir todas as magias</button>
+          <button class="mini-button danger-mini-button" type="button" data-bulk-delete="manual">Excluir todas as habilidades manuais</button>
+          <button class="mini-button danger-mini-button" type="button" data-bulk-delete="monsters">Excluir todos os monstros da sessão</button>
+          <button class="mini-button danger-mini-button" type="button" data-bulk-delete="inventory">Limpar inventário completo</button>
+        </div>
       </section>
 
       <section class="guide-panel guide-checklist-panel">
@@ -2439,6 +2740,54 @@ function applyInitialAttributePool() {
   showToast("Atributos iniciais aplicados na ficha.");
 }
 
+function entryLocationKind(entry) {
+  if (entry?.location?.kind) return entry.location.kind;
+  if (entry?.uid === state.current.equippedWeaponUid || entry?.uid === state.current.equippedArmorUid) return LOCATION_KINDS.EQUIPPED;
+  if (entry?.cubeUid || entry?.inCube) return LOCATION_KINDS.CUBE;
+  if (entry?.supportSlot === "gancho") return LOCATION_KINDS.HOOK;
+  if (entry?.supportSlot === "coldre") return LOCATION_KINDS.HOLSTER;
+  if (entry?.supportSlot === "bandoleira") return LOCATION_KINDS.BANDOLIER;
+  return LOCATION_KINDS.UNASSIGNED;
+}
+
+function isStorageInventoryEntry(entry) {
+  return isStorageMarketItem(findMarketItem(entry?.itemId));
+}
+
+function groupInventoryForEquipment(entries = state.current.inventory) {
+  const groups = { equipped: [], active: [], hooks: [], holsters: [], cubes: [], common: [], unassigned: [] };
+  entries.forEach((entry) => {
+    const kind = entryLocationKind(entry);
+    if (kind === LOCATION_KINDS.EQUIPPED) groups.equipped.push(entry);
+    else if (kind === LOCATION_KINDS.ACTIVE) groups.active.push(entry);
+    else if (kind === LOCATION_KINDS.HOOK) groups.hooks.push(entry);
+    else if ([LOCATION_KINDS.HOLSTER, LOCATION_KINDS.BANDOLIER].includes(kind)) groups.holsters.push(entry);
+    else if (isStorageInventoryEntry(entry) || kind === LOCATION_KINDS.CUBE) groups.cubes.push(entry);
+    else if (kind === LOCATION_KINDS.UNASSIGNED) groups.unassigned.push(entry);
+    else groups.common.push(entry);
+  });
+  return groups;
+}
+
+function renderInventoryLocationSection(title, entries, note = "", className = "") {
+  const key = `inventory:${dataSlug(title)}`;
+  const paginated = paginateItems(entries, state.pagination[key] || 1);
+  state.pagination[key] = paginated.page;
+  return `
+    <section class="inventory-panel inventory-panel-wide inventory-location-section ${className}">
+      <div class="inventory-section-heading">
+        <div>
+          <h3>${escapeHtml(title)}</h3>
+          ${note ? `<p class="inventory-note">${escapeHtml(note)}</p>` : ""}
+        </div>
+        <strong>${entries.length}</strong>
+      </div>
+      ${renderInventoryCards(paginated.items, { showCubeAction: true, showEquipAction: true, showSupportAction: true })}
+      <nav class="pagination-controls" aria-label="Paginação de ${escapeHtml(title)}">${renderPaginationControls(paginated, key)}</nav>
+    </section>
+  `;
+}
+
 function renderEquipmentPage(derived) {
   const equippedWeapon = getEquippedMarketItem("weapon");
   const equippedArmor = getEquippedMarketItem("armor");
@@ -2446,6 +2795,8 @@ function renderEquipmentPage(derived) {
   const equippedArmorEntry = getEquippedInventoryEntry("armor");
   const modSlots = modifierSlotState();
   const supportState = externalSupportState();
+  const inventoryGroups = groupInventoryForEquipment();
+  const domainValidation = domainCharacterFromLegacy().validateInventory();
   el.equipmentWallet.textContent = formatCurrency(state.current.currency);
   el.equipmentPageContent.innerHTML = `
     <section class="inventory-panel inventory-panel-wide">
@@ -2473,10 +2824,20 @@ function renderEquipmentPage(derived) {
       <h3>Suportes externos</h3>
       ${renderExternalSupportPanel(supportState)}
     </section>
-    <section class="inventory-panel inventory-panel-wide">
-      <h3>Inventário comprado</h3>
-      ${renderInventoryCards(state.current.inventory, { showCubeAction: true, showEquipAction: true, showSupportAction: true, supportState })}
-    </section>
+    ${renderInventoryLocationSection("Equipado", inventoryGroups.equipped, "Armas, armadura e itens atualmente prontos no loadout.")}
+    ${renderInventoryLocationSection("Ativos / acesso rápido", inventoryGroups.active, "Itens preparados para uso imediato durante uma cena.")}
+    ${renderInventoryLocationSection("Ganchos", inventoryGroups.hooks, "Itens presos em ganchos externos.")}
+    ${renderInventoryLocationSection("Coldres / bandoleiras", inventoryGroups.holsters, "Armas e itens presos em suportes de acesso rápido.")}
+    ${renderInventoryLocationSection("Cubos", inventoryGroups.cubes, "Cubos, armazenadores e os itens vinculados a eles.")}
+    ${renderInventoryLocationSection("Itens comuns", inventoryGroups.common, "Itens guardados em base, veículo ou outro armazenador.")}
+    ${renderInventoryLocationSection(
+      "Itens sem local definido",
+      inventoryGroups.unassigned,
+      domainValidation.warnings.length
+        ? "Estes itens não estão prontos para uso. Use Mover para escolher uma localização."
+        : "Nenhum alerta de localização.",
+      inventoryGroups.unassigned.length ? "inventory-location-warning" : ""
+    )}
   `;
 }
 
@@ -2586,6 +2947,9 @@ function renderCosmosPage(derived) {
   const equippedWeapon = getEquippedMarketItem("weapon");
   const equippedArmor = getEquippedMarketItem("armor");
   const learnedCosmosAndChips = (state.current.knownAbilities || []).filter((ability) => ["Cosmos", "Chip modificador"].includes(ability.source));
+  const knownPaginationKey = "cosmos:known";
+  const knownPaginated = paginateItems(learnedCosmosAndChips, state.pagination[knownPaginationKey] || 1);
+  state.pagination[knownPaginationKey] = knownPaginated.page;
   const modSlots = modifierSlotState();
   const cosmicSpellSlots = cosmicSpellSlotState();
   const channelers = [equippedWeapon, equippedArmor]
@@ -2611,6 +2975,7 @@ function renderCosmosPage(derived) {
         ${renderDetailRow("Kit", profession.kit || "—")}
         ${renderDetailRow("Penalidade", profession.penalty || "—")}
       </div>
+      ${profession.id !== "escolha-profissao" ? '<button class="mini-button danger-mini-button" type="button" data-profession-action="remove">Remover chip de profissão</button>' : ""}
     </section>
     <section class="inventory-panel">
       <h3>Espaços de mods</h3>
@@ -2622,8 +2987,9 @@ function renderCosmosPage(derived) {
     </section>
     <section class="inventory-panel inventory-panel-wide">
       <h3>Habilidades registradas</h3>
-      ${learnedCosmosAndChips.length ? `<div class="ability-grid">${learnedCosmosAndChips.map(renderKnownAbilityCard).join("")}</div>` : `<p class="inventory-note">${escapeHtml(state.current.abilities || "Nenhuma habilidade cósmica, chip modificador ou talento extra registrado ainda.")}</p>`}
+      ${learnedCosmosAndChips.length ? `<div class="ability-grid">${knownPaginated.items.map(renderKnownAbilityCard).join("")}</div><nav class="pagination-controls">${renderPaginationControls(knownPaginated, knownPaginationKey)}</nav>` : `<p class="inventory-note">${escapeHtml(state.current.abilities || "Nenhuma habilidade cósmica, chip modificador ou talento extra registrado ainda.")}</p>`}
     </section>
+    ${renderInstalledModsPanel()}
   `;
 }
 
@@ -2683,6 +3049,35 @@ function renderModifierSlotPanel(modSlots = modifierSlotState()) {
   `;
 }
 
+function renderInstalledModsPanel() {
+  const mods = state.current.installedMods || [];
+  return `
+    <section class="inventory-panel inventory-panel-wide">
+      <h3>Mods instalados</h3>
+      ${mods.length ? `
+        <div class="ability-grid">
+          ${mods.map((mod) => `
+            <article class="inventory-card ability-card compact-card with-actions">
+              <div class="card-face">
+                <span class="ability-source">Mod instalado</span>
+                <h4>${renderCardTitleButton(mod.name || "Mod sem nome")}</h4>
+                <p class="card-meta-line">${escapeHtml(mod.targetName || "Equipamento não informado")}</p>
+              </div>
+              <div class="inventory-actions">
+                <button class="mini-button danger-mini-button" type="button" data-mod-action="remove" data-mod-id="${escapeHtml(mod.id)}">Remover mod</button>
+              </div>
+              <div class="card-hover-popover" role="tooltip">
+                <strong>${escapeHtml(mod.name || "Mod sem nome")}</strong>
+                <p>${escapeHtml(mod.effect || "Mod instalado no equipamento.")}</p>
+              </div>
+            </article>
+          `).join("")}
+        </div>
+      ` : '<div class="empty-state">Nenhum mod instalado.</div>'}
+    </section>
+  `;
+}
+
 function renderCubePage(derived) {
   const storage = syncLoadUsedFromCubeStorage(cubeStorageStats(derived));
   const { cubes, usedUnits, totalUnits, looseItems, legacyCubeItems } = storage;
@@ -2690,6 +3085,18 @@ function renderCubePage(derived) {
   const openCube = cubes.find((entry) => entry.uid === state.openCubeUid) || cubes[0] || null;
   if (openCube && state.openCubeUid !== openCube.uid) state.openCubeUid = openCube.uid;
   const openCubeItems = openCube ? cubeContainedEntries(openCube.uid) : [];
+  const cubeListKey = "cubes:physical";
+  const looseItemsKey = "cubes:loose";
+  const openCubeKey = `cubes:contents:${openCube?.uid || "none"}`;
+  const legacyCubeKey = "cubes:legacy";
+  const cubeListPage = paginateItems(cubes, state.pagination[cubeListKey] || 1);
+  const looseItemsPage = paginateItems(looseItems, state.pagination[looseItemsKey] || 1);
+  const openCubePage = paginateItems(openCubeItems, state.pagination[openCubeKey] || 1);
+  const legacyCubePage = paginateItems(legacyCubeItems, state.pagination[legacyCubeKey] || 1);
+  state.pagination[cubeListKey] = cubeListPage.page;
+  state.pagination[looseItemsKey] = looseItemsPage.page;
+  state.pagination[openCubeKey] = openCubePage.page;
+  state.pagination[legacyCubeKey] = legacyCubePage.page;
   syncLoadUsedInput();
   el.cubeUsagePill.textContent = `${usedUnits}/${totalUnits} unidades`;
   el.cubePageContent.innerHTML = `
@@ -2710,24 +3117,27 @@ function renderCubePage(derived) {
     </section>
     <section class="inventory-panel inventory-panel-wide">
       <h3>Cubos do personagem</h3>
-      ${cubes.length ? `<div class="cube-grid">${cubes.map(renderCubeCard).join("")}</div>` : '<div class="empty-state">Nenhum cubo criado. Crie um cubo aqui ou compre o Cubo simples na biblioteca de Itens.</div>'}
+      ${cubes.length ? `<div class="cube-grid">${cubeListPage.items.map(renderCubeCard).join("")}</div><nav class="pagination-controls">${renderPaginationControls(cubeListPage, cubeListKey)}</nav>` : '<div class="empty-state">Nenhum cubo criado. Crie um cubo aqui ou compre o Cubo simples na biblioteca de Itens.</div>'}
     </section>
     <section class="inventory-panel inventory-panel-wide">
       <h3>Itens soltos</h3>
-      ${renderInventoryCards(looseItems, { showCubeAction: false, showEquipAction: false, draggable: true })}
+      ${renderInventoryCards(looseItemsPage.items, { showCubeAction: false, showEquipAction: false, draggable: true })}
+      <nav class="pagination-controls">${renderPaginationControls(looseItemsPage, looseItemsKey)}</nav>
     </section>
     <section class="inventory-panel inventory-panel-wide">
       <h3>${openCube ? `Interior: ${escapeHtml(cubeDisplayName(openCube))}` : "Interior do cubo"}</h3>
       ${openCube ? `
         <p class="inventory-note">Duplo clique em outro cubo para abrir o interior dele. Para tirar um item, use o botão abaixo.</p>
-        ${renderInventoryCards(openCubeItems, { showCubeAction: true, showEquipAction: false })}
+        ${renderInventoryCards(openCubePage.items, { showCubeAction: true, showEquipAction: false })}
+        <nav class="pagination-controls">${renderPaginationControls(openCubePage, openCubeKey)}</nav>
       ` : '<div class="empty-state">Nenhum cubo selecionado.</div>'}
     </section>
     ${legacyCubeItems.length ? `
       <section class="inventory-panel inventory-panel-wide">
         <h3>Cubo antigo da ficha</h3>
         <p class="inventory-note">Itens salvos no formato antigo aparecem aqui até serem retirados e colocados em um cubo físico.</p>
-        ${renderInventoryCards(legacyCubeItems, { showCubeAction: true, showEquipAction: false })}
+        ${renderInventoryCards(legacyCubePage.items, { showCubeAction: true, showEquipAction: false })}
+        <nav class="pagination-controls">${renderPaginationControls(legacyCubePage, legacyCubeKey)}</nav>
       </section>
     ` : ""}
   `;
@@ -2779,7 +3189,9 @@ function renderCubeCard(entry) {
       </div>
       <div class="inventory-actions">
         <button class="mini-button" type="button" data-inventory-action="open-cube" data-uid="${escapeHtml(entry.uid)}">Abrir</button>
+        <button class="mini-button" type="button" data-inventory-action="move" data-uid="${escapeHtml(entry.uid)}">Mover</button>
         <button class="mini-button danger-mini-button" type="button" data-inventory-action="sell" data-uid="${escapeHtml(entry.uid)}">Vender</button>
+        <button class="mini-button danger-mini-button" type="button" data-inventory-action="delete" data-uid="${escapeHtml(entry.uid)}">Excluir</button>
       </div>
       <div class="card-hover-popover" role="tooltip">
         <strong>${escapeHtml(cubeDisplayName(entry))}</strong>
@@ -2850,6 +3262,7 @@ function createCubeFromForm(event) {
     supportSlot: "",
     crackLevel: 0,
   });
+  syncDomainSnapshotFromLegacy({ autoSave: true });
   state.openCubeUid = uid;
   form.reset();
   renderSummary();
@@ -2883,9 +3296,15 @@ function moveInventoryItemToCube(itemUid, cubeUid) {
     showToast(cubeRejectText(cubeEntry));
     return;
   }
-  itemEntry.cubeUid = cubeEntry.uid;
-  itemEntry.inCube = false;
-  itemEntry.supportSlot = "";
+  const domain = domainCharacterFromLegacy();
+  try {
+    domain.moveEntityTo(itemUid, { kind: LOCATION_KINDS.CUBE, containerId: cubeUid });
+  } catch (error) {
+    showToast(error.message || "Não foi possível guardar o item neste cubo.", "tech-error");
+    return;
+  }
+  syncDomainCharacterToLegacy(domain);
+  persistCurrentCharacterSilently();
   state.openCubeUid = cubeEntry.uid;
   renderSummary();
   showToast(`${item.name} guardado em ${cubeDisplayName(cubeEntry)}.`);
@@ -2893,10 +3312,13 @@ function moveInventoryItemToCube(itemUid, cubeUid) {
 
 function renderAbilitiesPage() {
   const entries = collectAbilityEntries();
+  const key = "abilities:all";
+  const paginated = paginateItems(entries, state.pagination[key] || 1);
+  state.pagination[key] = paginated.page;
   el.abilitiesPageContent.innerHTML = `
     <section class="inventory-panel inventory-panel-wide">
       <h3>Habilidades do personagem</h3>
-      ${entries.length ? `<div class="ability-grid">${entries.map(renderAbilityCard).join("")}</div>` : '<div class="empty-state">Nenhuma habilidade vinculada à ficha ainda.</div>'}
+      ${entries.length ? `<div class="ability-grid">${paginated.items.map(renderAbilityCard).join("")}</div><nav class="pagination-controls">${renderPaginationControls(paginated, key)}</nav>` : '<div class="empty-state">Nenhuma habilidade vinculada à ficha ainda.</div>'}
     </section>
   `;
 }
@@ -2935,36 +3357,98 @@ function renderDicePage() {
 function renderManualCreatedPage() {
   const customItems = state.current.customItems || [];
   const customAbilities = (state.current.knownAbilities || []).filter((ability) => ability.custom);
+  const customRecords = state.current.customRecords || [];
+  const entries = [
+    ...customItems.map((item) => ({
+      name: item.name,
+      source: marketCategoryLabel(item.category),
+      effect: item.summary,
+      meta: marketMeta(item),
+      imageDataUrl: item.imageDataUrl,
+      imageName: item.imageName,
+      deleteId: item.id,
+      deleteType: "item",
+    })),
+    ...customAbilities.map((ability) => ({ ...ability, deleteId: ability.id, deleteType: "ability" })),
+    ...customRecords.map((record) => ({
+      name: record.name,
+      source: manualRecordCategoryLabel(record.category),
+      effect: formatOfficialRecordFields(record),
+      meta: [record.tier ? `Tier ${record.tier}` : "", record.source].filter(Boolean).join(" - "),
+      imageDataUrl: record.imageDataUrl,
+      imageName: record.imageName,
+      deleteId: record.id,
+      deleteType: "record",
+    })),
+  ];
+  const key = "manual:created";
+  const paginated = paginateItems(entries, state.pagination[key] || 1);
+  state.pagination[key] = paginated.page;
   el.manualCreatedContent.innerHTML = `
     <section class="inventory-panel inventory-panel-wide">
       <h3>Conteúdo criado</h3>
-      ${customItems.length || customAbilities.length ? `
+      ${entries.length ? `
         <div class="ability-grid">
-          ${customItems.map((item) => renderAbilityCard({
-            name: item.name,
-            source: marketCategoryLabel(item.category),
-            effect: item.summary,
-            meta: marketMeta(item),
-            imageDataUrl: item.imageDataUrl,
-            imageName: item.imageName,
-          })).join("")}
-          ${customAbilities.map(renderAbilityCard).join("")}
+          ${paginated.items.map(renderAbilityCard).join("")}
         </div>
+        <nav class="pagination-controls">${renderPaginationControls(paginated, key)}</nav>
       ` : '<div class="empty-state">Nada criado manualmente ainda.</div>'}
     </section>
   `;
 }
 
+function manualRecordCategoryLabel(category) {
+  const labels = {
+    mod: "Mod",
+    cube: "Cubo",
+    "special-item": "Item especial",
+    crafting: "Crafting",
+    vehicle: "Veículo",
+    pursuit: "Perseguição",
+    drone: "Drone",
+    turret: "Torreta",
+    robot: "Robô",
+    hacking: "Hacking",
+    network: "Rede digital",
+    shop: "Loja",
+    "black-market": "Mercado negro",
+  };
+  return labels[category] || "Modelo oficial";
+}
+
+function formatOfficialRecordFields(record) {
+  const fields = Object.entries(record.fields || {});
+  if (!fields.length) return record.summary || "Registro criado pelo modelo oficial.";
+  return fields.map(([key, value]) => `${fieldLabelFromId(key)}: ${value}`).join(" | ");
+}
+
+function fieldLabelFromId(value) {
+  return String(value || "")
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 function renderAbilityCard(entry) {
   const passiveSummary = formatPassiveEffectSummary(entry.passiveEffects, { includeConditional: true, empty: "" });
+  const knownAbility = entry.knownAbility === true;
+  const hasActions = Boolean(entry.deleteId || knownAbility || entry.professionRemovable);
   return `
-    <article class="inventory-card ability-card compact-card ${entry.imageDataUrl ? "with-image" : ""}" tabindex="0">
+    <article class="inventory-card ability-card compact-card ${hasActions ? "with-actions" : ""} ${entry.imageDataUrl ? "with-image" : ""}" tabindex="0">
       ${renderCardImage(entry)}
       <div class="card-face">
         <span class="ability-source">${escapeHtml(entry.source || "Manual")}</span>
         <h4>${renderCardTitleButton(entry.name)}</h4>
         ${entry.meta ? `<p class="card-meta-line">${escapeHtml(entry.meta)}</p>` : ""}
       </div>
+      ${hasActions ? `
+        <div class="inventory-actions">
+          ${entry.professionRemovable ? '<button class="mini-button danger-mini-button" type="button" data-profession-action="remove">Remover chip</button>' : ""}
+          ${knownAbility ? renderKnownAbilityActions(entry) : ""}
+          ${entry.deleteId ? `<button class="mini-button danger-mini-button" type="button" data-custom-content-delete="${escapeHtml(entry.deleteId)}" data-custom-content-type="${escapeHtml(entry.deleteType || "ability")}">Excluir</button>` : ""}
+        </div>
+      ` : ""}
       <div class="card-hover-popover" role="tooltip">
         <strong>${escapeHtml(entry.name)}</strong>
         ${entry.meta ? `<p>${escapeHtml(entry.meta)}</p>` : ""}
@@ -2976,21 +3460,16 @@ function renderAbilityCard(entry) {
 }
 
 function renderKnownAbilityCard(entry) {
-  const canUnequipChip = entry.source === "Chip modificador";
   const passiveSummary = formatPassiveEffectSummary(entry.passiveEffects, { includeConditional: true, empty: "" });
   return `
-    <article class="inventory-card ability-card compact-card ${canUnequipChip ? "with-actions" : ""} ${entry.imageDataUrl ? "with-image" : ""}" tabindex="0">
+    <article class="inventory-card ability-card compact-card with-actions ${entry.imageDataUrl ? "with-image" : ""}" tabindex="0">
       ${renderCardImage(entry)}
       <div class="card-face">
         <span class="ability-source">${escapeHtml(entry.source || "Manual")}</span>
         <h4>${renderCardTitleButton(entry.name)}</h4>
         ${entry.meta ? `<p class="card-meta-line">${escapeHtml(entry.meta)}</p>` : ""}
       </div>
-      ${canUnequipChip ? `
-        <div class="inventory-actions">
-          <button class="mini-button danger-mini-button" type="button" data-unequip-chip-id="${escapeHtml(entry.id)}">Desequipar chip</button>
-        </div>
-      ` : ""}
+      <div class="inventory-actions">${renderKnownAbilityActions(entry)}</div>
       <div class="card-hover-popover" role="tooltip">
         <strong>${escapeHtml(entry.name)}</strong>
         ${entry.meta ? `<p>${escapeHtml(entry.meta)}</p>` : ""}
@@ -2999,6 +3478,19 @@ function renderKnownAbilityCard(entry) {
       </div>
     </article>
   `;
+}
+
+function renderKnownAbilityActions(entry) {
+  if (entry.source === "Cosmos") {
+    return `<button class="mini-button danger-mini-button" type="button" data-ability-action="remove" data-ability-id="${escapeHtml(entry.id)}">Remover magia</button>`;
+  }
+  if (entry.source === "Chip modificador") {
+    return `
+      <button class="mini-button" type="button" data-ability-action="${entry.installed === false ? "install" : "uninstall"}" data-ability-id="${escapeHtml(entry.id)}">${entry.installed === false ? "Instalar" : "Desinstalar"}</button>
+      <button class="mini-button danger-mini-button" type="button" data-ability-action="delete" data-ability-id="${escapeHtml(entry.id)}">Excluir</button>
+    `;
+  }
+  return `<button class="mini-button danger-mini-button" type="button" data-ability-action="delete" data-ability-id="${escapeHtml(entry.id)}">Excluir</button>`;
 }
 
 function renderCardImage(entry) {
@@ -3060,12 +3552,15 @@ function renderInventoryCards(entries, options = {}) {
       ${entries.map((entry) => {
         const item = findMarketItem(entry.itemId);
         if (!item) return "";
+        const definition = domainDefinitionForItem(item);
+        const entityType = entry.domainEntityType || definition.entityType;
+        const storageEntity = [ENTITY_TYPES.CUBE, ENTITY_TYPES.HOOK, ENTITY_TYPES.HOLSTER, ENTITY_TYPES.BANDOLIER].includes(entityType);
         const equipped = isInventoryEquipped(entry);
         const cubeLabel = entry.cubeUid || entry.inCube ? "Tirar do cubo" : "Guardar no cubo";
         const cubeAction = entry.cubeUid ? "cube-remove" : "cube";
         const equipAction = equipped ? "unequip" : "equip";
         const equipLabel = equipped ? "Desequipar" : "Equipar";
-        const salePrice = Number.isFinite(item.price) ? item.price : 0;
+        const salePrice = Number.isFinite(item.price) ? Math.floor(item.price / 2) : 0;
         const draggableAttrs = options.draggable && canStoreEntryInPhysicalCube(entry) ? ` draggable="true" data-drag-inventory-uid="${escapeHtml(entry.uid)}"` : "";
         const supportState = options.supportState || externalSupportState();
         const supportTarget = options.showSupportAction && !entry.supportSlot ? findAvailableExternalSupport(entry, supportState) : null;
@@ -3076,23 +3571,31 @@ function renderInventoryCards(entries, options = {}) {
           .filter((type) => providerCounts[type.id] > 0)
           .map((type) => `${type.singular} +${providerCounts[type.id]}`)
           .join(", ");
-        const cardMeta = [compactMarketMeta(item), supportLabel, providerLabel ? `Fornece: ${providerLabel}` : ""].filter(Boolean).join(" - ");
+        const locationLabel = inventoryLocationLabel(entry);
+        const cardMeta = [compactMarketMeta(item), locationLabel, supportLabel, providerLabel ? `Fornece: ${providerLabel}` : ""].filter(Boolean).join(" - ");
         const tracksCracks = ["item", "weapon", "armor", "cube"].includes(item.category);
         const crackLevel = itemCrackLevel(entry);
+        const chipInstalled = entityType === ENTITY_TYPES.CHIP_MOD && entry.location?.slotId === "chip";
         return `
           <article class="inventory-card compact-card ${item.imageDataUrl ? "with-image" : ""}" tabindex="0"${draggableAttrs}>
             ${renderCardImage(item)}
             <div class="card-face">
-              <span class="ability-source">${escapeHtml(marketCategoryLabel(item.category))}</span>
+              <span class="ability-source">${escapeHtml(domainEntityTypeLabel(entityType))}</span>
               <h4>${renderCardTitleButton(item.name)}</h4>
               <p class="card-meta-line">${escapeHtml(cardMeta)}</p>
             </div>
             <div class="inventory-actions">
+              ${storageEntity ? `<button class="mini-button" type="button" data-inventory-action="open-storage" data-uid="${entry.uid}">Abrir</button>` : ""}
+              ${entityType === ENTITY_TYPES.ITEM && !storageEntity ? `<button class="mini-button" type="button" data-inventory-action="use" data-uid="${entry.uid}">Usar</button>` : ""}
+              ${entityType === ENTITY_TYPES.CHIP_MOD ? `<button class="mini-button" type="button" data-inventory-action="${chipInstalled ? "uninstall" : "install"}" data-uid="${entry.uid}">${chipInstalled ? "Remover chip" : "Instalar"}</button>` : ""}
+              ${entityType === ENTITY_TYPES.COSMIC_SPELL ? `<button class="mini-button" type="button" data-inventory-action="cast" data-uid="${entry.uid}">Conjurar</button>` : ""}
               ${options.showEquipAction && ["weapon", "armor"].includes(item.category) ? `<button class="mini-button" type="button" data-inventory-action="${equipAction}" data-uid="${entry.uid}">${equipLabel}</button>` : ""}
               ${options.showCubeAction && item.category === "item" && (entry.cubeUid || entry.inCube) ? `<button class="mini-button" type="button" data-inventory-action="${cubeAction}" data-uid="${entry.uid}">${cubeLabel}</button>` : ""}
               ${entry.supportSlot ? `<button class="mini-button" type="button" data-inventory-action="support-remove" data-uid="${entry.uid}">Soltar suporte</button>` : ""}
               ${canAttachSupport && !entry.supportSlot ? `<button class="mini-button" type="button" data-inventory-action="support-attach" data-uid="${entry.uid}" ${supportTarget ? "" : "disabled"}>${supportTarget ? `Prender em ${supportTarget.singular}` : "Sem suporte"}</button>` : ""}
+              <button class="mini-button" type="button" data-inventory-action="move" data-uid="${entry.uid}">Mover</button>
               <button class="mini-button danger-mini-button" type="button" data-inventory-action="sell" data-uid="${entry.uid}">Vender</button>
+              <button class="mini-button danger-mini-button" type="button" data-inventory-action="delete" data-uid="${entry.uid}">Excluir</button>
             </div>
             <div class="card-hover-popover" role="tooltip">
               <strong>${escapeHtml(item.name)}</strong>
@@ -3108,7 +3611,7 @@ function renderInventoryCards(entries, options = {}) {
                 ${crackLevel >= ITEM_CRACK_MAX ? '<p><strong>Item colapsado.</strong></p>' : ""}
               ` : ""}
               <label class="sell-field">
-                Valor de venda
+                Valor sugerido de venda
                 <input type="number" min="0" step="1" value="${salePrice}" data-sell-value />
               </label>
             </div>
@@ -3128,22 +3631,19 @@ function buyMarketItem(itemId) {
     return;
   }
   if (item.category === "cube" && !canAddPhysicalCube()) return;
-  if (state.current.currency < item.price) {
-    showToast("Luzentis insuficientes para comprar.");
-    return;
+  try {
+    const domain = domainCharacterFromLegacy();
+    const entity = domain.buyEntity(domainDefinitionForItem(item), {
+      location: { kind: LOCATION_KINDS.UNASSIGNED },
+    });
+    syncDomainCharacterToLegacy(domain);
+    persistCurrentCharacterSilently();
+    renderForm();
+    showToast(`${item.name} comprado por ${formatCurrency(item.price)}.`);
+    openInventoryLocationDialog(entity.id, "purchase");
+  } catch (error) {
+    showToast(error.message || "Não foi possível concluir a compra.", "tech-error");
   }
-  state.current.currency -= item.price;
-  state.current.inventory.unshift({
-    uid: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
-    itemId: item.id,
-    category: item.category,
-    inCube: false,
-    cubeUid: "",
-    supportSlot: "",
-    crackLevel: 0,
-  });
-  renderForm();
-  showToast(`${item.name} comprado e adicionado aos equipamentos.`);
 }
 
 function learnLibraryAbility(itemId) {
@@ -3172,8 +3672,14 @@ function learnLibraryAbility(itemId) {
     effect: item.summary,
     meta: libraryMeta(item),
     passiveEffects: source === "Chip modificador" ? normalizePassiveEffects(item.passiveEffects || inferModifierChipPassiveEffects(item)) : [],
+    installed: source === "Chip modificador",
     custom: false,
   });
+  const domain = domainCharacterFromLegacy();
+  if (source === "Cosmos") domain.learnSpell(domainDefinitionForItem(item));
+  domain.metadata.legacyKnownAbilities = structuredCloneSafe(state.current.knownAbilities);
+  syncDomainCharacterToLegacy(domain);
+  persistCurrentCharacterSilently();
   renderSummary();
   showToast(`${item.name} adicionado às habilidades.`);
 }
@@ -3183,6 +3689,10 @@ function unequipModifierChip(abilityId) {
   if (!ability) return;
   if (!canUseCosmicSpellSlotLayout({ excludedAbilityId: abilityId })) return;
   state.current.knownAbilities = (state.current.knownAbilities || []).filter((entry) => entry.id !== abilityId);
+  const domain = domainCharacterFromLegacy();
+  domain.metadata.legacyKnownAbilities = structuredCloneSafe(state.current.knownAbilities);
+  syncDomainCharacterToLegacy(domain);
+  persistCurrentCharacterSilently();
   renderSummary();
   showToast(`${ability.name} desequipado da ficha.`);
 }
@@ -3237,7 +3747,7 @@ function openVitalHud() {
 
 function closeVitalHud() {
   el.vitalHudModal.hidden = true;
-  document.body.classList.remove("modal-open");
+  syncModalOpenState();
 }
 
 function defaultTestModeFor(kind, name) {
@@ -3485,8 +3995,16 @@ function rollWeaponDamage(weapon) {
 
 function applyManualTemplate() {
   if (!el.manualType) return;
-  const template = manualCreationTemplates[el.manualType.value] || manualCreationTemplates.item;
-  const allowsImage = ["item", "weapon", "armor"].includes(el.manualType.value);
+  const officialTemplate = findOfficialTemplateForManualType(el.manualType.value);
+  const template = officialTemplate
+    ? {
+        title: `Modelo oficial - ${officialTemplate.label}`,
+        format: officialTemplate.fields.map((field) => field.label).join(" | "),
+        example: officialTemplate.source,
+        fields: {},
+      }
+    : manualCreationTemplates[el.manualType.value] || manualCreationTemplates.item;
+  const allowsImage = true;
   el.manualFormatGuide.innerHTML = `
     <strong>${escapeHtml(template.title)}</strong>
     <span>${escapeHtml(template.format)}</span>
@@ -3496,9 +4014,58 @@ function applyManualTemplate() {
   el.manualImagePanel.hidden = !allowsImage;
   renderManualImagePreview();
   ["tier", "subtype", "price", "weight", "power", "mods", "cosmos", "tags"].forEach((field) => {
-    setManualField(field, template.fields[field] || {});
+    setManualField(field, officialTemplate ? { hidden: true } : template.fields[field] || {});
   });
+  renderManualOfficialFields(officialTemplate);
   el.manualEffect.placeholder = template.fields.effect?.placeholder || "Descreva o efeito, regra ou observações.";
+}
+
+function findOfficialTemplateForManualType(type) {
+  const templateId = OFFICIAL_TEMPLATE_TYPE_MAP[type];
+  if (!templateId) return null;
+  return OFFICIAL_BOOKS.templates.find((template) => template.id === templateId) || null;
+}
+
+function renderManualOfficialFields(template) {
+  if (!el.manualOfficialFields) return;
+  if (!template) {
+    el.manualOfficialFields.hidden = true;
+    el.manualOfficialFields.innerHTML = "";
+    return;
+  }
+  el.manualOfficialFields.hidden = false;
+  el.manualOfficialFields.innerHTML = template.fields
+    .filter((field) => !/^nome(?:\s|$)|^nome-da-|^nome-do-|^nome-ou-numero/.test(normalizeSearch(field.label)))
+    .map((field) => {
+      const wideClass = field.wide ? "wide-field" : "";
+      if (field.type === "textarea") {
+        return `
+          <label class="${wideClass}">
+            ${escapeHtml(field.label)}
+            <textarea rows="3" data-official-field="${escapeHtml(field.id)}"></textarea>
+          </label>
+        `;
+      }
+      if (field.type === "select-yes-no") {
+        return `
+          <label class="${wideClass}">
+            ${escapeHtml(field.label)}
+            <select data-official-field="${escapeHtml(field.id)}">
+              <option value="">Não informado</option>
+              <option value="Sim">Sim</option>
+              <option value="Não">Não</option>
+            </select>
+          </label>
+        `;
+      }
+      return `
+        <label class="${wideClass}">
+          ${escapeHtml(field.label)}
+          <input type="text" data-official-field="${escapeHtml(field.id)}" />
+        </label>
+      `;
+    })
+    .join("");
 }
 
 function setManualField(field, config = {}) {
@@ -3515,8 +4082,9 @@ function setManualField(field, config = {}) {
 
 function readManualEntry() {
   const type = el.manualType.value;
+  const officialTemplate = findOfficialTemplateForManualType(type);
   const template = manualCreationTemplates[type] || manualCreationTemplates.item;
-  const visible = (field) => !template.fields[field]?.hidden;
+  const visible = (field) => !officialTemplate && !template.fields[field]?.hidden;
   const textValue = (field, node) => visible(field) ? node.value.trim() : "";
   const numberIfVisible = (field, node) => {
     if (!visible(field) || node.value === "") return "";
@@ -3534,9 +4102,33 @@ function readManualEntry() {
     cosmos: numberIfVisible("cosmos", el.manualCosmos),
     tags: parseTagList(textValue("tags", el.manualTags)),
     effect: el.manualEffect.value.trim(),
-    imageDataUrl: ["item", "weapon", "armor"].includes(type) ? state.manualImageDataUrl : "",
-    imageName: ["item", "weapon", "armor"].includes(type) ? state.manualImageName : "",
+    imageDataUrl: state.manualImageDataUrl,
+    imageName: state.manualImageName,
+    templateId: officialTemplate?.id || "",
+    templateSource: officialTemplate?.source || "",
+    officialData: readManualOfficialFields(),
   };
+}
+
+function readManualOfficialFields() {
+  if (!el.manualOfficialFields || el.manualOfficialFields.hidden) return {};
+  return [...el.manualOfficialFields.querySelectorAll("[data-official-field]")].reduce((values, input) => {
+    const value = input.value.trim();
+    if (value) values[input.dataset.officialField] = value;
+    return values;
+  }, {});
+}
+
+function officialFieldValue(entry, ...keys) {
+  const fields = entry.officialData || {};
+  for (const key of keys) {
+    const exact = fields[key];
+    if (exact !== undefined && exact !== "") return exact;
+    const normalizedKey = normalizeSearch(key);
+    const match = Object.entries(fields).find(([field]) => normalizeSearch(field).includes(normalizedKey));
+    if (match && match[1] !== "") return match[1];
+  }
+  return "";
 }
 
 function parseTagList(value) {
@@ -3568,8 +4160,12 @@ function createManualEntry(event) {
   if (!manual.name) return;
 
   const id = `custom-${manual.type}-${dataSlug(manual.name)}-${Date.now()}`;
-  const tags = uniqueTags(["manual", ...manual.tags]);
-  const summary = manual.effect || manual.power || "Criado manualmente.";
+  if (manual.templateId) applyOfficialManualValues(manual);
+  const tags = uniqueTags(["manual", manual.templateId ? "modelo oficial" : "", ...manual.tags].filter(Boolean));
+  const summary = manual.effect
+    || officialFieldValue(manual, "descricao", "efeito", "funcao", "observacoes")
+    || manual.power
+    || "Criado manualmente.";
   if (["item", "weapon", "armor"].includes(manual.type)) {
     state.current.customItems = state.current.customItems || [];
     const item = {
@@ -3582,6 +4178,10 @@ function createManualEntry(event) {
       summary,
       imageDataUrl: manual.imageDataUrl,
       imageName: manual.imageName,
+      officialData: manual.officialData,
+      templateId: manual.templateId,
+      source: manual.templateSource || "Criação manual",
+      schemaVersion: 1,
     };
     if (manual.type === "weapon") {
       item.tier = manual.tier || "Custom";
@@ -3606,11 +4206,39 @@ function createManualEntry(event) {
       supportSlot: "",
       crackLevel: 0,
     });
+    syncDomainSnapshotFromLegacy({ autoSave: true });
     event.currentTarget.reset();
     clearManualItemImage();
     applyManualTemplate();
     renderForm();
     showToast(`${manual.name} criado e colocado nos equipamentos.`);
+    return;
+  }
+
+  if (manual.templateId) {
+    state.current.customRecords = state.current.customRecords || [];
+    state.current.customRecords.unshift({
+      id,
+      category: manual.type,
+      name: manual.name,
+      tier: manual.tier,
+      type: manual.subtype,
+      price: manual.price,
+      summary,
+      tags,
+      imageDataUrl: manual.imageDataUrl,
+      imageName: manual.imageName,
+      fields: manual.officialData,
+      templateId: manual.templateId,
+      source: manual.templateSource,
+      schemaVersion: 1,
+      createdAt: new Date().toISOString(),
+    });
+    event.currentTarget.reset();
+    clearManualItemImage();
+    applyManualTemplate();
+    renderForm();
+    showToast(`${manual.name} criado no modelo oficial ${manual.templateSource}.`);
     return;
   }
 
@@ -3637,6 +4265,7 @@ function createManualEntry(event) {
     effect: manual.effect || "Sem efeito registrado.",
     meta: buildManualAbilityMeta(manual.type, manual),
     passiveEffects: manual.type === "chip-mod" ? inferModifierChipPassiveEffects({ name: manual.name, effect: manual.effect, tags }) : [],
+    installed: manual.type === "chip-mod",
     tags,
     custom: true,
   });
@@ -3647,11 +4276,61 @@ function createManualEntry(event) {
   showToast(`${manual.name} criado e adicionado às habilidades.`);
 }
 
+function applyOfficialManualValues(manual) {
+  manual.tier = officialFieldValue(manual, "tier") || manual.tier;
+  manual.subtype = officialFieldValue(manual, "categoria", "tipo") || manual.subtype;
+  manual.price = parseCurrencyNumber(
+    officialFieldValue(manual, "preco-base-em-luzentis", "preco-em-luzentis", "preco-local-em-luzentis", "preco-estimado")
+  );
+  manual.weight = officialFieldValue(manual, "peso-ou-carga", "peso", "carga") || manual.weight;
+  if (manual.type === "weapon") {
+    manual.power = officialFieldValue(manual, "dano");
+    manual.mods = parseFirstNumber(officialFieldValue(manual, "espacos-de-mod"));
+    manual.tags = uniqueTags([
+      ...manual.tags,
+      officialFieldValue(manual, "tipo-de-dano"),
+      officialFieldValue(manual, "alcance"),
+      officialFieldValue(manual, "propriedades"),
+    ].filter(Boolean));
+  }
+  if (manual.type === "armor") {
+    manual.power = officialFieldValue(manual, "ca-concedida");
+    manual.mods = parseFirstNumber(officialFieldValue(manual, "espacos-de-mod"));
+    manual.tags = uniqueTags([
+      ...manual.tags,
+      officialFieldValue(manual, "resistencias"),
+      officialFieldValue(manual, "vulnerabilidades"),
+    ].filter(Boolean));
+  }
+}
+
+function parseCurrencyNumber(value) {
+  const digits = String(value || "").replace(/\D/g, "");
+  return digits ? numberValue(digits, 0) : 0;
+}
+
 function handleInventoryAction(action, uid, trigger = null) {
   const entry = state.current.inventory.find((item) => item.uid === uid);
   if (!entry) return;
   const item = findMarketItem(entry.itemId);
   if (!item) return;
+
+  if (action === "open-storage") {
+    const domain = domainCharacterFromLegacy();
+    const storage = domain.inventory.findById(uid);
+    if (!storage?.isStorage()) return;
+    if (storage.entityType === ENTITY_TYPES.CUBE || item.category === "cube") {
+      openCubeInterior(uid);
+      switchCharacterPage("cubo");
+      return;
+    }
+    const contents = domain.inventory.getStoredIn(uid);
+    const capacity = storage.storage.maxSlots;
+    const used = capacity - storage.getAvailableSlots(domain.inventory);
+    const contentNames = contents.map((entity) => entity.name).join(", ") || "Vazio";
+    window.alert(`${storage.name}\nCapacidade: ${used}/${capacity}\nConteúdo: ${contentNames}`);
+    return;
+  }
 
   if (action === "open-cube") {
     openCubeInterior(uid);
@@ -3659,30 +4338,114 @@ function handleInventoryAction(action, uid, trigger = null) {
   }
 
   if (action === "cube-remove") {
-    entry.cubeUid = "";
-    entry.inCube = false;
+    const domain = domainCharacterFromLegacy();
+    domain.moveEntityTo(uid, { kind: LOCATION_KINDS.UNASSIGNED });
+    syncDomainCharacterToLegacy(domain);
+    persistCurrentCharacterSilently();
     renderSummary();
-    showToast(`${item.name} removido do cubo.`);
+    showToast(`${item.name} removido do cubo e marcado como sem local.`);
     return;
   }
 
   if (action === "support-attach") {
-    attachEntryToExternalSupport(entry);
+    openInventoryLocationDialog(uid, "move");
     return;
   }
 
   if (action === "support-remove") {
-    entry.supportSlot = "";
+    const domain = domainCharacterFromLegacy();
+    domain.moveEntityTo(uid, { kind: LOCATION_KINDS.UNASSIGNED });
+    syncDomainCharacterToLegacy(domain);
+    persistCurrentCharacterSilently();
     renderSummary();
-    showToast(`${item.name} solto do suporte.`);
+    showToast(`${item.name} solto do suporte e marcado como sem local.`);
+    return;
+  }
+
+  if (action === "move") {
+    openInventoryLocationDialog(uid, "move");
+    return;
+  }
+
+  if (action === "use") {
+    const domain = domainCharacterFromLegacy();
+    const entity = domain.inventory.findById(uid);
+    const resource = entity?.resources?.[0];
+    if (resource && !resource.spend(1)) {
+      showToast(`${item.name} está sem ${resource.label.toLowerCase()}.`, "tech-error");
+      return;
+    }
+    if (entity) {
+      syncDomainCharacterToLegacy(domain);
+      persistCurrentCharacterSilently();
+    }
+    renderSummary();
+    showToast(resource ? `${item.name} usado. ${resource.current}/${resource.max} ${resource.label}.` : `${item.name} usado.`);
+    return;
+  }
+
+  if (action === "install") {
+    if (!canAddModifierChip()) {
+      const slots = modifierSlotState();
+      showToast(`Sem espaço de mods para chip: ${slots.used}/${slots.total}.`, "tech-error");
+      return;
+    }
+    const domain = domainCharacterFromLegacy();
+    const targets = domain.inventory.getAll().filter((entity) =>
+      [ENTITY_TYPES.WEAPON, ENTITY_TYPES.ARMOR].includes(entity.entityType)
+      && entity.location.kind === LOCATION_KINDS.EQUIPPED
+    );
+    if (!targets.length) {
+      showToast("Equipe uma arma ou armadura antes de instalar o chip.", "tech-error");
+      return;
+    }
+    let target = targets[0];
+    if (targets.length > 1) {
+      const choices = targets.map((candidate, index) => `${index + 1}. ${candidate.name}`).join("\n");
+      const selected = window.prompt(`Instalar ${item.name} em qual equipamento?\n${choices}`, "1");
+      if (selected === null) return;
+      target = targets[clamp(numberValue(selected, 1) - 1, 0, targets.length - 1)];
+    }
+    try {
+      domain.installChip(uid, target.id);
+      syncDomainCharacterToLegacy(domain);
+      persistCurrentCharacterSilently();
+      renderForm();
+      showToast(`${item.name} instalado em ${target.name}.`);
+    } catch (error) {
+      showToast(error.message || "Não foi possível instalar o chip.", "tech-error");
+    }
+    return;
+  }
+
+  if (action === "uninstall") {
+    const domain = domainCharacterFromLegacy();
+    domain.uninstallChip(uid);
+    syncDomainCharacterToLegacy(domain);
+    persistCurrentCharacterSilently();
+    renderForm();
+    showToast(`${item.name} removido do equipamento.`);
+    return;
+  }
+
+  if (action === "cast") {
+    const domain = domainCharacterFromLegacy();
+    const entity = domain.inventory.findById(uid);
+    const cosmosCost = Math.max(0, numberValue(entity?.definitionSnapshot?.cosmosCost, item.cost || 0));
+    if (domain.currentCosmos < cosmosCost) {
+      showToast(`Cosmos insuficiente: a magia exige ${cosmosCost}.`, "cosmic-error");
+      return;
+    }
+    domain.currentCosmos -= cosmosCost;
+    syncDomainCharacterToLegacy(domain);
+    state.current.cosmosCurrent = domain.currentCosmos;
+    persistCurrentCharacterSilently();
+    renderForm();
+    showToast(`${item.name} conjurada${cosmosCost ? ` por ${cosmosCost} Cosmos` : ""}.`);
     return;
   }
 
   if (action === "sell") {
-    if (isCubeEntry(entry) && cubeContainedEntries(uid).length) {
-      showToast("Esvazie o cubo antes de vender.");
-      return;
-    }
     if (!canDisableExternalSupportProvider(entry)) return;
     const nextWeaponUid = item.category === "weapon" && state.current.equippedWeaponUid === uid ? "" : state.current.equippedWeaponUid;
     const nextArmorUid = item.category === "armor" && state.current.equippedArmorUid === uid ? "" : state.current.equippedArmorUid;
@@ -3690,20 +4453,54 @@ function handleInventoryAction(action, uid, trigger = null) {
     if (removesModSource && !canUseModifierSlotLayout({ weaponUid: nextWeaponUid, armorUid: nextArmorUid })) return;
     if (removesModSource && !canUseCosmicSpellSlotLayout({ weaponUid: nextWeaponUid, armorUid: nextArmorUid })) return;
     const input = trigger?.closest(".inventory-card")?.querySelector("[data-sell-value]");
-    const saleValue = Math.max(0, numberValue(input?.value, 0));
-    state.current.currency += saleValue;
-    state.current.inventory = state.current.inventory.filter((inventoryItem) => inventoryItem.uid !== uid);
-    if (state.openCubeUid === uid) state.openCubeUid = "";
-    if (state.current.equippedWeaponUid === uid) {
-      state.current.equippedWeaponUid = "";
-      state.current.weapon = "";
+    const suggestedValue = Math.floor(numberValue(input?.value, numberValue(item.price, 0) / 2));
+    const requestedValue = window.prompt(`Valor de venda de ${item.name}:`, String(suggestedValue));
+    if (requestedValue === null) return;
+    const saleValue = Math.max(0, numberValue(requestedValue, suggestedValue));
+    const domain = domainCharacterFromLegacy();
+    const entity = domain.inventory.findById(uid);
+    const contents = entity?.isStorage() ? domain.inventory.getStoredIn(uid) : [];
+    if (contents.length && !window.confirm(`Este armazenador possui ${contents.length} item(ns). Ao vender, eles ficarão sem local definido. Continuar?`)) return;
+    try {
+      domain.sellEntity(uid, saleValue);
+      syncDomainCharacterToLegacy(domain);
+      persistCurrentCharacterSilently();
+      if (state.openCubeUid === uid) state.openCubeUid = "";
+      renderForm();
+      showToast(`${item.name} vendido por ${formatCurrency(saleValue)}.`);
+    } catch (error) {
+      showToast(error.message || "Não foi possível vender o item.", "tech-error");
     }
-    if (state.current.equippedArmorUid === uid) {
-      state.current.equippedArmorUid = "";
-      state.current.armor = "";
+    return;
+  }
+
+  if (action === "delete") {
+    if (isInventoryEquipped(entry)) {
+      showToast("Este item está equipado. Desequipe antes de excluir.", "tech-error");
+      return;
     }
-    renderForm();
-    showToast(`${item.name} vendido por ${formatCurrency(saleValue)}.`);
+    if (!window.confirm(`Excluir ${item.name}? Isso não devolve Luzentis.`)) return;
+    const domain = domainCharacterFromLegacy();
+    const entity = domain.inventory.findById(uid);
+    const contents = entity?.isStorage() ? domain.inventory.getStoredIn(uid) : [];
+    let deleteContents = false;
+    if (contents.length) {
+      deleteContents = window.confirm("Este armazenador possui itens dentro. Deseja excluir também o conteúdo?");
+      if (!deleteContents) {
+        showToast("Exclusão bloqueada: esvazie o armazenador primeiro.", "tech-error");
+        return;
+      }
+    }
+    try {
+      domain.deleteEntityManually(uid, { deleteContents, force: false });
+      syncDomainCharacterToLegacy(domain);
+      persistCurrentCharacterSilently();
+      if (state.openCubeUid === uid) state.openCubeUid = "";
+      renderForm();
+      showToast(`${item.name} excluído sem reembolso.`);
+    } catch (error) {
+      showToast(error.message || "Não foi possível excluir o item.", "tech-error");
+    }
     return;
   }
 
@@ -3712,14 +4509,10 @@ function handleInventoryAction(action, uid, trigger = null) {
     const nextArmorUid = item.category === "armor" ? uid : state.current.equippedArmorUid;
     if (!canUseModifierSlotLayout({ weaponUid: nextWeaponUid, armorUid: nextArmorUid })) return;
     if (!canUseCosmicSpellSlotLayout({ weaponUid: nextWeaponUid, armorUid: nextArmorUid })) return;
-    if (item.category === "weapon") {
-      state.current.equippedWeaponUid = uid;
-      state.current.weapon = item.name;
-    }
-    if (item.category === "armor") {
-      state.current.equippedArmorUid = uid;
-      state.current.armor = item.name;
-    }
+    const domain = domainCharacterFromLegacy();
+    domain.equipEntity(uid, item.category === "armor" ? "armor" : "mainWeapon");
+    syncDomainCharacterToLegacy(domain);
+    persistCurrentCharacterSilently();
     renderForm();
     showToast(`${item.name} equipado.`);
     return;
@@ -3731,38 +4524,17 @@ function handleInventoryAction(action, uid, trigger = null) {
     const nextArmorUid = item.category === "armor" && state.current.equippedArmorUid === uid ? "" : state.current.equippedArmorUid;
     if (!canUseModifierSlotLayout({ weaponUid: nextWeaponUid, armorUid: nextArmorUid })) return;
     if (!canUseCosmicSpellSlotLayout({ weaponUid: nextWeaponUid, armorUid: nextArmorUid })) return;
-    if (item.category === "weapon" && state.current.equippedWeaponUid === uid) {
-      state.current.equippedWeaponUid = "";
-      state.current.weapon = "";
-    }
-    if (item.category === "armor" && state.current.equippedArmorUid === uid) {
-      state.current.equippedArmorUid = "";
-      state.current.armor = "";
-    }
+    const domain = domainCharacterFromLegacy();
+    domain.unequipEntity(uid);
+    syncDomainCharacterToLegacy(domain);
+    persistCurrentCharacterSilently();
     renderForm();
-    showToast(`${item.name} desequipado.`);
+    showToast(`${item.name} desequipado e marcado como sem local.`);
     return;
   }
 
   if (action === "cube") {
-    if (entry.cubeUid) {
-      entry.cubeUid = "";
-      entry.inCube = false;
-      renderSummary();
-      showToast(`${item.name} removido do cubo.`);
-      return;
-    }
-    if (!canDisableExternalSupportProvider(entry)) return;
-    const derived = derivedStats(totalAttributes(), findRace(state.current.race), findProfession(state.current.profession));
-    const cubeCount = state.current.inventory.filter((inventoryItem) => inventoryItem.inCube).length;
-    if (!entry.inCube && cubeCount >= derived.cubeSlots) {
-      showToast("O cubo está sem slots livres.");
-      return;
-    }
-    entry.inCube = !entry.inCube;
-    if (entry.inCube) entry.supportSlot = "";
-    renderSummary();
-    showToast(entry.inCube ? "Item guardado no cubo." : "Item removido do cubo.");
+    openInventoryLocationDialog(uid, "move");
   }
 }
 
@@ -3820,10 +4592,12 @@ function renderSavedList() {
 
 function renderLibrary() {
   const library = libraryMap[state.activeLibrary];
-  const selectedGroup = syncLibraryFilterOptions(library, state.activeLibrary);
+  const libraryItems = state.activeLibrary === "monstros" ? getMonsterLibraryItems() : library.items;
+  const selectedGroup = syncLibraryFilterOptions(libraryItems, state.activeLibrary);
   const sortMode = el.librarySort.value || "default";
   const query = normalizeSearch(el.librarySearch.value.trim());
   const isRaceLibrary = state.activeLibrary === "racas";
+  const isMonsterLibrary = state.activeLibrary === "monstros";
   const showsInlineSummary = state.activeLibrary === "regras";
   const isMarketLibrary = Boolean(library.market);
   const isLearnLibrary = Boolean(library.learn);
@@ -3834,20 +4608,27 @@ function renderLibrary() {
   const learnedAbilityIds = new Set((state.current.knownAbilities || []).map((ability) => ability.id));
   el.libraryTitle.textContent = library.title;
   el.libraryKicker.textContent = library.kicker;
+  el.createMonsterButton.hidden = !isMonsterLibrary;
+  el.monsterSessionPanel.hidden = !isMonsterLibrary;
+  if (isMonsterLibrary) renderMonsterSessionPanel();
 
-  const filtered = sortLibraryItems(library.items.filter((item) => {
+  const filtered = sortLibraryItems(libraryItems.filter((item) => {
     const matchesSearch = itemSearchText(item).includes(query);
     const matchesGroup = !selectedGroup || getLibraryGroupValues(item, state.activeLibrary).includes(selectedGroup);
     return matchesSearch && matchesGroup;
   }), sortMode, state.activeLibrary);
+  const paginationKey = `library:${state.activeLibrary}`;
+  const paginated = paginateItems(filtered, state.pagination[paginationKey] || 1);
+  state.pagination[paginationKey] = paginated.page;
+  el.libraryPagination.innerHTML = renderPaginationControls(paginated, paginationKey);
 
   if (!filtered.length) {
     el.libraryGrid.innerHTML = '<div class="empty-state">Nada encontrado na biblioteca.</div>';
     return;
   }
 
-  el.libraryGrid.innerHTML = filtered.map((item) => {
-    const meta = isMarketLibrary ? marketMeta(item) : libraryMeta(item);
+  el.libraryGrid.innerHTML = paginated.items.map((item) => {
+    const meta = isMarketLibrary ? marketMeta(item) : isMonsterLibrary ? monsterMeta(item) : libraryMeta(item);
     const bonus = item.bonus ? Object.entries(item.bonus).map(([key, value]) => `${key} ${formatMod(value)}`).join("  ") : "";
     const tags = (item.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
     const alreadyLearned = isLearnLibrary && learnedAbilityIds.has(item.id);
@@ -3862,7 +4643,7 @@ function renderLibrary() {
         : library.learn === "cosmos" ? "Adicionar magia" : "Adicionar chip";
     const cardOpen = isRaceLibrary
       ? `<button class="library-card race-card compact-card" type="button" data-race-id="${escapeHtml(item.id)}" aria-label="Abrir página da raça ${escapeHtml(item.name)}">`
-      : `<article class="library-card compact-card ${item.imageDataUrl ? "with-image" : ""}" tabindex="0">`;
+      : `<article class="library-card compact-card ${isMonsterLibrary ? "with-actions monster-library-card" : ""} ${item.imageDataUrl ? "with-image" : ""}" tabindex="0">`;
     const cardClose = isRaceLibrary ? "</button>" : "</article>";
     return `
       ${cardOpen}
@@ -3874,10 +4655,19 @@ function renderLibrary() {
         </div>
         ${isMarketLibrary ? `<button class="primary-button shop-button" type="button" data-buy-id="${escapeHtml(item.id)}">Comprar</button>` : ""}
         ${isLearnLibrary ? `<button class="primary-button shop-button" type="button" data-learn-id="${escapeHtml(item.id)}" ${learnDisabled ? "disabled" : ""} ${slotBlocked ? `data-slot-blocked="${slotBlocked}" aria-disabled="true"` : ""}>${learnLabel}</button>` : ""}
+        ${isMonsterLibrary ? `
+          <div class="inventory-actions monster-card-actions">
+            <button class="mini-button" type="button" data-monster-session-add="${escapeHtml(item.id)}">Adicionar à sessão</button>
+            <button class="mini-button" type="button" data-monster-playable="${escapeHtml(item.id)}">Criar ficha jogável</button>
+            <button class="mini-button" type="button" data-monster-assets="${escapeHtml(item.id)}">Conteúdo</button>
+            ${item.official ? `<button class="mini-button" type="button" data-monster-edit="${escapeHtml(item.id)}">Editar cópia</button>` : `<button class="mini-button danger-mini-button" type="button" data-monster-delete="${escapeHtml(item.id)}">Excluir</button>`}
+          </div>
+        ` : ""}
         <div class="card-hover-popover" role="tooltip">
           <strong>${escapeHtml(item.name)}</strong>
           ${meta || bonus ? `<p>${escapeHtml(meta || bonus)}</p>` : ""}
           <p>${escapeHtml(item.summary)}</p>
+          ${isMonsterLibrary ? renderMonsterPopoverDetails(item) : ""}
           ${tags ? `<div class="tag-row">${tags}</div>` : ""}
         </div>
       ${cardClose}
@@ -3885,7 +4675,251 @@ function renderLibrary() {
   }).join("");
 }
 
-function syncLibraryFilterOptions(library, view) {
+function paginateItems(items, page, pageSize = PAGE_SIZE) {
+  const safeItems = Array.isArray(items) ? items : [];
+  const safePageSize = Math.max(1, numberValue(pageSize, PAGE_SIZE));
+  const pageCount = Math.max(1, Math.ceil(safeItems.length / safePageSize));
+  const safePage = clamp(numberValue(page, 1), 1, pageCount);
+  const start = (safePage - 1) * safePageSize;
+  return {
+    items: safeItems.slice(start, start + safePageSize),
+    page: safePage,
+    pageSize: safePageSize,
+    pageCount,
+    total: safeItems.length,
+  };
+}
+
+function renderPaginationControls(pagination, key) {
+  if (!pagination || pagination.total <= pagination.pageSize) return "";
+  const pageButtons = Array.from({ length: pagination.pageCount }, (_, index) => index + 1)
+    .map((page) => `<button class="mini-button ${page === pagination.page ? "active" : ""}" type="button" data-page-key="${escapeHtml(key)}" data-page-value="${page}" aria-current="${page === pagination.page ? "page" : "false"}">Página ${page}</button>`)
+    .join("");
+  return `
+    <button class="mini-button" type="button" data-page-key="${escapeHtml(key)}" data-page-value="${pagination.page - 1}" ${pagination.page <= 1 ? "disabled" : ""}>Anterior</button>
+    ${pageButtons}
+    <button class="mini-button" type="button" data-page-key="${escapeHtml(key)}" data-page-value="${pagination.page + 1}" ${pagination.page >= pagination.pageCount ? "disabled" : ""}>Próxima</button>
+  `;
+}
+
+function handlePaginationClick(event) {
+  if (!(event.target instanceof Element)) return;
+  const button = event.target.closest("[data-page-key]");
+  if (!button || button.hasAttribute("disabled")) return;
+  const key = button.dataset.pageKey;
+  state.pagination[key] = Math.max(1, numberValue(button.dataset.pageValue, 1));
+  if (key.startsWith("library:")) renderLibrary();
+  else if (key.startsWith("inventory:")) renderEquipmentPage(derivedStats(totalAttributes(), findRace(state.current.race), findProfession(state.current.profession)));
+  else if (key.startsWith("cosmos:")) renderCosmosPage(derivedStats(totalAttributes(), findRace(state.current.race), findProfession(state.current.profession)));
+  else if (key.startsWith("abilities:")) renderAbilitiesPage();
+  else if (key.startsWith("manual:")) renderManualCreatedPage();
+  else if (key.startsWith("monster-assets:")) renderMonsterAssetManager();
+  else if (key.startsWith("cubes:")) renderCubePage(derivedStats(totalAttributes(), findRace(state.current.race), findProfession(state.current.profession)));
+  else if (key.startsWith("monster-session:")) renderMonsterSessionPanel();
+}
+
+function resetLibraryPaginationAndRender() {
+  state.pagination[`library:${state.activeLibrary}`] = 1;
+  renderLibrary();
+}
+
+function handleAbilityAction(action, abilityId) {
+  const ability = (state.current.knownAbilities || []).find((entry) => entry.id === abilityId);
+  if (!ability) return;
+  if (action === "install") {
+    if (!canAddModifierChip()) {
+      const slots = modifierSlotState();
+      showToast(`Sem espaço de mods para chip: ${slots.used}/${slots.total}.`, "tech-error");
+      return;
+    }
+    ability.installed = true;
+    persistCurrentCharacterSilently();
+    renderForm();
+    showToast(`${ability.name} instalado.`);
+    return;
+  }
+  if (action === "uninstall") {
+    if (!canUseCosmicSpellSlotLayout({ excludedAbilityId: abilityId })) return;
+    ability.installed = false;
+    persistCurrentCharacterSilently();
+    renderForm();
+    showToast(`${ability.name} desinstalado.`);
+    return;
+  }
+  const label = ability.source === "Cosmos" ? "Remover magia" : "Excluir";
+  if (!window.confirm(`${label} ${ability.name}? Esta ação não devolve Luzentis.`)) return;
+  state.current.knownAbilities = (state.current.knownAbilities || []).filter((entry) => entry.id !== abilityId);
+  const domain = domainCharacterFromLegacy();
+  domain.knownSpells = (domain.knownSpells || []).filter((spell) => spell.id !== abilityId && spell.definitionId !== abilityId);
+  domain.metadata.legacyKnownAbilities = structuredCloneSafe(state.current.knownAbilities);
+  syncDomainCharacterToLegacy(domain);
+  persistCurrentCharacterSilently();
+  renderForm();
+  showToast(ability.source === "Cosmos" ? `${ability.name} removida da ficha.` : `${ability.name} excluído sem reembolso.`);
+}
+
+function removeProfessionChip() {
+  const profession = findProfession(state.current.profession);
+  if (profession.id === "escolha-profissao") return;
+  if (!window.confirm(`Remover o chip de profissão ${profession.name}? Os efeitos concedidos deixarão de valer.`)) return;
+  state.current.profession = "escolha-profissao";
+  persistCurrentCharacterSilently();
+  renderForm();
+  showToast("Chip de profissão removido.");
+}
+
+function removeInstalledMod(modId) {
+  const mod = (state.current.installedMods || []).find((entry) => entry.id === modId);
+  if (!mod) return;
+  if (!window.confirm(`Remover o mod ${mod.name || "selecionado"} do equipamento?`)) return;
+  const returnToInventory = window.confirm("Deseja devolver o mod ao inventário? OK devolve; Cancelar exclui o mod sem reembolso.");
+  const domain = domainCharacterFromLegacy();
+  domain.inventory.getAll().forEach((entity) => {
+    entity.installedModIds = (entity.installedModIds || []).filter((id) => id !== modId);
+  });
+  state.current.installedMods = (state.current.installedMods || []).filter((entry) => entry.id !== modId);
+  if (returnToInventory) {
+    state.current.customRecords = state.current.customRecords || [];
+    state.current.customRecords.unshift({
+      id: mod.id,
+      category: "mod",
+      name: mod.name || "Mod removido",
+      summary: mod.effect || "Mod devolvido ao inventário.",
+      source: "Removido de equipamento",
+      createdAt: new Date().toISOString(),
+    });
+  }
+  syncDomainCharacterToLegacy(domain);
+  persistCurrentCharacterSilently();
+  renderForm();
+  showToast(returnToInventory ? "Mod removido e devolvido ao inventário." : "Mod removido e excluído.");
+}
+
+function deleteCustomContent(id, type) {
+  const collections = {
+    item: state.current.customItems || [],
+    ability: state.current.knownAbilities || [],
+    record: state.current.customRecords || [],
+  };
+  const record = collections[type]?.find((entry) => entry.id === id);
+  if (!record) return;
+  if (!window.confirm(`Excluir ${record.name}? Esta ação não devolve Luzentis.`)) return;
+  if (type === "item") {
+    const domain = domainCharacterFromLegacy();
+    const instances = domain.inventory.getAll().filter((entity) => entity.definitionId === id);
+    if (instances.some((entity) => entity.location.kind === LOCATION_KINDS.EQUIPPED)) {
+      showToast("Este item está equipado. Desequipe antes de excluir.", "tech-error");
+      return;
+    }
+    instances.forEach((entity) => domain.deleteEntityManually(entity.id, { force: true, deleteContents: true }));
+    state.current.customItems = (state.current.customItems || []).filter((entry) => entry.id !== id);
+    syncDomainCharacterToLegacy(domain);
+  } else if (type === "ability") {
+    state.current.knownAbilities = (state.current.knownAbilities || []).filter((entry) => entry.id !== id);
+  } else {
+    state.current.customRecords = (state.current.customRecords || []).filter((entry) => entry.id !== id);
+  }
+  persistCurrentCharacterSilently();
+  renderForm();
+  showToast(`${record.name} excluído sem reembolso.`);
+}
+
+function createRandomLevel1Character() {
+  const firstNames = ["Aric", "Lyssara", "Kael", "Nara", "Voren", "Selene", "Darian", "Ilya", "Tarek", "Mira"];
+  const lastNames = ["Valen", "Solaris", "Drak", "Korr", "Nox", "Aster", "Veyra", "Orion", "Tallis", "Rhen"];
+  const availableRaces = raceData.filter((race) => race.id);
+  const availableProfessions = professionData.filter((profession) => profession.id !== "escolha-profissao");
+  const rollPool = Array.from({ length: 7 }, () => Math.floor(Math.random() * 6) + 1);
+  const discardedIndex = rollPool.reduce((lowest, value, index) => value < rollPool[lowest] ? index : lowest, 0);
+  const kept = rollPool.filter((_, index) => index !== discardedIndex).sort(() => Math.random() - 0.5);
+  const character = emptyCharacter();
+  character.name = `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+  character.race = availableRaces[Math.floor(Math.random() * availableRaces.length)]?.id || "humanis";
+  character.profession = availableProfessions[Math.floor(Math.random() * availableProfessions.length)]?.id || "escolha-profissao";
+  character.racialChoice = defaultRacialChoice(findRace(character.race));
+  character.level = 1;
+  character.attributes = ATTRIBUTES.reduce((values, attr, index) => {
+    values[attr] = ATTRIBUTE_BASE + kept[index];
+    return values;
+  }, {});
+  character.initialAttributeRoll = { rolls: rollPool, kept, discardedIndex };
+  state.current = character;
+
+  const starterWeapon = weaponData.find((item) => String(item.tier).toUpperCase() === "F") || weaponData[0];
+  const starterArmor = armorData.find((item) => String(item.tier).toUpperCase() === "F") || armorData[0];
+  const addStarter = (item, slotId) => {
+    if (!item) return;
+    const domain = domainCharacterFromLegacy();
+    const entity = domainDefinitionForItem(item).createInstance({
+      location: { kind: LOCATION_KINDS.EQUIPPED, slotId },
+    });
+    domain.inventory.add(entity);
+    domain.equipEntity(entity.id, slotId);
+    syncDomainCharacterToLegacy(domain);
+  };
+  addStarter(starterWeapon, "mainWeapon");
+  addStarter(starterArmor, "armor");
+  const starterSupply = commonItemData.find((item) => /kit.*suprimento|suprimento.*kit/i.test(item.name)) || commonItemData.find((item) => /kit/i.test(item.name));
+  if (starterSupply) {
+    const domain = domainCharacterFromLegacy();
+    domain.inventory.add(domainDefinitionForItem(starterSupply).createInstance({ location: { kind: LOCATION_KINDS.UNASSIGNED } }));
+    syncDomainCharacterToLegacy(domain);
+  }
+
+  const simpleCube = cubeData.find((item) => item.cubeKind === "simple") || cubeData[0];
+  const cubeCount = Math.max(0, 5 + attributeModifier(totalAttributes().FOR));
+  for (let index = 0; index < cubeCount && simpleCube; index += 1) {
+    const domain = domainCharacterFromLegacy();
+    domain.inventory.add(domainDefinitionForItem(simpleCube).createInstance({ location: { kind: LOCATION_KINDS.UNASSIGNED } }));
+    syncDomainCharacterToLegacy(domain);
+  }
+  const derived = derivedStats(totalAttributes(), findRace(character.race), findProfession(character.profession));
+  state.current.pvCurrent = derived.pvMax;
+  state.current.cosmosCurrent = derived.cosmosMax;
+  persistCurrentCharacterSilently();
+  renderForm();
+  switchView("personagens");
+  switchCharacterPage("ficha");
+  showToast(`${state.current.name} foi criado no nível 1.`);
+}
+
+function bulkDeleteCharacterContent(kind) {
+  if (!window.confirm("Tem certeza? Essa ação não devolve Luzentis e não pode ser desfeita.")) return;
+  if (kind === "monsters") {
+    state.monsterSession = [];
+    persistMonsterSession();
+    renderMonsterSessionPanel();
+    showToast("Monstros da sessão excluídos.");
+    return;
+  }
+  if (["chips", "spells", "manual"].includes(kind)) {
+    state.current.knownAbilities = (state.current.knownAbilities || []).filter((ability) => {
+      if (kind === "chips") return ability.source !== "Chip modificador";
+      if (kind === "spells") return ability.source !== "Cosmos";
+      return !ability.custom && ability.source !== "Manual";
+    });
+  }
+  if (["items", "weapons", "armors", "equipment", "inventory"].includes(kind)) {
+    const domain = domainCharacterFromLegacy();
+    const targets = domain.inventory.getAll().filter((entity) => {
+      if (kind === "inventory") return true;
+      if (kind === "weapons") return entity.entityType === ENTITY_TYPES.WEAPON;
+      if (kind === "armors") return entity.entityType === ENTITY_TYPES.ARMOR;
+      if (kind === "items") return entity.entityType === ENTITY_TYPES.ITEM;
+      return [ENTITY_TYPES.WEAPON, ENTITY_TYPES.ARMOR, ENTITY_TYPES.CUBE, ENTITY_TYPES.HOOK, ENTITY_TYPES.HOLSTER, ENTITY_TYPES.BANDOLIER].includes(entity.entityType);
+    });
+    targets.forEach((entity) => {
+      if (domain.inventory.findById(entity.id)) domain.deleteEntityManually(entity.id, { force: true, deleteContents: true });
+    });
+    syncDomainCharacterToLegacy(domain);
+    if (kind === "inventory") state.openCubeUid = "";
+  }
+  persistCurrentCharacterSilently();
+  renderForm();
+  showToast("Conteúdo removido sem reembolso.");
+}
+
+function syncLibraryFilterOptions(items, view) {
   const config = getLibraryFilterConfig(view);
   if (!config) {
     el.libraryTierControl.hidden = true;
@@ -3895,7 +4929,7 @@ function syncLibraryFilterOptions(library, view) {
   }
 
   const previousValue = el.libraryTierFilter.value;
-  const options = [...new Set(library.items.flatMap((item) => getLibraryGroupValues(item, view)).filter(Boolean))]
+  const options = [...new Set(items.flatMap((item) => getLibraryGroupValues(item, view)).filter(Boolean))]
     .sort((a, b) => compareGroupValues(a, b, config));
 
   if (!options.length) {
@@ -3921,8 +4955,11 @@ function getLibraryFilterConfig(view) {
     armas: { allLabel: "Todos os tiers", prefix: "Tier", type: "tier" },
     armaduras: { allLabel: "Todos os tiers", prefix: "Tier", type: "tier" },
     chipsMod: { allLabel: "Todos os ranks", prefix: "Rank", type: "tier" },
+    mods: { allLabel: "Todos os tipos", prefix: "", type: "text" },
     magias: { allLabel: "Todos os custos", prefix: "Custo", type: "number" },
     itens: { allLabel: "Todas as categorias", prefix: "", type: "text" },
+    armazenamento: { allLabel: "Todos os tipos", prefix: "", type: "text" },
+    monstros: { allLabel: "Todos os tiers", prefix: "Tier", type: "tier" },
   };
   return configs[view] || null;
 }
@@ -3930,8 +4967,14 @@ function getLibraryFilterConfig(view) {
 function getLibraryGroupValues(item, view) {
   if (view === "magias") return item.cost !== undefined && item.cost !== "" ? [String(item.cost)] : [];
   if (view === "chipsMod") return item.rank || item.tier ? [String(item.rank || item.tier)] : [];
+  if (view === "mods") return item.type ? [String(item.type)] : [];
   if (view === "armas" || view === "armaduras") return item.tier ? [String(item.tier)] : [];
   if (view === "itens") return Array.isArray(item.tags) ? item.tags.map(String) : [];
+  if (view === "armazenamento") {
+    const definition = domainDefinitionForItem(item);
+    return [domainEntityTypeLabel(definition.entityType)];
+  }
+  if (view === "monstros") return item.tier ? [String(item.tier)] : [];
   return [];
 }
 
@@ -4021,6 +5064,17 @@ function itemSearchText(item) {
     item.context,
     item.tier,
     item.type,
+    item.role,
+    item.size,
+    item.pv,
+    item.ca,
+    item.movement,
+    item.habitat,
+    item.behavior,
+    item.attacks,
+    item.abilities,
+    item.weaknesses,
+    item.resources,
     item.kind,
     item.damage,
     item.summary,
@@ -4046,8 +5100,21 @@ function normalizeSearch(value) {
     .toLowerCase();
 }
 
+function mergeCatalogByName(primary = [], fallback = []) {
+  const entries = [];
+  const names = new Set();
+  [...(primary || []), ...(fallback || [])].forEach((entry) => {
+    const key = normalizeSearch(entry?.name || entry?.id || "");
+    if (!key || names.has(key)) return;
+    names.add(key);
+    entries.push(entry);
+  });
+  return entries;
+}
+
 function saveCurrent() {
   readForm();
+  syncDomainSnapshotFromLegacy();
   const now = new Date().toISOString();
   state.current.updatedAt = now;
   const index = state.saved.findIndex((character) => character.id === state.current.id);
@@ -4119,6 +5186,7 @@ function handleSavedAction(action, id) {
 
 function exportCurrent() {
   readForm();
+  syncDomainSnapshotFromLegacy();
   const data = JSON.stringify(state.current, null, 2);
   const blob = new Blob([data], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -4280,6 +5348,476 @@ function persistSaved() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state.saved));
 }
 
+function loadMonsterSheets() {
+  try {
+    const raw = localStorage.getItem(MONSTER_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    state.monsterSheets = parsed && typeof parsed === "object" ? parsed : {};
+  } catch (error) {
+    state.monsterSheets = {};
+  }
+}
+
+function persistMonsterSheets() {
+  localStorage.setItem(MONSTER_STORAGE_KEY, JSON.stringify(state.monsterSheets));
+}
+
+function loadMonsterSession() {
+  try {
+    const raw = localStorage.getItem(MONSTER_SESSION_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    state.monsterSession = Array.isArray(parsed) ? parsed.map((sheet) => MonsterSheet.fromJSON(sheet)) : [];
+  } catch {
+    state.monsterSession = [];
+  }
+}
+
+function persistMonsterSession() {
+  localStorage.setItem(MONSTER_SESSION_STORAGE_KEY, JSON.stringify(state.monsterSession.map((sheet) => sheet.toJSON())));
+}
+
+function splitMonsterText(value) {
+  return String(value || "")
+    .split(/\r?\n|;/)
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+}
+
+function monsterDefinitionFromRecord(record) {
+  const assetAttacks = (record.assets || [])
+    .filter((asset) => asset.category === "weapon")
+    .map((asset) => ({ name: asset.name, description: asset.summary, ...structuredCloneSafe(asset.snapshot || {}) }));
+  const assetAbilities = (record.assets || [])
+    .filter((asset) => asset.category !== "weapon")
+    .map((asset) => ({ name: asset.name, description: asset.summary, source: monsterAssetCategoryLabel(asset.category) }));
+  return new MonsterDefinition({
+    id: record.id,
+    name: record.name,
+    tier: record.tier || record.rank,
+    rank: record.rank || record.tier,
+    type: record.type || record.role,
+    description: record.description || record.summary || record.behavior,
+    image: record.imageDataUrl || record.image || "",
+    attributes: typeof record.attributes === "object" ? record.attributes : { resumo: record.attributes || "" },
+    maxPV: Math.max(1, numberValue(record.pv, parseFirstNumber(record.pv) || 1)),
+    ca: Math.max(0, numberValue(record.ca, parseFirstNumber(record.ca))),
+    movement: record.movement || "",
+    maxCosmos: Math.max(0, numberValue(record.cosmos, parseFirstNumber(record.cosmos))),
+    maxStress: Math.max(0, numberValue(record.maxStress, parseFirstNumber(record.stress))),
+    attacks: [...splitMonsterText(record.attacks), ...assetAttacks],
+    abilities: [...splitMonsterText(record.abilities), ...assetAbilities],
+    rachadurasMax: Math.max(1, numberValue(record.rachadurasMax, parseFirstNumber(record.cracks) || ITEM_CRACK_MAX)),
+    quickRolls: splitMonsterText(record.quickRolls),
+    metadata: structuredCloneSafe(record),
+    sourceReference: { origin: record.source || "Biblioteca de monstros Solaris" },
+  });
+}
+
+function addMonsterToSession(monsterId, { openEditor = false } = {}) {
+  const record = findMonsterSheet(monsterId);
+  if (!record) return;
+  const sheet = new MonsterSheet({
+    definition: monsterDefinitionFromRecord(record),
+    gmNotes: record.gmNotes || "",
+  });
+  state.monsterSession.unshift(sheet);
+  persistMonsterSession();
+  renderMonsterSessionPanel();
+  if (openEditor && !record.official) openMonsterEditor(monsterId);
+  showToast(`${record.name} adicionado à sessão.`);
+}
+
+function renderMonsterSessionPanel() {
+  if (!el.monsterSessionPanel) return;
+  const sheets = state.monsterSession || [];
+  const key = "monster-session:active";
+  const paginated = paginateItems(sheets, state.pagination[key] || 1);
+  state.pagination[key] = paginated.page;
+  el.monsterSessionPanel.innerHTML = `
+    <div class="monster-session-heading">
+      <div>
+        <span class="ability-source">Mesa ativa</span>
+        <h2>Monstros da sessão</h2>
+      </div>
+      <strong>${sheets.length}</strong>
+    </div>
+    ${sheets.length ? `
+      <div class="monster-session-grid">
+        ${paginated.items.map((sheet) => renderMonsterSessionCard(sheet)).join("")}
+      </div>
+      <nav class="pagination-controls">${renderPaginationControls(paginated, key)}</nav>
+    ` : '<div class="empty-state">Adicione uma criatura do bestiário para usar sua ficha simplificada durante a sessão.</div>'}
+  `;
+}
+
+function renderMonsterSessionCard(sheet) {
+  const monster = sheet.instance;
+  const attacks = monster.attacks || [];
+  const abilities = monster.abilities || [];
+  const latestRoll = monster.rollHistory?.[0];
+  const conditionMarkup = monster.conditions.length
+    ? monster.conditions.map((condition) => `<button class="tag" type="button" title="Clique para remover" data-monster-session-action="remove-condition" data-monster-session-id="${escapeHtml(monster.id)}" data-condition-id="${escapeHtml(condition.id)}">${escapeHtml(condition.label)}</button>`).join("")
+    : '<span class="inventory-note">Nenhuma condição</span>';
+  return `
+    <article class="monster-session-card" data-monster-session-card="${escapeHtml(monster.id)}">
+      <header>
+        ${monster.image ? `<img src="${escapeHtml(monster.image)}" alt="${escapeHtml(monster.name)}" />` : '<span class="monster-session-avatar" aria-hidden="true">M</span>'}
+        <div>
+          <span class="ability-source">${escapeHtml([monster.tier ? `Tier ${monster.tier}` : "", monster.type].filter(Boolean).join(" - ") || "Criatura")}</span>
+          <h3>${escapeHtml(monster.name)}</h3>
+          <p>${escapeHtml(monster.description || "Ficha de sessão Solaris.")}</p>
+        </div>
+      </header>
+      <div class="monster-session-stats">
+        <div><span>PV</span><strong>${monster.currentPV}/${monster.maxPV}</strong></div>
+        <div><span>CA</span><strong>${monster.ca}</strong></div>
+        <div><span>MOV.</span><strong>${escapeHtml(monster.movement || "—")}</strong></div>
+        <div><span>Cosmos</span><strong>${monster.currentCosmos}/${monster.maxCosmos}</strong></div>
+        <div><span>Estresse</span><strong>${monster.stress}/${monster.maxStress}</strong></div>
+        <div><span>Rachaduras</span><strong>${monster.rachaduras.current}/${monster.rachaduras.max}</strong></div>
+      </div>
+      <div class="monster-session-section">
+        <strong>Ataques</strong>
+        <p>${escapeHtml(attacks.map((attack) => typeof attack === "string" ? attack : attack.name || attack.description).filter(Boolean).join(" | ") || "Nenhum ataque registrado.")}</p>
+      </div>
+      <div class="monster-session-section">
+        <strong>Habilidades</strong>
+        <p>${escapeHtml(abilities.map((ability) => typeof ability === "string" ? ability : ability.name || ability.description).filter(Boolean).join(" | ") || "Nenhuma habilidade registrada.")}</p>
+      </div>
+      <div class="tag-row monster-condition-row">${conditionMarkup}</div>
+      <label class="monster-notes-field">
+        Notas do mestre
+        <textarea rows="2" data-monster-session-notes="${escapeHtml(monster.id)}">${escapeHtml(sheet.gmNotes || "")}</textarea>
+      </label>
+      ${latestRoll ? `<p class="monster-last-roll"><strong>Última rolagem:</strong> ${escapeHtml(latestRoll.label || latestRoll.formula)} = ${escapeHtml(latestRoll.total)}</p>` : ""}
+      <div class="monster-session-actions">
+        <button class="primary-button" type="button" data-monster-session-action="attack" data-monster-session-id="${escapeHtml(monster.id)}">Atacar</button>
+        <button class="mini-button" type="button" data-monster-session-action="damage" data-monster-session-id="${escapeHtml(monster.id)}">Receber dano</button>
+        <button class="mini-button" type="button" data-monster-session-action="heal" data-monster-session-id="${escapeHtml(monster.id)}">Curar</button>
+        <button class="mini-button" type="button" data-monster-session-action="condition" data-monster-session-id="${escapeHtml(monster.id)}">Aplicar condição</button>
+        <button class="mini-button" type="button" data-monster-session-action="save-notes" data-monster-session-id="${escapeHtml(monster.id)}">Salvar notas</button>
+        <button class="mini-button danger-mini-button" type="button" data-monster-session-action="delete" data-monster-session-id="${escapeHtml(monster.id)}">Excluir monstro</button>
+      </div>
+    </article>
+  `;
+}
+
+function findMonsterSessionSheet(instanceId) {
+  return (state.monsterSession || []).find((sheet) => sheet.instance.id === instanceId) || null;
+}
+
+function handleMonsterSessionAction(action, instanceId, actionElement = null) {
+  const sheet = findMonsterSessionSheet(instanceId);
+  if (!sheet) return;
+  const monster = sheet.instance;
+  if (action === "attack") {
+    const firstAttack = monster.attacks?.[0];
+    const attackText = typeof firstAttack === "string"
+      ? firstAttack
+      : [firstAttack?.name, firstAttack?.attack, firstAttack?.damage, firstAttack?.description].filter(Boolean).join(" ");
+    const expression = parseDiceExpression(attackText) || { count: 1, sides: 20, bonus: 0 };
+    const rolls = rollDicePool(expression.count, expression.sides);
+    const total = rolls.raw + expression.bonus;
+    monster.recordRoll({
+      label: `Ataque - ${monster.name}`,
+      formula: `${expression.count}d${expression.sides}${expression.bonus ? formatMod(expression.bonus) : ""}`,
+      rolls: rolls.rolls,
+      total,
+    });
+    persistMonsterSession();
+    renderMonsterSessionPanel();
+    showHolographicDiceOverlay({ label: `Ataque - ${monster.name}`, sides: expression.sides, rolls: rolls.rolls, total, formula: `${expression.count}d${expression.sides}${expression.bonus ? formatMod(expression.bonus) : ""}` });
+    return;
+  }
+  if (["damage", "heal"].includes(action)) {
+    const requested = window.prompt(action === "damage" ? `Quanto dano ${monster.name} recebe?` : `Quantos PV ${monster.name} recupera?`, "1");
+    if (requested === null) return;
+    const amount = Math.max(0, numberValue(requested, 0));
+    if (action === "damage") monster.receiveDamage(amount);
+    else monster.heal(amount);
+  } else if (action === "condition") {
+    const label = window.prompt(`Qual condição aplicar em ${monster.name}?`, "");
+    if (!label?.trim()) return;
+    monster.applyCondition({ label: label.trim(), key: dataSlug(label), description: "Condição aplicada durante a sessão." });
+  } else if (action === "remove-condition") {
+    const conditionId = actionElement?.dataset.conditionId;
+    if (conditionId) monster.removeCondition(conditionId);
+  } else if (action === "save-notes") {
+    const card = actionElement?.closest("[data-monster-session-card]");
+    sheet.gmNotes = card?.querySelector("[data-monster-session-notes]")?.value || "";
+    monster.notes = sheet.gmNotes;
+    showToast("Notas do mestre salvas.");
+  } else if (action === "delete") {
+    if (!window.confirm(`Excluir ${monster.name} da sessão? Esta ação não devolve Luzentis.`)) return;
+    state.monsterSession = state.monsterSession.filter((entry) => entry.instance.id !== instanceId);
+  }
+  persistMonsterSession();
+  renderMonsterSessionPanel();
+}
+
+function deleteMonsterSheetById(monsterId) {
+  const monster = state.monsterSheets[monsterId];
+  if (!monster) return;
+  if (!window.confirm(`Excluir ${monster.name}? Esta ação não devolve Luzentis.`)) return;
+  delete state.monsterSheets[monsterId];
+  state.monsterSession = state.monsterSession.filter((sheet) => sheet.definition.id !== monsterId);
+  persistMonsterSheets();
+  persistMonsterSession();
+  renderLibrary();
+  showToast(`${monster.name} excluído.`);
+}
+
+function openMonsterEditor(monsterId = "") {
+  const monster = monsterId ? findMonsterSheet(monsterId) : null;
+  state.activeMonsterId = monsterId;
+  const sheetType = monster?.sheetType || "full";
+  el.monsterSheetType.value = sheetType;
+  el.monsterEditorTitle.textContent = monster ? `Editar ${monster.name}` : "Criar criatura";
+  el.deleteMonsterButton.hidden = !monsterId || !state.monsterSheets[monsterId];
+  el.deleteMonsterButton.textContent = monster?.official ? "Restaurar ficha oficial" : "Excluir ficha";
+  renderMonsterEditorFields(monster || {}, sheetType);
+  el.monsterEditorModal.hidden = false;
+  document.body.classList.add("modal-open");
+}
+
+function closeMonsterEditor() {
+  el.monsterEditorModal.hidden = true;
+  state.activeMonsterId = "";
+  syncModalOpenState();
+}
+
+function renderMonsterEditorFields(monster = {}, sheetType = "full") {
+  const template = monsterSheetTemplates[sheetType] || monsterSheetTemplates.full;
+  el.monsterEditorFields.innerHTML = `
+    <div class="record-template-note">
+      <strong>${escapeHtml(template.label)}</strong>
+      <span>${escapeHtml(template.source)}</span>
+      ${monster.needsCoreStats ? "<small>O Livro 3 não informa Tier, PV e CA desta ficha de chefe. Preencha conforme a sua campanha.</small>" : ""}
+    </div>
+    ${template.fields.map(([id, label, type]) => renderMonsterEditorField(id, label, type, monster[id])).join("")}
+  `;
+}
+
+function renderMonsterEditorField(id, label, type, value) {
+  const wide = type === "textarea" ? "wide-field" : "";
+  if (type === "textarea") {
+    return `
+      <label class="${wide}">
+        ${escapeHtml(label)}
+        <textarea rows="4" data-monster-field="${escapeHtml(id)}">${escapeHtml(value || "")}</textarea>
+      </label>
+    `;
+  }
+  return `
+    <label class="${wide}">
+      ${escapeHtml(label)}
+      <input type="${type}" ${type === "number" ? 'min="0" step="1"' : ""} data-monster-field="${escapeHtml(id)}" value="${escapeHtml(value ?? "")}" />
+    </label>
+  `;
+}
+
+function saveMonsterSheet(event) {
+  event.preventDefault();
+  const fields = [...el.monsterEditorFields.querySelectorAll("[data-monster-field]")].reduce((result, input) => {
+    const key = input.dataset.monsterField;
+    result[key] = input.type === "number"
+      ? (input.value === "" ? null : Math.max(0, numberValue(input.value, 0)))
+      : input.value.trim();
+    return result;
+  }, {});
+  if (!fields.name) {
+    showToast("Informe o nome da criatura.");
+    return;
+  }
+  const current = state.activeMonsterId ? findMonsterSheet(state.activeMonsterId) : null;
+  const id = state.activeMonsterId || `custom-monster-${dataSlug(fields.name)}-${Date.now()}`;
+  const sheetType = el.monsterSheetType.value;
+  const record = {
+    ...(current || {}),
+    ...fields,
+    id,
+    category: "monster",
+    sheetType,
+    summary: fields.behavior || fields.campaign || fields.abilities || current?.summary || "Criatura criada manualmente.",
+    tags: uniqueTags([fields.tier, fields.type, fields.role, sheetType === "boss" ? "Chefe" : "", "ficha personalizada"].filter(Boolean)),
+    assets: current?.assets || [],
+    officialSourceId: current?.official ? current.id : current?.officialSourceId || "",
+    source: current?.source || monsterSheetTemplates[sheetType].source,
+    schemaVersion: 1,
+    updatedAt: new Date().toISOString(),
+    createdAt: current?.createdAt || new Date().toISOString(),
+    needsCoreStats: false,
+  };
+  state.monsterSheets[id] = record;
+  persistMonsterSheets();
+  closeMonsterEditor();
+  renderLibrary();
+  showToast(`${record.name} salvo no bestiário pessoal.`);
+}
+
+function deleteActiveMonsterSheet() {
+  const id = state.activeMonsterId;
+  if (!id || !state.monsterSheets[id]) return;
+  const wasOfficial = monsterData.some((monster) => monster.id === id);
+  const target = state.monsterSheets[id];
+  if (!window.confirm(wasOfficial ? `Restaurar a ficha oficial de ${target.name}?` : `Excluir ${target.name}? Esta ação não devolve Luzentis.`)) return;
+  delete state.monsterSheets[id];
+  state.monsterSession = state.monsterSession.filter((sheet) => sheet.definition.id !== id);
+  persistMonsterSheets();
+  persistMonsterSession();
+  closeMonsterEditor();
+  renderLibrary();
+  showToast(wasOfficial ? "Ficha oficial restaurada." : "Ficha de criatura excluída.");
+}
+
+function openMonsterAssets(monsterId) {
+  const monster = findMonsterSheet(monsterId);
+  if (!monster) return;
+  state.activeMonsterId = monsterId;
+  state.activeMonsterAssetCategory = el.monsterAssetCategory.value || "weapon";
+  el.monsterAssetsTitle.textContent = `Conteúdo de ${monster.name}`;
+  el.monsterAssetSearch.value = "";
+  el.monsterAssetsModal.hidden = false;
+  document.body.classList.add("modal-open");
+  renderMonsterAssetManager();
+}
+
+function closeMonsterAssets() {
+  el.monsterAssetsModal.hidden = true;
+  state.activeMonsterId = "";
+  syncModalOpenState();
+}
+
+function syncModalOpenState() {
+  const anyOpen = !el.vitalHudModal.hidden || !el.monsterEditorModal.hidden || !el.monsterAssetsModal.hidden;
+  document.body.classList.toggle("modal-open", anyOpen);
+}
+
+function renderMonsterAssetManager() {
+  const monster = findMonsterSheet(state.activeMonsterId);
+  if (!monster) return;
+  const category = el.monsterAssetCategory.value || state.activeMonsterAssetCategory;
+  const query = normalizeSearch(el.monsterAssetSearch.value);
+  const attachedIds = new Set((monster.assets || []).map((asset) => `${asset.category}:${asset.id}`));
+  const assets = getMonsterAssetCatalog(category).filter((asset) => itemSearchText(asset).includes(query));
+  const key = `monster-assets:${category}:${monster.id}`;
+  const paginated = paginateItems(assets, state.pagination[key] || 1);
+  state.pagination[key] = paginated.page;
+  el.monsterAssetGrid.innerHTML = assets.length ? paginated.items.map((asset) => {
+    const attached = attachedIds.has(`${category}:${asset.id}`);
+    return `
+      <article class="asset-manager-card ${attached ? "attached" : ""}">
+        <div>
+          <span>${escapeHtml(monsterAssetCategoryLabel(category))}</span>
+          <h3>${escapeHtml(asset.name)}</h3>
+          <p>${escapeHtml(asset.summary || asset.effect || "Sem descrição.")}</p>
+        </div>
+        <button class="${attached ? "ghost-button" : "primary-button"}" type="button" data-monster-asset-toggle="${escapeHtml(asset.id)}" data-asset-category="${escapeHtml(category)}">
+          ${attached ? "Remover" : "Adicionar"}
+        </button>
+      </article>
+    `;
+  }).join("") + `<nav class="pagination-controls">${renderPaginationControls(paginated, key)}</nav>` : '<div class="empty-state">Nenhum conteúdo encontrado nesta categoria.</div>';
+}
+
+function getMonsterAssetCatalog(category) {
+  const customRecords = state.current.customRecords || [];
+  if (category === "weapon") {
+    return mergeCatalogByName(
+      weaponData,
+      (state.current.customItems || []).filter((item) => item.category === "weapon")
+    );
+  }
+  if (category === "cosmos") {
+    return mergeCatalogByName(
+      cosmicSpellData,
+      (state.current.knownAbilities || [])
+        .filter((ability) => ability.source === "Cosmos")
+        .map((ability) => ({ ...ability, summary: ability.effect }))
+    );
+  }
+  if (category === "mod") {
+    return mergeCatalogByName(
+      equipmentModData,
+      customRecords.filter((record) => record.category === "mod")
+    );
+  }
+  return mergeCatalogByName(
+    modifierChipData,
+    collectAbilityEntries().map((ability, index) => ({
+      ...ability,
+      id: ability.id || `character-ability-${index}-${dataSlug(ability.name)}`,
+      summary: ability.effect,
+    }))
+  );
+}
+
+function monsterAssetCategoryLabel(category) {
+  return {
+    weapon: "Arma",
+    cosmos: "Magia cósmica",
+    ability: "Habilidade",
+    mod: "Mod",
+  }[category] || "Conteúdo";
+}
+
+function toggleMonsterAsset(assetId, category) {
+  const monster = ensureEditableMonster(state.activeMonsterId);
+  const asset = getMonsterAssetCatalog(category).find((entry) => entry.id === assetId);
+  if (!monster || !asset) return;
+  monster.assets = monster.assets || [];
+  const index = monster.assets.findIndex((entry) => entry.id === assetId && entry.category === category);
+  if (index >= 0) {
+    monster.assets.splice(index, 1);
+  } else {
+    monster.assets.push({
+      id: asset.id,
+      category,
+      name: asset.name,
+      summary: asset.summary || asset.effect || "",
+      source: asset.source || monsterAssetCategoryLabel(category),
+      snapshot: structuredCloneSafe(asset),
+    });
+  }
+  monster.updatedAt = new Date().toISOString();
+  state.monsterSheets[monster.id] = monster;
+  persistMonsterSheets();
+  renderMonsterAssetManager();
+  renderLibrary();
+}
+
+function ensureEditableMonster(id) {
+  if (state.monsterSheets[id]) return state.monsterSheets[id];
+  const official = monsterData.find((monster) => monster.id === id);
+  if (!official) return null;
+  state.monsterSheets[id] = {
+    ...structuredCloneSafe(official),
+    officialSourceId: official.id,
+    assets: structuredCloneSafe(official.assets || []),
+    schemaVersion: 1,
+  };
+  return state.monsterSheets[id];
+}
+
+function exportActiveMonster() {
+  const monster = findMonsterSheet(state.activeMonsterId);
+  if (!monster) return;
+  const payload = {
+    exportType: "solaris-monster",
+    schemaVersion: 1,
+    foundryReady: true,
+    monster,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${dataSlug(monster.name) || "monstro-solaris"}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+  showToast("Ficha de monstro exportada em JSON.");
+}
+
 function totalAttributes() {
   const race = findRace(state.current.race);
   const racialBonus = raceEffectiveBonus(race, state.current.racialChoice);
@@ -4387,10 +5925,11 @@ function collectAbilityEntries() {
       source: "Chip de profissão",
       effect,
       meta: profession.name,
+      professionRemovable: profession.id !== "escolha-profissao",
     });
   });
 
-  (state.current.knownAbilities || []).forEach((ability) => entries.push(ability));
+  (state.current.knownAbilities || []).forEach((ability) => entries.push({ ...ability, knownAbility: true }));
 
   if (equippedWeapon) {
     entries.push({
@@ -4469,6 +6008,241 @@ function findAbilityLibraryItem(id) {
 function findMarketItem(id) {
   const customItems = state.current?.customItems || [];
   return [...cubeData, ...itemData, ...weaponData, ...armorData, ...customItems].find((item) => item.id === id);
+}
+
+function domainDefinitionForItem(item) {
+  const definition = definitionFromLegacyItem(item || {});
+  if (item?.category === "cube") {
+    definition.maxSlots = Math.max(1, numberValue(item.cubeCapacity, definition.maxSlots || 1));
+    definition.cubeKind = item.cubeKind || definition.cubeKind || "simple";
+  }
+  return definition;
+}
+
+function domainEntityTypeLabel(type) {
+  const labels = {
+    [ENTITY_TYPES.ITEM]: "Item comum",
+    [ENTITY_TYPES.WEAPON]: "Arma",
+    [ENTITY_TYPES.ARMOR]: "Armadura",
+    [ENTITY_TYPES.CUBE]: "Cubo",
+    [ENTITY_TYPES.HOOK]: "Gancho",
+    [ENTITY_TYPES.HOLSTER]: "Coldre",
+    [ENTITY_TYPES.BANDOLIER]: "Bandoleira",
+    [ENTITY_TYPES.CHIP_MOD]: "Chip modificador",
+    [ENTITY_TYPES.COSMIC_SPELL]: "Magia cósmica",
+    [ENTITY_TYPES.CUSTOM_ABILITY]: "Habilidade",
+    [ENTITY_TYPES.DRONE]: "Drone",
+    [ENTITY_TYPES.ROBOT]: "Robô",
+    [ENTITY_TYPES.VEHICLE]: "Veículo",
+  };
+  return labels[type] || "Entidade";
+}
+
+function domainCharacterFromLegacy(character = state.current) {
+  const previous = character.domainCharacter
+    ? DomainCharacter.fromJSON(character.domainCharacter)
+    : null;
+  const domain = migrateLegacyCharacterData(
+    { ...character, domainCharacter: null },
+    (itemId) => findMarketItem(itemId)
+  );
+  if (previous) {
+    domain.knownSpells = previous.knownSpells;
+    domain.installedChips = previous.installedChips;
+    domain.permanentEffects = previous.permanentEffects;
+    domain.temporaryEffects = previous.temporaryEffects;
+    domain.conditions = previous.conditions;
+    domain.metadata = { ...previous.metadata, ...domain.metadata };
+  }
+  domain.name = character.name;
+  domain.race = character.race;
+  domain.level = character.level;
+  domain.bodyWeight = character.bodyWeightKg;
+  domain.luzentis = character.currency;
+  domain.attributes = { ...character.attributes };
+  domain.currentPV = character.pvCurrent;
+  domain.currentCosmos = character.cosmosCurrent;
+  domain.stress = character.stress;
+  domain.rollHistory = structuredCloneSafe(character.diceLog || []);
+  return domain;
+}
+
+function syncDomainCharacterToLegacy(domain, character = state.current) {
+  const previousEntries = new Map((character.inventory || []).map((entry) => [entry.uid, entry]));
+  character.currency = domain.luzentis;
+  character.inventory = domain.inventory.getAll().map((entity) => {
+    const previous = previousEntries.get(entity.id) || entity.customData?.legacyEntry || {};
+    const location = entity.location || { kind: LOCATION_KINDS.UNASSIGNED };
+    const supportSlot = location.kind === LOCATION_KINDS.HOOK
+      ? "gancho"
+      : location.kind === LOCATION_KINDS.HOLSTER
+        ? "coldre"
+        : location.kind === LOCATION_KINDS.BANDOLIER
+          ? "bandoleira"
+          : "";
+    return {
+      ...previous,
+      uid: entity.id,
+      itemId: entity.definitionId || previous.itemId,
+      category: previous.category || entity.definitionSnapshot?.metadata?.category || entity.entityType,
+      inCube: location.kind === LOCATION_KINDS.CUBE && location.containerId === "legacy-cube",
+      cubeUid: location.kind === LOCATION_KINDS.CUBE && location.containerId !== "legacy-cube"
+        ? location.containerId
+        : "",
+      supportSlot,
+      location: { ...location },
+      crackLevel: entity.rachaduras.current,
+      crackMax: entity.rachaduras.max,
+      cubeCapacity: entity.storage?.maxSlots ?? previous.cubeCapacity,
+      cubeKind: entity.definitionSnapshot?.cubeKind || previous.cubeKind,
+      domainEntityType: entity.entityType,
+      domainEntity: entity.toJSON(),
+    };
+  });
+  character.equippedWeaponUid = domain.loadout.mainWeapon || domain.loadout.secondaryWeapon || "";
+  character.equippedArmorUid = domain.loadout.armor || "";
+  character.weapon = getMarketItemByInventoryUid(character.equippedWeaponUid)?.name || "";
+  character.armor = getMarketItemByInventoryUid(character.equippedArmorUid)?.name || "";
+  character.domainCharacter = domain.toJSON();
+  return character;
+}
+
+function syncDomainSnapshotFromLegacy({ autoSave = false } = {}) {
+  const domain = domainCharacterFromLegacy();
+  syncDomainCharacterToLegacy(domain);
+  if (autoSave) persistCurrentCharacterSilently();
+  return domain;
+}
+
+function persistCurrentCharacterSilently() {
+  state.current.updatedAt = new Date().toISOString();
+  const index = state.saved.findIndex((character) => character.id === state.current.id);
+  const payload = structuredCloneSafe(state.current);
+  if (index >= 0) state.saved[index] = payload;
+  else state.saved.unshift(payload);
+  persistSaved();
+  renderSavedList();
+}
+
+function inventoryLocationLabel(entry) {
+  const location = entry?.location || {};
+  const labels = {
+    [LOCATION_KINDS.EQUIPPED]: "Equipado",
+    [LOCATION_KINDS.ACTIVE]: "Acesso rápido",
+    [LOCATION_KINDS.CUBE]: "Dentro de cubo",
+    [LOCATION_KINDS.CONTAINER]: "Armazenado",
+    [LOCATION_KINDS.HOOK]: "Gancho",
+    [LOCATION_KINDS.HOLSTER]: "Coldre",
+    [LOCATION_KINDS.BANDOLIER]: "Bandoleira",
+    [LOCATION_KINDS.BASE]: "Base / depósito",
+    [LOCATION_KINDS.VEHICLE]: "Veículo",
+    [LOCATION_KINDS.UNASSIGNED]: "Sem local definido",
+  };
+  return labels[location.kind] || labels[LOCATION_KINDS.UNASSIGNED];
+}
+
+function storageLocationKind(storageType) {
+  if (storageType === "cube") return LOCATION_KINDS.CUBE;
+  if (storageType === "hook") return LOCATION_KINDS.HOOK;
+  if (storageType === "holster") return LOCATION_KINDS.HOLSTER;
+  if (storageType === "bandolier") return LOCATION_KINDS.BANDOLIER;
+  if (storageType === "vehicle") return LOCATION_KINDS.VEHICLE;
+  return LOCATION_KINDS.CONTAINER;
+}
+
+function encodeLocationOption(location) {
+  return encodeURIComponent(JSON.stringify(location));
+}
+
+function decodeLocationOption(value) {
+  try {
+    return JSON.parse(decodeURIComponent(value));
+  } catch {
+    return { kind: LOCATION_KINDS.UNASSIGNED };
+  }
+}
+
+function getInventoryLocationOptions(domain, entity) {
+  const options = [
+    { label: "Sem local definido (gera alerta)", location: { kind: LOCATION_KINDS.UNASSIGNED } },
+    { label: "Ativo / acesso rápido", location: { kind: LOCATION_KINDS.ACTIVE, slotId: "active" } },
+    { label: "Base / depósito", location: { kind: LOCATION_KINDS.BASE } },
+  ];
+  if ([ENTITY_TYPES.WEAPON, ENTITY_TYPES.ARMOR].includes(entity.entityType)) {
+    options.splice(1, 0, {
+      label: entity.entityType === ENTITY_TYPES.ARMOR ? "Equipar como armadura" : "Equipar como arma principal",
+      location: {
+        kind: LOCATION_KINDS.EQUIPPED,
+        slotId: entity.entityType === ENTITY_TYPES.ARMOR ? "armor" : "mainWeapon",
+      },
+    });
+  }
+  domain.inventory.getStorageEntities().forEach((storage) => {
+    if (storage.id === entity.id || !storage.canStore(entity, domain.inventory)) return;
+    const available = storage.getAvailableSlots(domain.inventory);
+    options.push({
+      label: `${storage.name} (${available} espaço${available === 1 ? "" : "s"} livre${available === 1 ? "" : "s"})`,
+      location: {
+        kind: storageLocationKind(storage.storage.storageType),
+        containerId: storage.id,
+        label: storage.name,
+      },
+    });
+  });
+  return options;
+}
+
+function openInventoryLocationDialog(entityId, reason = "move") {
+  const domain = domainCharacterFromLegacy();
+  const entity = domain.inventory.findById(entityId);
+  if (!entity) return;
+  state.pendingLocationEntityId = entityId;
+  state.pendingLocationReason = reason;
+  el.inventoryLocationTitle.textContent = reason === "purchase"
+    ? `Onde guardar ${entity.name}?`
+    : `Mover ${entity.name}`;
+  el.inventoryLocationMessage.textContent = reason === "purchase"
+    ? "A compra foi concluída. Escolha onde o item ficará; sem uma escolha ele permanece com alerta de localização."
+    : "A localização define se o item está pronto para uso, armazenado ou aguardando organização.";
+  el.inventoryLocationSelect.innerHTML = getInventoryLocationOptions(domain, entity)
+    .map((option) => `<option value="${encodeLocationOption(option.location)}">${escapeHtml(option.label)}</option>`)
+    .join("");
+  el.inventoryLocationModal.hidden = false;
+  document.body.classList.add("modal-open");
+}
+
+function closeInventoryLocationDialog() {
+  const reason = state.pendingLocationReason;
+  state.pendingLocationEntityId = "";
+  state.pendingLocationReason = "";
+  el.inventoryLocationModal.hidden = true;
+  document.body.classList.remove("modal-open");
+  if (reason === "purchase") showToast("Item comprado e mantido sem local definido.", "tech-error");
+}
+
+function applyPendingInventoryLocation(event) {
+  event.preventDefault();
+  const entityId = state.pendingLocationEntityId;
+  if (!entityId) return;
+  const domain = domainCharacterFromLegacy();
+  const entity = domain.inventory.findById(entityId);
+  if (!entity) return;
+  const location = decodeLocationOption(el.inventoryLocationSelect.value);
+  try {
+    if (location.kind === LOCATION_KINDS.EQUIPPED) domain.equipEntity(entity.id, location.slotId);
+    else if (location.kind === LOCATION_KINDS.ACTIVE) domain.setEntityActive(entity.id, location.slotId);
+    else domain.moveEntityTo(entity.id, location);
+    syncDomainCharacterToLegacy(domain);
+    persistCurrentCharacterSilently();
+    state.pendingLocationEntityId = "";
+    state.pendingLocationReason = "";
+    el.inventoryLocationModal.hidden = true;
+    document.body.classList.remove("modal-open");
+    renderForm();
+    showToast(`${entity.name} movido para ${inventoryLocationLabel({ location: entity.location })}.`);
+  } catch (error) {
+    showToast(error.message || "Não foi possível mover o item.", "tech-error");
+  }
 }
 
 function getInventoryEntry(uid) {
@@ -4900,7 +6674,7 @@ function getMarketItemByInventoryUid(uid) {
 }
 
 function modifierChipEntries() {
-  return (state.current.knownAbilities || []).filter((ability) => ability.source === "Chip modificador");
+  return (state.current.knownAbilities || []).filter((ability) => ability.source === "Chip modificador" && ability.installed !== false);
 }
 
 function cosmicSpellEntries({ abilities = state.current.knownAbilities } = {}) {
@@ -4923,7 +6697,7 @@ function cosmicSpellSlotState({
     name: entry.item?.name || "Nenhuma",
   }));
   const chipSources = activeAbilities
-    .filter((ability) => ability.source === "Chip modificador")
+    .filter((ability) => ability.source === "Chip modificador" && ability.installed !== false)
     .map((ability) => ({ name: ability.name, slots: cosmicSpellSlotValueFromAbility(ability) }))
     .filter((source) => source.slots > 0);
   const chipSlots = chipSources.reduce((sum, source) => sum + source.slots, 0);
@@ -5069,6 +6843,7 @@ function marketLine(item) {
 
 function libraryMeta(item) {
   const parts = [
+    item.source || "",
     item.cost ? `Custo ${item.cost} Cosmos` : "",
     item.category === "cosmos" ? "Ocupa 1 espaço de magia" : "",
     item.rank ? `Rank ${item.rank}` : "",
@@ -5080,6 +6855,43 @@ function libraryMeta(item) {
     item.type || "",
   ].filter(Boolean);
   return parts.join(" - ");
+}
+
+function monsterMeta(monster) {
+  return [
+    monster.tier ? `Tier ${monster.tier}` : "Tier pendente",
+    monster.type || "",
+    monster.role || "",
+    Number.isFinite(monster.pv) ? `PV ${monster.pv}` : "PV pendente",
+    Number.isFinite(monster.ca) ? `CA ${monster.ca}` : "CA pendente",
+  ].filter(Boolean).join(" - ");
+}
+
+function renderMonsterPopoverDetails(monster) {
+  const assetCount = (monster.assets || []).length;
+  return `
+    ${monster.movement ? `<p><strong>Movimento:</strong> ${escapeHtml(monster.movement)}</p>` : ""}
+    ${monster.attacks ? `<p><strong>Ataques:</strong> ${escapeHtml(monster.attacks)}</p>` : ""}
+    ${monster.abilities ? `<p><strong>Habilidades:</strong> ${escapeHtml(monster.abilities)}</p>` : ""}
+    ${monster.weaknesses ? `<p><strong>Fraquezas:</strong> ${escapeHtml(monster.weaknesses)}</p>` : ""}
+    ${assetCount ? `<p><strong>Conteúdo vinculado:</strong> ${assetCount}</p>` : ""}
+    ${monster.needsCoreStats ? '<p class="support-warning"><strong>Livro 3:</strong> ficha de chefe sem Tier, PV e CA explícitos.</p>' : ""}
+  `;
+}
+
+function getMonsterLibraryItems() {
+  return monsterData.map((monster) => ({
+    ...monster,
+    ...(state.monsterSheets[monster.id] || {}),
+    official: true,
+    assets: state.monsterSheets[monster.id]?.assets || monster.assets || [],
+  })).concat(
+    Object.values(state.monsterSheets).filter((monster) => !monsterData.some((official) => official.id === monster.id))
+  );
+}
+
+function findMonsterSheet(id) {
+  return getMonsterLibraryItems().find((monster) => monster.id === id) || null;
 }
 
 function marketCategoryLabel(category) {
@@ -5372,6 +7184,7 @@ function normalizeKnownAbility(ability) {
   const normalized = { ...ability };
   if (normalized.source === "Chip modificador") {
     normalized.passiveEffects = abilityPassiveEffects(normalized);
+    normalized.installed = normalized.installed !== false;
   } else {
     normalized.passiveEffects = normalizePassiveEffects(normalized.passiveEffects);
   }
@@ -5404,17 +7217,35 @@ function normalizeCharacter(character) {
     loadUsed: numberValue(character.loadUsed, 0),
     bodyWeightKg: Math.max(1, numberValue(character.bodyWeightKg, 70)),
     currency: character.currency === undefined ? STARTING_CURRENCY : numberValue(character.currency, 0),
-    inventory: Array.isArray(character.inventory) ? character.inventory.map((entry) => ({
-      ...entry,
-      cubeUid: entry.cubeUid || "",
-      inCube: Boolean(entry.inCube),
-      supportSlot: entry.cubeUid || entry.inCube ? "" : entry.supportSlot || "",
-      crackLevel: clamp(numberValue(entry.crackLevel, entry.uid === character.equippedWeaponUid ? character.crackLevel : 0), 0, ITEM_CRACK_MAX),
-    })) : [],
+    inventory: Array.isArray(character.inventory) ? character.inventory.map((entry) => {
+      const cubeUid = entry.cubeUid || "";
+      const inCube = Boolean(entry.inCube);
+      const supportSlot = cubeUid || inCube ? "" : entry.supportSlot || "";
+      let location = entry.location?.kind ? { ...entry.location } : { kind: LOCATION_KINDS.UNASSIGNED };
+      if (!entry.location?.kind) {
+        if (entry.uid === character.equippedWeaponUid) location = { kind: LOCATION_KINDS.EQUIPPED, slotId: "mainWeapon" };
+        else if (entry.uid === character.equippedArmorUid) location = { kind: LOCATION_KINDS.EQUIPPED, slotId: "armor" };
+        else if (cubeUid) location = { kind: LOCATION_KINDS.CUBE, containerId: cubeUid };
+        else if (inCube) location = { kind: LOCATION_KINDS.CUBE, containerId: "legacy-cube" };
+        else if (supportSlot === "gancho") location = { kind: LOCATION_KINDS.HOOK };
+        else if (supportSlot === "coldre") location = { kind: LOCATION_KINDS.HOLSTER };
+        else if (supportSlot === "bandoleira") location = { kind: LOCATION_KINDS.BANDOLIER };
+      }
+      return {
+        ...entry,
+        cubeUid,
+        inCube,
+        supportSlot,
+        location,
+        crackLevel: clamp(numberValue(entry.crackLevel, entry.uid === character.equippedWeaponUid ? character.crackLevel : 0), 0, ITEM_CRACK_MAX),
+      };
+    }) : [],
     knownAbilities: Array.isArray(character.knownAbilities) ? character.knownAbilities.map(normalizeKnownAbility) : [],
+    installedMods: Array.isArray(character.installedMods) ? character.installedMods : [],
     cosmicTrainingSlots: Math.max(0, numberValue(character.cosmicTrainingSlots, 0)),
     cosmicGrimoireSlots: Math.max(0, numberValue(character.cosmicGrimoireSlots, 0)),
     customItems: Array.isArray(character.customItems) ? character.customItems : [],
+    customRecords: Array.isArray(character.customRecords) ? character.customRecords : [],
     diceLog: Array.isArray(character.diceLog) ? character.diceLog : [],
     initialAttributeRoll: character.initialAttributeRoll && Array.isArray(character.initialAttributeRoll.rolls)
       ? character.initialAttributeRoll
@@ -5423,6 +7254,9 @@ function normalizeCharacter(character) {
     pendingCosmicEffect: ["blessing", "failure"].includes(character.pendingCosmicEffect) ? character.pendingCosmicEffect : "",
     equippedWeaponUid: character.equippedWeaponUid || "",
     equippedArmorUid: character.equippedArmorUid || "",
+    domainCharacter: character.domainCharacter && typeof character.domainCharacter === "object"
+      ? character.domainCharacter
+      : null,
   };
 }
 

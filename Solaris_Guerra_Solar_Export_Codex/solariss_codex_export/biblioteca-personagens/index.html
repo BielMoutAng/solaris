@@ -12,7 +12,7 @@
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./assets/icons/solaris-icon.svg" />
     <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./styles.css?v=20260606b" />
+    <link rel="stylesheet" href="./styles.css?v=20260611a" />
   </head>
   <body>
     <div class="app-shell">
@@ -50,6 +50,14 @@
           <button class="nav-item" type="button" data-view="chipsMod">
             <span class="nav-icon" data-icon="chip"></span>
             <span>Chips mod.</span>
+          </button>
+          <button class="nav-item" type="button" data-view="mods">
+            <span class="nav-icon" data-icon="chip"></span>
+            <span>Mods</span>
+          </button>
+          <button class="nav-item" type="button" data-view="armazenamento">
+            <span class="nav-icon" data-icon="package"></span>
+            <span>Armazenamento</span>
           </button>
           <button class="nav-item" type="button" data-view="armas">
             <span class="nav-icon" data-icon="sword"></span>
@@ -236,7 +244,7 @@
                       <span class="resource-glyph" data-icon="spark"></span>
                       <span>Estresse</span>
                     </span>
-                    <input id="stress" name="stress" type="number" min="0" max="7" step="1" />
+                    <input id="stress" name="stress" type="number" min="0" max="6" step="1" />
                     <span class="resource-meter"><span id="stressMeter"></span></span>
                   </label>
                 </div>
@@ -473,6 +481,19 @@
                     <option value="cosmos">Magia cósmica</option>
                     <option value="chip-mod">Chip modificador</option>
                     <option value="ability">Habilidade solta</option>
+                    <option value="mod">Mod</option>
+                    <option value="cube">Cubo</option>
+                    <option value="special-item">Item especial</option>
+                    <option value="crafting">Projeto de crafting</option>
+                    <option value="vehicle">Veículo</option>
+                    <option value="pursuit">Perseguição</option>
+                    <option value="drone">Drone</option>
+                    <option value="turret">Torreta</option>
+                    <option value="robot">Robô</option>
+                    <option value="hacking">Hacking</option>
+                    <option value="network">Rede digital</option>
+                    <option value="shop">Loja</option>
+                    <option value="black-market">Mercado negro</option>
                   </select>
                 </label>
                 <label>
@@ -515,6 +536,7 @@
                   Efeito
                   <textarea id="manualEffect" rows="5" placeholder="Descreva o efeito, regra, materiais ou observações."></textarea>
                 </label>
+                <div class="manual-official-fields" id="manualOfficialFields" hidden></div>
                 <button class="primary-button" type="submit">
                   <span data-icon="plus"></span>
                   Adicionar
@@ -532,7 +554,12 @@
                 <p id="libraryKicker">Biblioteca</p>
                 <h2 id="libraryTitle">Raças</h2>
               </div>
-              <div class="library-controls" id="libraryControls">
+              <div class="library-header-tools">
+                <button class="primary-button" id="createMonsterButton" type="button" hidden>
+                  <span data-icon="plus"></span>
+                  Criar criatura
+                </button>
+                <div class="library-controls" id="libraryControls">
                 <label class="search-box library-search">
                   <span data-icon="search"></span>
                   <input id="librarySearch" type="search" placeholder="Filtrar biblioteca" autocomplete="off" />
@@ -554,9 +581,12 @@
                     <option value="price-desc">Preço maior</option>
                   </select>
                 </label>
+                </div>
               </div>
             </div>
+            <section class="monster-session-panel" id="monsterSessionPanel" hidden></section>
             <div class="library-grid" id="libraryGrid"></div>
+            <nav class="pagination-controls" id="libraryPagination" aria-label="Paginação da biblioteca"></nav>
           </div>
         </section>
 
@@ -617,8 +647,102 @@
       </div>
     </div>
 
+    <div class="record-modal" id="monsterEditorModal" hidden>
+      <div class="record-modal-backdrop" data-monster-editor-close></div>
+      <section class="record-modal-window" role="dialog" aria-modal="true" aria-labelledby="monsterEditorTitle">
+        <div class="record-modal-header">
+          <div>
+            <p>Bestiário pessoal</p>
+            <h2 id="monsterEditorTitle">Criar criatura</h2>
+          </div>
+          <button class="icon-button" id="closeMonsterEditor" type="button" aria-label="Fechar editor">
+            <span data-icon="plus"></span>
+          </button>
+        </div>
+        <form class="record-form" id="monsterEditorForm" autocomplete="off">
+          <label>
+            Modelo de ficha
+            <select id="monsterSheetType">
+              <option value="full">Monstro comum</option>
+              <option value="quick">Ficha curta</option>
+              <option value="boss">Chefe</option>
+            </select>
+          </label>
+          <div class="record-fields" id="monsterEditorFields"></div>
+          <div class="record-form-actions">
+            <button class="ghost-button" id="deleteMonsterButton" type="button" hidden>Excluir ficha</button>
+            <button class="primary-button" type="submit">
+              <span data-icon="save"></span>
+              Salvar criatura
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="record-modal" id="monsterAssetsModal" hidden>
+      <div class="record-modal-backdrop" data-monster-assets-close></div>
+      <section class="record-modal-window asset-manager-window" role="dialog" aria-modal="true" aria-labelledby="monsterAssetsTitle">
+        <div class="record-modal-header">
+          <div>
+            <p>Arsenal e habilidades</p>
+            <h2 id="monsterAssetsTitle">Conteúdo da criatura</h2>
+          </div>
+          <button class="icon-button" id="closeMonsterAssets" type="button" aria-label="Fechar arsenal">
+            <span data-icon="plus"></span>
+          </button>
+        </div>
+        <div class="asset-manager-controls">
+          <label class="search-box">
+            <span data-icon="search"></span>
+            <input id="monsterAssetSearch" type="search" placeholder="Buscar arma, magia ou habilidade" />
+          </label>
+          <label class="library-select-control">
+            Categoria
+            <select id="monsterAssetCategory">
+              <option value="weapon">Armas</option>
+              <option value="cosmos">Magias cósmicas</option>
+              <option value="ability">Habilidades e chips</option>
+              <option value="mod">Mods</option>
+            </select>
+          </label>
+          <button class="ghost-button" id="exportMonsterButton" type="button">
+            <span data-icon="download"></span>
+            Exportar ficha
+          </button>
+        </div>
+        <div class="asset-manager-grid" id="monsterAssetGrid"></div>
+      </section>
+    </div>
+
+    <div class="record-modal inventory-location-modal" id="inventoryLocationModal" hidden>
+      <div class="record-modal-backdrop" data-inventory-location-close></div>
+      <section class="record-modal-window inventory-location-window" role="dialog" aria-modal="true" aria-labelledby="inventoryLocationTitle">
+        <div class="record-modal-header">
+          <div>
+            <p>Inventário físico</p>
+            <h2 id="inventoryLocationTitle">Escolher localização</h2>
+          </div>
+          <button class="icon-button" id="closeInventoryLocation" type="button" aria-label="Fechar localização">
+            <span data-icon="plus"></span>
+          </button>
+        </div>
+        <form class="record-form inventory-location-form" id="inventoryLocationForm">
+          <p class="inventory-note" id="inventoryLocationMessage"></p>
+          <label>
+            Guardar em
+            <select id="inventoryLocationSelect"></select>
+          </label>
+          <div class="record-form-actions">
+            <button class="primary-button" type="submit">Confirmar localização</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+    <script src="./official-books-data.js?v=20260606e"></script>
     <script src="./official-items.js?v=20260603b"></script>
     <script type="importmap">
       {
@@ -628,7 +752,7 @@
         }
       }
     </script>
-    <script src="./HumanisVitalHUD.js?v=20260606b"></script>
-    <script src="./app.js?v=20260606b"></script>
+    <script src="./HumanisVitalHUD.js?v=20260606e"></script>
+    <script type="module" src="./app.js?v=20260611a"></script>
   </body>
 </html>

@@ -1,12 +1,14 @@
 {
   "name": "solaris-biblioteca",
-  "version": "0.1.1",
+  "version": "0.3.0",
   "description": "Biblioteca local de personagens para Solaris Guerra Solar.",
   "author": "Solaris",
   "main": "electron-main.cjs",
+  "type": "module",
   "private": true,
   "scripts": {
     "start": "electron .",
+    "test": "node --test tests/solaris-domain-architecture.test.mjs",
     "pack": "electron-builder --dir",
     "dist": "electron-builder --win nsis portable"
   },
@@ -27,7 +29,9 @@
       "app.js",
       "sw.js",
       "HumanisVitalHUD.js",
+      "official-books-data.js",
       "official-items.js",
+      "src/**/*",
       "electron-main.cjs",
       "README.md",
       "assets/**/*"
