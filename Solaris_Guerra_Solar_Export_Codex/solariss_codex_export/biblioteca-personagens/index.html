@@ -12,7 +12,7 @@
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./assets/icons/solaris-icon.svg" />
     <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./styles.css?v=20260611a" />
+    <link rel="stylesheet" href="./styles.css?v=20260611m" />
   </head>
   <body>
     <div class="app-shell">
@@ -85,40 +85,21 @@
           </button>
         </nav>
 
-        <section class="saved-panel" aria-label="Personagens salvos">
-          <div class="panel-heading">
-            <h2>Arquivo</h2>
-            <button class="icon-button" id="newCharacterSide" type="button" title="Novo personagem" aria-label="Novo personagem">
-              <span data-icon="plus"></span>
-            </button>
-          </div>
-          <label class="search-box">
-            <span data-icon="search"></span>
-            <input id="characterSearch" type="search" placeholder="Buscar ficha" autocomplete="off" />
-          </label>
-          <div class="saved-list" id="savedList"></div>
-        </section>
       </aside>
 
       <main class="workspace">
         <header class="topbar">
+          <button class="icon-button topbar-home-button" id="homeButton" type="button" title="Tela inicial" aria-label="Voltar para a tela inicial">
+            <span data-icon="orbit"></span>
+          </button>
           <div class="topbar-title">
             <p id="viewKicker">Ficha ativa</p>
             <h2 id="viewTitle">Criador de personagem</h2>
           </div>
           <div class="toolbar">
-            <button class="ghost-button" id="importButton" type="button">
-              <span data-icon="upload"></span>
-              Importar
-            </button>
-            <input id="importInput" type="file" accept="application/json" hidden />
             <button class="ghost-button" id="printButton" type="button">
               <span data-icon="printer"></span>
               Imprimir
-            </button>
-            <button class="ghost-button" id="exportButton" type="button">
-              <span data-icon="download"></span>
-              Exportar
             </button>
             <button class="primary-button" id="saveButton" type="button">
               <span data-icon="save"></span>
@@ -127,16 +108,182 @@
           </div>
         </header>
 
-        <section class="view active" id="personagensView">
+        <section class="tablet-home view active" id="tabletHomeView" aria-label="Tela inicial Solaris">
+          <div class="tablet-frame">
+            <header class="tablet-system-bar">
+              <div class="tablet-brand">
+                <span class="tablet-brand-mark" data-icon="orbit"></span>
+                <div>
+                  <strong>Solaris</strong>
+                  <small>Guerra Solar // terminal de campanha</small>
+                </div>
+              </div>
+              <div class="tablet-system-status">
+                <span>Sistema ativo</span>
+                <i aria-hidden="true"></i>
+              </div>
+            </header>
+
+            <button class="tablet-hud-panel" id="launcherVitalTrigger" type="button" aria-label="Abrir HUD vital do personagem">
+              <div class="tablet-hud-heading">
+                <span>HUD do personagem</span>
+                <small>Monitoramento ativo</small>
+              </div>
+              <div class="tablet-hud-portrait">
+                <img id="launcherPortraitImage" alt="" hidden />
+                <span id="launcherPortraitIcon" data-icon="user"></span>
+                <span class="tablet-scan-line" aria-hidden="true"></span>
+              </div>
+              <div class="tablet-hud-identity">
+                <strong id="launcherName">Personagem sem nome</strong>
+                <span id="launcherLine">Humanis // Nível 1</span>
+              </div>
+              <div class="tablet-hud-stats" id="launcherStats"></div>
+              <div class="tablet-hud-bars" id="launcherResourceBars"></div>
+              <span class="tablet-panel-action">Abrir monitor vital</span>
+            </button>
+
+            <nav class="tablet-app-grid" aria-label="Aplicativos Solaris">
+              <button class="tablet-app-button" type="button" data-launcher-view="itensHub">
+                <span data-icon="package"></span>
+                <strong>Itens</strong>
+                <small>Equipamentos e inventário</small>
+              </button>
+              <button class="tablet-app-button" type="button" data-launcher-view="skillsHub">
+                <span data-icon="spark"></span>
+                <strong>Skills</strong>
+                <small>Profissões e magias</small>
+              </button>
+              <button class="tablet-app-button" type="button" data-launcher-view="rulesHub">
+                <span data-icon="book"></span>
+                <strong>Regras</strong>
+                <small>Sistema e criação</small>
+              </button>
+              <button class="tablet-app-button" type="button" data-launcher-library="monstros">
+                <span data-icon="skull"></span>
+                <strong>Bestiário</strong>
+                <small>Criaturas e ameaças</small>
+              </button>
+            </nav>
+
+            <button class="tablet-character-launcher" type="button" data-launcher-view="personagens">
+              <span class="tablet-character-glyph" data-icon="user"></span>
+              <span>
+                <small>Arquivo ativo</small>
+                <strong>Ficha do personagem</strong>
+                <em>Identidade, atributos, perícias e equipamentos</em>
+              </span>
+              <span class="tablet-launch-arrow" aria-hidden="true">›</span>
+            </button>
+
+            <button class="tablet-utility-button tablet-creator-launcher" type="button" data-launcher-view="criador">
+              <span data-icon="save"></span>
+              <span><strong>Criador de fichas</strong><small>Importar, exportar e gerenciar</small></span>
+            </button>
+            <button class="tablet-utility-button tablet-dice-launcher" type="button" data-launcher-view="dados">
+              <span data-icon="spark"></span>
+              <span><strong>Dados</strong><small>Rolagens e iniciativa</small></span>
+            </button>
+            <button class="tablet-utility-button tablet-rules-launcher" type="button" data-launcher-view="rulesHub">
+              <span data-icon="book"></span>
+              <span><strong>Regras e ações</strong><small>Consulta rápida</small></span>
+            </button>
+          </div>
+        </section>
+
+        <section class="launcher-hub view" id="itemsHubView">
+          <div class="launcher-hub-shell">
+            <div class="launcher-hub-header">
+              <div>
+                <p>Aplicativo Solaris</p>
+                <h2>Itens e equipamentos</h2>
+                <span>Escolha uma biblioteca para abrir.</span>
+              </div>
+              <button class="ghost-button" type="button" data-launcher-view="inicio"><span data-icon="orbit"></span>Início</button>
+            </div>
+            <div class="launcher-category-grid">
+              <button class="launcher-category" type="button" data-launcher-library="chipsMod"><span data-icon="chip"></span><strong>Chips mods</strong><small>Chips modificadores</small></button>
+              <button class="launcher-category" type="button" data-launcher-library="mods"><span data-icon="chip"></span><strong>Mods</strong><small>Melhorias de equipamento</small></button>
+              <button class="launcher-category" type="button" data-launcher-library="armazenamento"><span data-icon="package"></span><strong>Armazenamento</strong><small>Cubos e suportes</small></button>
+              <button class="launcher-category" type="button" data-launcher-library="armas"><span data-icon="sword"></span><strong>Armas</strong><small>Grupos, tiers e dano</small></button>
+              <button class="launcher-category" type="button" data-launcher-library="armaduras"><span data-icon="shield"></span><strong>Armaduras</strong><small>Defesa e slots</small></button>
+              <button class="launcher-category" type="button" data-launcher-library="itens"><span data-icon="package"></span><strong>Itens</strong><small>Utilidades e suprimentos</small></button>
+            </div>
+          </div>
+        </section>
+
+        <section class="launcher-hub view" id="skillsHubView">
+          <div class="launcher-hub-shell">
+            <div class="launcher-hub-header">
+              <div>
+                <p>Aplicativo Solaris</p>
+                <h2>Skills</h2>
+                <span>Conhecimentos que moldam o personagem.</span>
+              </div>
+              <button class="ghost-button" type="button" data-launcher-view="inicio"><span data-icon="orbit"></span>Início</button>
+            </div>
+            <div class="launcher-category-grid launcher-category-grid-compact">
+              <button class="launcher-category" type="button" data-launcher-library="profissoes"><span data-icon="chip"></span><strong>Chips de profissões</strong><small>Foco, talento, kit e penalidade</small></button>
+              <button class="launcher-category" type="button" data-launcher-library="magias"><span data-icon="spark"></span><strong>Magias cósmicas</strong><small>Poderes, custos e aquisição</small></button>
+            </div>
+          </div>
+        </section>
+
+        <section class="launcher-hub view" id="rulesHubView">
+          <div class="launcher-hub-shell">
+            <div class="launcher-hub-header">
+              <div>
+                <p>Aplicativo Solaris</p>
+                <h2>Regras e orientação</h2>
+                <span>Consulta do sistema fora da ficha.</span>
+              </div>
+              <button class="ghost-button" type="button" data-launcher-view="inicio"><span data-icon="orbit"></span>Início</button>
+            </div>
+            <div class="launcher-category-grid launcher-category-grid-compact">
+              <button class="launcher-category" type="button" data-launcher-library="regras"><span data-icon="book"></span><strong>Regras</strong><small>Livros e sistemas principais</small></button>
+              <button class="launcher-category" type="button" data-launcher-library="acoes"><span data-icon="spark"></span><strong>Ações</strong><small>Combate, cenas e timeskip</small></button>
+              <button class="launcher-category" type="button" data-launcher-view="guia"><span data-icon="user"></span><strong>Guia de criação</strong><small>Passo a passo do personagem</small></button>
+            </div>
+          </div>
+        </section>
+
+        <section class="character-manager view" id="characterManagerView">
+          <div class="launcher-hub-shell character-manager-shell">
+            <div class="launcher-hub-header">
+              <div>
+                <p>Arquivo Solaris</p>
+                <h2>Criador de fichas</h2>
+                <span>Crie, importe, exporte e selecione fichas salvas neste dispositivo.</span>
+              </div>
+              <button class="ghost-button" type="button" data-launcher-view="inicio"><span data-icon="orbit"></span>Início</button>
+            </div>
+            <div class="character-manager-actions">
+              <button class="primary-button" id="newCharacterSide" type="button"><span data-icon="plus"></span>Nova ficha</button>
+              <button class="ghost-button" id="importButton" type="button"><span data-icon="upload"></span>Importar ficha</button>
+              <input id="importInput" type="file" accept="application/json" hidden />
+              <button class="ghost-button" id="exportButton" type="button"><span data-icon="download"></span>Exportar ficha atual</button>
+            </div>
+            <section class="saved-panel character-manager-library" aria-label="Personagens salvos">
+              <div class="panel-heading">
+                <h2>Fichas neste dispositivo</h2>
+              </div>
+              <label class="search-box">
+                <span data-icon="search"></span>
+                <input id="characterSearch" type="search" placeholder="Buscar ficha" autocomplete="off" />
+              </label>
+              <div class="saved-list" id="savedList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="personagensView">
           <div class="character-tabs" aria-label="Páginas do personagem">
             <button class="character-tab active" type="button" data-character-page="ficha">Ficha</button>
             <button class="character-tab" type="button" data-character-page="equipamentos">Equipamentos</button>
             <button class="character-tab" type="button" data-character-page="cosmos">Cosmos e chips</button>
             <button class="character-tab" type="button" data-character-page="cubo">Cubo</button>
             <button class="character-tab" type="button" data-character-page="habilidades">Habilidades</button>
-            <button class="character-tab" type="button" data-character-page="dados">Dados</button>
             <button class="character-tab" type="button" data-character-page="criar">Criar</button>
-            <button class="character-tab" type="button" data-character-page="guia">Guia</button>
           </div>
 
           <div class="character-page active" id="characterSheetPage">
@@ -183,7 +330,14 @@
                     </label>
                     <label>
                       Nível
-                      <input id="level" name="level" type="number" min="1" max="10" step="1" />
+                      <span class="level-field-row">
+                        <input id="level" name="level" type="number" min="1" max="10" step="1" readonly />
+                        <button class="mini-button" id="levelUpButton" type="button">Evoluir</button>
+                      </span>
+                    </label>
+                    <label>
+                      Experiência total
+                      <input id="experience" name="experience" type="number" min="0" step="1" />
                     </label>
                     <label>
                       Origem
@@ -740,10 +894,31 @@
       </section>
     </div>
 
+    <div class="record-modal level-up-modal" id="levelUpModal" hidden>
+      <div class="record-modal-backdrop" data-level-up-close></div>
+      <section class="record-modal-window level-up-window" role="dialog" aria-modal="true" aria-labelledby="levelUpTitle">
+        <div class="record-modal-header">
+          <div>
+            <p>Estação de Evolução</p>
+            <h2 id="levelUpTitle">Subir de nível</h2>
+          </div>
+          <button class="icon-button" id="closeLevelUp" type="button" aria-label="Fechar evolução">
+            <span data-icon="plus"></span>
+          </button>
+        </div>
+        <form class="record-form level-up-form" id="levelUpForm">
+          <div id="levelUpContent"></div>
+          <div class="record-form-actions">
+            <button class="primary-button" id="confirmLevelUp" type="submit">Sortear benefício</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="./official-books-data.js?v=20260606e"></script>
-    <script src="./official-items.js?v=20260603b"></script>
+    <script src="./official-books-data.js?v=20260611m"></script>
+    <script src="./official-book5-catalog.js?v=20260611m"></script>
     <script type="importmap">
       {
         "imports": {
@@ -753,6 +928,6 @@
       }
     </script>
     <script src="./HumanisVitalHUD.js?v=20260606e"></script>
-    <script type="module" src="./app.js?v=20260611a"></script>
+    <script type="module" src="./app.js?v=20260611m"></script>
   </body>
 </html>

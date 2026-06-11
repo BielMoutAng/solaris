@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - codex/alinha-regras-livros-1-2
   workflow_dispatch:
 
 permissions:

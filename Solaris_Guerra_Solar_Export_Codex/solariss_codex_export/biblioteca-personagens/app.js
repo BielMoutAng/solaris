@@ -22,8 +22,97 @@ const STARTING_CURRENCY = 2000;
 const BASE_CA = 4;
 const ITEM_CRACK_MAX = 5;
 const TIER_ORDER = ["F", "E", "D", "C", "B", "A", "S"];
+const OFFICIAL_BOOK5 = globalThis.SOLARIS_OFFICIAL_BOOK5 || {
+  templates: [],
+  catalog: { weapons: [], armors: [], items: [], storage: [], cubes: [], modifierChips: [], mods: [] },
+};
 const CUBE_WEIGHT_KG = 1;
 const CURRENCY_NAME = "Luzentis";
+const LEVEL_UP_REQUIREMENTS = {
+  2: { xp: 1000, material: "5 Barras de Ferrita", time: "2 horas" },
+  3: { xp: 3000, material: "5 Barras de Paralatum", time: "2 horas" },
+  4: { xp: 6000, material: "5 Barras de Paralatum + Ferrita fundidas", time: "2 horas" },
+  5: { xp: 10000, material: "5 Barras de Ourium", time: "2 horas" },
+  6: { xp: 15000, material: "5 Barras de Palatita", time: "4 horas" },
+  7: { xp: 21000, material: "5 Barras de Palatita + Ourium fundidas", time: "4 horas" },
+  8: { xp: 28000, material: "5 Barras de Adamantina", time: "4 horas" },
+  9: { xp: 36000, material: "5 Barras de liga Adamantita + Palatita + Ourium", time: "6 horas" },
+  10: { xp: 45000, material: "5 Barras de Vulcanium", time: "6 horas" },
+};
+const LEVEL_UP_BENEFITS = {
+  2: [
+    { name: "Perito", effect: "Ganhe 1 perícia treinada à escolha.", choice: "skill", trainedSkill: true },
+    { name: "Vital", effect: "+1d4 PV permanentes.", permanentPvRoll: 4 },
+    { name: "Surto de Ação", effect: "1 vez por descanso completo, pode atacar 2 vezes no seu turno." },
+    { name: "Estressado", effect: "+1 Estresse fixo.", stressFloor: 1 },
+    { name: "Soneca", effect: "Recupera +1d4 PV extra em descanso rápido." },
+    { name: "Estômago de Aço", effect: "Sem penalidade por comida estragada ou água turva." },
+  ],
+  3: [
+    { name: "Afinidade Paralatum", effect: "-1 Dificuldade em craft que use Paralatum." },
+    { name: "Circuito Estável", effect: "1 vez por descanso de vigília, ignora Jammed." },
+    { name: "Mão Certeira", effect: "+1 na primeira jogada de ataque do turno." },
+    { name: "Eletroestático", effect: "A primeira vez que sofrer dano elétrico em cada combate: +1 dano." },
+    { name: "Pulso Fino", effect: "Troca de arma e ataca em seguida 1 vez por combate." },
+    { name: "Reparo Ligeiro", effect: "1 vez por descanso de vigília, repara 1d4 rachaduras de arma ou armadura com kit." },
+  ],
+  4: [
+    { name: "Mecano-reflexo", effect: "+1 em um teste de Engenharia." },
+    { name: "Dorso Firme", effect: "+1 PV permanente e ignora 1 ponto de concussão 1 vez por turno.", permanentPvBonus: 1 },
+    { name: "Contra-golpe Inercial", effect: "Ao levar concussão, +1d4 no próximo ataque corpo a corpo, 1 vez por combate." },
+    { name: "Interferência", effect: "-1 no teste de Furtividade.", passiveEffects: [{ target: "skill", key: "Furtividade", value: -1, label: "Furtividade -1" }] },
+    { name: "Chassi Ajustado", effect: "+1 m de deslocamento quando sem carga pesada." },
+    { name: "Pinça Universal", effect: "Abrir ou fechar compartimento difícil vira ação simples 1 vez por cena." },
+  ],
+  5: [
+    { name: "Nariz de Cristal", effect: "+2 para rastrear cristais ou Cosmos." },
+    { name: "Eco Mental", effect: "1 vez por descanso de vigília, converte 1 Estresse em +1 no próximo teste de PRE." },
+    { name: "Estalo Místico", effect: "+1 no primeiro teste de PRE do dia." },
+    { name: "Vertigem Cósmica", effect: "Ao entrar em Escuridão Cósmica, teste MEN 11; falha: -1 no próximo teste." },
+    { name: "Camada de Silício", effect: "-1d4 de dano laser/plasma 1 vez por combate." },
+    { name: "Limiar Consciente", effect: "A primeira falha em Medo/Terror por dia vira sucesso parcial." },
+  ],
+  6: [
+    { name: "Casco Ajustado", effect: "+1 CA enquanto parado ou Aguardando." },
+    { name: "Ferramental Pesado", effect: "-1 Dificuldade em instalar carenagens ou placas." },
+    { name: "Pé de Chumbo", effect: "+1 para resistir empurrões ou derrubar." },
+    { name: "Tranco Inflexível", effect: "-1 em testes de Acrobacia.", passiveEffects: [{ target: "skill", key: "Acrobacia", value: -1, label: "Acrobacia -1" }] },
+    { name: "Fixador Rápido", effect: "1 vez por descanso completo, estabiliza motor ou mecanismo com +2 em Engenharia." },
+    { name: "Respiração Compassada", effect: "+1 no primeiro teste de Briga ou Atletismo da cena." },
+  ],
+  7: [
+    { name: "Sinergia Tecnomística", effect: "+1 em Tecnologia ou PRE, escolha 1, na primeira rolagem por descanso completo.", choice: "technology-or-pre" },
+    { name: "Lente Interna", effect: "Vantagem 1 vez por descanso de vigília para identificar fluxos." },
+    { name: "Amortecedor Ósseo", effect: "1 vez por cena, reduza 1d4 de concussão recebida." },
+    { name: "Descarga Sensível", effect: "Ao fazer uma rolagem de ataque, sofre -1 no ataque.", passiveEffects: [{ target: "attack", value: -1, label: "Ataques -1" }] },
+    { name: "Mecânico", effect: "-1 Dificuldade ao consertar veículos de Paralatum, Ourium ou Palatita." },
+    { name: "Chispa de Ação", effect: "1 vez por descanso de vigília, transforma uma ação simples em ação simples." },
+  ],
+  8: [
+    { name: "Espinha Rígida", effect: "+2 PV permanentes.", permanentPvBonus: 2 },
+    { name: "Bloqueio Instintivo", effect: "+1 CA contra o primeiro ataque que o acerte na cena." },
+    { name: "Postura Estável", effect: "Vantagem 1 vez por combate contra derrubar ou arrastar." },
+    { name: "Peso Morto", effect: "-1 m de deslocamento quando carregado com equipamento pesado." },
+    { name: "Punho Seguro", effect: "+1 no ataque corpo a corpo.", passiveEffects: [{ target: "attack", scope: "melee", value: 1, label: "Ataque corpo a corpo +1" }] },
+    { name: "Regra da Casa", effect: "-1 Dificuldade para reparar rachaduras de armaduras." },
+  ],
+  9: [
+    { name: "Matrix Estável", effect: "Na primeira falha de Tecnologia da cena, trate como sucesso parcial." },
+    { name: "Sintonia de Núcleo", effect: "1 vez por cena, recarrega 1 carga de mod." },
+    { name: "Ressonância de Campo", effect: "-1 dano laser/plasma por fonte." },
+    { name: "Resíduo de Estresse", effect: "Ao tirar falha crítica em perícia, ganha +1 Estresse." },
+    { name: "Sangue Frio", effect: "+1 em testes de Percepção." },
+    { name: "Ferramenta Fantasma", effect: "Cria ferramentas cósmicas usadas em Engenharia com +1." },
+  ],
+  10: [
+    { name: "Trilho Vulcânico", effect: "+1 em Pilotagem ou Briga, escolha 1, na primeira rolagem 1 vez por descanso de vigília.", choice: "pilot-or-fight" },
+    { name: "Inércia Contida", effect: "1 vez por combate, reduz 1d6 de dano explosivo recebido." },
+    { name: "Tônus Supremo", effect: "+1 em uma Jogada de Proteção à escolha, 1 vez por descanso de vigília.", choice: "protection" },
+    { name: "Calor Residual", effect: "A primeira vez que sofrer dano de fogo no combate recebe 1d6 extra de dano." },
+    { name: "Marcha Forçada", effect: "+1 m de deslocamento fora de combate." },
+    { name: "Mestre de Bancada", effect: "-1 Dificuldade em um tipo de craft à escolha: Armas, Armaduras ou Mods.", choice: "craft" },
+  ],
+};
 const CURRENCY_SYMBOL = "ℓ";
 const OFFICIAL_BOOKS = globalThis.SOLARIS_OFFICIAL_BOOKS || {
   templates: [],
@@ -54,19 +143,19 @@ const COSMIC_SPELL_SLOT_RULE_SUMMARY = "Cada magia cósmica conhecida ocupa 1 es
 const CUBE_TYPE_DEFINITIONS = {
   simple: {
     label: "Cubo simples",
-    summary: "Carrega 1 unidade de material de um único tipo. Não possui variações.",
+    summary: "Isola 1 item, amostra, relíquia, cristal ou componente perigoso. Não possui variações.",
     fixedCapacity: 1,
     materialMode: "single",
   },
   cargo: {
-    label: "Cubo de cargas",
-    summary: "Carrega várias unidades do item exato definido pelo primeiro item guardado.",
+    label: "Cubo de carga",
+    summary: "Transporta até 10 unidades do item ou recurso exato definido pelo primeiro conteúdo.",
     fixedCapacity: null,
     materialMode: "exact-first-item",
   },
   specialized: {
     label: "Cubo especializado",
-    summary: "Carrega várias unidades do tipo definido pelo primeiro item guardado.",
+    summary: "Transporta até 10 unidades da categoria técnica definida pelo primeiro conteúdo.",
     fixedCapacity: null,
     materialMode: "family-first-item",
   },
@@ -258,8 +347,9 @@ const raceData = [
     cosmos: 0,
     movement: 0,
     cubeBonus: 0,
-    tags: ["adaptável", "explorador", "+1 atributo"],
-    summary: "Adaptáveis e versáteis. Escolhem qualquer atributo para receber +1 e dependem de treinamento, profissão e equipamento para se especializar.",
+    extraTrainedSkills: 1,
+    tags: ["adaptável", "explorador", "+1 atributo", "+1 perícia"],
+    summary: "Adaptáveis e versáteis. Escolhem qualquer atributo para receber +1 e uma perícia treinada adicional.",
     profile: {
       age: "100-120 anos / maturidade aos 18",
       build: "1,75m / 70-90 kg",
@@ -268,7 +358,7 @@ const raceData = [
       culture: "Adaptáveis, curiosos e exploradores.",
       baseAbility: "Adaptabilidade Humana: 1x por cena, recebe +1 em um teste de perícia na qual não seja treinado. Gente de Sistema: +1 em testes sociais simples para negociar trabalho, comida, abrigo ou informação com comunidades civilizadas.",
       weakness: "Sem Especialização Natural: não recebe resistência natural, visão especial ou afinidade cósmica automática.",
-      skill: "A especialização vem das perícias treinadas e do Chip de Profissão.",
+      skill: "Escolhe 1 perícia treinada adicional. Adaptabilidade Humana dá +1, uma vez por cena, em uma perícia na qual o Humanis não seja treinado.",
       note: "Visão comum, com 3 m de visão no escuro pelo padrão do sistema. Idioma Comum.",
     },
     progression: [],
@@ -294,7 +384,7 @@ const raceData = [
       culture: "Anfíbios, científicos e atentos a padrões, energia, vibração e fluxo.",
       baseAbility: "Leitura de Padrões: 1x por cena, recebe +1 em Tecnologia, Engenharia, Percepção Cósmica, Busca Cósmica ou análise energética. Anfíbio Parcial: +1 em testes adequados de locomoção, resistência ou percepção em água e umidade.",
       weakness: "Secura Corporal: em ambiente extremamente seco, quente ou desidratante, sofre -1 em testes de CON até se reidratar ou descansar adequadamente.",
-      skill: "A escolha racial favorece perícias de MEN ou INT.",
+      skill: "Não concede perícia treinada extra. Leitura de Padrões dá +1, uma vez por cena, em Tecnologia, Engenharia, Percepção Cósmica, Busca Cósmica ou análise energética.",
       note: "Visão infravermelha limitada a 10 m. Idiomas Comum e Veyrkan, se usados na campanha.",
     },
     progression: [],
@@ -320,7 +410,7 @@ const raceData = [
       culture: "Disciplina, hierarquia, força como status e resistência física.",
       baseAbility: "Corpo de Rocha: +2 PV no nível 1. Promessa de Rocha: 1x por descanso curto, transforma em sucesso parcial uma falha apropriada de JPF, JPR ou JPC que o faria abandonar uma posição defensiva.",
       weakness: "Peso da Pedra: -1 em Furtividade com armadura média ou pesada ou ao atravessar áreas frágeis, silenciosas ou instáveis.",
-      skill: "A escolha racial favorece perícias de FOR ou resistência por CON.",
+      skill: "Não concede perícia treinada extra. Corpo de Rocha aumenta os PV e Peso da Pedra pode aplicar -1 em Furtividade.",
       note: "Visão de penumbra até 10 m. Idiomas Comum e Zerakhul, se usados na campanha.",
     },
     progression: [],
@@ -346,7 +436,7 @@ const raceData = [
       culture: "Espirituais, ligados ao equilíbrio do Cosmos.",
       baseAbility: "Escutar o Mundo: 1x por cena, recebe do mestre uma impressão sensorial sobre perigo, desequilíbrio ou segurança. Freio do Ciclo: 1x por descanso curto, um sucesso parcial apropriado pode reduzir em 1 o Estresse de um aliado.",
       weakness: "Peso do Desrespeito: agressão ecológica ou profanação gratuita pode causar +1 Estresse ou desvantagem no próximo teste de MEN ou PRE.",
-      skill: "A escolha racial favorece perícias cósmicas e sociais de MEN ou PRE.",
+      skill: "Não concede perícia treinada extra. Freio do Ciclo interage com Empatia, Acalmar Criatura, Percepção Cósmica e Intuição Cósmica.",
       note: "Visão de penumbra até 10 m. Idiomas Comum e Kairi.",
     },
     progression: [],
@@ -825,83 +915,24 @@ const professionData = [
   },
 ];
 
-const officialItemRows = Array.isArray(globalThis.SOLARIS_OFFICIAL_ITEMS)
-  ? globalThis.SOLARIS_OFFICIAL_ITEMS
-  : [];
+const itemData = Array.isArray(OFFICIAL_BOOK5.catalog.items) ? OFFICIAL_BOOK5.catalog.items : [];
 
-const spreadsheetItemData = officialItemRows.map((item) => ({
-  ...item,
-  category: "item",
-  tags: Array.isArray(item.tags) && item.tags.length ? item.tags : ["item"],
+const cubeData = (Array.isArray(OFFICIAL_BOOK5.catalog.cubes) ? OFFICIAL_BOOK5.catalog.cubes : []).map((cube) => ({
+  ...cube,
+  price: Number.isFinite(cube.price) ? cube.price : 0,
+  weight: `${CUBE_WEIGHT_KG} Kg`,
+  tags: uniqueTags([...(cube.tags || []), "cubo", "1 kg"]),
 }));
 
-const itemData = mergeCatalogByName(OFFICIAL_BOOKS.catalog.items, spreadsheetItemData);
-
-const cubeData = [
-  {
-    id: "cubo-simples",
-    category: "cube",
-    name: "Cubo simples",
-    tier: "F",
-    cubeKind: "simple",
-    cubeCapacity: 1,
-    cubeMaterialMode: "single",
-    weight: `${CUBE_WEIGHT_KG} Kg`,
-    price: 0,
-    tags: ["cubo", "simples", "material"],
-    summary: "Cubo básico que carrega 1 unidade de material ou item. Não possui variações.",
-  },
+const storageMarketData = [
+  ...cubeData,
+  ...(Array.isArray(OFFICIAL_BOOK5.catalog.storage) ? OFFICIAL_BOOK5.catalog.storage : []),
 ];
+const commonItemData = itemData;
 
-function isStorageMarketItem(item) {
-  const text = normalizeSearch([
-    item?.name,
-    item?.category,
-    item?.summary,
-    ...(item?.tags || []),
-  ].filter(Boolean).join(" "));
-  return item?.category === "cube" || /\b(cubo|gancho|coldre|bandoleira)\b/.test(text);
-}
-
-const storageMarketData = [...cubeData, ...itemData.filter(isStorageMarketItem)];
-const commonItemData = itemData.filter((item) => !isStorageMarketItem(item));
-
-const legacyWeaponData = [
-  { id: "arma-bastao-carbonita", category: "weapon", name: "Bastão de Carbonita", tier: "F", type: "Concussão", damage: "1d4", mods: 0, weight: "2 Kg", price: 5000, tags: ["frágil"], summary: "Muito frágil; quebra rápido." },
-  { id: "arma-bastao-ferrita", category: "weapon", name: "Bastão de Ferrita", tier: "F", type: "Concussão", damage: "1d4", mods: 0, weight: "4 Kg", price: 5000, tags: ["pesado"], summary: "Pesado para dano baixo." },
-  { id: "arma-bastao-paralatum", category: "weapon", name: "Bastão de poeira estelar com Paralatum", tier: "F", type: "Concussão", damage: "1d4", mods: 1, weight: "2 Kg", price: 10000, tags: ["canalizador"], summary: "Serve como canalizador cósmico e permite escolher 3 habilidades de 1 Cosmos." },
-  { id: "arma-espada-ferrita", category: "weapon", name: "Espada de Ferrita", tier: "F", type: "Cortante", damage: "1d6", mods: 1, weight: "3 Kg", price: 12000, tags: ["simples"], summary: "Arma comum em colônias." },
-  { id: "arma-adaga-pralatum", category: "weapon", name: "Adaga de Pralatum", tier: "F", type: "Cortante", damage: "1d6+1", mods: 0, weight: "0,5 Kg", price: 7000, tags: ["REF"], summary: "Usa MOD de REF para atacar." },
-  { id: "arma-faca-ferrita", category: "weapon", name: "Faca Ferrita Padrão", tier: "E", type: "Cortante", damage: "1d6", mods: 1, weight: "0,8 Kg", price: 4000, tags: ["campo"], summary: "Usada em campo, confiável e durável." },
-  { id: "arma-lanca-carbonita", category: "weapon", name: "Lança de Carbonita", tier: "E", type: "Perfurante", damage: "1d6", mods: 0, weight: "2,5 Kg", price: 4000, tags: ["alcance"], summary: "Básica, mas tem alcance extra." },
-  { id: "arma-espada-curta-pralatum", category: "weapon", name: "Espada Curta de Pralatum", tier: "E", type: "Cortante", damage: "1d6+1", mods: 1, weight: "3 Kg", price: 3000, tags: ["equilibrada"], summary: "Boa para uso geral." },
-  { id: "arma-maca-ferrita", category: "weapon", name: "Maça de Ferrita", tier: "E", type: "Concussão", damage: "1d6", mods: 1, weight: "5 Kg", price: 2500, tags: ["impacto"], summary: "Arma simples de concussão." },
-  { id: "arma-lanca-aco", category: "weapon", name: "Lança de Aço", tier: "E", type: "Perfurante", damage: "1d8", mods: 1, weight: "4 Kg", price: 6000, tags: ["alcance"], summary: "Alcance médio; ataca com 1 quadrado de distância." },
-  { id: "arma-espada-longa-pralatum", category: "weapon", name: "Espada Longa de Pralatum", tier: "E", type: "Cortante", damage: "1d6", mods: 2, weight: "4 Kg", price: 7000, tags: ["oficial"], summary: "Arma padrão de oficiais." },
-  { id: "arma-martelo-guerra", category: "weapon", name: "Martelo de Guerra Reforçado", tier: "E", type: "Concussão", damage: "1d10", mods: 1, weight: "8 Kg", price: 10000, tags: ["crítico"], summary: "Derruba inimigos em críticos por 1 rodada." },
-  { id: "arma-lanca-krun-ferrita", category: "weapon", name: "Lança Laminada Krun-Ferrita", tier: "E", type: "Perfurante", damage: "1d10", mods: 2, weight: "3,5 Kg", price: 12000, tags: ["canalizador"], summary: "Permite escolher 1 habilidade de 2 Cosmos e pode canalizar Cosmos." },
-  { id: "arma-pistola-ferrita", category: "weapon", name: "Pistola de Ferrita", tier: "F", type: "Perfurante", damage: "1d4", mods: 0, weight: "0,5 Kg", price: 5000, tags: ["2-8 m"], summary: "Carregador com 6 munições." },
-  { id: "arma-revolver-sucata", category: "weapon", name: "Revólver de Sucata Seis-Fendas", tier: "F", type: "Perfurante", damage: "1d4", mods: 0, weight: "0,9 Kg", price: 5000, tags: ["2-8 m"], summary: "Tambor com 6 munições." },
-  { id: "arma-rifle-olho-nyx", category: "weapon", name: "Rifle de Precisão Olho de Nyx", tier: "E", type: "Perfurante", damage: "2d6", mods: 2, weight: "4,2 Kg", price: 15000, tags: ["4-20 m"], summary: "Carregador 5; entre 12 e 16 m, +1 dano." },
-];
-
-const legacyArmorData = [
-  { id: "armadura-malha-carbonita", category: "armor", name: "Armadura de Malha Carbonita", tier: "F", kind: "CaC", ca: 8, mods: 1, weight: "25 Kg", price: 60, tags: ["corpo a corpo"], summary: "Proteção reforçada para linha de frente." },
-  { id: "armadura-peitoral-kudrog", category: "armor", name: "Peitoral de Couro de Kudrog", tier: "F", kind: "Ranged", ca: 5, mods: 1, weight: "10 Kg", price: 40, tags: ["leve"], summary: "Projetado para atiradores; aumenta mobilidade." },
-  { id: "armadura-sucatas", category: "armor", name: "Armadura de Sucatas", tier: "F", kind: "Suporte", ca: 6, mods: 2, weight: "20 Kg", price: 15, tags: ["utilitária"], summary: "2 ganchos fixos e interface de rede com 1 RAM." },
-  { id: "armadura-aco-pralatum", category: "armor", name: "Armadura de Aço Pralatum", tier: "E", kind: "CaC", ca: 8, mods: 2, weight: "28 Kg", price: 15000, tags: ["frontal"], summary: "Boa defesa em combate fechado." },
-  { id: "armadura-colete-carbonita", category: "armor", name: "Colete Tático de Carbonita", tier: "E", kind: "Ranged", ca: 6, mods: 1, weight: "12 Kg", price: 90, tags: ["leve"], summary: "Projetado para manobras rápidas." },
-  { id: "armadura-vestes-fluxo", category: "armor", name: "Vestes de Fluxo Estelar", tier: "E", kind: "Cósmica", ca: 5, mods: 2, cosmos: 2, weight: "9 Kg", price: 100, tags: ["cosmos"], summary: "Permite escolher 2 habilidades de 1 consumo cósmico." },
-  { id: "armadura-traje-ferrita", category: "armor", name: "Traje Modular de Ferrita", tier: "E", kind: "Suporte", ca: 6, mods: 3, weight: "22 Kg", price: 80, tags: ["utilitária"], summary: "3 slots utilitários e interface com 2 RAM." },
-  { id: "armadura-couraca-leviata", category: "armor", name: "Couraça Leviatã de Ktaluhl", tier: "S", kind: "CaC", ca: 12, mods: 4, weight: "40 Kg", price: 10000000, tags: ["lendária"], summary: "Contra-ataca 1x/rodada ao sofrer dano corpo a corpo." },
-  { id: "armadura-traje-nulo", category: "armor", name: "Traje Nulo Mira de Uryon", tier: "S", kind: "Ranged", ca: 7, mods: 4, weight: "30 Kg", price: 10000000, tags: ["sniper"], summary: "Ignora distância mínima e pode tratar ataque recebido como erro automático." },
-  { id: "armadura-manto-falaris", category: "armor", name: "Manto de Falaris", tier: "S", kind: "Cósmica", ca: 6, mods: 5, cosmos: 4, weight: "12 Kg", price: 10000000, tags: ["cosmos"], summary: "Disparo potencializado e alto suporte cósmico." },
-  { id: "armadura-serafim", category: "armor", name: "Armadura Serafim de Emergência", tier: "S", kind: "Suporte", ca: 8, mods: 6, weight: "38 Kg", price: 10000000, tags: ["suporte"], summary: "Intercepta ataques, cura aliados e opera itens por braços mecânicos." },
-];
-
-const weaponData = mergeCatalogByName(OFFICIAL_BOOKS.catalog.weapons, legacyWeaponData);
-const armorData = mergeCatalogByName(OFFICIAL_BOOKS.catalog.armors, legacyArmorData);
-const equipmentModData = mergeCatalogByName(OFFICIAL_BOOKS.catalog.mods, []);
+const weaponData = Array.isArray(OFFICIAL_BOOK5.catalog.weapons) ? OFFICIAL_BOOK5.catalog.weapons : [];
+const armorData = Array.isArray(OFFICIAL_BOOK5.catalog.armors) ? OFFICIAL_BOOK5.catalog.armors : [];
+const equipmentModData = Array.isArray(OFFICIAL_BOOK5.catalog.mods) ? OFFICIAL_BOOK5.catalog.mods : [];
 
 const cosmicSpellRows = [
   [1, "Rajada Cósmica", "1d6 de dano energético, ignora 1 CA. Alcance 10 m.", "Instantânea"],
@@ -981,93 +1012,12 @@ const cosmicSpellData = cosmicSpellRows.map(([cost, name, summary, duration]) =>
   tags: ["cosmos", `custo ${cost}`],
 }));
 
-const modifierChipRows = [
-  ["F", "Passos rápidos", "Deslocamento +1 m"],
-  ["F", "Pernas elásticas", "Pulo +1 m"],
-  ["F", "Pulmões reforçados", "Respira +10 min embaixo d'água"],
-  ["F", "Pele de Veyrkan", "Pele úmida (-1 concussão)"],
-  ["F", "Pele dura", "+1 de CA no primeiro turno"],
-  ["F", "Visão noturna simples", "Enxerga 10 m no escuro"],
-  ["F", "Unhas reforçadas", "Dano desarmado 1 cortante"],
-  ["F", "Pele endurecida", "+1 PV temporário por descanso"],
-  ["F", "Corrida básica", "+1,5 m extra por rodada"],
-  ["F", "Ossos rígidos", "Reduz 1 de dano em quedas leves"],
-  ["F", "Tato fino", "+1 procurar objetos pequenos"],
-  ["F", "Mãos firmes", "+1 em jogadas de ataque"],
-  ["F", "Instinto alerta", "+1 percepção para não ser surpreendido"],
-  ["F", "Estômago adaptado", "Ignora comida estragada"],
-  ["F", "Audição aguçada", "Vantagem em Percepção para detectar sons à distância"],
-  ["F", "Músculos tensos", "Carrega +1 Cubo"],
-  ["F", "Voz firme", "+1 persuasão"],
-  ["F", "Respiração ritmada", "+1 em testes de atletismo"],
-  ["F", "Olhos atentos", "+1 na jogada de ataque em inimigos até 6 m"],
-  ["F", "Calos nas mãos", "Ignora penalidade de armas improvisadas"],
-  ["F", "Reflexo básico", "+1 de CA para armaduras feitas por tecido"],
-  ["F", "Equilíbrio estável", "Reduz chance de queda (-1 em CD ou +1 em testes)"],
-  ["F", "Pulso frio", "Em 1 natural, role 1d4; em 4 ignora penalidade"],
-  ["F", "Nadador iniciante", "Aumenta 3 m de nado em águas calmas"],
-  ["F", "Pele resistente ao sol", "Ignora insolação leve"],
-  ["F", "Orientação simples", "+1 pilotagem em áreas urbanas/corredores"],
-  ["F", "Orientação cósmica fraquíssima", "Escolhe 3 habilidades cósmicas de custo base 1"],
-  ["F", "Primeiros socorros", "Pode sacrificar movimento para fazer teste de medicina no próprio turno"],
-  ["E", "Surto de energia", "1x/dia repete última ação se tiver condições"],
-  ["E", "Escudo temporário", "2 PV temporários por descanso rápido, não podem ser curados"],
-  ["E", "Passos silenciosos", "Pode usar a ação Esconder-se como bônus"],
-  ["E", "Reflexo de Gatyiuk", "+1 REF"],
-  ["E", "Força de Graluk", "+1 FOR"],
-  ["E", "Espírito de Yndra", "+1 ESP"],
-  ["E", "Mente de Khorl", "+1 MEN"],
-  ["E", "Pele Mutável", "Altera aparência superficial 1x/dia"],
-  ["E", "Instinto Predador", "Escolhe inimigo prioritário; +1 ataque contra ele por descanso rápido"],
-  ["E", "Poliglota Cósmico", "Aprende 2 idiomas adicionais"],
-  ["E", "Marca da Presa", "1x/combate marca alvo; +1 rastreamento/dano"],
-  ["E", "Lâmina de Luz", "Invoca lâmina cósmica 1d6, custa 1 Cosmos"],
-  ["E", "Estouro Cósmico", "Explosão em área 3 m, 1d4 cósmico, custa 1 Cosmos"],
-  ["E", "Toque Curativo", "Cura 1d4 PV em toque, custa 1 Cosmos"],
-  ["E", "Disparo de Fóton", "Disparo cósmico 1d6 até 16 m, custa 1 Cosmos"],
-  ["E", "Faísca Persistente", "Gera luz fraca de 10 m mesmo sem Cosmos"],
-  ["E", "Aura de Repulsa", "Inimigos gastam +1 m para atravessar em 2 m"],
-  ["E", "Centelha de Dano", "Ataques desarmados dão +1 de dano cósmico mesmo sem Cosmos"],
-  ["E", "Fluxo Instável", "Ao chegar a 0 Cosmos, causa 1d6 de dano cósmico em 1,5 m"],
-  ["E", "Choque Ventricular", "Ao chegar a 0 PV, revive com 1 PV; 1x/descanso longo"],
-  ["E", "Vínculo Mental", "Telepatia simples com 1 aliado em até 9 m"],
-  ["E", "Pulso de Eco", "Sonar de 9 m revela corredores/salas 1x por dia"],
-  ["E", "Regeneração Lenta", "+1 PV adicional em descansos curtos"],
-  ["E", "Pulso Estimulante", "1x/combate aliado a 6 m ganha +1 em ataque por 5 rodadas"],
-  ["E", "Campo de Estabilidade", "Aliados ignoram terreno difícil em 3 m"],
-  ["E", "Marca de Alvo", "1x/descanso curto marca inimigo; aliados +1 ataque contra ele"],
-  ["E", "Pulso Desestabilizador", "Inimigo a 6 m tem desvantagem no próximo ataque por 5 turnos"],
-  ["E", "Orientação cósmica fraquíssima", "Escolhe 2 habilidades cósmicas de custo base 2"],
-  ["D", "Nervo Estabilizador", "+1 em JRF"],
-  ["D", "Pulso Antecipado D-02", "1x/combate, trate a Iniciativa como se tivesse rolado +2"],
-  ["D", "Filtro Neural D-03", "Falhar em testes não gera estresse"],
-  ["D", "Trava de Mira D-04", "+1 para acertar o mesmo alvo em sequência"],
-  ["D", "Sinapse Cinética D-05", "+1 m de deslocamento após atacar"],
-  ["D", "Reflexo de Impacto D-06", "+1 de CA"],
-  ["D", "Anel de Memória D-07", "+1 em Memória Cósmica e testes de lore técnico"],
-  ["D", "Equalizador de Estresse D-08", "1x/dia consome 1 de estresse para 1d4 pontos de vida"],
-  ["D", "Condutor Fino D-09", "+1 para ataques com cosmos"],
-  ["D", "Servo de Precisão D-10", "+1d4 de dano no primeiro ataque da cena"],
-  ["C", "Matriz Autônoma C-01", "1x/combate, receba 1 ação simples adicional"],
-  ["C", "Campo Inercial C-02", "1x/combate, reduza 1d6 de dano recebido"],
-  ["C", "Nó de Consistência C-03", "Ao conseguir sucesso total em teste, ganha vantagem no próximo teste"],
-  ["C", "Foco de Guerra C-04", "+1 em ataques e CA enquanto PV <= 50%"],
-  ["C", "Regulador Neural C-05", "Estresse máximo aumenta em +1"],
-  ["C", "Eco Tático C-06", "1x/combate, como ação simples, repita um ataque falho"],
-  ["C", "Canalizador Avançado C-07", "+1 ponto/lvl de Cosmos total"],
-  ["C", "Lente Predatória C-08", "Vantagem 1x/descanso rápido em Percepção ou Busca"],
-  ["C", "Blindagem Sináptica C-09", "1x/descanso rápido, ignore efeito mental recebido"],
-  ["C", "Núcleo de Decisão C-10", "1x/cena, +2 em um teste após ver o resultado"],
-];
-
-const modifierChipData = modifierChipRows.map(([rank, name, summary]) => ({
-  id: `chipmod-${rank.toLowerCase()}-${dataSlug(name)}`,
-  category: "chip-mod",
-  name,
-  rank,
-  summary,
-  passiveEffects: inferModifierChipPassiveEffects({ name, effect: summary }),
-  tags: ["chip modificador", `rank ${rank}`],
+const modifierChipData = (Array.isArray(OFFICIAL_BOOK5.catalog.modifierChips)
+  ? OFFICIAL_BOOK5.catalog.modifierChips
+  : []
+).map((chip) => ({
+  ...chip,
+  passiveEffects: inferModifierChipPassiveEffects({ ...chip, effect: chip.summary }),
 }));
 
 const monsterData = Array.isArray(OFFICIAL_BOOKS.bestiary) && OFFICIAL_BOOKS.bestiary.length
@@ -1172,13 +1122,35 @@ const legacyRuleData = [
   { name: "Bênção Cósmica", tags: ["4-5-6", "bônus"], summary: "Com 3d6 ativos, a sequência 4, 5, 6 gera +1d4 futuro. Apenas um bônus fica guardado por vez." },
   { name: "Falha Cósmica", tags: ["3-2-1", "risco"], summary: "Com 3d6 ativos, a sequência 3, 2, 1 aplica -1d4 na próxima rolagem e pode causar rachadura ou Estresse." },
   { name: "Rachaduras", tags: ["equipamento", "colapso"], summary: "Armas, armaduras e equipamentos acumulam rachaduras individualmente. Ao chegar a 5 rachaduras, o item colapsa e deixa de funcionar até ser reparado." },
-  { name: "Carga", tags: ["peso", "sobrecarga"], summary: "Carga máxima: metade do peso corporal + MOD FOR × 10 kg. Acima de 100%, o movimento cai pela metade; acima de 150%, o movimento fica 0." },
+  { name: "Carga", tags: ["peso", "sobrecarga", "cubos"], summary: "Carga máxima: metade do peso corporal + MOD FOR × 10 kg. Cada cubo pesa 1 kg e sua carga interna não soma peso separado. Acima de 100%, o movimento cai pela metade; acima de 150%, o movimento fica 0." },
   { name: "Equipamento inicial", tags: ["criação", "Luzentis"], summary: "Cada personagem começa com 2.000 Luzentis, cubos simples iguais a 5 + MOD FOR, uma arma Tier F, uma armadura Tier F, kit de suprimento e kit da profissão." },
   { name: "Espaços de magia cósmica", tags: ["cosmos", "magias", "grimórios"], summary: `${COSMIC_SPELL_SLOT_RULE_SUMMARY} Equipamentos e chips são calculados automaticamente quando equipados/adicionados; treino e grimórios são registrados na aba Cosmos e chips.` },
   { name: "Level up", tags: ["espinha artificial", "evolução"], summary: "A evolução usa materiais, custo em ℓ, tempo de procedimento e rolagem de benefício do nível." },
 ];
 
-const ruleData = mergeCatalogByName(OFFICIAL_BOOKS.rules, legacyRuleData);
+const raceRuleData = raceData.map((race) => ({
+  id: `regra-raca-${race.id}`,
+  name: `Raça: ${race.name}`,
+  source: "Livro 1, Capítulo 5",
+  tags: ["raça", race.name, ...(race.tags || [])],
+  summary: [
+    `Bônus: ${race.profile.attributeBonus}.`,
+    `Perícia extra: ${race.profile.skill}`,
+    `Traços: ${race.profile.baseAbility}`,
+    `Fraqueza: ${race.profile.weakness}`,
+    race.profile.note,
+  ].filter(Boolean).join(" "),
+}));
+
+const levelRuleData = Object.entries(LEVEL_UP_REQUIREMENTS).map(([level, requirement]) => ({
+  id: `regra-evolucao-nivel-${level}`,
+  name: `Evolução para o nível ${level}`,
+  source: "Livro 1, Capítulo 39",
+  tags: ["evolução", "nível", `nível ${level}`],
+  summary: `Requer ${requirement.xp.toLocaleString("pt-BR")} XP total, ${requirement.material}, ${requirement.cost || 500 * Number(level)} Luzentis, ${requirement.time} e uma Estação de Evolução funcional. Ao concluir, role 1d6 na tabela do nível ${level}.`,
+}));
+
+const ruleData = mergeCatalogByName([...OFFICIAL_BOOKS.rules, ...raceRuleData, ...levelRuleData], legacyRuleData);
 
 const actionData = [
   { name: "Atacar", context: "Combate", tags: ["ação", "arma"], summary: "Faça uma jogada de ataque com arma, corpo a corpo ou habilidade ofensiva. Em acerto, role o dano." },
@@ -1246,7 +1218,7 @@ const characterCreationSteps = [
   },
   {
     title: "Perícias e ignorâncias",
-    summary: "Escolha 2 perícias treinadas livres. O chip concede um foco profissional. O mestre pode permitir 1 ignorância para ganhar mais 1 perícia.",
+    summary: "Escolha 2 perícias treinadas livres. Humanis escolhe 1 perícia treinada adicional. O chip concede um foco profissional. O mestre pode permitir 1 ignorância para ganhar mais 1 perícia.",
     fields: "Habilidades e notas.",
     tip: "Perícia treinada pode dar vantagem; ignorância deve ser uma fraqueza real que aparece em jogo.",
   },
@@ -1314,6 +1286,11 @@ const emptyCharacter = () => ({
   profession: "escolha-profissao",
   racialChoice: "FOR",
   level: 1,
+  experience: 0,
+  evolutionHistory: [],
+  permanentPvBonus: 0,
+  stressFloor: 0,
+  bonusTrainedSkills: 0,
   origin: "",
   attributes: { FOR: ATTRIBUTE_BASE, REF: ATTRIBUTE_BASE, CON: ATTRIBUTE_BASE, MEN: ATTRIBUTE_BASE, PRE: ATTRIBUTE_BASE, INT: ATTRIBUTE_BASE },
   pvCurrent: 8,
@@ -1350,7 +1327,7 @@ const emptyCharacter = () => ({
 });
 
 const state = {
-  activeView: "personagens",
+  activeView: "inicio",
   activeLibrary: "racas",
   activeRaceId: null,
   activeCharacterPage: "ficha",
@@ -1366,6 +1343,9 @@ const state = {
   pagination: {},
   pendingLocationEntityId: "",
   pendingLocationReason: "",
+  pendingLevelUp: null,
+  pendingRaceChange: null,
+  pendingRacialChoiceChange: null,
   current: emptyCharacter(),
   saved: [],
 };
@@ -1373,6 +1353,20 @@ const state = {
 const el = {
   form: document.querySelector("#characterForm"),
   navList: document.querySelector(".nav-list"),
+  tabletHomeView: document.querySelector("#tabletHomeView"),
+  itemsHubView: document.querySelector("#itemsHubView"),
+  skillsHubView: document.querySelector("#skillsHubView"),
+  rulesHubView: document.querySelector("#rulesHubView"),
+  characterManagerView: document.querySelector("#characterManagerView"),
+  topbar: document.querySelector(".topbar"),
+  homeButton: document.querySelector("#homeButton"),
+  launcherVitalTrigger: document.querySelector("#launcherVitalTrigger"),
+  launcherPortraitImage: document.querySelector("#launcherPortraitImage"),
+  launcherPortraitIcon: document.querySelector("#launcherPortraitIcon"),
+  launcherName: document.querySelector("#launcherName"),
+  launcherLine: document.querySelector("#launcherLine"),
+  launcherStats: document.querySelector("#launcherStats"),
+  launcherResourceBars: document.querySelector("#launcherResourceBars"),
   attributeGrid: document.querySelector("#attributeGrid"),
   quickTestGrid: document.querySelector("#quickTestGrid"),
   race: document.querySelector("#race"),
@@ -1474,6 +1468,12 @@ const el = {
   inventoryLocationForm: document.querySelector("#inventoryLocationForm"),
   inventoryLocationSelect: document.querySelector("#inventoryLocationSelect"),
   closeInventoryLocation: document.querySelector("#closeInventoryLocation"),
+  levelUpButton: document.querySelector("#levelUpButton"),
+  levelUpModal: document.querySelector("#levelUpModal"),
+  levelUpForm: document.querySelector("#levelUpForm"),
+  levelUpContent: document.querySelector("#levelUpContent"),
+  confirmLevelUp: document.querySelector("#confirmLevelUp"),
+  closeLevelUp: document.querySelector("#closeLevelUp"),
   toast: document.querySelector("#toast"),
 };
 
@@ -1492,6 +1492,7 @@ function init() {
   renderSavedList();
   renderSummary();
   renderLibrary();
+  switchView("inicio");
 }
 
 function installIcons() {
@@ -1531,9 +1532,14 @@ function hydrateAttributes() {
 }
 
 function hydrateQuickTests() {
+  const training = skillTrainingLimits();
+  const race = findRace(state.current.race);
   el.quickTestGrid.innerHTML = `
     <section class="quick-test-section">
-      <h4>Perícias por atributo</h4>
+      <div class="quick-test-section-heading">
+        <h4>Perícias por atributo</h4>
+        <span class="skill-training-limit ${training.trained > training.limit ? "over-limit" : ""}">${training.trained}/${training.limit} Peritos${training.racialExtra ? ` · ${escapeHtml(race.name)} +${training.racialExtra}` : ""}</span>
+      </div>
       <div class="skill-training-grid">
         ${QUICK_TEST_ATTRIBUTES.map(renderSkillAttributeCard).join("")}
       </div>
@@ -1545,6 +1551,25 @@ function hydrateQuickTests() {
       </div>
     </section>
   `;
+}
+
+function skillTrainingLimits({ excludedSkill = "" } = {}) {
+  const selections = Object.entries(state.current.skillTraining || {})
+    .filter(([skillName]) => skillName !== excludedSkill)
+    .map(([, value]) => value);
+  const trained = selections.filter((value) => value === "trained").length;
+  const ignorant = selections.filter((value) => value === "ignorant").length;
+  const racialExtra = Math.max(0, numberValue(findRace(state.current.race).extraTrainedSkills, 0));
+  const evolutionExtra = Math.max(0, numberValue(state.current.bonusTrainedSkills, 0));
+  const baseLimit = 2 + racialExtra + evolutionExtra;
+  return {
+    trained,
+    ignorant,
+    racialExtra,
+    evolutionExtra,
+    baseLimit,
+    limit: baseLimit + (ignorant > 0 ? 1 : 0),
+  };
 }
 
 function renderSkillAttributeCard(attr) {
@@ -1621,6 +1646,13 @@ function bindEvents() {
   document.querySelectorAll(".nav-item").forEach((button) => {
     button.addEventListener("click", () => handleNavClick(button.dataset.view));
   });
+  document.querySelectorAll("[data-launcher-view]").forEach((button) => {
+    button.addEventListener("click", () => switchView(button.dataset.launcherView));
+  });
+  document.querySelectorAll("[data-launcher-library]").forEach((button) => {
+    button.addEventListener("click", () => switchView(button.dataset.launcherLibrary));
+  });
+  el.homeButton.addEventListener("click", () => switchView("inicio"));
 
   el.characterTabs.forEach((button) => {
     button.addEventListener("click", () => switchCharacterPage(button.dataset.characterPage));
@@ -1629,6 +1661,7 @@ function bindEvents() {
     if (!(event.target instanceof Element)) return;
     const pageButton = event.target.closest("[data-guide-page]");
     if (pageButton) {
+      switchView("personagens");
       switchCharacterPage(pageButton.dataset.guidePage);
       return;
     }
@@ -1683,20 +1716,16 @@ function bindEvents() {
     const row = event.target.closest(".skill-training-row");
     state.current.skillTraining = state.current.skillTraining || {};
     if (event.target.checked) {
-      const selections = Object.values(state.current.skillTraining);
-      const trainedCount = selections.filter((value) => value === "trained").length;
-      const ignorantCount = selections.filter((value) => value === "ignorant").length;
       const previousState = state.current.skillTraining[skillName] || "";
-      if (skillState === "ignorant" && ignorantCount >= 1 && previousState !== "ignorant") {
+      const training = skillTrainingLimits({ excludedSkill: skillName });
+      if (skillState === "ignorant" && training.ignorant >= 1 && previousState !== "ignorant") {
         event.target.checked = false;
         showToast("A criação padrão permite uma Ignorância opcional.");
         return;
       }
-      const remainingIgnorantCount = ignorantCount - (previousState === "ignorant" ? 1 : 0);
-      const trainedLimit = 2 + (remainingIgnorantCount > 0 ? 1 : 0);
-      if (skillState === "trained" && trainedCount >= trainedLimit && previousState !== "trained") {
+      if (skillState === "trained" && training.trained >= training.limit && previousState !== "trained") {
         event.target.checked = false;
-        showToast(`Limite atual: ${trainedLimit} perícias treinadas.`);
+        showToast(`Limite atual: ${training.limit} perícias treinadas${training.racialExtra ? " (Humanis +1)" : ""}.`);
         return;
       }
       row?.querySelectorAll("[data-skill-training]").forEach((input) => {
@@ -1704,8 +1733,8 @@ function bindEvents() {
       });
       state.current.skillTraining[skillName] = skillState;
     } else if (state.current.skillTraining[skillName] === skillState) {
-      const trainedCount = Object.values(state.current.skillTraining).filter((value) => value === "trained").length;
-      if (skillState === "ignorant" && trainedCount > 2) {
+      const training = skillTrainingLimits();
+      if (skillState === "ignorant" && training.trained > training.baseLimit) {
         event.target.checked = true;
         showToast("Remova a perícia treinada adicional antes de retirar a Ignorância.");
         return;
@@ -1714,11 +1743,54 @@ function bindEvents() {
     }
     renderSummary();
   });
+  const captureRaceChange = () => {
+    if (state.pendingRaceChange) return;
+    const previousRace = findRace(state.current.race);
+    const previousDerived = derivedStats(totalAttributes(), previousRace, findProfession(state.current.profession));
+    state.pendingRaceChange = {
+      previousRaceId: previousRace.id,
+      wasAtFullPv: state.current.pvCurrent >= previousDerived.pvMax,
+    };
+  };
+  el.race.addEventListener("pointerdown", captureRaceChange);
+  el.race.addEventListener("keydown", captureRaceChange);
+  el.race.addEventListener("input", captureRaceChange);
   el.race.addEventListener("change", () => {
+    const wasAtFullPv = Boolean(state.pendingRaceChange?.wasAtFullPv);
     hydrateRacialChoice(el.race.value);
     const race = findRace(el.race.value);
     el.racialChoice.value = defaultRacialChoice(race, el.racialChoice.value);
     readForm();
+    if (wasAtFullPv) {
+      state.current.pvCurrent = derivedStats(totalAttributes(), race, findProfession(state.current.profession)).pvMax;
+      document.querySelector("#pvCurrent").value = state.current.pvCurrent;
+    }
+    state.pendingRaceChange = null;
+    hydrateQuickTests();
+    renderSummary();
+    const training = skillTrainingLimits();
+    if (training.trained > training.limit) {
+      showToast(`A raça ${race.name} permite ${training.limit} perícias treinadas. Revise as seleções excedentes.`);
+    }
+  });
+  const captureRacialChoiceChange = () => {
+    if (state.pendingRacialChoiceChange) return;
+    const derived = derivedStats(totalAttributes(), findRace(state.current.race), findProfession(state.current.profession));
+    state.pendingRacialChoiceChange = {
+      wasAtFullPv: state.current.pvCurrent >= derived.pvMax,
+    };
+  };
+  el.racialChoice.addEventListener("pointerdown", captureRacialChoiceChange);
+  el.racialChoice.addEventListener("keydown", captureRacialChoiceChange);
+  el.racialChoice.addEventListener("input", captureRacialChoiceChange);
+  el.racialChoice.addEventListener("change", () => {
+    const wasAtFullPv = Boolean(state.pendingRacialChoiceChange?.wasAtFullPv);
+    readForm();
+    if (wasAtFullPv) {
+      state.current.pvCurrent = derivedStats(totalAttributes(), findRace(state.current.race), findProfession(state.current.profession)).pvMax;
+      document.querySelector("#pvCurrent").value = state.current.pvCurrent;
+    }
+    state.pendingRacialChoiceChange = null;
     renderSummary();
   });
 
@@ -1787,6 +1859,12 @@ function bindEvents() {
       closeInventoryLocationDialog();
     }
   });
+  el.levelUpButton.addEventListener("click", openLevelUpDialog);
+  el.levelUpForm.addEventListener("submit", handleLevelUpSubmit);
+  el.closeLevelUp.addEventListener("click", closeLevelUpDialog);
+  el.levelUpModal.addEventListener("click", (event) => {
+    if (event.target instanceof Element && event.target.closest("[data-level-up-close]")) closeLevelUpDialog();
+  });
   el.manualImageDropzone.addEventListener("click", () => el.manualImageInput.click());
   el.manualImageInput.addEventListener("change", (event) => {
     const file = event.target.files?.[0];
@@ -1815,7 +1893,7 @@ function bindEvents() {
   el.testDialog.addEventListener("click", (event) => {
     if (event.target === el.testDialog) closeTestDialog();
   });
-  [el.vitalHudCharacterTrigger, el.vitalHudDerivedTrigger].forEach((trigger) => {
+  [el.vitalHudCharacterTrigger, el.vitalHudDerivedTrigger, el.launcherVitalTrigger].forEach((trigger) => {
     trigger.addEventListener("click", openVitalHud);
     trigger.addEventListener("keydown", (event) => {
       if (event.key !== "Enter" && event.key !== " ") return;
@@ -1834,6 +1912,7 @@ function bindEvents() {
     if (!el.monsterEditorModal.hidden) closeMonsterEditor();
     if (!el.monsterAssetsModal.hidden) closeMonsterAssets();
     if (!el.inventoryLocationModal.hidden) closeInventoryLocationDialog();
+    if (!el.levelUpModal.hidden) closeLevelUpDialog();
   });
   el.testBonus.addEventListener("input", renderPendingTestFormula);
   el.testMode.addEventListener("change", renderPendingTestFormula);
@@ -1936,6 +2015,45 @@ function bindEvents() {
       if (!action) return;
       handleInventoryAction(action.dataset.inventoryAction, action.dataset.uid, action);
     });
+  });
+
+  el.equipmentPageContent.addEventListener("dragstart", (event) => {
+    const card = event.target instanceof Element ? event.target.closest("[data-drag-inventory-uid]") : null;
+    if (!card || !event.dataTransfer) return;
+    event.dataTransfer.setData("text/solaris-inventory-uid", card.dataset.dragInventoryUid);
+    event.dataTransfer.effectAllowed = "move";
+    card.classList.add("is-dragging");
+    el.equipmentPageContent.classList.add("support-dragging");
+  });
+  el.equipmentPageContent.addEventListener("dragend", (event) => {
+    const card = event.target instanceof Element ? event.target.closest("[data-drag-inventory-uid]") : null;
+    card?.classList.remove("is-dragging");
+    el.equipmentPageContent.classList.remove("support-dragging");
+    el.equipmentPageContent.querySelectorAll(".support-drop-active").forEach((target) => target.classList.remove("support-drop-active"));
+  });
+  el.equipmentPageContent.addEventListener("dragover", (event) => {
+    const target = event.target instanceof Element ? event.target.closest("[data-support-drop-kind]") : null;
+    if (!target) return;
+    event.preventDefault();
+    target.classList.add("support-drop-active");
+    if (event.dataTransfer) event.dataTransfer.dropEffect = "move";
+  });
+  el.equipmentPageContent.addEventListener("dragleave", (event) => {
+    const target = event.target instanceof Element ? event.target.closest("[data-support-drop-kind]") : null;
+    if (target && (!(event.relatedTarget instanceof Node) || !target.contains(event.relatedTarget))) {
+      target.classList.remove("support-drop-active");
+    }
+  });
+  el.equipmentPageContent.addEventListener("drop", (event) => {
+    const target = event.target instanceof Element ? event.target.closest("[data-support-drop-kind]") : null;
+    if (!target || !event.dataTransfer) return;
+    event.preventDefault();
+    target.classList.remove("support-drop-active");
+    el.equipmentPageContent.classList.remove("support-dragging");
+    moveInventoryItemToExternalSupport(
+      event.dataTransfer.getData("text/solaris-inventory-uid"),
+      target.dataset.supportDropKind
+    );
   });
 
   el.cubePageContent.addEventListener("submit", (event) => {
@@ -2041,31 +2159,78 @@ function syncNavState() {
   setNavExpanded(state.navExpanded);
 }
 
+function hideWorkspaceViews() {
+  document.querySelectorAll(".workspace > .view").forEach((view) => view.classList.remove("active"));
+  el.personagensView.classList.remove("standalone-tool-mode");
+}
+
 function switchView(view) {
   setActiveNav(view);
   setNavExpanded(false);
   state.activeView = view;
   state.activeRaceId = null;
+  hideWorkspaceViews();
+
+  const hubViews = {
+    itensHub: el.itemsHubView,
+    skillsHub: el.skillsHubView,
+    rulesHub: el.rulesHubView,
+    criador: el.characterManagerView,
+  };
+  const isHub = Boolean(hubViews[view]);
+  el.topbar.hidden = view === "inicio" || isHub;
+  document.body.classList.toggle("is-tablet-home", view === "inicio");
+  document.querySelector("#saveButton").hidden = view !== "personagens";
+  document.querySelector("#printButton").hidden = view !== "personagens";
+
+  if (view === "inicio") {
+    el.tabletHomeView.classList.add("active");
+    renderLauncherSummary();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
+  if (isHub) {
+    hubViews[view].classList.add("active");
+    if (view === "criador") renderSavedList();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
 
   if (view === "personagens") {
+    if (state.activeCharacterPage === "guia" || state.activeCharacterPage === "dados") {
+      switchCharacterPage("ficha");
+    }
     el.personagensView.classList.add("active");
-    el.libraryView.classList.remove("active");
-    el.raceDetailView.classList.remove("active");
     el.viewKicker.textContent = "Ficha ativa";
-    el.viewTitle.textContent = "Criador de personagem";
+    el.viewTitle.textContent = "Personagem";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
+  if (view === "guia" || view === "dados") {
+    el.personagensView.classList.add("active", "standalone-tool-mode");
+    switchCharacterPage(view);
+    el.viewKicker.textContent = view === "guia" ? "Orientação do jogador" : "Mesa Solaris";
+    el.viewTitle.textContent = view === "guia" ? "Guia de criação de personagens" : "Rolagem de dados";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
+  if (!libraryMap[view]) {
+    switchView("inicio");
     return;
   }
 
   state.activeLibrary = view;
-  el.personagensView.classList.remove("active");
   el.libraryView.classList.add("active");
-  el.raceDetailView.classList.remove("active");
   el.viewKicker.textContent = "Biblioteca";
   el.viewTitle.textContent = libraryMap[view].title;
   el.librarySearch.value = "";
   el.libraryTierFilter.value = "";
   el.librarySort.value = "default";
   renderLibrary();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function switchCharacterPage(page) {
@@ -2120,10 +2285,10 @@ function renderRaceDetail(race = findRace(state.activeRaceId)) {
           ${tags ? `<div class="tag-row">${tags}</div>` : ""}
         </div>
         <div class="race-stat-strip" aria-label="Números da raça na ficha">
-          ${renderRaceStatTile("CA raça", race.ca)}
-          ${renderRaceStatTile("Cosmos usado", race.cosmos)}
-          ${renderRaceStatTile("Movimento", formatMod(race.movement || 0))}
-          ${renderRaceStatTile("Cubos", formatMod(race.cubeBonus || 0))}
+          ${renderRaceStatTile("Atributo", race.choice ? `${race.choice.options.join("/")} ${formatMod(race.choice.amount)}` : formatBonusSummary(race.bonus || {}))}
+          ${renderRaceStatTile("PV racial", formatMod(race.pvBonus || 0))}
+          ${renderRaceStatTile("Perícias extras", formatMod(race.extraTrainedSkills || 0))}
+          ${renderRaceStatTile("Cosmos racial", formatMod(race.cosmos || 0))}
         </div>
       </section>
 
@@ -2208,13 +2373,14 @@ function readForm() {
   state.current.racialChoice = form.get("racialChoice");
   state.current.profession = form.get("profession");
   state.current.level = numberValue(form.get("level"), 1);
+  state.current.experience = Math.max(0, numberValue(form.get("experience"), 0));
   state.current.origin = form.get("origin").trim();
   ATTRIBUTES.forEach((attr) => {
     state.current.attributes[attr] = clamp(numberValue(form.get(attr), ATTRIBUTE_BASE), 0, 20);
   });
   state.current.pvCurrent = numberValue(form.get("pvCurrent"), 0);
   state.current.cosmosCurrent = numberValue(form.get("cosmosCurrent"), 0);
-  state.current.stress = numberValue(form.get("stress"), 0);
+  state.current.stress = Math.max(numberValue(state.current.stressFloor, 0), numberValue(form.get("stress"), 0));
   state.current.weapon = form.get("weapon").trim();
   state.current.armor = form.get("armor").trim();
   state.current.loadUsed = numberValue(form.get("loadUsed"), 0);
@@ -2245,6 +2411,7 @@ function renderForm() {
   document.querySelector("#racialChoice").value = defaultRacialChoice(findRace(state.current.race), state.current.racialChoice);
   document.querySelector("#profession").value = state.current.profession;
   document.querySelector("#level").value = state.current.level;
+  document.querySelector("#experience").value = state.current.experience;
   document.querySelector("#origin").value = state.current.origin;
   ATTRIBUTES.forEach((attr) => {
     document.querySelector(`#${attr}`).value = state.current.attributes[attr] ?? 0;
@@ -2317,6 +2484,9 @@ function renderSummary() {
   const racialBonus = raceEffectiveBonus(race, state.current.racialChoice);
   document.querySelector("#bonusList").innerHTML = [
     ["Bônus racial", formatBonusSummary(racialBonus)],
+    ["Benefícios da raça", raceMechanicalBenefitSummary(race)],
+    ["Traços raciais", raceTraitNameSummary(race.profile?.baseAbility)],
+    ["Fraqueza racial", raceTraitNameSummary(race.profile?.weakness)],
     ["Passivos de mods", formatPassiveEffectSummary(activeModifierPassiveEffects({ includeConditional: true }), { includeConditional: true })],
     ["CA base", BASE_CA],
     ["CA armadura equipada", derived.armorCa],
@@ -2341,20 +2511,64 @@ function renderSummary() {
     ["Armadura equipada", state.current.armor || "Nenhuma"],
     ["Arma equipada", state.current.weapon || "Nenhuma"],
   ].map(([label, value]) => `<div class="row-line"><span>${label}</span><strong>${value}</strong></div>`).join("");
+  renderLauncherSummary({ race, profession, derived, diceProfile });
   renderStressHud(diceProfile, derived);
   renderCharacterPages(derived);
+}
+
+function renderLauncherSummary(context = {}) {
+  if (!el.launcherStats || !el.launcherResourceBars) return;
+  const race = context.race || findRace(state.current.race);
+  const profession = context.profession || findProfession(state.current.profession);
+  const derived = context.derived || derivedStats(totalAttributes(), race, profession);
+  const diceProfile = context.diceProfile || currentDiceProfile();
+  const stressMax = derived.stressMax || STRESS_MAX;
+
+  el.launcherName.textContent = state.current.name || "Personagem sem nome";
+  el.launcherLine.textContent = `${race.name} // ${profession.name} // Nível ${state.current.level}`;
+  el.launcherStats.innerHTML = [
+    ["PV", `${state.current.pvCurrent}/${derived.pvMax}`],
+    ["CA", derived.ca],
+    ["MOV", `${derived.movement} m`],
+    ["DADOS", `${diceProfile.count}d6`],
+  ].map(([label, value]) => `
+    <span>
+      <small>${label}</small>
+      <strong>${value}</strong>
+    </span>
+  `).join("");
+
+  const resources = [
+    ["PV", state.current.pvCurrent, derived.pvMax, "life"],
+    ["COSMOS", state.current.cosmosCurrent, derived.cosmosMax, "cosmos"],
+    ["ESTRESSE", state.current.stress, stressMax, "stress"],
+  ];
+  el.launcherResourceBars.innerHTML = resources.map(([label, value, max, kind]) => {
+    const percent = max > 0 ? clamp((value / max) * 100, 0, 100) : 0;
+    return `
+      <span class="tablet-resource-row ${kind}">
+        <span><small>${label}</small><strong>${value}/${max}</strong></span>
+        <i><b style="width:${percent}%"></b></i>
+      </span>
+    `;
+  }).join("");
 }
 
 function syncResourceBounds(derived) {
   state.current.pvCurrent = clamp(numberValue(state.current.pvCurrent, derived.pvMax), 0, derived.pvMax);
   state.current.cosmosCurrent = clamp(numberValue(state.current.cosmosCurrent, 0), 0, derived.cosmosMax);
-  state.current.stress = clamp(numberValue(state.current.stress, 0), 0, derived.stressMax || STRESS_MAX);
+  state.current.stress = clamp(
+    numberValue(state.current.stress, 0),
+    Math.max(0, numberValue(state.current.stressFloor, 0)),
+    derived.stressMax || STRESS_MAX
+  );
   const pvInput = document.querySelector("#pvCurrent");
   const cosmosInput = document.querySelector("#cosmosCurrent");
   const stressInput = document.querySelector("#stress");
   pvInput.max = derived.pvMax;
   cosmosInput.max = derived.cosmosMax;
   stressInput.max = derived.stressMax || STRESS_MAX;
+  stressInput.min = Math.max(0, numberValue(state.current.stressFloor, 0));
   pvInput.value = state.current.pvCurrent;
   cosmosInput.value = state.current.cosmosCurrent;
   stressInput.value = state.current.stress;
@@ -2750,6 +2964,24 @@ function entryLocationKind(entry) {
   return LOCATION_KINDS.UNASSIGNED;
 }
 
+function isStorageMarketItem(item) {
+  if (!item) return false;
+  if (["cube", "storage", "hook", "holster", "bandolier"].includes(item.category)) return true;
+  const text = normalizeSearch([
+    item.name,
+    item.type,
+    item.summary,
+    ...(item.tags || []),
+  ].filter(Boolean).join(" "));
+  return /\b(cubo|armazenamento|recipiente|mochila|gancho|coldre|bandoleira)\b/.test(text);
+}
+
+function isConsumableItem(item) {
+  if (!item) return false;
+  if (item.consumable === true) return true;
+  return (item.tags || []).some((tag) => normalizeSearch(tag) === "consumivel");
+}
+
 function isStorageInventoryEntry(entry) {
   return isStorageMarketItem(findMarketItem(entry?.itemId));
 }
@@ -2769,7 +3001,7 @@ function groupInventoryForEquipment(entries = state.current.inventory) {
   return groups;
 }
 
-function renderInventoryLocationSection(title, entries, note = "", className = "") {
+function renderInventoryLocationSection(title, entries, note = "", className = "", supportState = externalSupportState()) {
   const key = `inventory:${dataSlug(title)}`;
   const paginated = paginateItems(entries, state.pagination[key] || 1);
   state.pagination[key] = paginated.page;
@@ -2782,7 +3014,13 @@ function renderInventoryLocationSection(title, entries, note = "", className = "
         </div>
         <strong>${entries.length}</strong>
       </div>
-      ${renderInventoryCards(paginated.items, { showCubeAction: true, showEquipAction: true, showSupportAction: true })}
+      ${renderInventoryCards(paginated.items, {
+        showCubeAction: true,
+        showEquipAction: true,
+        showSupportAction: true,
+        draggable: true,
+        supportState,
+      })}
       <nav class="pagination-controls" aria-label="Paginação de ${escapeHtml(title)}">${renderPaginationControls(paginated, key)}</nav>
     </section>
   `;
@@ -2857,7 +3095,7 @@ function renderExternalSupportPanel(supportState = externalSupportState()) {
           .filter((provider) => provider.counts[typeState.id] > 0)
           .map((provider) => `${provider.name} +${provider.counts[typeState.id]}`);
         return `
-          <article class="external-support-card ${typeState.over > 0 ? "over-limit" : ""}">
+          <article class="external-support-card ${typeState.over > 0 ? "over-limit" : ""}" data-support-drop-kind="${escapeHtml(typeState.id)}">
             <div class="support-card-head">
               <span>${escapeHtml(typeState.label)}</span>
               <strong>${typeState.used}/${typeState.capacity}</strong>
@@ -3028,7 +3266,7 @@ function renderCosmicSpellSlotPanel(slots = cosmicSpellSlotState()) {
 
 function renderModifierSlotPanel(modSlots = modifierSlotState()) {
   const status = modSlots.over > 0
-    ? `${modSlots.over} chip${modSlots.over > 1 ? "s" : ""} acima do limite`
+    ? `${modSlots.over} espaço${modSlots.over === 1 ? "" : "s"} acima do limite`
     : `${modSlots.free} livre${modSlots.free === 1 ? "" : "s"}`;
   const percent = modSlots.total ? Math.min(100, Math.round((modSlots.used / modSlots.total) * 100)) : 0;
   return `
@@ -3040,7 +3278,7 @@ function renderModifierSlotPanel(modSlots = modifierSlotState()) {
       <div class="mod-slot-meter" aria-label="Uso dos espaços de mods">
         <span style="width:${percent}%"></span>
       </div>
-      <p class="inventory-note">Cada chip modificador ocupa 1 espaço de mod. O total vem da arma e da armadura equipadas.</p>
+      <p class="inventory-note">Cada chip ocupa a quantidade de slots indicada no Livro 5. O total vem da arma e da armadura equipadas.</p>
       <div class="detail-list">
         ${renderDetailRow("Espaços livres", status)}
         ${modSlots.sources.map((source) => renderDetailRow(source.label, `${source.mods} mod${source.mods === 1 ? "" : "s"}`)).join("")}
@@ -3160,7 +3398,7 @@ function renderCubeCreatorForm() {
       </label>
       <label data-cube-variation-field hidden>
         Capacidade
-        <input type="number" min="1" max="99" step="1" value="1" data-cube-create-capacity disabled />
+        <input type="number" min="1" max="10" step="1" value="1" data-cube-create-capacity disabled />
       </label>
       <p class="inventory-note" data-cube-create-summary>${escapeHtml(CUBE_TYPE_DEFINITIONS.simple.summary)}</p>
       <button class="primary-button" type="submit">Criar cubo</button>
@@ -3233,7 +3471,7 @@ function createCubeFromForm(event) {
   const definition = CUBE_TYPE_DEFINITIONS[type] || CUBE_TYPE_DEFINITIONS.simple;
   const nameInput = form.querySelector("[data-cube-create-name]");
   const capacityInput = form.querySelector("[data-cube-create-capacity]");
-  const capacity = definition.fixedCapacity || clamp(numberValue(capacityInput?.value, 4), 1, 99);
+  const capacity = definition.fixedCapacity || clamp(numberValue(capacityInput?.value, 4), 1, 10);
   const id = `custom-cube-${type}-${dataSlug(nameInput?.value || definition.label)}-${Date.now()}`;
   const item = {
     id,
@@ -3253,17 +3491,21 @@ function createCubeFromForm(event) {
   state.current.customItems = state.current.customItems || [];
   state.current.customItems.unshift(item);
   const uid = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
-  state.current.inventory.unshift({
-    uid,
-    itemId: item.id,
-    category: "cube",
-    inCube: false,
-    cubeUid: "",
-    supportSlot: "",
-    crackLevel: 0,
-  });
-  syncDomainSnapshotFromLegacy({ autoSave: true });
-  state.openCubeUid = uid;
+  try {
+    const domain = domainCharacterFromLegacy();
+    const entity = domainDefinitionForItem(item).createInstance({
+      id: uid,
+      location: { kind: LOCATION_KINDS.UNASSIGNED },
+    });
+    domain.inventory.add(entity);
+    syncDomainCharacterToLegacy(domain);
+    persistCurrentCharacterSilently();
+    state.openCubeUid = entity.id;
+  } catch (error) {
+    state.current.customItems = state.current.customItems.filter((entry) => entry.id !== item.id);
+    showToast(error.message || "Não foi possível criar o cubo.", "tech-error");
+    return;
+  }
   form.reset();
   renderSummary();
   showToast(`${item.name} criado.`);
@@ -3561,7 +3803,9 @@ function renderInventoryCards(entries, options = {}) {
         const equipAction = equipped ? "unequip" : "equip";
         const equipLabel = equipped ? "Desequipar" : "Equipar";
         const salePrice = Number.isFinite(item.price) ? Math.floor(item.price / 2) : 0;
-        const draggableAttrs = options.draggable && canStoreEntryInPhysicalCube(entry) ? ` draggable="true" data-drag-inventory-uid="${escapeHtml(entry.uid)}"` : "";
+        const draggableAttrs = options.draggable && (canStoreEntryInPhysicalCube(entry) || canAttachToExternalSupport(entry))
+          ? ` draggable="true" data-drag-inventory-uid="${escapeHtml(entry.uid)}"`
+          : "";
         const supportState = options.supportState || externalSupportState();
         const supportTarget = options.showSupportAction && !entry.supportSlot ? findAvailableExternalSupport(entry, supportState) : null;
         const canAttachSupport = options.showSupportAction && canAttachToExternalSupport(entry);
@@ -3576,11 +3820,12 @@ function renderInventoryCards(entries, options = {}) {
         const tracksCracks = ["item", "weapon", "armor", "cube"].includes(item.category);
         const crackLevel = itemCrackLevel(entry);
         const chipInstalled = entityType === ENTITY_TYPES.CHIP_MOD && entry.location?.slotId === "chip";
+        const consumable = isConsumableItem(item);
         return `
           <article class="inventory-card compact-card ${item.imageDataUrl ? "with-image" : ""}" tabindex="0"${draggableAttrs}>
             ${renderCardImage(item)}
             <div class="card-face">
-              <span class="ability-source">${escapeHtml(domainEntityTypeLabel(entityType))}</span>
+              <span class="ability-source">${escapeHtml(domainEntityTypeLabel(entityType))}${consumable ? ' · <span class="inventory-consumable-tag">Consumível</span>' : ""}</span>
               <h4>${renderCardTitleButton(item.name)}</h4>
               <p class="card-meta-line">${escapeHtml(cardMeta)}</p>
             </div>
@@ -3639,7 +3884,9 @@ function buyMarketItem(itemId) {
     syncDomainCharacterToLegacy(domain);
     persistCurrentCharacterSilently();
     renderForm();
-    showToast(`${item.name} comprado por ${formatCurrency(item.price)}.`);
+    showToast(item.price === 0
+      ? `${item.name} adicionado ao inventário.`
+      : `${item.name} comprado por ${formatCurrency(item.price)}.`);
     openInventoryLocationDialog(entity.id, "purchase");
   } catch (error) {
     showToast(error.message || "Não foi possível concluir a compra.", "tech-error");
@@ -3660,7 +3907,7 @@ function learnLibraryAbility(itemId) {
     showToast(`Sem espaços de magia cósmica: ${slots.used}/${slots.total}.`, "cosmic-error");
     return;
   }
-  if (source === "Chip modificador" && !canAddModifierChip()) {
+  if (source === "Chip modificador" && !canAddModifierChip(item.slots)) {
     const slots = modifierSlotState();
     showToast(`Sem espaço de mods para chip: ${slots.used}/${slots.total}.`, "tech-error");
     return;
@@ -3672,6 +3919,7 @@ function learnLibraryAbility(itemId) {
     effect: item.summary,
     meta: libraryMeta(item),
     passiveEffects: source === "Chip modificador" ? normalizePassiveEffects(item.passiveEffects || inferModifierChipPassiveEffects(item)) : [],
+    modifierSlots: source === "Chip modificador" ? Math.max(1, numberValue(item.slots, 1)) : 0,
     installed: source === "Chip modificador",
     custom: false,
   });
@@ -3979,13 +4227,15 @@ function rollWeaponDamage(weapon) {
     return;
   }
   const rolls = Array.from({ length: expression.count }, () => Math.floor(Math.random() * expression.sides) + 1);
-  const total = rolls.reduce((sum, roll) => sum + roll, 0) + expression.bonus;
-  const formula = `Dano ${weapon.name}: ${expression.count}d${expression.sides}${expression.bonus ? formatMod(expression.bonus) : ""}`;
+  const passiveBonus = passiveDamageBonus(weapon);
+  const totalBonus = expression.bonus + passiveBonus;
+  const total = rolls.reduce((sum, roll) => sum + roll, 0) + totalBonus;
+  const formula = `Dano ${weapon.name}: ${expression.count}d${expression.sides}${totalBonus ? formatMod(totalBonus) : ""}`;
   pushDiceLog({
     label: `Dano - ${weapon.name}`,
     count: expression.count,
     sides: expression.sides,
-    bonus: expression.bonus,
+    bonus: totalBonus,
     rolls,
     total,
     formula,
@@ -4023,7 +4273,7 @@ function applyManualTemplate() {
 function findOfficialTemplateForManualType(type) {
   const templateId = OFFICIAL_TEMPLATE_TYPE_MAP[type];
   if (!templateId) return null;
-  return OFFICIAL_BOOKS.templates.find((template) => template.id === templateId) || null;
+  return OFFICIAL_BOOK5.templates.find((template) => template.id === templateId) || null;
 }
 
 function renderManualOfficialFields(template) {
@@ -4265,6 +4515,7 @@ function createManualEntry(event) {
     effect: manual.effect || "Sem efeito registrado.",
     meta: buildManualAbilityMeta(manual.type, manual),
     passiveEffects: manual.type === "chip-mod" ? inferModifierChipPassiveEffects({ name: manual.name, effect: manual.effect, tags }) : [],
+    modifierSlots: manual.type === "chip-mod" ? 1 : 0,
     installed: manual.type === "chip-mod",
     tags,
     custom: true,
@@ -4375,17 +4626,25 @@ function handleInventoryAction(action, uid, trigger = null) {
       showToast(`${item.name} está sem ${resource.label.toLowerCase()}.`, "tech-error");
       return;
     }
+    const consumed = isConsumableItem(item) && (!resource || resource.current <= 0);
+    if (entity && consumed) {
+      domain.removeEntity(uid, { force: true, deleteContents: true });
+    }
     if (entity) {
       syncDomainCharacterToLegacy(domain);
       persistCurrentCharacterSilently();
     }
     renderSummary();
-    showToast(resource ? `${item.name} usado. ${resource.current}/${resource.max} ${resource.label}.` : `${item.name} usado.`);
+    showToast(consumed
+      ? `${item.name} consumido e removido do inventário.`
+      : resource
+        ? `${item.name} usado. ${resource.current}/${resource.max} ${resource.label}.`
+        : `${item.name} usado.`);
     return;
   }
 
   if (action === "install") {
-    if (!canAddModifierChip()) {
+    if (!canAddModifierChip(item.slots)) {
       const slots = modifierSlotState();
       showToast(`Sem espaço de mods para chip: ${slots.used}/${slots.total}.`, "tech-error");
       return;
@@ -4632,7 +4891,7 @@ function renderLibrary() {
     const bonus = item.bonus ? Object.entries(item.bonus).map(([key, value]) => `${key} ${formatMod(value)}`).join("  ") : "";
     const tags = (item.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
     const alreadyLearned = isLearnLibrary && learnedAbilityIds.has(item.id);
-    const lacksModSlot = isModifierChipLibrary && !alreadyLearned && modSlots.free <= 0;
+    const lacksModSlot = isModifierChipLibrary && !alreadyLearned && modSlots.free < modifierChipSlotCost(item);
     const lacksCosmicSpellSlot = isCosmicSpellLibrary && !alreadyLearned && cosmicSpellSlots.free <= 0;
     const slotBlocked = lacksModSlot ? "tech" : lacksCosmicSpellSlot ? "cosmic" : "";
     const learnDisabled = alreadyLearned;
@@ -4653,7 +4912,11 @@ function renderLibrary() {
           ${meta || bonus ? `<p class="card-meta-line">${escapeHtml(meta || bonus)}</p>` : ""}
           ${showsInlineSummary ? `<p class="library-inline-summary">${escapeHtml(item.summary)}</p>` : ""}
         </div>
-        ${isMarketLibrary ? `<button class="primary-button shop-button" type="button" data-buy-id="${escapeHtml(item.id)}">Comprar</button>` : ""}
+        ${isMarketLibrary
+          ? Number.isFinite(item.price)
+            ? `<button class="primary-button shop-button" type="button" data-buy-id="${escapeHtml(item.id)}">${item.price === 0 ? "Adicionar" : "Comprar"}</button>`
+            : '<button class="primary-button shop-button" type="button" disabled>Preço narrativo</button>'
+          : ""}
         ${isLearnLibrary ? `<button class="primary-button shop-button" type="button" data-learn-id="${escapeHtml(item.id)}" ${learnDisabled ? "disabled" : ""} ${slotBlocked ? `data-slot-blocked="${slotBlocked}" aria-disabled="true"` : ""}>${learnLabel}</button>` : ""}
         ${isMonsterLibrary ? `
           <div class="inventory-actions monster-card-actions">
@@ -4727,7 +4990,7 @@ function handleAbilityAction(action, abilityId) {
   const ability = (state.current.knownAbilities || []).find((entry) => entry.id === abilityId);
   if (!ability) return;
   if (action === "install") {
-    if (!canAddModifierChip()) {
+    if (!canAddModifierChip(modifierChipSlotCost(ability))) {
       const slots = modifierSlotState();
       showToast(`Sem espaço de mods para chip: ${slots.used}/${slots.total}.`, "tech-error");
       return;
@@ -4969,7 +5232,10 @@ function getLibraryGroupValues(item, view) {
   if (view === "chipsMod") return item.rank || item.tier ? [String(item.rank || item.tier)] : [];
   if (view === "mods") return item.type ? [String(item.type)] : [];
   if (view === "armas" || view === "armaduras") return item.tier ? [String(item.tier)] : [];
-  if (view === "itens") return Array.isArray(item.tags) ? item.tags.map(String) : [];
+  if (view === "itens") {
+    if (item.type) return [String(item.type)];
+    return Array.isArray(item.tags) ? item.tags.map(String) : [];
+  }
   if (view === "armazenamento") {
     const definition = domainDefinitionForItem(item);
     return [domainEntityTypeLabel(definition.entityType)];
@@ -5311,13 +5577,17 @@ function renderPhotoPreviews() {
   el.photoPreview.hidden = !hasPhoto;
   el.summaryPortraitImage.hidden = !hasPhoto;
   el.summaryPortraitIcon.hidden = hasPhoto;
+  el.launcherPortraitImage.hidden = !hasPhoto;
+  el.launcherPortraitIcon.hidden = hasPhoto;
 
   if (hasPhoto) {
     el.photoPreview.src = state.current.photoDataUrl;
     el.summaryPortraitImage.src = state.current.photoDataUrl;
+    el.launcherPortraitImage.src = state.current.photoDataUrl;
   } else {
     el.photoPreview.removeAttribute("src");
     el.summaryPortraitImage.removeAttribute("src");
+    el.launcherPortraitImage.removeAttribute("src");
   }
 }
 
@@ -5383,6 +5653,151 @@ function splitMonsterText(value) {
     .filter(Boolean);
 }
 
+function monsterDetailLines(record = {}) {
+  return (record.details || [])
+    .flatMap((group) => Array.isArray(group?.items) ? group.items : [])
+    .map((entry) => String(entry || "").trim())
+    .filter(Boolean);
+}
+
+function monsterDiceExpressions(value) {
+  return [...String(value || "").matchAll(/(\d*)d(\d+)(?:\s*([+-])\s*(\d+))?/gi)].map((match) => ({
+    count: clamp(numberValue(match[1] || 1, 1), 1, 20),
+    sides: clamp(numberValue(match[2], 6), 2, 100),
+    bonus: match[3] ? numberValue(`${match[3]}${match[4]}`, 0) : 0,
+  }));
+}
+
+function monsterDamageFormula(value) {
+  const expressions = monsterDiceExpressions(value);
+  return expressions.map((expression) => (
+    `${expression.count}d${expression.sides}${expression.bonus ? formatMod(expression.bonus) : ""}`
+  )).join(" + ");
+}
+
+function parseMonsterAttackEntry(value) {
+  const text = String(value || "").replace(/\.$/, "").trim();
+  if (!text || /^ataques?$/i.test(text)) return null;
+  const colonMatch = text.match(/^([^:]+):\s*(.+)$/);
+  const commaMatch = text.match(/^(.+?),\s*((?:\d*)d\d+.*|sem dano.*)$/i);
+  const match = colonMatch || commaMatch;
+  if (match) {
+    return {
+      name: match[1].trim(),
+      damage: match[2].trim(),
+      description: text,
+    };
+  }
+  return { name: text, damage: "", description: text };
+}
+
+function extractMonsterAttacks(record = {}) {
+  const lines = monsterDetailLines(record);
+  const attacks = [];
+  let readingAttacks = false;
+  let latestAttack = null;
+  const appendAttackText = (value) => {
+    String(value || "").split(";").map(parseMonsterAttackEntry).filter(Boolean).forEach((attack) => {
+      attacks.push(attack);
+      latestAttack = attack;
+    });
+  };
+
+  lines.forEach((line) => {
+    const header = line.match(/^Ataques?\s*:\s*(.*)$/i);
+    if (header) {
+      readingAttacks = true;
+      appendAttackText(header[1]);
+      return;
+    }
+    if (!readingAttacks) return;
+    const damage = line.match(/^Dano\s*:\s*(.+)$/i);
+    if (damage && latestAttack) {
+      latestAttack.damage = damage[1].replace(/\.$/, "").trim();
+      latestAttack.description = `${latestAttack.name}: ${latestAttack.damage}`;
+      return;
+    }
+    if (/^(?:Habilidades?|Habilidade\s*[—-]|Ações?|Reações?|Resistências?|Fraquezas?|Sentidos?|Moral|Recursos?|Uso em campanha)\b/i.test(line)) {
+      readingAttacks = false;
+      return;
+    }
+    appendAttackText(line);
+  });
+
+  if (!attacks.length) {
+    splitMonsterText(record.attacks)
+      .flatMap((line) => line.replace(/^Ataques?\s*:\s*/i, "").split(";"))
+      .map(parseMonsterAttackEntry)
+      .filter(Boolean)
+      .forEach((attack) => attacks.push(attack));
+  }
+
+  return attacks.filter((attack, index, list) => (
+    list.findIndex((candidate) => normalizeSearch(`${candidate.name}|${candidate.damage}`) === normalizeSearch(`${attack.name}|${attack.damage}`)) === index
+  ));
+}
+
+function extractMonsterAbilities(record = {}) {
+  const lines = monsterDetailLines(record);
+  const abilities = [];
+  let current = null;
+  const flush = () => {
+    if (!current) return;
+    current.description = current.description.trim();
+    current.damage = monsterDamageFormula(current.description);
+    abilities.push(current);
+    current = null;
+  };
+
+  lines.forEach((line) => {
+    const heading = line.match(/^(Habilidade|Ação(?: de chefe)?|Reação|Fase)\s*[—-]\s*([^:]+)\s*:?\s*(.*)$/i);
+    if (heading) {
+      flush();
+      current = {
+        name: heading[2].trim(),
+        source: heading[1].trim(),
+        description: heading[3].trim(),
+        damage: "",
+      };
+      return;
+    }
+    if (current && /^(?:Resistências?|Fraquezas?|Sentidos?|Moral|Recursos?|Uso em campanha|Condições?)\s*:/i.test(line)) {
+      flush();
+      return;
+    }
+    if (current) current.description += `${current.description ? " " : ""}${line}`;
+  });
+  flush();
+
+  if (!abilities.length) {
+    splitMonsterText(record.abilities).forEach((line) => {
+      const heading = line.match(/^(?:Habilidade|Ação(?: de chefe)?|Reação|Fase)\s*[—-]\s*([^:]+)\s*:?\s*(.*)$/i);
+      if (heading) {
+        abilities.push({
+          name: heading[1].trim(),
+          description: heading[2].trim(),
+          damage: monsterDamageFormula(heading[2]),
+        });
+      } else if (!/^Habilidades?\s*:?\s*$/i.test(line)) {
+        abilities.push({ name: line, description: "", damage: monsterDamageFormula(line) });
+      }
+    });
+  }
+  return abilities;
+}
+
+function extractMonsterAttributes(record = {}) {
+  const text = [record.attributes, ...monsterDetailLines(record)].join(" ");
+  const attributes = {};
+  for (const match of text.matchAll(/\b(FOR|REF|CON|MEN|PRE|INT)\s*(\d+)\s*\/\s*MOD\s*([+-]?\d+)/gi)) {
+    attributes[match[1].toUpperCase()] = {
+      value: numberValue(match[2], ATTRIBUTE_BASE),
+      modifier: numberValue(match[3], 0),
+    };
+  }
+  return Object.keys(attributes).length ? attributes : (typeof record.attributes === "object" ? record.attributes : { resumo: record.attributes || "" });
+}
+
 function monsterDefinitionFromRecord(record) {
   const assetAttacks = (record.assets || [])
     .filter((asset) => asset.category === "weapon")
@@ -5398,14 +5813,14 @@ function monsterDefinitionFromRecord(record) {
     type: record.type || record.role,
     description: record.description || record.summary || record.behavior,
     image: record.imageDataUrl || record.image || "",
-    attributes: typeof record.attributes === "object" ? record.attributes : { resumo: record.attributes || "" },
+    attributes: extractMonsterAttributes(record),
     maxPV: Math.max(1, numberValue(record.pv, parseFirstNumber(record.pv) || 1)),
     ca: Math.max(0, numberValue(record.ca, parseFirstNumber(record.ca))),
     movement: record.movement || "",
     maxCosmos: Math.max(0, numberValue(record.cosmos, parseFirstNumber(record.cosmos))),
     maxStress: Math.max(0, numberValue(record.maxStress, parseFirstNumber(record.stress))),
-    attacks: [...splitMonsterText(record.attacks), ...assetAttacks],
-    abilities: [...splitMonsterText(record.abilities), ...assetAbilities],
+    attacks: [...extractMonsterAttacks(record), ...assetAttacks],
+    abilities: [...extractMonsterAbilities(record), ...assetAbilities],
     rachadurasMax: Math.max(1, numberValue(record.rachadurasMax, parseFirstNumber(record.cracks) || ITEM_CRACK_MAX)),
     quickRolls: splitMonsterText(record.quickRolls),
     metadata: structuredCloneSafe(record),
@@ -5450,10 +5865,80 @@ function renderMonsterSessionPanel() {
   `;
 }
 
+function normalizedMonsterAttack(attack) {
+  if (typeof attack === "string") return parseMonsterAttackEntry(attack.replace(/^Ataques?\s*:\s*/i, ""));
+  if (!attack || typeof attack !== "object") return null;
+  return {
+    ...attack,
+    name: attack.name || "Ataque",
+    damage: attack.damage || monsterDamageFormula(attack.description),
+    description: attack.description || [attack.name, attack.damage].filter(Boolean).join(": "),
+  };
+}
+
+function normalizedMonsterAbility(ability) {
+  if (typeof ability === "string") {
+    const heading = ability.match(/^(?:Habilidade|Ação(?: de chefe)?|Reação|Fase)\s*[—-]\s*([^:]+)\s*:?\s*(.*)$/i);
+    const name = heading ? heading[1].trim() : ability;
+    const description = heading ? heading[2].trim() : "";
+    return { name, description, damage: monsterDamageFormula(description || ability) };
+  }
+  if (!ability || typeof ability !== "object") return null;
+  return {
+    ...ability,
+    name: ability.name || "Habilidade",
+    description: ability.description || ability.effect || "",
+    damage: ability.damage || monsterDamageFormula(ability.description || ability.effect),
+  };
+}
+
+function monsterSessionAttacks(monster) {
+  const direct = (monster.attacks || []).map(normalizedMonsterAttack).filter((attack) => attack?.name && !/^ataques?$/i.test(attack.name));
+  return direct.length ? direct : extractMonsterAttacks(monster.metadata || {});
+}
+
+function monsterSessionAbilities(monster) {
+  const direct = (monster.abilities || []).map(normalizedMonsterAbility).filter((ability) => ability?.name && !/^habilidades?$/i.test(ability.name));
+  return direct.length ? direct : extractMonsterAbilities(monster.metadata || {});
+}
+
+function renderMonsterAttackEntry(monster, attack, index) {
+  const damage = attack.damage || monsterDamageFormula(attack.description);
+  return `
+    <div class="monster-combat-entry">
+      <div>
+        <strong>${escapeHtml(attack.name)}</strong>
+        <span>${escapeHtml(damage || attack.description || "Dano não informado")}</span>
+      </div>
+      <div class="monster-combat-actions">
+        <button class="mini-button" type="button" data-monster-session-action="attack" data-monster-session-id="${escapeHtml(monster.id)}" data-monster-attack-index="${index}">Ataque</button>
+        <button class="mini-button" type="button" data-monster-session-action="attack-damage" data-monster-session-id="${escapeHtml(monster.id)}" data-monster-attack-index="${index}" ${monsterDiceExpressions(damage).length ? "" : "disabled"}>Dano</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderMonsterAbilityEntry(monster, ability, index) {
+  return `
+    <div class="monster-combat-entry ability-entry">
+      <div>
+        <strong>${escapeHtml(ability.name)}</strong>
+        <span>${escapeHtml(ability.description || "Efeito não informado.")}</span>
+        ${ability.damage ? `<small>Dano: ${escapeHtml(ability.damage)}</small>` : ""}
+      </div>
+      ${ability.damage ? `
+        <div class="monster-combat-actions">
+          <button class="mini-button" type="button" data-monster-session-action="ability-damage" data-monster-session-id="${escapeHtml(monster.id)}" data-monster-ability-index="${index}">Rolar dano</button>
+        </div>
+      ` : ""}
+    </div>
+  `;
+}
+
 function renderMonsterSessionCard(sheet) {
   const monster = sheet.instance;
-  const attacks = monster.attacks || [];
-  const abilities = monster.abilities || [];
+  const attacks = monsterSessionAttacks(monster);
+  const abilities = monsterSessionAbilities(monster);
   const latestRoll = monster.rollHistory?.[0];
   const conditionMarkup = monster.conditions.length
     ? monster.conditions.map((condition) => `<button class="tag" type="button" title="Clique para remover" data-monster-session-action="remove-condition" data-monster-session-id="${escapeHtml(monster.id)}" data-condition-id="${escapeHtml(condition.id)}">${escapeHtml(condition.label)}</button>`).join("")
@@ -5478,11 +5963,15 @@ function renderMonsterSessionCard(sheet) {
       </div>
       <div class="monster-session-section">
         <strong>Ataques</strong>
-        <p>${escapeHtml(attacks.map((attack) => typeof attack === "string" ? attack : attack.name || attack.description).filter(Boolean).join(" | ") || "Nenhum ataque registrado.")}</p>
+        ${attacks.length
+          ? `<div class="monster-combat-list">${attacks.map((attack, index) => renderMonsterAttackEntry(monster, attack, index)).join("")}</div>`
+          : "<p>Nenhum ataque registrado.</p>"}
       </div>
       <div class="monster-session-section">
         <strong>Habilidades</strong>
-        <p>${escapeHtml(abilities.map((ability) => typeof ability === "string" ? ability : ability.name || ability.description).filter(Boolean).join(" | ") || "Nenhuma habilidade registrada.")}</p>
+        ${abilities.length
+          ? `<div class="monster-combat-list">${abilities.map((ability, index) => renderMonsterAbilityEntry(monster, ability, index)).join("")}</div>`
+          : "<p>Nenhuma habilidade registrada.</p>"}
       </div>
       <div class="tag-row monster-condition-row">${conditionMarkup}</div>
       <label class="monster-notes-field">
@@ -5491,7 +5980,6 @@ function renderMonsterSessionCard(sheet) {
       </label>
       ${latestRoll ? `<p class="monster-last-roll"><strong>Última rolagem:</strong> ${escapeHtml(latestRoll.label || latestRoll.formula)} = ${escapeHtml(latestRoll.total)}</p>` : ""}
       <div class="monster-session-actions">
-        <button class="primary-button" type="button" data-monster-session-action="attack" data-monster-session-id="${escapeHtml(monster.id)}">Atacar</button>
         <button class="mini-button" type="button" data-monster-session-action="damage" data-monster-session-id="${escapeHtml(monster.id)}">Receber dano</button>
         <button class="mini-button" type="button" data-monster-session-action="heal" data-monster-session-id="${escapeHtml(monster.id)}">Curar</button>
         <button class="mini-button" type="button" data-monster-session-action="condition" data-monster-session-id="${escapeHtml(monster.id)}">Aplicar condição</button>
@@ -5506,27 +5994,90 @@ function findMonsterSessionSheet(instanceId) {
   return (state.monsterSession || []).find((sheet) => sheet.instance.id === instanceId) || null;
 }
 
+function monsterAttackAttributeKey(attack = {}) {
+  const text = normalizeSearch([attack.name, attack.damage, attack.description].filter(Boolean).join(" "));
+  if (/\b(cosmico|cosmica|mental|psiquico|ressonante|magia)\b/.test(text)) return "MEN";
+  if (/\b(pistola|revolver|rifle|fuzil|disparo|tiro|projetil|arco|besta|lancador)\b/.test(text)) return "REF";
+  return "FOR";
+}
+
+function monsterAttributeModifier(monster, attribute) {
+  const value = monster.attributes?.[attribute];
+  if (value && typeof value === "object") return numberValue(value.modifier, attributeModifier(value.value));
+  if (Number.isFinite(value)) return attributeModifier(value);
+  return 0;
+}
+
+function rollMonsterDamageFormula(monster, label, value) {
+  const expressions = monsterDiceExpressions(value);
+  if (!expressions.length) {
+    showToast("Este ataque ou habilidade não possui dano em dados.", "tech-error");
+    return;
+  }
+  const allRolls = [];
+  let total = 0;
+  expressions.forEach((expression) => {
+    const pool = rollDicePool(expression.count, expression.sides);
+    allRolls.push(...pool.rolls);
+    total += pool.raw + expression.bonus;
+  });
+  const formula = expressions.map((expression) => (
+    `${expression.count}d${expression.sides}${expression.bonus ? formatMod(expression.bonus) : ""}`
+  )).join(" + ");
+  monster.recordRoll({ label, formula, rolls: allRolls, total });
+  persistMonsterSession();
+  renderMonsterSessionPanel();
+  showHolographicDiceOverlay({
+    label,
+    sides: expressions[0].sides,
+    rolls: allRolls,
+    total,
+    formula,
+  });
+}
+
 function handleMonsterSessionAction(action, instanceId, actionElement = null) {
   const sheet = findMonsterSessionSheet(instanceId);
   if (!sheet) return;
   const monster = sheet.instance;
   if (action === "attack") {
-    const firstAttack = monster.attacks?.[0];
-    const attackText = typeof firstAttack === "string"
-      ? firstAttack
-      : [firstAttack?.name, firstAttack?.attack, firstAttack?.damage, firstAttack?.description].filter(Boolean).join(" ");
-    const expression = parseDiceExpression(attackText) || { count: 1, sides: 20, bonus: 0 };
-    const rolls = rollDicePool(expression.count, expression.sides);
-    const total = rolls.raw + expression.bonus;
+    const attacks = monsterSessionAttacks(monster);
+    const attackIndex = Math.max(0, numberValue(actionElement?.dataset.monsterAttackIndex, 0));
+    const attack = attacks[attackIndex] || attacks[0];
+    if (!attack) {
+      showToast("Este monstro não possui ataque registrado.", "tech-error");
+      return;
+    }
+    const attribute = monsterAttackAttributeKey(attack);
+    const bonus = monsterAttributeModifier(monster, attribute);
+    const rolls = rollDicePool(1, 20);
+    const total = rolls.raw + bonus;
+    const formula = `1d20${bonus ? formatMod(bonus) : ""}`;
     monster.recordRoll({
-      label: `Ataque - ${monster.name}`,
-      formula: `${expression.count}d${expression.sides}${expression.bonus ? formatMod(expression.bonus) : ""}`,
+      label: `${attack.name} - ataque`,
+      formula,
       rolls: rolls.rolls,
       total,
     });
     persistMonsterSession();
     renderMonsterSessionPanel();
-    showHolographicDiceOverlay({ label: `Ataque - ${monster.name}`, sides: expression.sides, rolls: rolls.rolls, total, formula: `${expression.count}d${expression.sides}${expression.bonus ? formatMod(expression.bonus) : ""}` });
+    showHolographicDiceOverlay({ label: `${attack.name} - ataque (${attribute})`, sides: 20, rolls: rolls.rolls, total, formula });
+    return;
+  }
+  if (action === "attack-damage") {
+    const attacks = monsterSessionAttacks(monster);
+    const attackIndex = Math.max(0, numberValue(actionElement?.dataset.monsterAttackIndex, 0));
+    const attack = attacks[attackIndex] || attacks[0];
+    if (!attack) return;
+    rollMonsterDamageFormula(monster, `${attack.name} - dano`, attack.damage || attack.description);
+    return;
+  }
+  if (action === "ability-damage") {
+    const abilities = monsterSessionAbilities(monster);
+    const abilityIndex = Math.max(0, numberValue(actionElement?.dataset.monsterAbilityIndex, 0));
+    const ability = abilities[abilityIndex] || abilities[0];
+    if (!ability) return;
+    rollMonsterDamageFormula(monster, `${ability.name} - dano`, ability.damage || ability.description);
     return;
   }
   if (["damage", "heal"].includes(action)) {
@@ -5841,9 +6392,10 @@ function derivedStats(attrs, race, profession) {
   const armorCa = armorCollapsed ? 0 : equippedArmor?.ca || 0;
   const equipmentCosmosBonus = equippedArmor?.cosmos || 0;
   const officialInitialPv = Math.max(1, 8 + initialLifeBonus(modCON) + numberValue(race.pvBonus, 0));
-  const pvMax = level === 1
+  const permanentPvBonus = Math.max(0, numberValue(state.current.permanentPvBonus, 0));
+  const pvMax = (level === 1
     ? officialInitialPv
-    : Math.max(officialInitialPv, 8 * level + Math.max(0, modCON) * level + numberValue(race.pvBonus, 0));
+    : Math.max(officialInitialPv, 8 * level + Math.max(0, modCON) * level + numberValue(race.pvBonus, 0))) + permanentPvBonus;
   const cosmosMax = Math.max(0, (LEVEL_COSMOS_BASE[level] || 1) + modMEN + equipmentCosmosBonus + (race.cosmos || 0) + passives.cosmosMax + passives.cosmosPerLevel * level);
   const ca = Math.max(1, BASE_CA + modREF + armorCa + passives.ca);
   const baseMovement = Math.max(1, 6 + modREF + (race.movement || 0) + passives.movement);
@@ -6007,7 +6559,7 @@ function findAbilityLibraryItem(id) {
 
 function findMarketItem(id) {
   const customItems = state.current?.customItems || [];
-  return [...cubeData, ...itemData, ...weaponData, ...armorData, ...customItems].find((item) => item.id === id);
+  return [...storageMarketData, ...commonItemData, ...weaponData, ...armorData, ...customItems].find((item) => item.id === id);
 }
 
 function domainDefinitionForItem(item) {
@@ -6122,6 +6674,208 @@ function persistCurrentCharacterSilently() {
   else state.saved.unshift(payload);
   persistSaved();
   renderSavedList();
+}
+
+function levelUpChoiceOptions(benefit) {
+  if (benefit.choice === "skill") {
+    return skillData
+      .filter((skill) => state.current.skillTraining?.[skill.name] !== "trained")
+      .map((skill) => ({ value: skill.name, label: skill.name }));
+  }
+  if (benefit.choice === "technology-or-pre") {
+    return [
+      { value: "Tecnologia", label: "Tecnologia" },
+      { value: "PRE", label: "PRE" },
+    ];
+  }
+  if (benefit.choice === "pilot-or-fight") {
+    return [
+      { value: "Pilotagem", label: "Pilotagem" },
+      { value: "Briga", label: "Briga" },
+    ];
+  }
+  if (benefit.choice === "protection") {
+    return ["JPF", "JPR", "JPC"].map((value) => ({ value, label: value }));
+  }
+  if (benefit.choice === "craft") {
+    return ["Armas", "Armaduras", "Mods"].map((value) => ({ value, label: value }));
+  }
+  return [];
+}
+
+function renderLevelUpDialog() {
+  const currentLevel = clamp(numberValue(state.current.level, 1), 1, 10);
+  const targetLevel = currentLevel + 1;
+  if (targetLevel > 10) {
+    el.levelUpContent.innerHTML = '<div class="empty-state">Este personagem já alcançou o nível máximo.</div>';
+    el.confirmLevelUp.hidden = true;
+    return;
+  }
+
+  const requirement = LEVEL_UP_REQUIREMENTS[targetLevel];
+  const cost = 500 * targetLevel;
+  const pending = state.pendingLevelUp;
+  const choiceOptions = pending ? levelUpChoiceOptions(pending.benefit) : [];
+  el.confirmLevelUp.hidden = false;
+  el.confirmLevelUp.textContent = pending ? "Concluir evolução" : "Sortear benefício";
+  el.levelUpContent.innerHTML = `
+    <div class="level-up-route">
+      <strong>Nível ${currentLevel}</strong>
+      <span aria-hidden="true">→</span>
+      <strong>Nível ${targetLevel}</strong>
+    </div>
+    <div class="detail-list level-up-requirements">
+      ${renderDetailRow("XP total", `${numberValue(state.current.experience, 0).toLocaleString("pt-BR")} / ${requirement.xp.toLocaleString("pt-BR")}`)}
+      ${renderDetailRow("Materiais", requirement.material)}
+      ${renderDetailRow("Custo", formatCurrency(cost))}
+      ${renderDetailRow("Tempo conectado", requirement.time)}
+      ${renderDetailRow("Estação", "Estação de Evolução funcional")}
+    </div>
+    ${pending ? `
+      <section class="level-up-result">
+        <span class="ability-source">Resultado 1d6: ${pending.roll}</span>
+        <h3>${escapeHtml(pending.benefit.name)}</h3>
+        <p>${escapeHtml(pending.benefit.effect)}</p>
+        ${choiceOptions.length ? `
+          <label>
+            Escolha necessária
+            <select id="levelUpChoiceSelect">
+              ${choiceOptions.map((option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`).join("")}
+            </select>
+          </label>
+        ` : ""}
+      </section>
+    ` : `
+      <div class="level-up-confirmations">
+        <label><input id="levelUpStationConfirmed" type="checkbox" /> Estação funcional disponível</label>
+        <label><input id="levelUpMaterialConfirmed" type="checkbox" /> Materiais entregues e consumidos</label>
+      </div>
+      <p class="inventory-note">O custo em Luzentis será debitado automaticamente. O resultado do benefício ficará registrado na ficha.</p>
+    `}
+  `;
+}
+
+function openLevelUpDialog() {
+  readForm();
+  state.pendingLevelUp = null;
+  renderLevelUpDialog();
+  el.levelUpModal.hidden = false;
+  document.body.classList.add("modal-open");
+}
+
+function closeLevelUpDialog() {
+  state.pendingLevelUp = null;
+  el.levelUpModal.hidden = true;
+  document.body.classList.remove("modal-open");
+}
+
+function handleLevelUpSubmit(event) {
+  event.preventDefault();
+  const currentLevel = clamp(numberValue(state.current.level, 1), 1, 10);
+  const targetLevel = currentLevel + 1;
+  const requirement = LEVEL_UP_REQUIREMENTS[targetLevel];
+  if (!requirement) return;
+  const cost = 500 * targetLevel;
+
+  if (!state.pendingLevelUp) {
+    if (numberValue(state.current.experience, 0) < requirement.xp) {
+      showToast(`Faltam ${(requirement.xp - numberValue(state.current.experience, 0)).toLocaleString("pt-BR")} XP para o nível ${targetLevel}.`, "tech-error");
+      return;
+    }
+    if (numberValue(state.current.currency, 0) < cost) {
+      showToast(`São necessários ${formatCurrency(cost)} para a evolução.`, "tech-error");
+      return;
+    }
+    if (!document.querySelector("#levelUpStationConfirmed")?.checked || !document.querySelector("#levelUpMaterialConfirmed")?.checked) {
+      showToast("Confirme a estação e o consumo dos materiais.", "tech-error");
+      return;
+    }
+    const roll = Math.floor(Math.random() * 6) + 1;
+    state.pendingLevelUp = {
+      targetLevel,
+      roll,
+      benefit: LEVEL_UP_BENEFITS[targetLevel][roll - 1],
+    };
+    renderLevelUpDialog();
+    return;
+  }
+
+  if (numberValue(state.current.currency, 0) < cost || numberValue(state.current.experience, 0) < requirement.xp) {
+    state.pendingLevelUp = null;
+    renderLevelUpDialog();
+    showToast("Os requisitos da evolução mudaram. Confira novamente.", "tech-error");
+    return;
+  }
+
+  const pending = state.pendingLevelUp;
+  const choice = document.querySelector("#levelUpChoiceSelect")?.value || "";
+  if (pending.benefit.choice && !choice) {
+    showToast("Faça a escolha do benefício antes de concluir.", "tech-error");
+    return;
+  }
+
+  applyLevelUpBenefit(pending.benefit, choice);
+  state.current.currency = Math.max(0, numberValue(state.current.currency, 0) - cost);
+  state.current.level = pending.targetLevel;
+  state.current.evolutionHistory = [
+    ...(state.current.evolutionHistory || []),
+    {
+      level: pending.targetLevel,
+      roll: pending.roll,
+      benefit: pending.benefit.name,
+      choice,
+      material: requirement.material,
+      cost,
+      completedAt: new Date().toISOString(),
+    },
+  ];
+  state.current.knownAbilities = [
+    ...(state.current.knownAbilities || []),
+    normalizeKnownAbility({
+      id: `evolucao-${pending.targetLevel}-${Date.now()}`,
+      name: pending.benefit.name,
+      source: "Evolução",
+      effect: `${pending.benefit.effect}${choice ? ` Escolha: ${choice}.` : ""}`,
+      meta: `Nível ${pending.targetLevel} · resultado ${pending.roll}`,
+      passiveEffects: pending.benefit.passiveEffects || [],
+    }),
+  ];
+  const roll = pending.roll;
+  const level = pending.targetLevel;
+  closeLevelUpDialog();
+  persistCurrentCharacterSilently();
+  renderForm();
+  pushDiceLog({
+    label: `Evolução para o nível ${level}`,
+    count: 1,
+    sides: 6,
+    bonus: 0,
+    rolls: [roll],
+    total: roll,
+    formula: `1d6 · ${pending.benefit.name}`,
+  });
+  showToast(`Nível ${level} alcançado: ${pending.benefit.name}.`);
+}
+
+function applyLevelUpBenefit(benefit, choice = "") {
+  if (benefit.trainedSkill && choice) {
+    state.current.skillTraining = { ...(state.current.skillTraining || {}), [choice]: "trained" };
+    state.current.bonusTrainedSkills = Math.max(0, numberValue(state.current.bonusTrainedSkills, 0)) + 1;
+  }
+  let pvBonus = Math.max(0, numberValue(benefit.permanentPvBonus, 0));
+  if (benefit.permanentPvRoll) pvBonus += Math.floor(Math.random() * benefit.permanentPvRoll) + 1;
+  if (pvBonus) {
+    state.current.permanentPvBonus = Math.max(0, numberValue(state.current.permanentPvBonus, 0)) + pvBonus;
+    state.current.pvCurrent = Math.max(0, numberValue(state.current.pvCurrent, 0)) + pvBonus;
+  }
+  if (benefit.stressFloor) {
+    state.current.stressFloor = clamp(
+      Math.max(numberValue(state.current.stressFloor, 0), benefit.stressFloor),
+      0,
+      STRESS_MAX
+    );
+    state.current.stress = Math.max(numberValue(state.current.stress, 0), state.current.stressFloor);
+  }
 }
 
 function inventoryLocationLabel(entry) {
@@ -6293,13 +7047,14 @@ function escapedPattern(value) {
 
 function supportCountsFromItem(item) {
   const counts = emptySupportCounts();
+  counts.gancho = Math.max(0, numberValue(item?.hooks, 0));
   const text = supportSearchText(item);
   if (!text) return counts;
   EXTERNAL_SUPPORT_TYPES.forEach((type) => {
     const pattern = type.keywords.map(escapedPattern).join("|");
     if (!new RegExp(`\\b(?:${pattern})\\b`).test(text)) return;
     const numbered = text.match(new RegExp(`(\\d+)\\s*(?:${pattern})\\b`));
-    counts[type.id] = Math.max(1, numbered ? numberValue(numbered[1], 1) : 1);
+    counts[type.id] = Math.max(counts[type.id], numbered ? numberValue(numbered[1], 1) : 1);
   });
   return counts;
 }
@@ -6423,6 +7178,46 @@ function attachEntryToExternalSupport(entry) {
   entry.supportSlot = target.id;
   renderSummary();
   showToast(`${item.name} preso em ${target.singular.toLowerCase()}.`);
+}
+
+function moveInventoryItemToExternalSupport(uid, supportTypeId) {
+  const entry = getInventoryEntry(uid);
+  const item = findMarketItem(entry?.itemId);
+  const supportType = externalSupportType(supportTypeId);
+  if (!entry || !item || !supportType) return;
+  if (entry.supportSlot === supportTypeId) {
+    showToast(`${item.name} já está em ${supportType.singular.toLowerCase()}.`);
+    return;
+  }
+  if (entry.cubeUid || entry.inCube) {
+    showToast("Tire o item do cubo antes de prendê-lo em um suporte.", "tech-error");
+    return;
+  }
+  if (!supportTypesForEntry(entry).some((type) => type.id === supportTypeId)) {
+    showToast(`${item.name} não é compatível com ${supportType.label.toLowerCase()}.`, "tech-error");
+    return;
+  }
+  const supportState = externalSupportState();
+  const targetState = supportState.types.find((type) => type.id === supportTypeId);
+  if (!targetState || targetState.free <= 0) {
+    showToast(`Não há espaço livre em ${supportType.label.toLowerCase()}.`, "tech-error");
+    return;
+  }
+  const locationKinds = {
+    gancho: LOCATION_KINDS.HOOK,
+    coldre: LOCATION_KINDS.HOLSTER,
+    bandoleira: LOCATION_KINDS.BANDOLIER,
+  };
+  try {
+    const domain = domainCharacterFromLegacy();
+    domain.moveEntityTo(uid, { kind: locationKinds[supportTypeId] });
+    syncDomainCharacterToLegacy(domain);
+    persistCurrentCharacterSilently();
+    renderSummary();
+    showToast(`${item.name} preso em ${supportType.singular.toLowerCase()}.`);
+  } catch (error) {
+    showToast(error.message || "Não foi possível mover o item.", "tech-error");
+  }
 }
 
 function cubeContainedEntries(cubeUid) {
@@ -6677,6 +7472,15 @@ function modifierChipEntries() {
   return (state.current.knownAbilities || []).filter((ability) => ability.source === "Chip modificador" && ability.installed !== false);
 }
 
+function modifierChipSlotCost(entry) {
+  const explicit = numberValue(entry?.modifierSlots ?? entry?.slots, NaN);
+  if (Number.isFinite(explicit)) return Math.max(1, explicit);
+  const official = modifierChipData.find((chip) =>
+    chip.id === entry?.id || normalizeSearch(chip.name) === normalizeSearch(entry?.name)
+  );
+  return Math.max(1, numberValue(official?.slots, 1));
+}
+
 function cosmicSpellEntries({ abilities = state.current.knownAbilities } = {}) {
   return (abilities || []).filter((ability) => ability.source === "Cosmos");
 }
@@ -6768,7 +7572,7 @@ function modifierSlotState({ weaponUid = state.current.equippedWeaponUid, armorU
     name: entry.item?.name || "Nenhuma",
   }));
   const total = equipped.reduce((sum, entry) => sum + entry.mods, 0);
-  const used = modifierChipEntries().length;
+  const used = modifierChipEntries().reduce((sum, ability) => sum + modifierChipSlotCost(ability), 0);
   return {
     total,
     used,
@@ -6781,9 +7585,9 @@ function modifierSlotState({ weaponUid = state.current.equippedWeaponUid, armorU
   };
 }
 
-function canAddModifierChip() {
+function canAddModifierChip(requiredSlots = 1) {
   const slots = modifierSlotState();
-  return slots.free > 0;
+  return slots.free >= Math.max(1, numberValue(requiredSlots, 1));
 }
 
 function canUseModifierSlotLayout(nextSlots) {
@@ -6847,6 +7651,7 @@ function libraryMeta(item) {
     item.cost ? `Custo ${item.cost} Cosmos` : "",
     item.category === "cosmos" ? "Ocupa 1 espaço de magia" : "",
     item.rank ? `Rank ${item.rank}` : "",
+    item.category === "chip-mod" ? `${Math.max(1, numberValue(item.slots, 1))} slot${numberValue(item.slots, 1) === 1 ? "" : "s"}` : "",
     item.duration ? `Duração ${item.duration}` : "",
     item.context || "",
     item.focus || "",
@@ -6918,6 +7723,25 @@ function raceEffectiveBonus(race, racialChoice) {
   return bonus;
 }
 
+function raceMechanicalBenefitSummary(race) {
+  const benefits = [];
+  if (race.extraTrainedSkills) benefits.push(`${formatMod(race.extraTrainedSkills)} perícia treinada`);
+  if (race.pvBonus) benefits.push(`${formatMod(race.pvBonus)} PV máximo`);
+  if (race.cosmos) benefits.push(`${formatMod(race.cosmos)} Cosmos máximo`);
+  if (race.movement) benefits.push(`${formatMod(race.movement)} m de movimento`);
+  if (race.cubeBonus) benefits.push(`${formatMod(race.cubeBonus)} cubos`);
+  return benefits.length ? benefits.join(" · ") : "Atributo escolhido e traços situacionais";
+}
+
+function raceTraitNameSummary(text) {
+  const value = String(text || "").trim();
+  if (!value) return "—";
+  const names = [...value.matchAll(/(?:^|\.\s+)([^.:]+):/g)]
+    .map((match) => match[1].trim())
+    .filter(Boolean);
+  return names.length ? names.join(" · ") : value;
+}
+
 function attributeModifier(value) {
   return Math.floor((numberValue(value, ATTRIBUTE_BASE) - ATTRIBUTE_MOD_BASE) / 2);
 }
@@ -6927,16 +7751,25 @@ function parsePassiveNumber(value) {
 }
 
 function passiveTextPayload(entry = {}) {
-  return [entry.name, entry.effect, entry.summary, entry.meta, ...(entry.tags || [])].filter(Boolean).join(" ");
+  return [
+    entry.name,
+    entry.effect,
+    entry.summary,
+    entry.meta,
+    entry.activation,
+    entry.installation,
+    entry.failure,
+    ...(entry.tags || []),
+  ].filter(Boolean).join(" ");
 }
 
 function isConditionalPassiveText(value) {
   const text = normalizeSearch(value);
-  return /\b(1x|primeiro|enquanto|quando|apos|ao chegar|ao conseguir|ao usar|ao trocar|ao destruir|se mover|contra|alvo|inimig|aliad|por descanso|por dia|por combate|por cena|ate \d|para armaduras|para detectar|em areas|em sombras)\b/.test(text);
+  return /\b(1x|primeiro|uma jogada|proximo teste|proxima jogada|enquanto|quando|apos|ao chegar|ao conseguir|ao usar|ao trocar|ao destruir|se mover|contra|alvo|inimig|aliad|por descanso|por dia|por combate|por cena|ate \d|para armaduras|para detectar|em areas|em sombras)\b/.test(text);
 }
 
 function passiveEffectKey(effect) {
-  return [effect.target, effect.key || "", effect.value, effect.conditional ? "c" : "p"].join(":");
+  return [effect.target, effect.key || "", effect.scope || "", effect.value, effect.conditional ? "c" : "p"].join(":");
 }
 
 function normalizePassiveEffects(effects = []) {
@@ -6945,6 +7778,7 @@ function normalizePassiveEffects(effects = []) {
     .map((effect) => ({
       target: effect.target || "note",
       key: effect.key || "",
+      scope: effect.scope || "",
       value: numberValue(effect.value, 0),
       label: effect.label || "Passivo",
       conditional: Boolean(effect.conditional),
@@ -6963,7 +7797,8 @@ function inferModifierChipPassiveEffects(entry = {}) {
   const raw = passiveTextPayload(entry);
   const text = normalizeSearch(raw).replace(/[−–—]/g, "-");
   const effects = [];
-  const defaultConditional = isConditionalPassiveText(raw);
+  const activation = normalizeSearch(entry.activation || "");
+  const defaultConditional = isConditionalPassiveText(raw) || Boolean(activation && !activation.includes("passiv"));
 
   for (const match of text.matchAll(/([+-]\d+(?:[,.]\d+)?)\s*(for|ref|con|men|pre|int|esp)\b/g)) {
     const attr = (PASSIVE_ATTRIBUTE_ALIASES[match[2].toUpperCase()] || match[2].toUpperCase());
@@ -7031,6 +7866,7 @@ function inferModifierChipPassiveEffects(entry = {}) {
   addPassiveSkillEffects(effects, text, raw, defaultConditional);
   addPassiveProtectionEffects(effects, text, defaultConditional);
   addPassiveAttackEffects(effects, text, defaultConditional);
+  addPassiveDamageEffects(effects, text, defaultConditional);
 
   return effects;
 }
@@ -7079,13 +7915,37 @@ function addPassiveProtectionEffects(effects, text, defaultConditional) {
 
 function addPassiveAttackEffects(effects, text, defaultConditional) {
   for (const match of text.matchAll(/([+-]\d+(?:[,.]\d+)?)\s*(?:em\s*)?(?:jogadas?\s*de\s*)?ataques?\b/g)) {
+    const nearby = text.slice(Math.max(0, match.index - 30), match.index + match[0].length + 45);
     addPassiveEffect(effects, {
       target: "attack",
+      scope: /\b(corpo a corpo|melee)\b/.test(nearby) ? "melee" : "",
       value: parsePassiveNumber(match[1]),
       label: `Ataques ${formatMod(parsePassiveNumber(match[1]))}`,
       conditional: defaultConditional,
     });
   }
+}
+
+function addPassiveDamageEffects(effects, text, defaultConditional) {
+  const patterns = [
+    /([+-]\d+(?:[,.]\d+)?)\s*(?:em\s*)?jogadas?\s*de\s*dano\b/g,
+    /(?:ataques?|armas?)\s+(?:causam?|recebem?)\s*([+-]\d+(?:[,.]\d+)?)\s*(?:de\s*)?dano\b/g,
+    /([+-]\d+(?:[,.]\d+)?)\s*(?:de\s*)?dano\s+(?:causado|com armas?)\b/g,
+  ];
+  patterns.forEach((pattern) => {
+    for (const match of text.matchAll(pattern)) {
+      const nearby = text.slice(Math.max(0, match.index - 35), match.index + match[0].length + 45);
+      if (/\b(sofrer|recebido|recebe|reduz|resistencia)\b/.test(nearby)) continue;
+      const value = parsePassiveNumber(match[1]);
+      addPassiveEffect(effects, {
+        target: "damage",
+        scope: /\b(corpo a corpo|melee|desarmad)\b/.test(nearby) ? "melee" : "",
+        value,
+        label: `Dano ${formatMod(value)}`,
+        conditional: defaultConditional,
+      });
+    }
+  });
 }
 
 function skillNameVariants(name) {
@@ -7114,6 +7974,20 @@ function activeModifierPassiveEffects({ includeConditional = false } = {}) {
     .filter((effect) => includeConditional || !effect.conditional);
 }
 
+function activeEvolutionPassiveEffects({ includeConditional = false } = {}) {
+  return (state.current.knownAbilities || [])
+    .filter((ability) => ability.source === "Evolução")
+    .flatMap((ability) => normalizePassiveEffects(ability.passiveEffects || []))
+    .filter((effect) => includeConditional || !effect.conditional);
+}
+
+function activeCharacterPassiveEffects({ includeConditional = false } = {}) {
+  return [
+    ...activeModifierPassiveEffects({ includeConditional }),
+    ...activeEvolutionPassiveEffects({ includeConditional }),
+  ];
+}
+
 function modifierPassiveTotals({ includeConditional = false } = {}) {
   const totals = {
     attributes: ATTRIBUTES.reduce((acc, attr) => ({ ...acc, [attr]: 0 }), {}),
@@ -7126,13 +8000,14 @@ function modifierPassiveTotals({ includeConditional = false } = {}) {
     cosmosMax: 0,
     cosmosPerLevel: 0,
     attack: 0,
+    damage: 0,
   };
 
-  activeModifierPassiveEffects({ includeConditional }).forEach((effect) => {
+  activeCharacterPassiveEffects({ includeConditional }).forEach((effect) => {
     if (effect.target === "attribute" && ATTRIBUTES.includes(effect.key)) totals.attributes[effect.key] += effect.value;
     else if (effect.target === "skill") totals.skills[effect.key] = (totals.skills[effect.key] || 0) + effect.value;
     else if (effect.target === "protection") totals.protections[effect.key] = (totals.protections[effect.key] || 0) + effect.value;
-    else if (effect.target in totals) totals[effect.target] += effect.value;
+    else if (effect.target in totals && !effect.scope) totals[effect.target] += effect.value;
   });
 
   return totals;
@@ -7159,8 +8034,24 @@ function passiveProtectionBonus(name) {
   return match ? match[1] : 0;
 }
 
-function passiveAttackBonus() {
-  return modifierPassiveTotals().attack || 0;
+function passiveEffectMatchesWeaponScope(effect, weapon, group = classifyWeapon(weapon)) {
+  if (!effect.scope) return true;
+  if (effect.scope === "melee") return ["blade", "unarmed", "polearm", "blunt", "axe"].includes(group.key);
+  return normalizeSearch([weapon?.type, group?.key, group?.label].filter(Boolean).join(" ")).includes(normalizeSearch(effect.scope));
+}
+
+function passiveAttackBonus(weapon, group = classifyWeapon(weapon)) {
+  const scoped = activeCharacterPassiveEffects()
+    .filter((effect) => effect.target === "attack" && effect.scope && passiveEffectMatchesWeaponScope(effect, weapon, group))
+    .reduce((sum, effect) => sum + effect.value, 0);
+  return (modifierPassiveTotals().attack || 0) + scoped;
+}
+
+function passiveDamageBonus(weapon, group = classifyWeapon(weapon)) {
+  const scoped = activeCharacterPassiveEffects()
+    .filter((effect) => effect.target === "damage" && effect.scope && passiveEffectMatchesWeaponScope(effect, weapon, group))
+    .reduce((sum, effect) => sum + effect.value, 0);
+  return (modifierPassiveTotals().damage || 0) + scoped;
 }
 
 function formatPassiveEffectSummary(effects, { includeConditional = false, empty = "Nenhum" } = {}) {
@@ -7184,6 +8075,7 @@ function normalizeKnownAbility(ability) {
   const normalized = { ...ability };
   if (normalized.source === "Chip modificador") {
     normalized.passiveEffects = abilityPassiveEffects(normalized);
+    normalized.modifierSlots = modifierChipSlotCost(normalized);
     normalized.installed = normalized.installed !== false;
   } else {
     normalized.passiveEffects = normalizePassiveEffects(normalized.passiveEffects);
@@ -7210,6 +8102,11 @@ function normalizeCharacter(character) {
     racialChoice: defaultRacialChoice(race, character.racialChoice),
     attributes,
     level: numberValue(character.level, 1),
+    experience: Math.max(0, numberValue(character.experience, 0)),
+    evolutionHistory: Array.isArray(character.evolutionHistory) ? character.evolutionHistory : [],
+    permanentPvBonus: Math.max(0, numberValue(character.permanentPvBonus, 0)),
+    stressFloor: clamp(numberValue(character.stressFloor, 0), 0, STRESS_MAX),
+    bonusTrainedSkills: Math.max(0, numberValue(character.bonusTrainedSkills, 0)),
     pvCurrent: numberValue(character.pvCurrent, 0),
     cosmosCurrent: numberValue(character.cosmosCurrent, 0),
     stress: numberValue(character.stress, 0),

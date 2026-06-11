@@ -541,14 +541,38 @@ def extract_number(text: str, label: str) -> int | None:
 
 def collect_group_text(groups: list[dict], needles: tuple[str, ...]) -> str:
     values = []
+    section_labels = (
+        "ataque",
+        "habilidade",
+        "acoes de chefe",
+        "reacoes",
+        "fases",
+        "resistencia",
+        "fraqueza",
+        "sentido",
+        "moral",
+        "recurso",
+        "loot",
+        "coleta",
+        "uso em campanha",
+        "solucoes",
+        "consequencias",
+        "condicoes",
+    )
     for group in groups:
         normalized = slug(group["label"])
         if any(slug(needle) in normalized for needle in needles):
             values.extend(group["items"])
         else:
+            collecting = False
             for item in group["items"]:
                 item_normalized = slug(item)
                 if any(item_normalized.startswith(slug(needle)) for needle in needles):
+                    values.append(item)
+                    collecting = True
+                elif any(item_normalized.startswith(slug(label)) for label in section_labels):
+                    collecting = False
+                elif collecting:
                     values.append(item)
     return "\n".join(dict.fromkeys(values))
 

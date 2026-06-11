@@ -1,6 +1,6 @@
 {
   "name": "solaris-biblioteca",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Biblioteca local de personagens para Solaris Guerra Solar.",
   "author": "Solaris",
   "main": "electron-main.cjs",
@@ -30,7 +30,7 @@
       "sw.js",
       "HumanisVitalHUD.js",
       "official-books-data.js",
-      "official-items.js",
+      "official-book5-catalog.js",
       "src/**/*",
       "electron-main.cjs",
       "README.md",

@@ -60,7 +60,11 @@ Na biblioteca de raças, clique em qualquer card para abrir uma página interna 
 
 As bibliotecas de armas, armaduras e itens permitem comprar com os Luzentis (ℓ) da ficha. A compra debita o valor e coloca o equipamento no inventário do personagem, onde armas e armaduras podem ser equipadas e itens podem ser guardados no cubo. As bibliotecas também têm busca, filtro por tier/rank/custo/categoria conforme o tipo de conteúdo, e ordenação por tier, preço ou ordem alfabética.
 
-A biblioteca de itens é carregada de `official-items.js`, com 175 itens extraídos da aba `tabela de itens` da planilha central `Tabela Solaris V2.xlsx`. Dados de crafting ainda não foram importados para o app.
+A biblioteca de armas, armaduras, itens, materiais, cubos, chips e mods é carregada de `official-book5-catalog.js`, gerado diretamente do documento oficial `livro 5 tabelas.docx`.
+
+Itens podem ser organizados em cubos, ganchos, coldres e bandoleiras. Na tela de equipamentos, arraste um item compatível até um suporte com espaço livre. Consumíveis recebem uma etiqueta própria e são removidos automaticamente do inventário ao serem usados.
+
+O botão `Evoluir` aplica a progressão oficial do Livro 1: confere XP total, materiais, custo, tempo e Estação de Evolução; sorteia o benefício do novo nível; registra escolhas e aplica automaticamente efeitos permanentes bem definidos.
 
 Também há bibliotecas laterais de Magias cósmicas e Chips modificadores. Ao adicionar uma magia ou chip, ele aparece na página Habilidades da ficha com nome, fonte e efeito.
 
