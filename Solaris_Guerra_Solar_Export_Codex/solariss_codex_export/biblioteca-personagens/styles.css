@@ -1226,6 +1226,39 @@ textarea:focus {
   margin-top: 2px;
 }
 
+.shop-price-editor {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: end;
+  width: 100%;
+  margin-top: auto;
+}
+
+.shop-price-editor label {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+
+.shop-price-editor input {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 9px;
+}
+
+.shop-price-editor .shop-button {
+  min-height: 36px;
+  margin: 0;
+}
+
 .tag-row {
   display: flex;
   flex-wrap: wrap;
@@ -4014,6 +4047,10 @@ textarea:focus {
 
 .ability-card.compact-card.with-actions {
   --card-action-space: 44px;
+}
+
+.library-card.compact-card.with-price-editor {
+  --card-action-space: 78px;
 }
 
 .card-face {

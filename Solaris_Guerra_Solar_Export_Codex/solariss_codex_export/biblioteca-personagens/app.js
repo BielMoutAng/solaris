@@ -15,6 +15,8 @@ const ATTRIBUTE_MOD_BASE = 10;
 const STORAGE_KEY = "solaris.character.library.v1";
 const MONSTER_STORAGE_KEY = "solaris.monster.library.v1";
 const MONSTER_SESSION_STORAGE_KEY = "solaris.monster.session.v1";
+const CUSTOM_LIBRARY_STORAGE_KEY = "solaris.custom.content.library.v1";
+const SHOP_PRICE_STORAGE_KEY = "solaris.shop.price.overrides.v1";
 const PAGE_SIZE = 20;
 const LEVEL_COSMOS_BASE = { 1: 1, 2: 1, 3: 1, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2, 10: 4 };
 const STRESS_MAX = 6;
@@ -1276,6 +1278,12 @@ const libraryMap = {
   acoes: { title: "Ações possíveis", kicker: "Combate, cena e downtime", items: actionData },
 };
 
+const CUSTOM_LIBRARY_VIEWS = ["magias", "chipsMod", "mods", "armazenamento", "armas", "armaduras", "itens"];
+const emptyCustomLibraryContent = () => CUSTOM_LIBRARY_VIEWS.reduce((content, view) => {
+  content[view] = [];
+  return content;
+}, {});
+
 const emptyCharacter = () => ({
   id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
   createdAt: new Date().toISOString(),
@@ -1346,6 +1354,8 @@ const state = {
   pendingLevelUp: null,
   pendingRaceChange: null,
   pendingRacialChoiceChange: null,
+  customLibraryContent: emptyCustomLibraryContent(),
+  shopPriceOverrides: {},
   current: emptyCharacter(),
   saved: [],
 };
@@ -1431,6 +1441,8 @@ const el = {
   testDialogKicker: document.querySelector("#testDialogKicker"),
   testDialogTitle: document.querySelector("#testDialogTitle"),
   testDialogFormula: document.querySelector("#testDialogFormula"),
+  testAttributeField: document.querySelector("#testAttributeField"),
+  testAttributeSelect: document.querySelector("#testAttributeSelect"),
   testBonus: document.querySelector("#testBonus"),
   testMode: document.querySelector("#testMode"),
   equipmentWallet: document.querySelector("#equipmentWallet"),
@@ -1485,6 +1497,8 @@ function init() {
   hydrateQuickTests();
   applyManualTemplate();
   loadSaved();
+  loadCustomLibraryContent();
+  loadShopPriceOverrides();
   loadMonsterSheets();
   loadMonsterSession();
   bindEvents();
@@ -1916,6 +1930,7 @@ function bindEvents() {
   });
   el.testBonus.addEventListener("input", renderPendingTestFormula);
   el.testMode.addEventListener("change", renderPendingTestFormula);
+  el.testAttributeSelect.addEventListener("change", updatePendingTestAttribute);
 
   el.characterSearch.addEventListener("input", renderSavedList);
   el.librarySearch.addEventListener("input", () => resetLibraryPaginationAndRender());
@@ -1960,7 +1975,7 @@ function bindEvents() {
     }
     const buyButton = event.target.closest("[data-buy-id]");
     if (buyButton) {
-      buyMarketItem(buyButton.dataset.buyId);
+      buyMarketItem(buyButton.dataset.buyId, buyButton);
       return;
     }
     const learnButton = event.target.closest("[data-learn-id]");
@@ -1999,7 +2014,14 @@ function bindEvents() {
         return;
       }
       const customAction = event.target.closest("[data-custom-content-delete]");
-      if (customAction) deleteCustomContent(customAction.dataset.customContentDelete, customAction.dataset.customContentType);
+      if (customAction) {
+        deleteCustomContent(customAction.dataset.customContentDelete, customAction.dataset.customContentType);
+        return;
+      }
+      const exportAction = event.target.closest("[data-custom-content-export]");
+      if (exportAction) {
+        exportCustomContentToLibrary(exportAction.dataset.customContentExport, exportAction.dataset.customContentType);
+      }
     });
   });
 
@@ -3610,8 +3632,18 @@ function renderManualCreatedPage() {
       imageName: item.imageName,
       deleteId: item.id,
       deleteType: "item",
+      exportId: customLibraryDestination(item, "item") ? item.id : "",
+      exportType: "item",
+      exportedToLibrary: isCustomContentExported(item.id),
     })),
-    ...customAbilities.map((ability) => ({ ...ability, deleteId: ability.id, deleteType: "ability" })),
+    ...customAbilities.map((ability) => ({
+      ...ability,
+      deleteId: ability.id,
+      deleteType: "ability",
+      exportId: customLibraryDestination(ability, "ability") ? ability.id : "",
+      exportType: "ability",
+      exportedToLibrary: isCustomContentExported(ability.id),
+    })),
     ...customRecords.map((record) => ({
       name: record.name,
       source: manualRecordCategoryLabel(record.category),
@@ -3621,6 +3653,9 @@ function renderManualCreatedPage() {
       imageName: record.imageName,
       deleteId: record.id,
       deleteType: "record",
+      exportId: customLibraryDestination(record, "record") ? record.id : "",
+      exportType: "record",
+      exportedToLibrary: isCustomContentExported(record.id),
     })),
   ];
   const key = "manual:created";
@@ -3675,7 +3710,7 @@ function fieldLabelFromId(value) {
 function renderAbilityCard(entry) {
   const passiveSummary = formatPassiveEffectSummary(entry.passiveEffects, { includeConditional: true, empty: "" });
   const knownAbility = entry.knownAbility === true;
-  const hasActions = Boolean(entry.deleteId || knownAbility || entry.professionRemovable);
+  const hasActions = Boolean(entry.deleteId || entry.exportId || knownAbility || entry.professionRemovable);
   return `
     <article class="inventory-card ability-card compact-card ${hasActions ? "with-actions" : ""} ${entry.imageDataUrl ? "with-image" : ""}" tabindex="0">
       ${renderCardImage(entry)}
@@ -3688,6 +3723,7 @@ function renderAbilityCard(entry) {
         <div class="inventory-actions">
           ${entry.professionRemovable ? '<button class="mini-button danger-mini-button" type="button" data-profession-action="remove">Remover chip</button>' : ""}
           ${knownAbility ? renderKnownAbilityActions(entry) : ""}
+          ${entry.exportId ? `<button class="mini-button" type="button" data-custom-content-export="${escapeHtml(entry.exportId)}" data-custom-content-type="${escapeHtml(entry.exportType)}">${entry.exportedToLibrary ? "Atualizar biblioteca" : "Enviar à biblioteca"}</button>` : ""}
           ${entry.deleteId ? `<button class="mini-button danger-mini-button" type="button" data-custom-content-delete="${escapeHtml(entry.deleteId)}" data-custom-content-type="${escapeHtml(entry.deleteType || "ability")}">Excluir</button>` : ""}
         </div>
       ` : ""}
@@ -3867,10 +3903,22 @@ function renderInventoryCards(entries, options = {}) {
   `;
 }
 
-function buyMarketItem(itemId) {
+function buyMarketItem(itemId, trigger = null) {
   readForm();
-  const item = findMarketItem(itemId);
+  let item = findMarketItem(itemId);
   if (!item) return;
+  if (item.priceEditable) {
+    const priceInput = trigger?.closest(".library-card")?.querySelector("[data-shop-price-input]");
+    if (!priceInput || priceInput.value === "") {
+      showToast("Defina o preço deste item antes de comprar.", "tech-error");
+      priceInput?.focus();
+      return;
+    }
+    const customPrice = Math.max(0, numberValue(priceInput.value, 0));
+    state.shopPriceOverrides[itemId] = customPrice;
+    persistShopPriceOverrides();
+    item = { ...item, price: customPrice };
+  }
   if (!Number.isFinite(item.price)) {
     showToast("Este item não tem preço definido.");
     return;
@@ -4006,24 +4054,62 @@ function defaultTestModeFor(kind, name) {
   return "normal";
 }
 
-function openTestDialog({ kind = "Teste", name = "Rolagem", attr = "FOR", modifier = null, mode = "normal" } = {}) {
+function openTestDialog({
+  kind = "Teste",
+  name = "Rolagem",
+  attr = "FOR",
+  modifier = null,
+  modifierBonus = 0,
+  selectableAttributes = [],
+  mode = "normal",
+} = {}) {
   readForm();
   const totals = totalAttributes();
   const passiveBonus = kind === "Perícia" ? passiveSkillBonus(name) : kind === "Proteção" ? passiveProtectionBonus(name) : 0;
-  const testModifier = modifier ?? (attributeModifier(totals[attr] || ATTRIBUTE_BASE) + passiveBonus);
-  state.pendingTest = { kind, name, attr, modifier: testModifier, diceType: kind === "Ataque" ? "d20" : "d6-pool" };
+  const attributeOptions = selectableAttributes.filter((attribute) => ATTRIBUTES.includes(attribute));
+  const fixedModifierBonus = numberValue(modifierBonus, 0) + passiveBonus;
+  const testModifier = modifier ?? (attributeModifier(totals[attr] || ATTRIBUTE_BASE) + fixedModifierBonus);
+  state.pendingTest = {
+    kind,
+    name,
+    attr,
+    modifier: testModifier,
+    fixedModifier: modifier,
+    modifierBonus: fixedModifierBonus,
+    selectableAttributes: attributeOptions,
+    diceType: kind === "Ataque" ? "d20" : "d6-pool",
+  };
   el.testDialogKicker.textContent = kind;
   el.testDialogTitle.textContent = `${name} (${attr})`;
+  el.testAttributeField.hidden = !attributeOptions.length;
+  el.testAttributeSelect.innerHTML = attributeOptions.map((attribute) => {
+    const attributeMod = attributeModifier(totals[attribute] || ATTRIBUTE_BASE);
+    return `<option value="${attribute}">${attribute} (${formatMod(attributeMod)})</option>`;
+  }).join("");
+  if (attributeOptions.length) el.testAttributeSelect.value = attributeOptions.includes(attr) ? attr : attributeOptions[0];
   el.testBonus.value = "0";
   el.testMode.value = mode;
+  updatePendingTestAttribute();
   renderPendingTestFormula();
   el.testDialog.hidden = false;
-  el.testBonus.focus();
+  (attributeOptions.length ? el.testAttributeSelect : el.testBonus).focus();
 }
 
 function closeTestDialog() {
   el.testDialog.hidden = true;
+  el.testAttributeField.hidden = true;
   state.pendingTest = null;
+}
+
+function updatePendingTestAttribute() {
+  if (!state.pendingTest?.selectableAttributes?.length) return;
+  const attr = el.testAttributeSelect.value;
+  if (!state.pendingTest.selectableAttributes.includes(attr)) return;
+  const totals = totalAttributes();
+  state.pendingTest.attr = attr;
+  state.pendingTest.modifier = attributeModifier(totals[attr] || ATTRIBUTE_BASE) + state.pendingTest.modifierBonus;
+  el.testDialogTitle.textContent = `${state.pendingTest.name} (${attr})`;
+  renderPendingTestFormula();
 }
 
 function renderPendingTestFormula() {
@@ -4070,6 +4156,7 @@ function rollCharacterTest(test, situationalBonus = 0, mode = "normal") {
     sides: 6,
     bonus: situationalBonus,
     modifier: test.modifier,
+    attribute: test.attr,
     rolls: chosen.rolls,
     alternateRolls: pools.length > 1 ? pools.map((pool) => pool.rolls) : [],
     mode,
@@ -4102,6 +4189,7 @@ function rollD20CharacterTest(test, situationalBonus = 0, mode = "normal") {
     sides: 20,
     bonus: situationalBonus,
     modifier: test.modifier,
+    attribute: test.attr,
     rolls: chosen.rolls,
     alternateRolls: pools.length > 1 ? pools.map((pool) => pool.rolls) : [],
     mode,
@@ -4213,8 +4301,13 @@ function handleEquipmentRoll(kind) {
   const group = classifyWeapon(weapon);
   if (kind === "attack") {
     const attr = weaponAttackAttribute(group);
-    const modifier = attributeModifier(totalAttributes()[attr]) + passiveAttackBonus(weapon, group);
-    openTestDialog({ kind: "Ataque", name: weapon.name, attr, modifier });
+    openTestDialog({
+      kind: "Ataque",
+      name: weapon.name,
+      attr,
+      modifierBonus: passiveAttackBonus(weapon, group),
+      selectableAttributes: ATTRIBUTES,
+    });
     return;
   }
   if (kind === "damage") rollWeaponDamage(weapon);
@@ -4511,13 +4604,21 @@ function createManualEntry(event) {
   state.current.knownAbilities.unshift({
     id,
     name: manual.name,
+    manualType: manual.type,
     source: manual.type === "ability" ? manual.tier || "Manual" : sourceMap[manual.type] || "Manual",
     effect: manual.effect || "Sem efeito registrado.",
     meta: buildManualAbilityMeta(manual.type, manual),
+    tier: manual.tier,
+    subtype: manual.subtype,
+    price: manual.price,
+    weight: manual.weight,
+    power: manual.power,
     passiveEffects: manual.type === "chip-mod" ? inferModifierChipPassiveEffects({ name: manual.name, effect: manual.effect, tags }) : [],
     modifierSlots: manual.type === "chip-mod" ? 1 : 0,
     installed: manual.type === "chip-mod",
     tags,
+    imageDataUrl: manual.imageDataUrl,
+    imageName: manual.imageName,
     custom: true,
   });
   event.currentTarget.reset();
@@ -4851,7 +4952,9 @@ function renderSavedList() {
 
 function renderLibrary() {
   const library = libraryMap[state.activeLibrary];
-  const libraryItems = state.activeLibrary === "monstros" ? getMonsterLibraryItems() : library.items;
+  const libraryItems = state.activeLibrary === "monstros"
+    ? getMonsterLibraryItems()
+    : [...library.items, ...customLibraryItems(state.activeLibrary)].map(resolveShopPrice);
   const selectedGroup = syncLibraryFilterOptions(libraryItems, state.activeLibrary);
   const sortMode = el.librarySort.value || "default";
   const query = normalizeSearch(el.librarySearch.value.trim());
@@ -4902,7 +5005,7 @@ function renderLibrary() {
         : library.learn === "cosmos" ? "Adicionar magia" : "Adicionar chip";
     const cardOpen = isRaceLibrary
       ? `<button class="library-card race-card compact-card" type="button" data-race-id="${escapeHtml(item.id)}" aria-label="Abrir página da raça ${escapeHtml(item.name)}">`
-      : `<article class="library-card compact-card ${isMonsterLibrary ? "with-actions monster-library-card" : ""} ${item.imageDataUrl ? "with-image" : ""}" tabindex="0">`;
+      : `<article class="library-card compact-card ${isMonsterLibrary ? "with-actions monster-library-card" : ""} ${item.priceEditable ? "with-price-editor" : ""} ${item.imageDataUrl ? "with-image" : ""}" tabindex="0">`;
     const cardClose = isRaceLibrary ? "</button>" : "</article>";
     return `
       ${cardOpen}
@@ -4912,11 +5015,7 @@ function renderLibrary() {
           ${meta || bonus ? `<p class="card-meta-line">${escapeHtml(meta || bonus)}</p>` : ""}
           ${showsInlineSummary ? `<p class="library-inline-summary">${escapeHtml(item.summary)}</p>` : ""}
         </div>
-        ${isMarketLibrary
-          ? Number.isFinite(item.price)
-            ? `<button class="primary-button shop-button" type="button" data-buy-id="${escapeHtml(item.id)}">${item.price === 0 ? "Adicionar" : "Comprar"}</button>`
-            : '<button class="primary-button shop-button" type="button" disabled>Preço narrativo</button>'
-          : ""}
+        ${isMarketLibrary ? renderLibraryPurchaseControls(item) : ""}
         ${isLearnLibrary ? `<button class="primary-button shop-button" type="button" data-learn-id="${escapeHtml(item.id)}" ${learnDisabled ? "disabled" : ""} ${slotBlocked ? `data-slot-blocked="${slotBlocked}" aria-disabled="true"` : ""}>${learnLabel}</button>` : ""}
         ${isMonsterLibrary ? `
           <div class="inventory-actions monster-card-actions">
@@ -4936,6 +5035,24 @@ function renderLibrary() {
       ${cardClose}
     `;
   }).join("");
+}
+
+function renderLibraryPurchaseControls(item) {
+  if (!item.priceEditable) {
+    return Number.isFinite(item.price)
+      ? `<button class="primary-button shop-button" type="button" data-buy-id="${escapeHtml(item.id)}">${item.price === 0 ? "Adicionar" : "Comprar"}</button>`
+      : '<button class="primary-button shop-button" type="button" disabled>Preço narrativo</button>';
+  }
+  const priceValue = Number.isFinite(item.price) ? item.price : "";
+  return `
+    <div class="shop-price-editor">
+      <label>
+        Preço da loja
+        <input type="number" min="0" step="1" value="${escapeHtml(priceValue)}" data-shop-price-input="${escapeHtml(item.id)}" placeholder="Definir" />
+      </label>
+      <button class="primary-button shop-button" type="button" data-buy-id="${escapeHtml(item.id)}">${Number.isFinite(item.price) && item.price === 0 ? "Adicionar" : "Comprar"}</button>
+    </div>
+  `;
 }
 
 function paginateItems(items, page, pageSize = PAGE_SIZE) {
@@ -5056,6 +5173,119 @@ function removeInstalledMod(modId) {
   persistCurrentCharacterSilently();
   renderForm();
   showToast(returnToInventory ? "Mod removido e devolvido ao inventário." : "Mod removido e excluído.");
+}
+
+function findCustomContent(id, type) {
+  if (type === "item") return (state.current.customItems || []).find((entry) => entry.id === id);
+  if (type === "ability") return (state.current.knownAbilities || []).find((entry) => entry.id === id && entry.custom);
+  if (type === "record") return (state.current.customRecords || []).find((entry) => entry.id === id);
+  return null;
+}
+
+function customLibraryDestination(record, type) {
+  if (!record) return "";
+  if (type === "item") {
+    return {
+      item: "itens",
+      weapon: "armas",
+      armor: "armaduras",
+      cube: "armazenamento",
+    }[record.category] || "";
+  }
+  if (type === "ability") {
+    const manualType = record.manualType || (record.source === "Cosmos" ? "cosmos" : record.source === "Chip modificador" ? "chip-mod" : "");
+    return manualType === "cosmos" ? "magias" : manualType === "chip-mod" ? "chipsMod" : "";
+  }
+  if (type === "record") {
+    if (record.category === "mod") return "mods";
+    if (record.category === "special-item") return "itens";
+    if (["cube", "vehicle", "drone", "turret", "robot"].includes(record.category)) return "armazenamento";
+  }
+  return "";
+}
+
+function isCustomContentExported(originId) {
+  return CUSTOM_LIBRARY_VIEWS.some((view) => customLibraryItems(view).some((entry) => entry.libraryOriginId === originId));
+}
+
+function exportCustomContentToLibrary(id, type) {
+  const record = findCustomContent(id, type);
+  const destination = customLibraryDestination(record, type);
+  if (!record || !destination) {
+    showToast("Este tipo de conteúdo ainda não possui uma biblioteca correspondente.", "tech-error");
+    return;
+  }
+  const libraryEntry = buildCustomLibraryEntry(record, type, destination);
+  const entries = customLibraryItems(destination);
+  const existingIndex = entries.findIndex((entry) => entry.libraryOriginId === id);
+  if (existingIndex >= 0) entries[existingIndex] = libraryEntry;
+  else entries.unshift(libraryEntry);
+  state.customLibraryContent[destination] = entries;
+  persistCustomLibraryContent();
+  renderManualCreatedPage();
+  showToast(`${record.name} ${existingIndex >= 0 ? "atualizado na" : "enviado para a"} biblioteca de ${libraryMap[destination].title.toLowerCase()}.`);
+}
+
+function buildCustomLibraryEntry(record, type, destination) {
+  const common = {
+    id: `custom-library-${dataSlug(record.name)}-${record.id}`,
+    libraryOriginId: record.id,
+    libraryCustom: true,
+    source: "Biblioteca personalizada",
+    name: record.name,
+    summary: record.summary || record.effect || formatOfficialRecordFields(record) || "Conteúdo criado manualmente.",
+    tags: uniqueTags(["personalizado", ...(record.tags || [])]),
+    imageDataUrl: record.imageDataUrl || "",
+    imageName: record.imageName || "",
+    schemaVersion: 1,
+  };
+  if (type === "item") {
+    return { ...structuredCloneSafe(record), ...common };
+  }
+  if (type === "ability") {
+    if (destination === "magias") {
+      return {
+        ...common,
+        category: "cosmos",
+        cost: Math.max(0, parseFirstNumber(record.tier || record.meta || record.power) || 1),
+        duration: record.weight || "",
+      };
+    }
+    return {
+      ...common,
+      category: "chip-mod",
+      rank: record.tier || record.subtype || "Custom",
+      slots: Math.max(1, numberValue(record.modifierSlots, 1)),
+      passiveEffects: normalizePassiveEffects(record.passiveEffects || inferModifierChipPassiveEffects(record)),
+    };
+  }
+  const baseRecord = {
+    ...common,
+    category: record.category,
+    tier: record.tier || "",
+    type: record.type || "",
+    price: Number.isFinite(record.price) ? record.price : undefined,
+    officialData: record.fields || {},
+    templateId: record.templateId || "",
+  };
+  if (destination === "armazenamento") {
+    const capacityText = Object.entries(record.fields || {})
+      .find(([key]) => /capacidade|unidades|espacos/i.test(normalizeSearch(key)))?.[1];
+    return {
+      ...baseRecord,
+      cubeKind: record.category === "cube" ? inferCubeKindFromText(`${record.name} ${record.type} ${record.summary}`) : undefined,
+      cubeCapacity: record.category === "cube" ? Math.max(1, parseFirstNumber(capacityText || record.summary) || 1) : undefined,
+      weight: record.category === "cube" ? `${CUBE_WEIGHT_KG} Kg` : "",
+    };
+  }
+  return baseRecord;
+}
+
+function inferCubeKindFromText(value) {
+  const text = normalizeSearch(value);
+  if (text.includes("especial")) return "specialized";
+  if (text.includes("carga")) return "cargo";
+  return "simple";
 }
 
 function deleteCustomContent(id, type) {
@@ -5616,6 +5846,37 @@ function loadSaved() {
 
 function persistSaved() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state.saved));
+}
+
+function loadCustomLibraryContent() {
+  try {
+    const raw = localStorage.getItem(CUSTOM_LIBRARY_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    state.customLibraryContent = CUSTOM_LIBRARY_VIEWS.reduce((content, view) => {
+      content[view] = Array.isArray(parsed?.[view]) ? parsed[view] : [];
+      return content;
+    }, {});
+  } catch {
+    state.customLibraryContent = emptyCustomLibraryContent();
+  }
+}
+
+function persistCustomLibraryContent() {
+  localStorage.setItem(CUSTOM_LIBRARY_STORAGE_KEY, JSON.stringify(state.customLibraryContent));
+}
+
+function loadShopPriceOverrides() {
+  try {
+    const raw = localStorage.getItem(SHOP_PRICE_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    state.shopPriceOverrides = parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    state.shopPriceOverrides = {};
+  }
+}
+
+function persistShopPriceOverrides() {
+  localStorage.setItem(SHOP_PRICE_STORAGE_KEY, JSON.stringify(state.shopPriceOverrides));
 }
 
 function loadMonsterSheets() {
@@ -6275,13 +6536,13 @@ function getMonsterAssetCatalog(category) {
   const customRecords = state.current.customRecords || [];
   if (category === "weapon") {
     return mergeCatalogByName(
-      weaponData,
+      [...weaponData, ...customLibraryItems("armas")],
       (state.current.customItems || []).filter((item) => item.category === "weapon")
     );
   }
   if (category === "cosmos") {
     return mergeCatalogByName(
-      cosmicSpellData,
+      [...cosmicSpellData, ...customLibraryItems("magias")],
       (state.current.knownAbilities || [])
         .filter((ability) => ability.source === "Cosmos")
         .map((ability) => ({ ...ability, summary: ability.effect }))
@@ -6289,12 +6550,12 @@ function getMonsterAssetCatalog(category) {
   }
   if (category === "mod") {
     return mergeCatalogByName(
-      equipmentModData,
+      [...equipmentModData, ...customLibraryItems("mods")],
       customRecords.filter((record) => record.category === "mod")
     );
   }
   return mergeCatalogByName(
-    modifierChipData,
+    [...modifierChipData, ...customLibraryItems("chipsMod")],
     collectAbilityEntries().map((ability, index) => ({
       ...ability,
       id: ability.id || `character-ability-${index}-${dataSlug(ability.name)}`,
@@ -6553,13 +6814,44 @@ function findProfession(id) {
   return professionData.find((profession) => profession.id === id) || professionData[0];
 }
 
+function customLibraryItems(view) {
+  return Array.isArray(state.customLibraryContent?.[view]) ? state.customLibraryContent[view] : [];
+}
+
+function resolveShopPrice(item) {
+  if (!item) return item;
+  if (Number.isFinite(item.price)) return item;
+  const override = Number(state.shopPriceOverrides?.[item.id]);
+  return {
+    ...item,
+    price: Number.isFinite(override) ? Math.max(0, override) : item.price,
+    priceEditable: true,
+  };
+}
+
 function findAbilityLibraryItem(id) {
-  return [...cosmicSpellData, ...modifierChipData].find((item) => item.id === id);
+  return [
+    ...cosmicSpellData,
+    ...modifierChipData,
+    ...customLibraryItems("magias"),
+    ...customLibraryItems("chipsMod"),
+  ].find((item) => item.id === id);
 }
 
 function findMarketItem(id) {
   const customItems = state.current?.customItems || [];
-  return [...storageMarketData, ...commonItemData, ...weaponData, ...armorData, ...customItems].find((item) => item.id === id);
+  const item = [
+    ...storageMarketData,
+    ...commonItemData,
+    ...weaponData,
+    ...armorData,
+    ...customLibraryItems("armazenamento"),
+    ...customLibraryItems("itens"),
+    ...customLibraryItems("armas"),
+    ...customLibraryItems("armaduras"),
+    ...customItems,
+  ].find((entry) => entry.id === id);
+  return resolveShopPrice(item);
 }
 
 function domainDefinitionForItem(item) {
