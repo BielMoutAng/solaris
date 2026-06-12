@@ -221,6 +221,33 @@ const protectionData = [
   { name: "JPC", attr: "MEN", attrs: ["MEN", "PRE"], summary: "JP Cósmica: use MEN contra energia, distorção e interferência; use PRE contra medo, possessão emocional e pressão espiritual." },
 ];
 
+const attributeDetailData = {
+  FOR: {
+    name: "Força",
+    summary: "Representa potência muscular, esforço físico, impacto e capacidade de mover, erguer, romper ou dominar fisicamente.",
+  },
+  REF: {
+    name: "Reflexo",
+    summary: "Representa coordenação, precisão, velocidade de reação, equilíbrio, deslocamento e controle corporal.",
+  },
+  CON: {
+    name: "Constituição",
+    summary: "Representa resistência física, saúde, vigor, tolerância a esforço, ferimentos, doenças e condições ambientais.",
+  },
+  MEN: {
+    name: "Mentalidade",
+    summary: "Representa percepção e compreensão do Cosmos, memória cósmica, intuição e resistência a interferências mentais.",
+  },
+  PRE: {
+    name: "Presença",
+    summary: "Representa espírito, força emocional, influência social, empatia, persuasão e imposição da vontade.",
+  },
+  INT: {
+    name: "Intelecto",
+    summary: "Representa conhecimento técnico, raciocínio, medicina, engenharia, biologia, tecnologia e análise material.",
+  },
+};
+
 const manualCreationTemplates = {
   item: {
     title: "Formato de item",
@@ -1220,7 +1247,7 @@ const characterCreationSteps = [
   },
   {
     title: "Perícias e ignorâncias",
-    summary: "Escolha 2 perícias treinadas livres. Humanis escolhe 1 perícia treinada adicional. O chip concede um foco profissional. O mestre pode permitir 1 ignorância para ganhar mais 1 perícia.",
+    summary: "Escolha 2 perícias treinadas livres. Humanis escolhe 1 perícia treinada adicional. O chip concede um foco profissional. Cada ignorância marcada permite escolher mais 1 perícia treinada.",
     fields: "Habilidades e notas.",
     tip: "Perícia treinada pode dar vantagem; ignorância deve ser uma fraqueza real que aparece em jogo.",
   },
@@ -1255,7 +1282,7 @@ const characterCreationChecklist = [
   "Raça, atributo racial, idioma, habilidade e fraqueza",
   "Atributos distribuídos e modificadores conferidos",
   "Chip de profissão com foco, talento, kit e penalidade",
-  "Perícias treinadas e ignorância, se o mestre permitir",
+  "Perícias treinadas e todas as ignorâncias escolhidas",
   "PV atual/máximo, CA, Cosmos, movimento, cubos e iniciativa",
   "Arma inicial Tier F e armadura inicial Tier F",
   "Kit de suprimento, kit da profissão, Luzentis iniciais e anotações",
@@ -1486,6 +1513,11 @@ const el = {
   levelUpContent: document.querySelector("#levelUpContent"),
   confirmLevelUp: document.querySelector("#confirmLevelUp"),
   closeLevelUp: document.querySelector("#closeLevelUp"),
+  universalDetailModal: document.querySelector("#universalDetailModal"),
+  universalDetailKicker: document.querySelector("#universalDetailKicker"),
+  universalDetailTitle: document.querySelector("#universalDetailTitle"),
+  universalDetailContent: document.querySelector("#universalDetailContent"),
+  closeUniversalDetail: document.querySelector("#closeUniversalDetail"),
   toast: document.querySelector("#toast"),
 };
 
@@ -1531,7 +1563,7 @@ function hydrateRacialChoice(raceId) {
 
 function hydrateAttributes() {
   el.attributeGrid.innerHTML = ATTRIBUTES.map((attr) => `
-    <article class="attribute-cell">
+    <article class="attribute-cell" data-detail-kind="attribute" data-detail-id="${attr}">
       <header>
         <strong>${attr}</strong>
         <span class="attribute-total" id="${attr}Total">+0</span>
@@ -1582,7 +1614,7 @@ function skillTrainingLimits({ excludedSkill = "" } = {}) {
     racialExtra,
     evolutionExtra,
     baseLimit,
-    limit: baseLimit + (ignorant > 0 ? 1 : 0),
+    limit: baseLimit + ignorant,
   };
 }
 
@@ -1603,7 +1635,7 @@ function renderSkillTrainingRow(skill) {
   const modifier = skillModifier(skill);
   return `
     <div class="skill-training-row">
-      <button class="quick-test-button skill-test-button" type="button" title="${escapeHtml(skill.summary)}" aria-label="${escapeHtml(`${skill.name} ${formatMod(modifier)}. ${skill.summary}`)}" data-test-roll data-test-kind="Perícia" data-test-name="${escapeHtml(skill.name)}" data-test-attr="${escapeHtml(skill.attr)}">
+      <button class="quick-test-button skill-test-button" type="button" title="${escapeHtml(skill.summary)}" aria-label="${escapeHtml(`${skill.name} ${formatMod(modifier)}. ${skill.summary}`)}" data-test-roll data-test-kind="Perícia" data-test-name="${escapeHtml(skill.name)}" data-test-attr="${escapeHtml(skill.attr)}" data-detail-kind="skill" data-detail-id="${escapeHtml(skill.name)}">
         <strong>${escapeHtml(skill.name)} <span class="skill-modifier" data-skill-modifier="${escapeHtml(skill.name)}" data-skill-attr="${escapeHtml(skill.attr)}">${formatMod(modifier)}</span></strong>
       </button>
       <div class="skill-training-checks" aria-label="Treinamento em ${escapeHtml(skill.name)}">
@@ -1630,7 +1662,7 @@ function refreshSkillTrainingModifiers(totals = totalAttributes()) {
 
 function renderQuickTestButton(kind, item) {
   return `
-    <button class="quick-test-button" type="button" data-test-roll data-test-kind="${escapeHtml(kind)}" data-test-name="${escapeHtml(item.name)}" data-test-attr="${escapeHtml(item.attr)}">
+    <button class="quick-test-button" type="button" data-test-roll data-test-kind="${escapeHtml(kind)}" data-test-name="${escapeHtml(item.name)}" data-test-attr="${escapeHtml(item.attr)}" data-detail-kind="${kind === "Proteção" ? "protection" : "skill"}" data-detail-id="${escapeHtml(item.name)}">
       <strong>${escapeHtml(item.name)}</strong>
       <span>${escapeHtml(item.attr)} - ${escapeHtml(item.summary)}</span>
     </button>
@@ -1642,14 +1674,14 @@ function renderProtectionTestButton(item) {
   if (attrs.length === 1) return renderQuickTestButton("Proteção", item);
 
   return `
-    <article class="protection-choice-card">
+    <article class="protection-choice-card" data-detail-kind="protection" data-detail-id="${escapeHtml(item.name)}">
       <div>
         <strong>${escapeHtml(item.name)}</strong>
         <span>${escapeHtml(item.summary)}</span>
       </div>
       <div class="protection-choice-actions" aria-label="Escolha o atributo da ${escapeHtml(item.name)}">
         ${attrs.map((attr) => `
-          <button class="mini-button" type="button" data-test-roll data-test-kind="Proteção" data-test-name="${escapeHtml(item.name)}" data-test-attr="${escapeHtml(attr)}">${escapeHtml(attr)}</button>
+          <button class="mini-button" type="button" data-test-roll data-test-kind="Proteção" data-test-name="${escapeHtml(item.name)}" data-test-attr="${escapeHtml(attr)}" data-detail-kind="protection" data-detail-id="${escapeHtml(item.name)}">${escapeHtml(attr)}</button>
         `).join("")}
       </div>
     </article>
@@ -1716,12 +1748,14 @@ function bindEvents() {
     const button = event.target.closest("[data-test-roll]");
     if (!button) return;
     event.preventDefault();
-    openTestDialog({
+    const testRequest = {
       kind: button.dataset.testKind,
       name: button.dataset.testName,
       attr: button.dataset.testAttr,
       mode: defaultTestModeFor(button.dataset.testKind, button.dataset.testName),
-    });
+    };
+    window.clearTimeout(testRollClickTimer);
+    testRollClickTimer = window.setTimeout(() => openTestDialog(testRequest), 240);
   });
   el.quickTestGrid.addEventListener("change", (event) => {
     if (!(event.target instanceof HTMLInputElement) || !event.target.dataset.skillTraining) return;
@@ -1732,11 +1766,6 @@ function bindEvents() {
     if (event.target.checked) {
       const previousState = state.current.skillTraining[skillName] || "";
       const training = skillTrainingLimits({ excludedSkill: skillName });
-      if (skillState === "ignorant" && training.ignorant >= 1 && previousState !== "ignorant") {
-        event.target.checked = false;
-        showToast("A criação padrão permite uma Ignorância opcional.");
-        return;
-      }
       if (skillState === "trained" && training.trained >= training.limit && previousState !== "trained") {
         event.target.checked = false;
         showToast(`Limite atual: ${training.limit} perícias treinadas${training.racialExtra ? " (Humanis +1)" : ""}.`);
@@ -1748,13 +1777,15 @@ function bindEvents() {
       state.current.skillTraining[skillName] = skillState;
     } else if (state.current.skillTraining[skillName] === skillState) {
       const training = skillTrainingLimits();
-      if (skillState === "ignorant" && training.trained > training.baseLimit) {
+      const remainingLimit = training.baseLimit + Math.max(0, training.ignorant - 1);
+      if (skillState === "ignorant" && training.trained > remainingLimit) {
         event.target.checked = true;
-        showToast("Remova a perícia treinada adicional antes de retirar a Ignorância.");
+        showToast("Remova uma perícia treinada adicional antes de retirar esta Ignorância.");
         return;
       }
       delete state.current.skillTraining[skillName];
     }
+    hydrateQuickTests();
     renderSummary();
   });
   const captureRaceChange = () => {
@@ -1879,6 +1910,10 @@ function bindEvents() {
   el.levelUpModal.addEventListener("click", (event) => {
     if (event.target instanceof Element && event.target.closest("[data-level-up-close]")) closeLevelUpDialog();
   });
+  el.closeUniversalDetail.addEventListener("click", closeUniversalDetail);
+  el.universalDetailModal.addEventListener("click", (event) => {
+    if (event.target instanceof Element && event.target.closest("[data-universal-detail-close]")) closeUniversalDetail();
+  });
   el.manualImageDropzone.addEventListener("click", () => el.manualImageInput.click());
   el.manualImageInput.addEventListener("change", (event) => {
     const file = event.target.files?.[0];
@@ -1927,6 +1962,7 @@ function bindEvents() {
     if (!el.monsterAssetsModal.hidden) closeMonsterAssets();
     if (!el.inventoryLocationModal.hidden) closeInventoryLocationDialog();
     if (!el.levelUpModal.hidden) closeLevelUpDialog();
+    if (!el.universalDetailModal.hidden) closeUniversalDetail();
   });
   el.testBonus.addEventListener("input", renderPendingTestFormula);
   el.testMode.addEventListener("change", renderPendingTestFormula);
@@ -1938,6 +1974,7 @@ function bindEvents() {
   el.librarySort.addEventListener("change", () => resetLibraryPaginationAndRender());
   document.addEventListener("click", handleCardDetailsClick);
   document.addEventListener("click", handlePaginationClick);
+  document.addEventListener("dblclick", handleUniversalDetailDoubleClick);
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeCardDetails();
   });
@@ -3317,7 +3354,7 @@ function renderInstalledModsPanel() {
       ${mods.length ? `
         <div class="ability-grid">
           ${mods.map((mod) => `
-            <article class="inventory-card ability-card compact-card with-actions">
+            <article class="inventory-card ability-card compact-card with-actions" tabindex="0" data-detail-kind="installed-mod" data-detail-id="${escapeHtml(mod.id)}" data-detail-name="${escapeHtml(mod.name || "Mod sem nome")}">
               <div class="card-face">
                 <span class="ability-source">Mod instalado</span>
                 <h4>${renderCardTitleButton(mod.name || "Mod sem nome")}</h4>
@@ -3712,7 +3749,7 @@ function renderAbilityCard(entry) {
   const knownAbility = entry.knownAbility === true;
   const hasActions = Boolean(entry.deleteId || entry.exportId || knownAbility || entry.professionRemovable);
   return `
-    <article class="inventory-card ability-card compact-card ${hasActions ? "with-actions" : ""} ${entry.imageDataUrl ? "with-image" : ""}" tabindex="0">
+    <article class="inventory-card ability-card compact-card ${hasActions ? "with-actions" : ""} ${entry.imageDataUrl ? "with-image" : ""}" tabindex="0" data-detail-kind="ability" data-detail-id="${escapeHtml(entry.id || entry.deleteId || "")}" data-detail-name="${escapeHtml(entry.name)}" data-detail-source="${escapeHtml(entry.source || "")}">
       ${renderCardImage(entry)}
       <div class="card-face">
         <span class="ability-source">${escapeHtml(entry.source || "Manual")}</span>
@@ -3740,7 +3777,7 @@ function renderAbilityCard(entry) {
 function renderKnownAbilityCard(entry) {
   const passiveSummary = formatPassiveEffectSummary(entry.passiveEffects, { includeConditional: true, empty: "" });
   return `
-    <article class="inventory-card ability-card compact-card with-actions ${entry.imageDataUrl ? "with-image" : ""}" tabindex="0">
+    <article class="inventory-card ability-card compact-card with-actions ${entry.imageDataUrl ? "with-image" : ""}" tabindex="0" data-detail-kind="ability" data-detail-id="${escapeHtml(entry.id || "")}" data-detail-name="${escapeHtml(entry.name)}" data-detail-source="${escapeHtml(entry.source || "")}">
       ${renderCardImage(entry)}
       <div class="card-face">
         <span class="ability-source">${escapeHtml(entry.source || "Manual")}</span>
@@ -3823,6 +3860,429 @@ function closeCardDetails(exceptCard = null) {
   });
 }
 
+const universalDetailFieldLabels = {
+  source: "Fonte oficial",
+  summary: "Descrição",
+  effect: "Efeito",
+  context: "Contexto",
+  tier: "Tier",
+  type: "Tipo",
+  kind: "Categoria",
+  category: "Categoria",
+  role: "Papel",
+  size: "Tamanho",
+  pv: "Pontos de Vida",
+  ca: "Classe de Armadura",
+  movement: "Movimento",
+  habitat: "Habitat",
+  behavior: "Comportamento",
+  attributes: "Atributos",
+  attacks: "Ataques",
+  abilities: "Habilidades",
+  resistances: "Resistências",
+  weaknesses: "Fraquezas",
+  senses: "Sentidos",
+  moral: "Moral",
+  resources: "Recursos coletáveis",
+  campaign: "Uso em campanha",
+  attack: "Jogada de ataque",
+  damage: "Dano",
+  range: "Alcance",
+  ammo: "Munição",
+  capacity: "Capacidade",
+  handling: "Empunhadura",
+  mods: "Espaços de mod",
+  cracks: "Rachaduras",
+  jammed: "Jammed / falha",
+  failure: "Falha",
+  legality: "Legalidade",
+  price: "Preço",
+  weight: "Peso",
+  reduction: "Redução",
+  hooks: "Ganchos",
+  interface: "Interface",
+  electronics: "Eletrônica",
+  cosmicSpellSlots: "Espaços de magia cósmica",
+  cost: "Custo",
+  duration: "Duração",
+  rank: "Rank",
+  installation: "Instalação",
+  slots: "Espaços ocupados",
+  activation: "Ativação",
+  materials: "Materiais",
+  risk: "Risco",
+  focus: "Foco",
+  talent: "Talento",
+  kit: "Kit",
+  penalty: "Penalidade",
+  bonus: "Bônus",
+  choice: "Escolha racial",
+  progression: "Progressão",
+  profile: "Perfil racial",
+  passiveEffects: "Efeitos passivos",
+  officialData: "Campos oficiais",
+  fields: "Campos oficiais",
+  details: "Texto detalhado do livro",
+  tags: "Tags",
+  inventoryState: "Estado na ficha",
+  training: "Treinamento",
+  modifier: "Modificador atual",
+  formula: "Fórmula do teste",
+  relatedSkills: "Perícias relacionadas",
+  currentValue: "Valor atual",
+  baseValue: "Valor base",
+  totalValue: "Valor total",
+  targetName: "Equipamento vinculado",
+  attr: "Atributo associado",
+};
+
+const universalDetailHiddenFields = new Set([
+  "id",
+  "name",
+  "schemaVersion",
+  "imageDataUrl",
+  "imageName",
+  "official",
+  "officialSourceId",
+  "libraryOriginId",
+  "libraryCustom",
+  "domainEntityType",
+  "deleteId",
+  "deleteType",
+  "exportId",
+  "exportType",
+  "exportedToLibrary",
+  "knownAbility",
+  "professionRemovable",
+  "custom",
+  "manualType",
+  "snapshot",
+  "priceEditable",
+  "createdAt",
+  "updatedAt",
+]);
+
+const universalDetailFieldOrder = [
+  "summary",
+  "effect",
+  "context",
+  "details",
+  "tier",
+  "rank",
+  "type",
+  "kind",
+  "role",
+  "size",
+  "pv",
+  "ca",
+  "movement",
+  "attributes",
+  "attack",
+  "damage",
+  "range",
+  "ammo",
+  "capacity",
+  "handling",
+  "habitat",
+  "behavior",
+  "attacks",
+  "abilities",
+  "resistances",
+  "weaknesses",
+  "senses",
+  "moral",
+  "resources",
+  "campaign",
+  "cost",
+  "duration",
+  "activation",
+  "installation",
+  "slots",
+  "mods",
+  "cracks",
+  "jammed",
+  "failure",
+  "reduction",
+  "hooks",
+  "interface",
+  "electronics",
+  "cosmicSpellSlots",
+  "materials",
+  "risk",
+  "weight",
+  "legality",
+  "price",
+  "focus",
+  "talent",
+  "kit",
+  "penalty",
+  "bonus",
+  "choice",
+  "profile",
+  "progression",
+  "training",
+  "modifier",
+  "formula",
+  "relatedSkills",
+  "currentValue",
+  "baseValue",
+  "totalValue",
+  "passiveEffects",
+  "officialData",
+  "fields",
+  "inventoryState",
+  "tags",
+];
+
+let universalDetailReturnFocus = null;
+let testRollClickTimer = null;
+
+function handleUniversalDetailDoubleClick(event) {
+  if (!(event.target instanceof Element)) return;
+  if (event.target.closest("[data-cube-drop-uid]")) return;
+
+  const interactive = event.target.closest("button, input, select, textarea, label, a");
+  if (interactive && !interactive.matches("[data-detail-kind], [data-card-details-toggle]")) return;
+
+  const target = event.target.closest("[data-detail-kind]");
+  if (!target) return;
+  const payload = resolveUniversalDetail(target.dataset);
+  if (!payload) return;
+
+  event.preventDefault();
+  window.clearTimeout(testRollClickTimer);
+  testRollClickTimer = null;
+  closeCardDetails();
+  openUniversalDetail(payload);
+}
+
+function resolveUniversalDetail(dataset) {
+  const kind = dataset.detailKind;
+  const id = dataset.detailId || "";
+  const name = dataset.detailName || "";
+  const source = dataset.detailSource || "";
+
+  if (kind === "attribute") {
+    const detail = attributeDetailData[id];
+    if (!detail) return null;
+    const totals = totalAttributes();
+    return {
+      kicker: "Atributo",
+      title: `${id} - ${detail.name}`,
+      record: {
+        name: detail.name,
+        summary: detail.summary,
+        baseValue: numberValue(state.current.attributes?.[id], ATTRIBUTE_BASE),
+        totalValue: totals[id],
+        modifier: formatMod(attributeModifier(totals[id])),
+        formula: "3d6 + modificador do atributo + bônus situacional",
+        relatedSkills: skillData.filter((skill) => skill.attr === id).map((skill) => skill.name),
+        source: "Livro 1 - atributos e testes",
+      },
+    };
+  }
+
+  if (kind === "skill") {
+    const skill = skillData.find((entry) => entry.name === id);
+    if (!skill) return null;
+    const training = state.current.skillTraining?.[skill.name] || "normal";
+    return {
+      kicker: "Perícia",
+      title: skill.name,
+      record: {
+        ...skill,
+        training: training === "trained" ? "Perito: vantagem no teste" : training === "ignorant" ? "Ignorante: desvantagem no teste" : "Sem especialização",
+        modifier: formatMod(skillModifier(skill)),
+        formula: `3d6 + MOD ${skill.attr} + bônus situacional`,
+        source: "Livro 1 - perícias",
+      },
+    };
+  }
+
+  if (kind === "protection") {
+    const protection = protectionData.find((entry) => entry.name === id);
+    if (!protection) return null;
+    const attrs = protection.attrs || [protection.attr];
+    return {
+      kicker: "Jogada de Proteção",
+      title: protection.name,
+      record: {
+        ...protection,
+        type: attrs.join(" ou "),
+        formula: `3d6 + ${attrs.map((attr) => `MOD ${attr}`).join(" ou ")} + bônus situacional`,
+        source: "Livro 1 - Jogadas de Proteção",
+      },
+    };
+  }
+
+  if (kind === "library") {
+    const view = dataset.detailView || state.activeLibrary;
+    const item = getLibraryItemsForView(view).find((entry) => entry.id === id);
+    if (!item) return null;
+    return {
+      kicker: libraryMap[view]?.title || "Biblioteca",
+      title: item.name,
+      record: item,
+    };
+  }
+
+  if (kind === "inventory") {
+    const item = findMarketItem(id);
+    if (!item) return null;
+    const inventoryEntry = (state.current.inventory || []).find((entry) => entry.uid === dataset.detailUid);
+    return {
+      kicker: "Inventário do personagem",
+      title: item.name,
+      record: {
+        ...item,
+        inventoryState: inventoryEntry ? {
+          localização: inventoryLocationLabel(inventoryEntry),
+          equipado: isInventoryEquipped(inventoryEntry),
+          rachaduras: itemCrackLevel(inventoryEntry),
+          suporte: inventoryEntry.supportSlot ? externalSupportTypeLabel(inventoryEntry.supportSlot) : "",
+          cubo: inventoryEntry.cubeUid || inventoryEntry.inCube ? "Armazenado em cubo" : "",
+        } : {},
+      },
+    };
+  }
+
+  if (kind === "ability") {
+    const entry = collectAbilityEntries().find((ability) => (
+      (id && (ability.id === id || ability.deleteId === id))
+      || (ability.name === name && (!source || ability.source === source))
+    ));
+    if (!entry) return null;
+    const linkedRecord = resolveLinkedAbilityRecord(entry);
+    return {
+      kicker: entry.source || "Habilidade",
+      title: entry.name,
+      record: linkedRecord ? { ...linkedRecord, effect: entry.effect || linkedRecord.effect || linkedRecord.summary } : entry,
+    };
+  }
+
+  if (kind === "installed-mod") {
+    const mod = (state.current.installedMods || []).find((entry) => entry.id === id)
+      || (state.current.installedMods || []).find((entry) => entry.name === name);
+    if (!mod) return null;
+    const libraryMod = [...equipmentModData, ...customLibraryItems("mods")].find((entry) => entry.name === mod.name);
+    return {
+      kicker: "Mod instalado",
+      title: mod.name || "Mod sem nome",
+      record: { ...(libraryMod || {}), ...mod },
+    };
+  }
+
+  return null;
+}
+
+function resolveLinkedAbilityRecord(entry) {
+  if (entry.source === "Arma") return [...weaponData, ...customLibraryItems("armas")].find((item) => item.name === entry.name);
+  if (entry.source === "Armadura") return [...armorData, ...customLibraryItems("armaduras")].find((item) => item.name === entry.name);
+  if (entry.source === "Cosmos") return findAbilityLibraryItem(entry.id) || cosmicSpellData.find((item) => item.name === entry.name);
+  if (entry.source === "Chip modificador") return findAbilityLibraryItem(entry.id) || modifierChipData.find((item) => item.name === entry.name);
+  if (entry.source === "Raça") return findRace(state.current.race);
+  if (entry.source === "Chip de profissão") return findProfession(state.current.profession);
+  return null;
+}
+
+function openUniversalDetail({ kicker, title, record }) {
+  universalDetailReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  el.universalDetailKicker.textContent = kicker || "Informações completas";
+  el.universalDetailTitle.textContent = title || record?.name || "Detalhes";
+  el.universalDetailContent.innerHTML = renderUniversalDetailContent(record || {});
+  el.universalDetailModal.hidden = false;
+  document.body.classList.add("modal-open");
+  el.closeUniversalDetail.focus();
+}
+
+function closeUniversalDetail() {
+  el.universalDetailModal.hidden = true;
+  el.universalDetailContent.innerHTML = "";
+  syncModalOpenState();
+  universalDetailReturnFocus?.focus?.();
+  universalDetailReturnFocus = null;
+}
+
+function renderUniversalDetailContent(record) {
+  const source = record.source ? `<span>${escapeHtml(record.source)}</span>` : "";
+  const tags = Array.isArray(record.tags) && record.tags.length
+    ? `<div class="universal-detail-tags">${record.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>`
+    : "";
+  const image = record.imageDataUrl
+    ? `<figure class="universal-detail-image"><img src="${escapeHtml(record.imageDataUrl)}" alt="${escapeHtml(record.imageName || record.name || "Imagem do registro")}" /></figure>`
+    : "";
+  const keys = [...universalDetailFieldOrder, ...Object.keys(record)]
+    .filter((key, index, all) => all.indexOf(key) === index)
+    .filter((key) => !universalDetailHiddenFields.has(key) && key !== "source" && key !== "tags" && detailValueIsPresent(record[key]));
+  return `
+    ${source || tags ? `<div class="universal-detail-meta">${source}${tags}</div>` : ""}
+    ${image}
+    <dl class="universal-detail-fields">
+      ${keys.map((key) => renderUniversalDetailField(key, record[key])).join("")}
+    </dl>
+  `;
+}
+
+function renderUniversalDetailField(key, value) {
+  const wide = typeof value === "object" || String(value).length > 90;
+  return `
+    <div class="universal-detail-field ${wide ? "wide" : ""}">
+      <dt>${escapeHtml(universalDetailFieldLabel(key))}</dt>
+      <dd>${renderUniversalDetailValue(value, key)}</dd>
+    </div>
+  `;
+}
+
+function renderUniversalDetailValue(value, key = "") {
+  if (typeof value === "boolean") return value ? "Sim" : "Não";
+  if (Array.isArray(value)) {
+    if (key === "details") {
+      return value.map((group) => `
+        <section class="universal-detail-book-section">
+          ${group?.label ? `<h3>${escapeHtml(group.label)}</h3>` : ""}
+          <ul>${(group?.items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        </section>
+      `).join("");
+    }
+    if (value.every((item) => typeof item !== "object")) {
+      return `<ul>${value.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+    }
+    return value.map((item) => `<div class="universal-detail-object">${renderUniversalDetailValue(item)}</div>`).join("");
+  }
+  if (value && typeof value === "object") {
+    return `
+      <dl class="universal-detail-subfields">
+        ${Object.entries(value)
+          .filter(([, item]) => detailValueIsPresent(item))
+          .map(([subKey, item]) => `
+            <div>
+              <dt>${escapeHtml(universalDetailFieldLabel(subKey))}</dt>
+              <dd>${renderUniversalDetailValue(item, subKey)}</dd>
+            </div>
+          `).join("")}
+      </dl>
+    `;
+  }
+  if (key === "price" && Number.isFinite(Number(value))) return escapeHtml(formatCurrency(Number(value)));
+  return `<span class="universal-detail-text">${escapeHtml(value)}</span>`;
+}
+
+function universalDetailFieldLabel(key) {
+  if (universalDetailFieldLabels[key]) return universalDetailFieldLabels[key];
+  const label = String(key || "")
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/[-_]+/g, " ")
+    .trim();
+  return label ? label.charAt(0).toUpperCase() + label.slice(1) : "Informação";
+}
+
+function detailValueIsPresent(value) {
+  if (value === 0 || value === false) return true;
+  if (Array.isArray(value)) return value.length > 0;
+  if (value && typeof value === "object") return Object.keys(value).length > 0;
+  return value !== undefined && value !== null && String(value).trim() !== "";
+}
+
 function renderInventoryCards(entries, options = {}) {
   if (!entries.length) return '<div class="empty-state">Nenhum item nesta lista.</div>';
   return `
@@ -3858,7 +4318,7 @@ function renderInventoryCards(entries, options = {}) {
         const chipInstalled = entityType === ENTITY_TYPES.CHIP_MOD && entry.location?.slotId === "chip";
         const consumable = isConsumableItem(item);
         return `
-          <article class="inventory-card compact-card ${item.imageDataUrl ? "with-image" : ""}" tabindex="0"${draggableAttrs}>
+          <article class="inventory-card compact-card ${item.imageDataUrl ? "with-image" : ""}" tabindex="0" data-detail-kind="inventory" data-detail-id="${escapeHtml(item.id)}" data-detail-uid="${escapeHtml(entry.uid)}"${draggableAttrs}>
             ${renderCardImage(item)}
             <div class="card-face">
               <span class="ability-source">${escapeHtml(domainEntityTypeLabel(entityType))}${consumable ? ' · <span class="inventory-consumable-tag">Consumível</span>' : ""}</span>
@@ -4950,11 +5410,16 @@ function renderSavedList() {
   });
 }
 
+function getLibraryItemsForView(view) {
+  const library = libraryMap[view];
+  if (!library) return [];
+  if (view === "monstros") return getMonsterLibraryItems();
+  return [...library.items, ...customLibraryItems(view)].map(resolveShopPrice);
+}
+
 function renderLibrary() {
   const library = libraryMap[state.activeLibrary];
-  const libraryItems = state.activeLibrary === "monstros"
-    ? getMonsterLibraryItems()
-    : [...library.items, ...customLibraryItems(state.activeLibrary)].map(resolveShopPrice);
+  const libraryItems = getLibraryItemsForView(state.activeLibrary);
   const selectedGroup = syncLibraryFilterOptions(libraryItems, state.activeLibrary);
   const sortMode = el.librarySort.value || "default";
   const query = normalizeSearch(el.librarySearch.value.trim());
@@ -5004,8 +5469,8 @@ function renderLibrary() {
         ? "Sem slot livre"
         : library.learn === "cosmos" ? "Adicionar magia" : "Adicionar chip";
     const cardOpen = isRaceLibrary
-      ? `<button class="library-card race-card compact-card" type="button" data-race-id="${escapeHtml(item.id)}" aria-label="Abrir página da raça ${escapeHtml(item.name)}">`
-      : `<article class="library-card compact-card ${isMonsterLibrary ? "with-actions monster-library-card" : ""} ${item.priceEditable ? "with-price-editor" : ""} ${item.imageDataUrl ? "with-image" : ""}" tabindex="0">`;
+      ? `<button class="library-card race-card compact-card" type="button" data-race-id="${escapeHtml(item.id)}" data-detail-kind="library" data-detail-view="${escapeHtml(state.activeLibrary)}" data-detail-id="${escapeHtml(item.id)}" aria-label="Abrir página da raça ${escapeHtml(item.name)}">`
+      : `<article class="library-card compact-card ${isMonsterLibrary ? "with-actions monster-library-card" : ""} ${item.priceEditable ? "with-price-editor" : ""} ${item.imageDataUrl ? "with-image" : ""}" tabindex="0" data-detail-kind="library" data-detail-view="${escapeHtml(state.activeLibrary)}" data-detail-id="${escapeHtml(item.id)}">`;
     const cardClose = isRaceLibrary ? "</button>" : "</article>";
     return `
       ${cardOpen}
@@ -6501,7 +6966,14 @@ function closeMonsterAssets() {
 }
 
 function syncModalOpenState() {
-  const anyOpen = !el.vitalHudModal.hidden || !el.monsterEditorModal.hidden || !el.monsterAssetsModal.hidden;
+  const anyOpen = [
+    el.vitalHudModal,
+    el.monsterEditorModal,
+    el.monsterAssetsModal,
+    el.inventoryLocationModal,
+    el.levelUpModal,
+    el.universalDetailModal,
+  ].some((modal) => modal && !modal.hidden);
   document.body.classList.toggle("modal-open", anyOpen);
 }
 
@@ -7058,7 +7530,7 @@ function openLevelUpDialog() {
 function closeLevelUpDialog() {
   state.pendingLevelUp = null;
   el.levelUpModal.hidden = true;
-  document.body.classList.remove("modal-open");
+  syncModalOpenState();
 }
 
 function handleLevelUpSubmit(event) {
@@ -7262,7 +7734,7 @@ function closeInventoryLocationDialog() {
   state.pendingLocationEntityId = "";
   state.pendingLocationReason = "";
   el.inventoryLocationModal.hidden = true;
-  document.body.classList.remove("modal-open");
+  syncModalOpenState();
   if (reason === "purchase") showToast("Item comprado e mantido sem local definido.", "tech-error");
 }
 

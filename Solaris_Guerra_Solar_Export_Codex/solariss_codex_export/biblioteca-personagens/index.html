@@ -12,7 +12,7 @@
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./assets/icons/solaris-icon.svg" />
     <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./styles.css?v=20260612a" />
+    <link rel="stylesheet" href="./styles.css?v=20260612e" />
   </head>
   <body>
     <div class="app-shell">
@@ -919,6 +919,22 @@
       </section>
     </div>
 
+    <div class="record-modal universal-detail-modal" id="universalDetailModal" hidden>
+      <div class="record-modal-backdrop" data-universal-detail-close></div>
+      <section class="record-modal-window universal-detail-window" role="dialog" aria-modal="true" aria-labelledby="universalDetailTitle">
+        <div class="record-modal-header">
+          <div>
+            <p id="universalDetailKicker">Informações completas</p>
+            <h2 id="universalDetailTitle">Detalhes</h2>
+          </div>
+          <button class="icon-button" id="closeUniversalDetail" type="button" aria-label="Fechar informações completas">
+            <span data-icon="plus"></span>
+          </button>
+        </div>
+        <div class="universal-detail-content" id="universalDetailContent"></div>
+      </section>
+    </div>
+
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <script src="./official-books-data.js?v=20260612a"></script>
@@ -932,6 +948,6 @@
       }
     </script>
     <script src="./HumanisVitalHUD.js?v=20260606e"></script>
-    <script type="module" src="./app.js?v=20260612a"></script>
+    <script type="module" src="./app.js?v=20260612e"></script>
   </body>
 </html>

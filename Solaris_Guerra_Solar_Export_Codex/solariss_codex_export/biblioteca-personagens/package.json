@@ -1,6 +1,6 @@
 {
   "name": "solaris-biblioteca",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Biblioteca local de personagens para Solaris Guerra Solar.",
   "author": "Solaris",
   "main": "electron-main.cjs",

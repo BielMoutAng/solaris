@@ -4611,6 +4611,127 @@ textarea:focus {
   transform: rotate(45deg);
 }
 
+.universal-detail-window {
+  width: min(920px, 94vw);
+  max-height: 88vh;
+}
+
+.universal-detail-content {
+  display: grid;
+  gap: 18px;
+  padding: 20px;
+}
+
+.universal-detail-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.universal-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.universal-detail-image {
+  width: min(320px, 100%);
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(100, 217, 201, 0.24);
+  background: rgba(0, 8, 11, 0.7);
+}
+
+.universal-detail-image img {
+  display: block;
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+}
+
+.universal-detail-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.universal-detail-field {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(100, 217, 201, 0.16);
+  background: rgba(7, 22, 26, 0.66);
+}
+
+.universal-detail-field.wide {
+  grid-column: 1 / -1;
+}
+
+.universal-detail-field > dt,
+.universal-detail-subfields dt {
+  margin: 0 0 7px;
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.universal-detail-field > dd,
+.universal-detail-subfields dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--text);
+  line-height: 1.58;
+}
+
+.universal-detail-text {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.universal-detail-field ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.universal-detail-book-section {
+  display: grid;
+  gap: 10px;
+}
+
+.universal-detail-book-section + .universal-detail-book-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(100, 217, 201, 0.14);
+}
+
+.universal-detail-book-section h3 {
+  margin: 0;
+  color: var(--gold);
+  font-size: 0.9rem;
+}
+
+.universal-detail-subfields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.universal-detail-subfields > div,
+.universal-detail-object {
+  min-width: 0;
+  padding: 10px;
+  border-left: 2px solid rgba(42, 230, 215, 0.28);
+  background: rgba(0, 0, 0, 0.14);
+}
+
 .record-form {
   display: grid;
   gap: 16px;
@@ -4768,8 +4889,14 @@ textarea:focus {
   }
 
   .manual-official-fields,
-  .record-fields {
+  .record-fields,
+  .universal-detail-fields,
+  .universal-detail-subfields {
     grid-template-columns: 1fr;
+  }
+
+  .universal-detail-field.wide {
+    grid-column: auto;
   }
 
   .record-fields .wide-field,
