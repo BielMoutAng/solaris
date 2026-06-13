@@ -2284,6 +2284,18 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Falha/Jammed: Ao recarregar",
+        "officialData": {
+          "Nome": "Pistola de Sucata",
+          "Categoria": "Pistola",
+          "Ataque": "REF",
+          "Dano": "1d4 balístico",
+          "Alcance/Área": "6 m",
+          "Munição": "Leve",
+          "Capacidade/Cadência": "8 / tiro único",
+          "Slots/Rach.": "0 / 0-5",
+          "Jammed": "Ao recarregar",
+          "Legalidade/Preço": "Comum controlada / 5.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 54",
         "schemaVersion": 2
       },
@@ -2311,6 +2323,18 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Falha/Jammed: Erro crítico ou 3+ rach.",
+        "officialData": {
+          "Nome": "Revólver Antigo",
+          "Categoria": "Revólver",
+          "Ataque": "REF",
+          "Dano": "1d6 balístico/perfurante",
+          "Alcance/Área": "6 m",
+          "Munição": "Leve",
+          "Capacidade/Cadência": "6 / tiro único",
+          "Slots/Rach.": "0 / 0-5",
+          "Jammed": "Erro crítico ou 3+ rach.",
+          "Legalidade/Preço": "Comum controlada / 6.500 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 54",
         "schemaVersion": 2
       },
@@ -2338,6 +2362,18 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Cone; JPR"
         ],
         "summary": "Falha/Jammed: Erro crítico ou 3+ rach.",
+        "officialData": {
+          "Nome": "Escopeta Serrada de Sucata",
+          "Categoria": "Escopeta",
+          "Ataque": "Cone; JPR",
+          "Dano": "1d4 balístico",
+          "Alcance/Área": "Cone 4 m",
+          "Munição": "Cartucho",
+          "Capacidade/Cadência": "2 / tiro único",
+          "Slots/Rach.": "0 / 0-5",
+          "Jammed": "Erro crítico ou 3+ rach.",
+          "Legalidade/Preço": "Controlada / 7.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 54",
         "schemaVersion": 2
       },
@@ -2365,6 +2401,18 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Falha/Jammed: Erro crítico ou 3+ rach.",
+        "officialData": {
+          "Nome": "Carabina Remendada",
+          "Categoria": "Carabina",
+          "Ataque": "REF",
+          "Dano": "1d8 balístico/perfurante",
+          "Alcance/Área": "18 m",
+          "Munição": "Média",
+          "Capacidade/Cadência": "5 / tiro único",
+          "Slots/Rach.": "0 / 0-5",
+          "Jammed": "Erro crítico ou 3+ rach.",
+          "Legalidade/Preço": "Controlada / 8.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 54",
         "schemaVersion": 2
       },
@@ -2392,6 +2440,18 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Falha/Jammed: Erro crítico ou 3+ rach.",
+        "officialData": {
+          "Nome": "Submetralhadora de Sucatas",
+          "Categoria": "Submetralhadora",
+          "Ataque": "REF",
+          "Dano": "1d4 balístico",
+          "Alcance/Área": "6 m",
+          "Munição": "Leve",
+          "Capacidade/Cadência": "20 / tiro único ou Rajada",
+          "Slots/Rach.": "0 / 0-5",
+          "Jammed": "Erro crítico ou 3+ rach.",
+          "Legalidade/Preço": "Controlada / 8.500 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 54",
         "schemaVersion": 2
       },
@@ -2419,6 +2479,16 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Lâmina curta inspirada em garras e metal Rask. Empunhadura: Uma mão",
+        "officialData": {
+          "Nome": "Adaga Rask",
+          "Categoria": "Adaga",
+          "Ataque": "REF",
+          "Dano": "1d4 perfurante",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma mão",
+          "Legalidade/Preço": "Comum / 5.000 Lz",
+          "Material/Origem": "Lâmina curta inspirada em garras e metal Rask."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 55",
         "schemaVersion": 2
       },
@@ -2446,6 +2516,16 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Liga metálica reaproveitada, instável e mal identificada. Empunhadura: Uma mão",
+        "officialData": {
+          "Nome": "Espada Liga Estranha",
+          "Categoria": "Espada",
+          "Ataque": "FOR",
+          "Dano": "1d6 cortante",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma mão",
+          "Legalidade/Preço": "Comum controlada / 6.000 Lz",
+          "Material/Origem": "Liga metálica reaproveitada, instável e mal identificada."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 55",
         "schemaVersion": 2
       },
@@ -2473,6 +2553,16 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Lâmina curva leve feita para golpes rápidos. Empunhadura: Uma mão",
+        "officialData": {
+          "Nome": "Sabre Leve",
+          "Categoria": "Sabre",
+          "Ataque": "REF",
+          "Dano": "1d6 cortante",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma mão",
+          "Legalidade/Preço": "Comum controlada / 6.500 Lz",
+          "Material/Origem": "Lâmina curva leve feita para golpes rápidos."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 55",
         "schemaVersion": 2
       },
@@ -2500,6 +2590,16 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Cabo rústico e lâmina metálica reaproveitada. Empunhadura: Uma ou duas mãos",
+        "officialData": {
+          "Nome": "Machado Simples",
+          "Categoria": "Machado",
+          "Ataque": "FOR",
+          "Dano": "1d8 cortante",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma ou duas mãos",
+          "Legalidade/Preço": "Comum controlada / 7.000 Lz",
+          "Material/Origem": "Cabo rústico e lâmina metálica reaproveitada."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 55",
         "schemaVersion": 2
       },
@@ -2527,6 +2627,16 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Cabeça de pedra Myir polida presa a cabo reforçado. Empunhadura: Uma ou duas mãos",
+        "officialData": {
+          "Nome": "Martelo de Pedra Myir",
+          "Categoria": "Martelo",
+          "Ataque": "FOR",
+          "Dano": "1d8 concussão",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma ou duas mãos",
+          "Legalidade/Preço": "Comum / 7.000 Lz",
+          "Material/Origem": "Cabeça de pedra Myir polida presa a cabo reforçado."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 55",
         "schemaVersion": 2
       },
@@ -2554,6 +2664,16 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Haste de madeira resistente Kataktur com ponta metálica. Empunhadura: Duas mãos",
+        "officialData": {
+          "Nome": "Lança de Kataktur",
+          "Categoria": "Lança",
+          "Ataque": "FOR",
+          "Dano": "1d6 perfurante",
+          "Alcance": "2 m",
+          "Empunhadura": "Duas mãos",
+          "Legalidade/Preço": "Comum / 6.000 Lz",
+          "Material/Origem": "Haste de madeira resistente Kataktur com ponta metálica."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 55",
         "schemaVersion": 2
       },
@@ -2581,6 +2701,16 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Briga"
         ],
         "summary": "Couro de Kuldrus reforçado com placas metálicas. Empunhadura: Presa às mãos",
+        "officialData": {
+          "Nome": "Manopla de Kuldrus",
+          "Categoria": "Manopla",
+          "Ataque": "Briga",
+          "Dano": "1d4 concussão",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Presa às mãos",
+          "Legalidade/Preço": "Comum / 5.500 Lz",
+          "Material/Origem": "Couro de Kuldrus reforçado com placas metálicas."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 55",
         "schemaVersion": 2
       },
@@ -2608,6 +2738,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Muito frágil; quebra rápido. Serve como arma simples de sobrevivência ou treino. Empunhadura: Uma mão Falha/Jammed: Falha estrutural em erro crítico ou 3+ rachaduras",
+        "officialData": {
+          "Nome atualizado": "Bastão de Carbonita",
+          "Tier": "F",
+          "Categoria": "Bastão",
+          "Ataque": "FOR",
+          "Dano": "1d4 concussão",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma mão",
+          "Slots": "0",
+          "Rachaduras": "0/5",
+          "Falha": "Falha estrutural em erro crítico ou 3+ rachaduras",
+          "Legalidade / Preço": "Comum / 5.000 Lz",
+          "Observações": "Muito frágil; quebra rápido. Serve como arma simples de sobrevivência ou treino."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 74",
         "schemaVersion": 2
       },
@@ -2635,6 +2779,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Mais pesado que o dano sugere, mas é fácil de fabricar e reparar. Empunhadura: Uma mão Falha/Jammed: Falha estrutural em erro crítico ou 3+ rachaduras",
+        "officialData": {
+          "Nome atualizado": "Bastão de Ferrita",
+          "Tier": "F",
+          "Categoria": "Bastão",
+          "Ataque": "FOR",
+          "Dano": "1d4 concussão",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma mão",
+          "Slots": "0",
+          "Rachaduras": "0/5",
+          "Falha": "Falha estrutural em erro crítico ou 3+ rachaduras",
+          "Legalidade / Preço": "Comum / 5.500 Lz",
+          "Observações": "Mais pesado que o dano sugere, mas é fácil de fabricar e reparar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 74",
         "schemaVersion": 2
       },
@@ -2662,6 +2820,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR ou MEN"
         ],
         "summary": "Leve e barato. Pode funcionar como canalizador cósmico simples e permitir 1 habilidade cósmica Tier F de custo 1, se a campanha permitir. Empunhadura: Uma mão Falha/Jammed: Em Falha Cósmica, ganha 1 rachadura ou causa +1 Estresse",
+        "officialData": {
+          "Nome atualizado": "Bastão de Poeira Estelar Fundida com Paralatum",
+          "Tier": "F",
+          "Categoria": "Bastão Cósmico",
+          "Ataque": "FOR ou MEN",
+          "Dano": "1d4 concussão/cósmico",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma mão",
+          "Slots": "1",
+          "Rachaduras": "0/5",
+          "Falha": "Em Falha Cósmica, ganha 1 rachadura ou causa +1 Estresse",
+          "Legalidade / Preço": "Restrita / 8.500 Lz",
+          "Observações": "Leve e barato. Pode funcionar como canalizador cósmico simples e permitir 1 habilidade cósmica Tier F de custo 1, se a campanha permitir."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 74",
         "schemaVersion": 2
       },
@@ -2689,6 +2861,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Arma simples, comum em colônias e postos externos. Empunhadura: Uma mão Falha/Jammed: Falha estrutural em erro crítico",
+        "officialData": {
+          "Nome atualizado": "Espada de Ferrita",
+          "Tier": "F",
+          "Categoria": "Espada",
+          "Ataque": "FOR",
+          "Dano": "1d6 cortante",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma mão",
+          "Slots": "0",
+          "Rachaduras": "0/5",
+          "Falha": "Falha estrutural em erro crítico",
+          "Legalidade / Preço": "Comum controlada / 6.000 Lz",
+          "Observações": "Arma simples, comum em colônias e postos externos."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 74",
         "schemaVersion": 2
       },
@@ -2716,6 +2902,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Muito pesado; bom impacto bruto, mas pouco ágil. Empunhadura: Duas mãos Falha/Jammed: Falha estrutural em erro crítico",
+        "officialData": {
+          "Nome atualizado": "Martelo de CarboFerrita",
+          "Tier": "F",
+          "Categoria": "Martelo",
+          "Ataque": "FOR",
+          "Dano": "1d8 concussão",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Duas mãos",
+          "Slots": "0",
+          "Rachaduras": "0/5",
+          "Falha": "Falha estrutural em erro crítico",
+          "Legalidade / Preço": "Comum controlada / 7.000 Lz",
+          "Observações": "Muito pesado; bom impacto bruto, mas pouco ágil."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 74",
         "schemaVersion": 2
       },
@@ -2743,6 +2943,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Antiga Tier F, promovida para Tier E por causar dano alto para adaga inicial. Usa apenas REF. Empunhadura: Uma mão Falha/Jammed: Falha estrutural em erro crítico",
+        "officialData": {
+          "Nome atualizado": "Adaga de Paralatum",
+          "Tier": "E",
+          "Categoria": "Adaga",
+          "Ataque": "REF",
+          "Dano": "1d6 perfurante/cortante",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma mão",
+          "Slots": "0",
+          "Rachaduras": "0/5",
+          "Falha": "Falha estrutural em erro crítico",
+          "Legalidade / Preço": "Comum controlada / 15.000 Lz",
+          "Observações": "Antiga Tier F, promovida para Tier E por causar dano alto para adaga inicial. Usa apenas REF."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 75",
         "schemaVersion": 2
       },
@@ -2770,6 +2984,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Usada em campo; confiável e durável. Empunhadura: Uma mão Falha/Jammed: Falha estrutural em erro crítico",
+        "officialData": {
+          "Nome atualizado": "Faca Ferrita Padrão",
+          "Tier": "E",
+          "Categoria": "Adaga",
+          "Ataque": "REF",
+          "Dano": "1d6 perfurante/cortante",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma mão",
+          "Slots": "0",
+          "Rachaduras": "0/5",
+          "Falha": "Falha estrutural em erro crítico",
+          "Legalidade / Preço": "Comum / 15.000 Lz",
+          "Observações": "Usada em campo; confiável e durável."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 75",
         "schemaVersion": 2
       },
@@ -2797,6 +3025,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Mais pesado, mas confiável. Pode atordoar narrativamente em crítico, se o mestre usar esse efeito. Empunhadura: Uma mão Falha/Jammed: Falha estrutural em erro crítico",
+        "officialData": {
+          "Nome atualizado": "Bastão de Paralatum Reforçado com Ferrita",
+          "Tier": "E",
+          "Categoria": "Bastão",
+          "Ataque": "FOR",
+          "Dano": "1d6 concussão",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma mão",
+          "Slots": "0",
+          "Rachaduras": "0/5",
+          "Falha": "Falha estrutural em erro crítico",
+          "Legalidade / Preço": "Comum controlada / 17.000 Lz",
+          "Observações": "Mais pesado, mas confiável. Pode atordoar narrativamente em crítico, se o mestre usar esse efeito."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 75",
         "schemaVersion": 2
       },
@@ -2824,6 +3066,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Básica, mas tem alcance corporal estendido. Sofre desvantagem contra inimigos adjacentes. Empunhadura: Duas mãos Falha/Jammed: Falha estrutural em erro crítico",
+        "officialData": {
+          "Nome atualizado": "Lança de Carbonita",
+          "Tier": "E",
+          "Categoria": "Lança",
+          "Ataque": "FOR",
+          "Dano": "1d6 perfurante",
+          "Alcance": "2 m",
+          "Empunhadura": "Duas mãos",
+          "Slots": "0",
+          "Rachaduras": "0/5",
+          "Falha": "Falha estrutural em erro crítico",
+          "Legalidade / Preço": "Comum / 16.000 Lz",
+          "Observações": "Básica, mas tem alcance corporal estendido. Sofre desvantagem contra inimigos adjacentes."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 75",
         "schemaVersion": 2
       },
@@ -2851,6 +3107,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Boa para uso geral, equilibrada e com 1 slot para evolução inicial. Empunhadura: Uma mão Falha/Jammed: Falha estrutural em erro crítico",
+        "officialData": {
+          "Nome atualizado": "Espada Curta de Paralatum",
+          "Tier": "E",
+          "Categoria": "Espada",
+          "Ataque": "FOR",
+          "Dano": "1d6 cortante",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma mão",
+          "Slots": "1",
+          "Rachaduras": "0/5",
+          "Falha": "Falha estrutural em erro crítico",
+          "Legalidade / Preço": "Comum controlada / 18.000 Lz",
+          "Observações": "Boa para uso geral, equilibrada e com 1 slot para evolução inicial."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 75",
         "schemaVersion": 2
       },
@@ -2878,6 +3148,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Impacto simples e confiável contra alvos duros. Empunhadura: Uma mão Falha/Jammed: Falha estrutural em erro crítico",
+        "officialData": {
+          "Nome atualizado": "Maça de Ferrita",
+          "Tier": "E",
+          "Categoria": "Maça",
+          "Ataque": "FOR",
+          "Dano": "1d6 concussão",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma mão",
+          "Slots": "1",
+          "Rachaduras": "0/5",
+          "Falha": "Falha estrutural em erro crítico",
+          "Legalidade / Preço": "Comum controlada / 17.500 Lz",
+          "Observações": "Impacto simples e confiável contra alvos duros."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 75",
         "schemaVersion": 2
       },
@@ -2905,6 +3189,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Alcance médio corporal. Boa para formação defensiva. Sofre desvantagem contra inimigos adjacentes. Empunhadura: Duas mãos Falha/Jammed: Falha estrutural em erro crítico",
+        "officialData": {
+          "Nome atualizado": "Lança de Aço",
+          "Tier": "E",
+          "Categoria": "Lança",
+          "Ataque": "FOR",
+          "Dano": "1d8 perfurante",
+          "Alcance": "2 m",
+          "Empunhadura": "Duas mãos",
+          "Slots": "1",
+          "Rachaduras": "0/5",
+          "Falha": "Falha estrutural em erro crítico",
+          "Legalidade / Preço": "Comum controlada / 20.000 Lz",
+          "Observações": "Alcance médio corporal. Boa para formação defensiva. Sofre desvantagem contra inimigos adjacentes."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 75",
         "schemaVersion": 2
       },
@@ -2932,6 +3230,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Arma padrão de oficiais e combatentes treinados. Empunhadura: Uma ou duas mãos Falha/Jammed: Falha estrutural em erro crítico",
+        "officialData": {
+          "Nome atualizado": "Espada Longa de Paralatum",
+          "Tier": "E",
+          "Categoria": "Espada",
+          "Ataque": "FOR",
+          "Dano": "1d8 cortante",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Uma ou duas mãos",
+          "Slots": "2",
+          "Rachaduras": "0/5",
+          "Falha": "Falha estrutural em erro crítico",
+          "Legalidade / Preço": "Controlada / 22.000 Lz",
+          "Observações": "Arma padrão de oficiais e combatentes treinados."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 75",
         "schemaVersion": 2
       },
@@ -2959,6 +3271,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR"
         ],
         "summary": "Derruba inimigos em críticos se o mestre usar efeito de impacto. Uma rodada caída. Empunhadura: Duas mãos Falha/Jammed: Falha estrutural em erro crítico",
+        "officialData": {
+          "Nome atualizado": "Martelo de Guerra Reforçado",
+          "Tier": "E",
+          "Categoria": "Martelo",
+          "Ataque": "FOR",
+          "Dano": "1d10 concussão",
+          "Alcance": "Corpo a corpo",
+          "Empunhadura": "Duas mãos",
+          "Slots": "1",
+          "Rachaduras": "0/5",
+          "Falha": "Falha estrutural em erro crítico",
+          "Legalidade / Preço": "Controlada / 24.000 Lz",
+          "Observações": "Derruba inimigos em críticos se o mestre usar efeito de impacto. Uma rodada caída."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 75",
         "schemaVersion": 2
       },
@@ -2986,6 +3312,20 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "FOR ou MEN"
         ],
         "summary": "Forjada com tecnologia híbrida. Pode servir como canalizador cósmico e permitir 1 habilidade cósmica Tier E de custo até 2, se a campanha permitir. Empunhadura: Duas mãos Falha/Jammed: Em Falha Cósmica, ganha 1 rachadura ou causa +1 Estresse",
+        "officialData": {
+          "Nome atualizado": "Lança Laminada Krun-Ferrita",
+          "Tier": "E",
+          "Categoria": "Lança Cósmica",
+          "Ataque": "FOR ou MEN",
+          "Dano": "1d10 perfurante/cósmico",
+          "Alcance": "2 m",
+          "Empunhadura": "Duas mãos",
+          "Slots": "2",
+          "Rachaduras": "0/5",
+          "Falha": "Em Falha Cósmica, ganha 1 rachadura ou causa +1 Estresse",
+          "Legalidade / Preço": "Restrita / 30.000 Lz",
+          "Observações": "Forjada com tecnologia híbrida. Pode servir como canalizador cósmico e permitir 1 habilidade cósmica Tier E de custo até 2, se a campanha permitir."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 75",
         "schemaVersion": 2
       },
@@ -3013,6 +3353,21 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Variante antiga da Pistola de Sucata. Menor capacidade, mas estrutura mais simples. Pistolas comuns não possuem Rajada. Falha/Jammed: Erro crítico ou 3+ rachaduras",
+        "officialData": {
+          "Nome atualizado": "Pistola de Ferrita",
+          "Tier": "F",
+          "Categoria": "Pistola",
+          "Ataque": "REF",
+          "Dano": "1d4 balístico",
+          "Alcance / Área": "6 m",
+          "Munição": "Munição leve",
+          "Capacidade / Cadência": "6 / tiro único",
+          "Slots": "0",
+          "Rachaduras": "0/5",
+          "Jammed / Falha": "Erro crítico ou 3+ rachaduras",
+          "Legalidade / Preço": "Comum controlada / 5.000 Lz",
+          "Observações": "Variante antiga da Pistola de Sucata. Menor capacidade, mas estrutura mais simples. Pistolas comuns não possuem Rajada."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 76",
         "schemaVersion": 2
       },
@@ -3040,6 +3395,21 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Variante do Revólver Antigo. Pode ser segurado com uma mão, mas ataques com uma mão sofrem desvantagem. Falha/Jammed: Erro crítico ou 3+ rachaduras",
+        "officialData": {
+          "Nome atualizado": "Revólver de Sucata “Seis-Fendas”",
+          "Tier": "F",
+          "Categoria": "Revólver",
+          "Ataque": "REF",
+          "Dano": "1d6 balístico/perfurante",
+          "Alcance / Área": "6 m",
+          "Munição": "Munição leve",
+          "Capacidade / Cadência": "6 / tiro único",
+          "Slots": "0",
+          "Rachaduras": "0/5",
+          "Jammed / Falha": "Erro crítico ou 3+ rachaduras",
+          "Legalidade / Preço": "Comum controlada / 6.500 Lz",
+          "Observações": "Variante do Revólver Antigo. Pode ser segurado com uma mão, mas ataques com uma mão sofrem desvantagem."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 76",
         "schemaVersion": 2
       },
@@ -3067,6 +3437,21 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Cone / JPR"
         ],
         "summary": "Dois canos. Entra como escopeta curta: sempre atira em cone e precisa estar carregada para disparar. Falha/Jammed: Erro crítico ou 3+ rachaduras",
+        "officialData": {
+          "Nome atualizado": "Garrucha de Névoa Abissal",
+          "Tier": "F",
+          "Categoria": "Escopeta curta",
+          "Ataque": "Cone / JPR",
+          "Dano": "1d4 balístico",
+          "Alcance / Área": "Cone de 3 m",
+          "Munição": "Cartucho",
+          "Capacidade / Cadência": "2 / tiro único",
+          "Slots": "1",
+          "Rachaduras": "0/5",
+          "Jammed / Falha": "Erro crítico ou 3+ rachaduras",
+          "Legalidade / Preço": "Controlada / 7.500 Lz",
+          "Observações": "Dois canos. Entra como escopeta curta: sempre atira em cone e precisa estar carregada para disparar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 76",
         "schemaVersion": 2
       },
@@ -3094,6 +3479,21 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Carregador maior que a Carabina Remendada, mas sistema de trilho instável. Não possui Rajada. Falha/Jammed: Erro crítico, natural 1-2 se estiver com 3+ rachaduras",
+        "officialData": {
+          "Nome atualizado": "Carabina de Trilho Improvisada “Trilho-12”",
+          "Tier": "F",
+          "Categoria": "Carabina",
+          "Ataque": "REF",
+          "Dano": "1d8 balístico/perfurante",
+          "Alcance / Área": "18 m",
+          "Munição": "Munição média",
+          "Capacidade / Cadência": "8 / tiro único",
+          "Slots": "0",
+          "Rachaduras": "0/5",
+          "Jammed / Falha": "Erro crítico, natural 1-2 se estiver com 3+ rachaduras",
+          "Legalidade / Preço": "Controlada / 8.000 Lz",
+          "Observações": "Carregador maior que a Carabina Remendada, mas sistema de trilho instável. Não possui Rajada."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 76",
         "schemaVersion": 2
       },
@@ -3121,6 +3521,21 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Pistola pesada e agressiva. Continua sendo arma de uma mão e não possui Rajada. Falha/Jammed: Erro crítico ou 3+ rachaduras",
+        "officialData": {
+          "Nome atualizado": "Pistola Bruta de Ferrita",
+          "Tier": "E",
+          "Categoria": "Pistola",
+          "Ataque": "REF",
+          "Dano": "1d6 balístico",
+          "Alcance / Área": "8 m",
+          "Munição": "Munição leve",
+          "Capacidade / Cadência": "6 / tiro único",
+          "Slots": "0",
+          "Rachaduras": "0/5",
+          "Jammed / Falha": "Erro crítico ou 3+ rachaduras",
+          "Legalidade / Preço": "Comum controlada / 15.000 Lz",
+          "Observações": "Pistola pesada e agressiva. Continua sendo arma de uma mão e não possui Rajada."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 77",
         "schemaVersion": 2
       },
@@ -3148,6 +3563,21 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Boa arma leve intermediária. Mobilidade e customização inicial. Falha/Jammed: Erro crítico ou 3+ rachaduras",
+        "officialData": {
+          "Nome atualizado": "Pistola Cinética Leve",
+          "Tier": "E",
+          "Categoria": "Pistola",
+          "Ataque": "REF",
+          "Dano": "1d6 balístico",
+          "Alcance / Área": "8 m",
+          "Munição": "Munição leve",
+          "Capacidade / Cadência": "8 / tiro único",
+          "Slots": "1",
+          "Rachaduras": "0/5",
+          "Jammed / Falha": "Erro crítico ou 3+ rachaduras",
+          "Legalidade / Preço": "Comum controlada / 17.000 Lz",
+          "Observações": "Boa arma leve intermediária. Mobilidade e customização inicial."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 77",
         "schemaVersion": 2
       },
@@ -3175,6 +3605,21 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Carregador interno de 2 disparos. Pode funcionar como canalizador energético/cósmico limitado, se a campanha permitir. Falha/Jammed: Superaquece em erro crítico ou 3+ rachaduras",
+        "officialData": {
+          "Nome atualizado": "Pistola de Plasma Compacta com Cristal Cilerium",
+          "Tier": "E",
+          "Categoria": "Pistola energética",
+          "Ataque": "REF",
+          "Dano": "1d6 energético",
+          "Alcance / Área": "8 m",
+          "Munição": "Célula energética",
+          "Capacidade / Cadência": "2 / tiro único",
+          "Slots": "1",
+          "Rachaduras": "0/5",
+          "Jammed / Falha": "Superaquece em erro crítico ou 3+ rachaduras",
+          "Legalidade / Preço": "Restrita / 22.000 Lz",
+          "Observações": "Carregador interno de 2 disparos. Pode funcionar como canalizador energético/cósmico limitado, se a campanha permitir."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 77",
         "schemaVersion": 2
       },
@@ -3202,6 +3647,21 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Na Rajada, gasta 4 munições, ataca com vantagem e causa 2d4 balístico se acertar. Falha/Jammed: Erro crítico ou 3+ rachaduras",
+        "officialData": {
+          "Nome atualizado": "Submetralhadora Neon “Vesper-9”",
+          "Tier": "E",
+          "Categoria": "Submetralhadora",
+          "Ataque": "REF",
+          "Dano": "1d4 balístico",
+          "Alcance / Área": "8 m",
+          "Munição": "Munição leve",
+          "Capacidade / Cadência": "20 / tiro único ou Rajada",
+          "Slots": "1",
+          "Rachaduras": "0/5",
+          "Jammed / Falha": "Erro crítico ou 3+ rachaduras",
+          "Legalidade / Preço": "Controlada / 26.000 Lz",
+          "Observações": "Na Rajada, gasta 4 munições, ataca com vantagem e causa 2d4 balístico se acertar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 77",
         "schemaVersion": 2
       },
@@ -3229,6 +3689,21 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Reclassificado de carabina para fuzil. Na Rajada pesada, gasta 4 munições, ataca com desvantagem e causa 4d8 balístico/perfurante se acertar. Falha/Jammed: Erro crítico ou 3+ rachaduras",
+        "officialData": {
+          "Nome atualizado": "Fuzil de Impulso “Ktaluhl AR-3”",
+          "Tier": "E",
+          "Categoria": "Fuzil",
+          "Ataque": "REF",
+          "Dano": "1d8 balístico/perfurante",
+          "Alcance / Área": "12 m",
+          "Munição": "Munição média",
+          "Capacidade / Cadência": "4 / tiro único ou Rajada pesada",
+          "Slots": "1",
+          "Rachaduras": "0/5",
+          "Jammed / Falha": "Erro crítico ou 3+ rachaduras",
+          "Legalidade / Preço": "Restrita / 30.000 Lz",
+          "Observações": "Reclassificado de carabina para fuzil. Na Rajada pesada, gasta 4 munições, ataca com desvantagem e causa 4d8 balístico/perfurante se acertar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 77",
         "schemaVersion": 2
       },
@@ -3256,6 +3731,21 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "REF"
         ],
         "summary": "Se o personagem se mover antes de atirar, sofre desvantagem. Ataques contra inimigos adjacentes também sofrem desvantagem. Falha/Jammed: Erro crítico ou 3+ rachaduras",
+        "officialData": {
+          "Nome atualizado": "Rifle de Precisão “Olho de Nyx”",
+          "Tier": "E",
+          "Categoria": "Rifle de Precisão",
+          "Ataque": "REF",
+          "Dano": "2d6 balístico/perfurante",
+          "Alcance / Área": "40 m",
+          "Munição": "Munição média",
+          "Capacidade / Cadência": "5 / tiro único",
+          "Slots": "2",
+          "Rachaduras": "0/5",
+          "Jammed / Falha": "Erro crítico ou 3+ rachaduras",
+          "Legalidade / Preço": "Restrita / 35.000 Lz",
+          "Observações": "Se o personagem se mover antes de atirar, sofre desvantagem. Ataques contra inimigos adjacentes também sofrem desvantagem."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 77",
         "schemaVersion": 2
       }
@@ -3288,6 +3778,24 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Roupa Reforçada"
         ],
         "summary": "Em acerto crítico sofrido, pode rasgar e ganhar 1 rachadura, conforme decisão do mestre. Fibra simples, tecido grosso, couro gasto e reforços costurados",
+        "officialData": {
+          "Nome": "Jaqueta de Fibra Gasta",
+          "Tier": "F",
+          "Tipo": "Leve",
+          "Categoria": "Roupa Reforçada",
+          "CA": "+0",
+          "Redução": "—",
+          "Movimento": "+1m",
+          "Ganchos": "1",
+          "Interface Medular": "Não",
+          "Sistema eletrônico": "Não",
+          "Slots": "1",
+          "Rachaduras": "0/5",
+          "Legalidade": "Comum",
+          "Preço": "8.000 Luzentis",
+          "Material/Origem": "Fibra simples, tecido grosso, couro gasto e reforços costurados",
+          "Observação": "Em acerto crítico sofrido, pode rasgar e ganhar 1 rachadura, conforme decisão do mestre."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 64",
         "schemaVersion": 2
       },
@@ -3318,6 +3826,24 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Colete de Placas"
         ],
         "summary": "Em ambientes silenciosos, pode impor -1 em Furtividade por ruído das placas. Placas gastas de metal, polímero simples ou sucata tratada",
+        "officialData": {
+          "Nome": "Colete de Placas Gastas",
+          "Tier": "F",
+          "Tipo": "Média",
+          "Categoria": "Colete de Placas",
+          "CA": "+1",
+          "Redução": "—",
+          "Movimento": "-1m",
+          "Ganchos": "1",
+          "Interface Medular": "Não",
+          "Sistema eletrônico": "Não",
+          "Slots": "1",
+          "Rachaduras": "0/5",
+          "Legalidade": "Comum controlada",
+          "Preço": "9.000 Luzentis",
+          "Material/Origem": "Placas gastas de metal, polímero simples ou sucata tratada",
+          "Observação": "Em ambientes silenciosos, pode impor -1 em Furtividade por ruído das placas."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 65",
         "schemaVersion": 2
       },
@@ -3348,6 +3874,24 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Armadura de Placas"
         ],
         "summary": "Impõe -1 em Furtividade e Acrobacia. Em falha crítica de movimento, uma placa pode travar ou prender em obstáculo. Sucata compactada, placas industriais e metal rebitado",
+        "officialData": {
+          "Nome": "Couraça de Sucata Compactada",
+          "Tier": "F",
+          "Tipo": "Pesada",
+          "Categoria": "Armadura de Placas",
+          "CA": "+1",
+          "Redução": "1 contra quedas e impactos ambientais",
+          "Movimento": "-2 m",
+          "Ganchos": "1",
+          "Interface Medular": "Não",
+          "Sistema eletrônico": "Não",
+          "Slots": "1",
+          "Rachaduras": "0/5",
+          "Legalidade": "Controlada",
+          "Preço": "10.500 Luzentis",
+          "Material/Origem": "Sucata compactada, placas industriais e metal rebitado",
+          "Observação": "Impõe -1 em Furtividade e Acrobacia. Em falha crítica de movimento, uma placa pode travar ou prender em obstáculo."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 66",
         "schemaVersion": 2
       },
@@ -3378,6 +3922,24 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Armadura Modular Utilitária"
         ],
         "summary": "Impõe -1 em Furtividade por volume e peças penduradas. Em acerto crítico sofrido, 1 item em gancho pode cair ou ficar preso. Correias grossas, presilhas, suporte de ferramenta e placas pequenas",
+        "officialData": {
+          "Nome": "Arnês de Operário Kalar",
+          "Tier": "F",
+          "Tipo": "Utilitária",
+          "Categoria": "Armadura Modular Utilitária",
+          "CA": "+0",
+          "Redução": "—",
+          "Movimento": "Normal",
+          "Ganchos": "3",
+          "Interface Medular": "Não",
+          "Sistema eletrônico": "Não",
+          "Slots": "1",
+          "Rachaduras": "0/5",
+          "Legalidade": "Comum",
+          "Preço": "8.500 Luzentis",
+          "Material/Origem": "Correias grossas, presilhas, suporte de ferramenta e placas pequenas",
+          "Observação": "Impõe -1 em Furtividade por volume e peças penduradas. Em acerto crítico sofrido, 1 item em gancho pode cair ou ficar preso."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 67",
         "schemaVersion": 2
       },
@@ -3408,6 +3970,24 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Colete Utilitário"
         ],
         "summary": "Se estiver com os 2 ganchos ocupados, sofre -1 em Furtividade. Em falha de sistema, um suporte pode travar e deixar um item inacessível até ser liberado. Tecido reforçado, pequenas placas, presilhas e conectores simples",
+        "officialData": {
+          "Nome": "Colete de Suporte de Campo",
+          "Tier": "F",
+          "Tipo": "Utilitária",
+          "Categoria": "Colete Utilitário",
+          "CA": "+1",
+          "Redução": "—",
+          "Movimento": "Normal",
+          "Ganchos": "2",
+          "Interface Medular": "Simples",
+          "Sistema eletrônico": "Simples",
+          "Slots": "0",
+          "Rachaduras": "0/5",
+          "Legalidade": "Comum controlada",
+          "Preço": "10.000 Luzentis",
+          "Material/Origem": "Tecido reforçado, pequenas placas, presilhas e conectores simples",
+          "Observação": "Se estiver com os 2 ganchos ocupados, sofre -1 em Furtividade. Em falha de sistema, um suporte pode travar e deixar um item inacessível até ser liberado."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 68",
         "schemaVersion": 2
       },
@@ -3438,6 +4018,25 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Manto Condutor"
         ],
         "summary": "Permite aprender 1 habilidade cósmica Tier F Em Falha Cósmica, o manto ganha 1 rachadura ou causa +1 Estresse no usuário, a critério do mestre. Tecido gasto, fios condutores, fragmentos cósmicos fracos e inscrições instáveis",
+        "officialData": {
+          "Nome": "Manto Condutor Rachado",
+          "Tier": "F",
+          "Tipo": "Cósmica",
+          "Categoria": "Manto Condutor",
+          "CA": "+0",
+          "Redução": "—",
+          "Movimento": "Normal",
+          "Ganchos": "0",
+          "Interface Medular": "Simples",
+          "Sistema eletrônico": "Condutor cósmico instável",
+          "Slots": "0",
+          "Rachaduras": "0/5",
+          "Legalidade": "Restrita",
+          "Preço": "11.000 Luzentis",
+          "Material/Origem": "Tecido gasto, fios condutores, fragmentos cósmicos fracos e inscrições instáveis",
+          "Propriedade especial": "Permite aprender 1 habilidade cósmica Tier F",
+          "Observação": "Em Falha Cósmica, o manto ganha 1 rachadura ou causa +1 Estresse no usuário, a critério do mestre."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 69",
         "schemaVersion": 2
       },
@@ -3468,6 +4067,24 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Armadura de Sucata"
         ],
         "summary": "Impõe -1 em Furtividade e Acrobacia. Em erro crítico sofrido, ganha +1 rachadura adicional. Placas tortas, metal reaproveitado, cordas e couro velho",
+        "officialData": {
+          "Nome": "Placas de Sucata Amarradas",
+          "Tier": "F",
+          "Tipo": "Improvisada",
+          "Categoria": "Armadura de Sucata",
+          "CA": "+1",
+          "Redução": "—",
+          "Movimento": "Normal",
+          "Ganchos": "1",
+          "Interface Medular": "Não",
+          "Sistema eletrônico": "Não",
+          "Slots": "0",
+          "Rachaduras": "0/3",
+          "Legalidade": "Comum",
+          "Preço": "5.000 Luzentis",
+          "Material/Origem": "Placas tortas, metal reaproveitado, cordas e couro velho",
+          "Observação": "Impõe -1 em Furtividade e Acrobacia. Em erro crítico sofrido, ganha +1 rachadura adicional."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 70",
         "schemaVersion": 2
       },
@@ -3498,6 +4115,25 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Roupa Improvisada"
         ],
         "summary": "Ao sofrer dano de fogo ou ácido, ganha 1 rachadura automática além do efeito normal. Couro de Kuldrus rasgado, costurado e reaproveitado",
+        "officialData": {
+          "Nome": "Couro Rasgado de Kuldrus",
+          "Tier": "F",
+          "Tipo": "Improvisada",
+          "Categoria": "Roupa Improvisada",
+          "CA": "+0",
+          "Redução": "—",
+          "Movimento": "Normal",
+          "Ganchos": "1",
+          "Interface Medular": "Não",
+          "Sistema eletrônico": "Não",
+          "Slots": "0",
+          "Rachaduras": "0/3",
+          "Legalidade": "Comum",
+          "Preço": "4.500 Luzentis",
+          "Material/Origem": "Couro de Kuldrus rasgado, costurado e reaproveitado",
+          "Vulnerabilidade": "Fogo e ácido",
+          "Observação": "Ao sofrer dano de fogo ou ácido, ganha 1 rachadura automática além do efeito normal."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 71",
         "schemaVersion": 2
       },
@@ -3528,6 +4164,29 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Casaco Blindado"
         ],
         "summary": "Fibra de Ânimo: 1x por cena, recebe +1 em JPC contra medo, terror ou pressão espiritual/cósmica. Proteção equilibrada para linha de frente leve; segura melhor o corpo do que armaduras de tecido. Malha flexível de carbonita, anéis metálicos leves e reforço interno. Com 3+ rachaduras, partes da malha se abrem e a armadura impõe -1 em Acrobacia até reparo.",
+        "officialData": {
+          "Nome": "Malha de Carbonita",
+          "Tier": "F",
+          "Tipo": "Média",
+          "Categoria": "Casaco Blindado",
+          "CA": "+1",
+          "Mov.": "Normal",
+          "Ganchos": "1",
+          "Slots": "1",
+          "Rach.": "0/5",
+          "Preço": "9.000 Lz",
+          "Redução": "—",
+          "Peso": "25 kg",
+          "Movimento": "Normal",
+          "Interface Medular": "Não",
+          "Sistema eletrônico": "Não",
+          "Rachaduras": "0/5",
+          "Falha": "Com 3+ rachaduras, partes da malha se abrem e a armadura impõe -1 em Acrobacia até reparo.",
+          "Legalidade": "Comum controlada",
+          "Material/Origem": "Malha flexível de carbonita, anéis metálicos leves e reforço interno.",
+          "Propriedade": "Fibra de Ânimo: 1x por cena, recebe +1 em JPC contra medo, terror ou pressão espiritual/cósmica.",
+          "Observações": "Proteção equilibrada para linha de frente leve; segura melhor o corpo do que armaduras de tecido."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 80",
         "schemaVersion": 2
       },
@@ -3558,6 +4217,29 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Roupa Reforçada"
         ],
         "summary": "Perfil de Tiro: não sofre penalidade adicional por movimentação leve ou postura de tiro improvisada. Leve, móvel e discreto; protege pouco o resto do corpo, mas favorece personagens de mobilidade. Couro grosso de Kudrogo tratado com resina e costuras reforçadas. Em acerto crítico sofrido, as presilhas podem se romper e o peitoral perde 1 CA até ajuste ou reparo simples.",
+        "officialData": {
+          "Nome": "Peitoral de Couro de Kudrogo",
+          "Tier": "F",
+          "Tipo": "Leve",
+          "Categoria": "Roupa Reforçada",
+          "CA": "+1",
+          "Mov.": "Normal",
+          "Ganchos": "1",
+          "Slots": "1",
+          "Rach.": "0/5",
+          "Preço": "8.500 Lz",
+          "Redução": "—",
+          "Peso": "10 kg",
+          "Movimento": "Normal",
+          "Interface Medular": "Não",
+          "Sistema eletrônico": "Não",
+          "Rachaduras": "0/5",
+          "Falha": "Em acerto crítico sofrido, as presilhas podem se romper e o peitoral perde 1 CA até ajuste ou reparo simples.",
+          "Legalidade": "Comum",
+          "Material/Origem": "Couro grosso de Kudrogo tratado com resina e costuras reforçadas.",
+          "Propriedade": "Perfil de Tiro: não sofre penalidade adicional por movimentação leve ou postura de tiro improvisada.",
+          "Observações": "Leve, móvel e discreto; protege pouco o resto do corpo, mas favorece personagens de mobilidade."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 80",
         "schemaVersion": 2
       },
@@ -3588,6 +4270,29 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Manto Condutor"
         ],
         "summary": "Canalização de Lathrug: permite aprender e usar 1 habilidade cósmica Tier F de custo 1. Manto ritualístico protetor, usado por iniciantes no fluxo cósmico. Mais ritualístico do que defensivo. Tecido ritualístico, fios condutores, fragmentos minerais e costuras de foco. Em Falha Cósmica, o usuário sofre +1 Estresse ou o manto ganha +1 rachadura, à escolha do mestre.",
+        "officialData": {
+          "Nome": "Manto de Lathrug",
+          "Tier": "F",
+          "Tipo": "Cósmica",
+          "Categoria": "Manto Condutor",
+          "CA": "+0",
+          "Mov.": "Normal",
+          "Ganchos": "1",
+          "Slots": "1",
+          "Rach.": "0/5",
+          "Preço": "11.500 Lz",
+          "Redução": "—",
+          "Peso": "8 kg",
+          "Movimento": "Normal",
+          "Interface Medular": "Simples",
+          "Sistema eletrônico": "Condutor cósmico simples",
+          "Rachaduras": "0/5",
+          "Falha": "Em Falha Cósmica, o usuário sofre +1 Estresse ou o manto ganha +1 rachadura, à escolha do mestre.",
+          "Legalidade": "Restrita",
+          "Material/Origem": "Tecido ritualístico, fios condutores, fragmentos minerais e costuras de foco.",
+          "Propriedade": "Canalização de Lathrug: permite aprender e usar 1 habilidade cósmica Tier F de custo 1.",
+          "Observações": "Manto ritualístico protetor, usado por iniciantes no fluxo cósmico. Mais ritualístico do que defensivo."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 80",
         "schemaVersion": 2
       },
@@ -3618,6 +4323,29 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Armadura de Sucata"
         ],
         "summary": "Suporte de Campo: possui 1 suporte simples para equipamento tecnológico pequeno. Muito pesada para o Tier, improvisada e útil para catadores, técnicos e sobreviventes. Restos de nave, placas reaproveitadas, rebites, couro velho e presilhas grosseiras. Em erro crítico sofrido, uma peça pode soltar; 1 item em gancho fica inacessível até ajuste.",
+        "officialData": {
+          "Nome": "Armadura de Sucatas",
+          "Tier": "F",
+          "Tipo": "Utilitária",
+          "Categoria": "Armadura de Sucata",
+          "CA": "+1",
+          "Mov.": "-1 m",
+          "Ganchos": "2",
+          "Slots": "1",
+          "Rach.": "0/5",
+          "Preço": "9.500 Lz",
+          "Redução": "—",
+          "Peso": "20 kg",
+          "Movimento": "-1 m",
+          "Interface Medular": "Simples",
+          "Sistema eletrônico": "Simples",
+          "Rachaduras": "0/5",
+          "Falha": "Em erro crítico sofrido, uma peça pode soltar; 1 item em gancho fica inacessível até ajuste.",
+          "Legalidade": "Comum",
+          "Material/Origem": "Restos de nave, placas reaproveitadas, rebites, couro velho e presilhas grosseiras.",
+          "Propriedade": "Suporte de Campo: possui 1 suporte simples para equipamento tecnológico pequeno.",
+          "Observações": "Muito pesada para o Tier, improvisada e útil para catadores, técnicos e sobreviventes."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 80",
         "schemaVersion": 2
       },
@@ -3648,6 +4376,29 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Armadura de Placas"
         ],
         "summary": "Frontal de Impacto: a primeira fonte de dano concussivo da cena sofre -1 de dano. Proteção frontal forte, armadura fechada de combate direto. Aço reforçado com liga de paralatum. Com 3+ rachaduras, uma placa frontal entorta e impõe -1 em Acrobacia e Furtividade.",
+        "officialData": {
+          "Nome": "Armadura de Aço Paralatum",
+          "Tier": "E",
+          "Tipo": "Pesada",
+          "Categoria": "Armadura de Placas",
+          "CA": "+2",
+          "Mov.": "-1 m",
+          "Ganchos": "1",
+          "Slots": "2",
+          "Rach.": "0/5",
+          "Preço": "16.000 Lz",
+          "Redução": "1 contra impacto físico e concussão não energética",
+          "Peso": "28 kg",
+          "Movimento": "-1 m",
+          "Interface Medular": "Não",
+          "Sistema eletrônico": "Não",
+          "Rachaduras": "0/5",
+          "Falha": "Com 3+ rachaduras, uma placa frontal entorta e impõe -1 em Acrobacia e Furtividade.",
+          "Legalidade": "Controlada",
+          "Material/Origem": "Aço reforçado com liga de paralatum.",
+          "Propriedade": "Frontal de Impacto: a primeira fonte de dano concussivo da cena sofre -1 de dano.",
+          "Observações": "Proteção frontal forte, armadura fechada de combate direto."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 81",
         "schemaVersion": 2
       },
@@ -3678,6 +4429,29 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Colete de Placas"
         ],
         "summary": "Perfil Tático: não impõe penalidade em Furtividade quando estiver com até 1 gancho ocupado. Focado em mobilidade e combate rápido; boa proteção de tronco sem ficar pesado demais. Carbonita prensada, tiras táticas, presilhas e placas torácicas leves. Em acerto crítico sofrido, perde 1 gancho até manutenção.",
+        "officialData": {
+          "Nome": "Colete Tático de Carbonita",
+          "Tier": "E",
+          "Tipo": "Média",
+          "Categoria": "Colete de Placas",
+          "CA": "+1",
+          "Mov.": "Normal",
+          "Ganchos": "2",
+          "Slots": "1",
+          "Rach.": "0/5",
+          "Preço": "12.000 Lz",
+          "Redução": "—",
+          "Peso": "12 kg",
+          "Movimento": "Normal",
+          "Interface Medular": "Não",
+          "Sistema eletrônico": "Não",
+          "Rachaduras": "0/5",
+          "Falha": "Em acerto crítico sofrido, perde 1 gancho até manutenção.",
+          "Legalidade": "Comum controlada",
+          "Material/Origem": "Carbonita prensada, tiras táticas, presilhas e placas torácicas leves.",
+          "Propriedade": "Perfil Tático: não impõe penalidade em Furtividade quando estiver com até 1 gancho ocupado.",
+          "Observações": "Focado em mobilidade e combate rápido; boa proteção de tronco sem ficar pesado demais."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 81",
         "schemaVersion": 2
       },
@@ -3708,6 +4482,29 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Manto Condutor"
         ],
         "summary": "Fluxo Estelar: permite escolher 2 habilidades cósmicas Tier E ou inferior de custo 1. Mais estável que mantos Tier F; comum entre estudiosos e canalizadores experientes. Tecido de foco, fibras cristalinas e veios de condução energética. Em Falha Cósmica, sofre +1 Estresse e uma habilidade canalizada perde estabilidade até o fim da cena.",
+        "officialData": {
+          "Nome": "Vestes de Fluxo Estelar",
+          "Tier": "E",
+          "Tipo": "Cósmica",
+          "Categoria": "Manto Condutor",
+          "CA": "+1",
+          "Mov.": "Normal",
+          "Ganchos": "1",
+          "Slots": "2",
+          "Rach.": "0/5",
+          "Preço": "18.000 Lz",
+          "Redução": "—",
+          "Peso": "9 kg",
+          "Movimento": "Normal",
+          "Interface Medular": "Simples",
+          "Sistema eletrônico": "Condutor cósmico estabilizado",
+          "Rachaduras": "0/5",
+          "Falha": "Em Falha Cósmica, sofre +1 Estresse e uma habilidade canalizada perde estabilidade até o fim da cena.",
+          "Legalidade": "Restrita",
+          "Material/Origem": "Tecido de foco, fibras cristalinas e veios de condução energética.",
+          "Propriedade": "Fluxo Estelar: permite escolher 2 habilidades cósmicas Tier E ou inferior de custo 1.",
+          "Observações": "Mais estável que mantos Tier F; comum entre estudiosos e canalizadores experientes."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 81",
         "schemaVersion": 2
       },
@@ -3738,6 +4535,29 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Armadura Modular Utilitária"
         ],
         "summary": "Suporte Logístico: possui 1 suporte tecnológico e organização reforçada para kits, drones, granadas e cabos. Mais blindado que a Armadura de Sucatas, mas ainda funcional para suporte e campo. Ferrita segmentada, trilhos, placas utilitárias e presilhas de suporte. Em falha de sistema, 1 suporte trava e 1 item fica preso até reparo.",
+        "officialData": {
+          "Nome": "Traje Modular de Ferrita",
+          "Tier": "E",
+          "Tipo": "Utilitária",
+          "Categoria": "Armadura Modular Utilitária",
+          "CA": "+1",
+          "Mov.": "Normal",
+          "Ganchos": "3",
+          "Slots": "2",
+          "Rach.": "0/5",
+          "Preço": "13.500 Lz",
+          "Redução": "—",
+          "Peso": "22 kg",
+          "Movimento": "Normal",
+          "Interface Medular": "Simples",
+          "Sistema eletrônico": "Simples",
+          "Rachaduras": "0/5",
+          "Falha": "Em falha de sistema, 1 suporte trava e 1 item fica preso até reparo.",
+          "Legalidade": "Comum controlada",
+          "Material/Origem": "Ferrita segmentada, trilhos, placas utilitárias e presilhas de suporte.",
+          "Propriedade": "Suporte Logístico: possui 1 suporte tecnológico e organização reforçada para kits, drones, granadas e cabos.",
+          "Observações": "Mais blindado que a Armadura de Sucatas, mas ainda funcional para suporte e campo."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 81",
         "schemaVersion": 2
       },
@@ -3768,6 +4588,29 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Exotraje Simples"
         ],
         "summary": "Contra-Impacto Leviatã: 1x por rodada, quando sofre ataque corpo a corpo, pode realizar um contra-ataque desarmado como reação. Armadura brutal de elite, feita para combate frontal extremo. Vulcanium, adamantita, palatita, cristais energéticos e estrutura de exotraje. Com 3+ rachaduras, atuadores perdem precisão e impõem -1 em ataques corpo a corpo.",
+        "officialData": {
+          "Nome": "Couraça Leviatã de Ktaluhl",
+          "Tier": "S",
+          "Tipo": "Pesada",
+          "Categoria": "Exotraje Simples",
+          "CA": "+5",
+          "Mov.": "-1 m",
+          "Ganchos": "2",
+          "Slots": "5",
+          "Rach.": "0/5",
+          "Preço": "10.000.000 Lz",
+          "Redução": "2 contra dano físico",
+          "Peso": "40 kg",
+          "Movimento": "-1 m",
+          "Interface Medular": "Avançada",
+          "Sistema eletrônico": "Avançado",
+          "Rachaduras": "0/5",
+          "Falha": "Com 3+ rachaduras, atuadores perdem precisão e impõem -1 em ataques corpo a corpo.",
+          "Legalidade": "Militar / Lendária",
+          "Material/Origem": "Vulcanium, adamantita, palatita, cristais energéticos e estrutura de exotraje.",
+          "Propriedade": "Contra-Impacto Leviatã: 1x por rodada, quando sofre ataque corpo a corpo, pode realizar um contra-ataque desarmado como reação.",
+          "Observações": "Armadura brutal de elite, feita para combate frontal extremo."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 82",
         "schemaVersion": 2
       },
@@ -3798,6 +4641,29 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Traje Segmentado"
         ],
         "summary": "Mira de Uryon: 1x por rodada, se não se mover antes do disparo, ignora cobertura média e aumenta o alcance efetivo em 1 passo. Armadura tática de atirador. Se andar mais de 3 m no turno, perde precisão até o fim do turno. Vulcanium leve, sensores, circuito avançado e camada optrônica. Com 3+ rachaduras, os sensores ficam imprecisos e ataques à distância sofrem -1.",
+        "officialData": {
+          "Nome": "Traje Nulo “Mira de Uryon”",
+          "Tier": "S",
+          "Tipo": "Leve",
+          "Categoria": "Traje Segmentado",
+          "CA": "+4",
+          "Mov.": "Normal",
+          "Ganchos": "2",
+          "Slots": "5",
+          "Rach.": "0/5",
+          "Preço": "10.000.000 Lz",
+          "Redução": "—",
+          "Peso": "30 kg",
+          "Movimento": "Normal",
+          "Interface Medular": "Avançada",
+          "Sistema eletrônico": "Avançado",
+          "Rachaduras": "0/5",
+          "Falha": "Com 3+ rachaduras, os sensores ficam imprecisos e ataques à distância sofrem -1.",
+          "Legalidade": "Militar / Restrita",
+          "Material/Origem": "Vulcanium leve, sensores, circuito avançado e camada optrônica.",
+          "Propriedade": "Mira de Uryon: 1x por rodada, se não se mover antes do disparo, ignora cobertura média e aumenta o alcance efetivo em 1 passo.",
+          "Observações": "Armadura tática de atirador. Se andar mais de 3 m no turno, perde precisão até o fim do turno."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 82",
         "schemaVersion": 2
       },
@@ -3828,6 +4694,29 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Manto Condutor"
         ],
         "summary": "Reator Vivo: permite escolher 4 habilidades cósmicas; 1x por descanso completo, pode usar uma habilidade no custo máximo mesmo sem Cosmos, sofrendo +2 Estresse. Item mítico, perigoso e extremamente poderoso. Deve ser tratado como peça narrativa. Tecido vivo, núcleo reativo e veios de condução cósmica rara. Em Falha Cósmica grave, o usuário sofre +2 Estresse e o manto entra em ressonância instável.",
+        "officialData": {
+          "Nome": "Manto de Falaris (Reator Vivo)",
+          "Tier": "S",
+          "Tipo": "Cósmica",
+          "Categoria": "Manto Condutor",
+          "CA": "+2",
+          "Mov.": "Normal",
+          "Ganchos": "2",
+          "Slots": "5",
+          "Rach.": "0/5",
+          "Preço": "10.000.000 Lz",
+          "Redução": "—",
+          "Peso": "12 kg",
+          "Movimento": "Normal",
+          "Interface Medular": "Avançada",
+          "Sistema eletrônico": "Reator cósmico integrado",
+          "Rachaduras": "0/5",
+          "Falha": "Em Falha Cósmica grave, o usuário sofre +2 Estresse e o manto entra em ressonância instável.",
+          "Legalidade": "Única / Lendária",
+          "Material/Origem": "Tecido vivo, núcleo reativo e veios de condução cósmica rara.",
+          "Propriedade": "Reator Vivo: permite escolher 4 habilidades cósmicas; 1x por descanso completo, pode usar uma habilidade no custo máximo mesmo sem Cosmos, sofrendo +2 Estresse.",
+          "Observações": "Item mítico, perigoso e extremamente poderoso. Deve ser tratado como peça narrativa."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 82",
         "schemaVersion": 2
       },
@@ -3858,6 +4747,29 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Exotraje Simples"
         ],
         "summary": "Braços de Emergência: amplia suporte, facilita controle de drones/torretas e 1x por rodada pode interceptar um ataque contra aliado adjacente. Suporte Vital Serafim: 1x por descanso de vigília, cura 3d8 PV divididos entre até 2 alvos. Armadura de suporte supremo, feita para resgate, defesa e operação tática. Exoestrutura serafim, circuito neural, ligas de alto grau e braços auxiliares. Com 3+ rachaduras, os braços mecânicos perdem sincronia e 2 ganchos ficam inativos.",
+        "officialData": {
+          "Nome": "Armadura Serafim de Emergência",
+          "Tier": "S",
+          "Tipo": "Utilitária",
+          "Categoria": "Exotraje Simples",
+          "CA": "+3",
+          "Mov.": "Normal",
+          "Ganchos": "4",
+          "Slots": "5",
+          "Rach.": "0/5",
+          "Preço": "10.000.000 Lz",
+          "Redução": "1 contra dano físico",
+          "Peso": "38 kg",
+          "Movimento": "Normal",
+          "Interface Medular": "Avançada",
+          "Sistema eletrônico": "Avançado",
+          "Rachaduras": "0/5",
+          "Falha": "Com 3+ rachaduras, os braços mecânicos perdem sincronia e 2 ganchos ficam inativos.",
+          "Legalidade": "Militar / Lendária",
+          "Material/Origem": "Exoestrutura serafim, circuito neural, ligas de alto grau e braços auxiliares.",
+          "Propriedade": "Braços de Emergência: amplia suporte, facilita controle de drones/torretas e 1x por rodada pode interceptar um ataque contra aliado adjacente. Suporte Vital Serafim: 1x por descanso de vigília, cura 3d8 PV divididos entre até 2 alvos.",
+          "Observações": "Armadura de suporte supremo, feita para resgate, defesa e operação tática."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 82",
         "schemaVersion": 2
       }
@@ -3876,6 +4788,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ilumina 3m normal, +3m penumbra Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Vela",
+          "Peso": "0,5 Kg",
+          "Preço em Lz": "5 Lz",
+          "Função/Efeito": "Ilumina 3m normal, +3m penumbra",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 226",
         "schemaVersion": 2
       },
@@ -3892,6 +4811,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ilumina 6m normal, +6m penumbra (1h), dano 1d3 (fogo) Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Tocha",
+          "Peso": "1 Kg",
+          "Preço em Lz": "25 Lz",
+          "Função/Efeito": "Ilumina 6m normal, +6m penumbra (1h), dano 1d3 (fogo)",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 226",
         "schemaVersion": 2
       },
@@ -3908,6 +4834,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Acende fogo sem rolagem Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Pederneira",
+          "Peso": "0,5 Kg",
+          "Preço em Lz": "125 Lz",
+          "Função/Efeito": "Acende fogo sem rolagem",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 226",
         "schemaVersion": 2
       },
@@ -3924,6 +4857,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ilumina 9m normal, +9m penumbra, dura 6h Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Lanterna a óleo",
+          "Peso": "1,5 Kg",
+          "Preço em Lz": "300 Lz",
+          "Função/Efeito": "Ilumina 9m normal, +9m penumbra, dura 6h",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 226",
         "schemaVersion": 2
       },
@@ -3940,6 +4880,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Alcance 12m, dura 8h, precisa de carga Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Lanterna elétrica simples",
+          "Peso": "1,2 Kg",
+          "Preço em Lz": "900 Lz",
+          "Função/Efeito": "Alcance 12m, dura 8h, precisa de carga",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 226",
         "schemaVersion": 2
       },
@@ -3956,6 +4903,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Luz contínua fraca (6h) Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Cordão luminoso (5m)",
+          "Peso": "0,7 Kg",
+          "Preço em Lz": "450 Lz",
+          "Função/Efeito": "Luz contínua fraca (6h)",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 226",
         "schemaVersion": 2
       },
@@ -3972,6 +4926,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ilumina 30m frontal, alimentado por bateria Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Farol portátil",
+          "Peso": "4 Kg",
+          "Preço em Lz": "5.000 Lz",
+          "Função/Efeito": "Ilumina 30m frontal, alimentado por bateria",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 226",
         "schemaVersion": 2
       },
@@ -3989,6 +4950,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": true,
         "summary": "Sinal luminoso, visível a 500m Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Lanterna sinalizadora (foguete)",
+          "Peso": "0,5 Kg",
+          "Preço em Lz": "350 Lz",
+          "Função/Efeito": "Sinal luminoso, visível a 500m",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 226",
         "schemaVersion": 2
       },
@@ -4005,6 +4973,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Monta fogo seguro em qualquer ambiente Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Fogueira portátil (kit)",
+          "Peso": "3 Kg",
+          "Preço em Lz": "1.250 Lz",
+          "Função/Efeito": "Monta fogo seguro em qualquer ambiente",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 226",
         "schemaVersion": 2
       },
@@ -4022,6 +4997,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": true,
         "summary": "Acende fogo facilmente Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Caixa de fósforos (x20)",
+          "Peso": "0,2 Kg",
+          "Preço em Lz": "75 Lz",
+          "Função/Efeito": "Acende fogo facilmente",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 226",
         "schemaVersion": 2
       },
@@ -4038,6 +5020,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Iluminação fraca em 4m Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Lamparina de mesa",
+          "Peso": "1 Kg",
+          "Preço em Lz": "200 Lz",
+          "Função/Efeito": "Iluminação fraca em 4m",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 226",
         "schemaVersion": 2
       },
@@ -4054,6 +5043,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Aguenta até 1200N de pressão Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Corda 10m",
+          "Peso": "2 Kg",
+          "Preço em Lz": "50 Lz",
+          "Função/Efeito": "Aguenta até 1200N de pressão",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 227",
         "schemaVersion": 2
       },
@@ -4070,6 +5066,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Mantém água limpa por 24h Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Cantil (1L)",
+          "Peso": "0,7 Kg",
+          "Preço em Lz": "60 Lz",
+          "Função/Efeito": "Mantém água limpa por 24h",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 227",
         "schemaVersion": 2
       },
@@ -4086,6 +5089,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Abrigo contra frio e chuva Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Barraca (2 pessoas)",
+          "Peso": "4 Kg",
+          "Preço em Lz": "400 Lz",
+          "Função/Efeito": "Abrigo contra frio e chuva",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 227",
         "schemaVersion": 2
       },
@@ -4102,6 +5112,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Descanso confortável Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Saco de dormir",
+          "Peso": "2,5 Kg",
+          "Preço em Lz": "200 Lz",
+          "Função/Efeito": "Descanso confortável",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 227",
         "schemaVersion": 2
       },
@@ -4118,6 +5135,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Purifica até 5L/dia Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Filtro de água portátil",
+          "Peso": "1 Kg",
+          "Preço em Lz": "450 Lz",
+          "Função/Efeito": "Purifica até 5L/dia",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 227",
         "schemaVersion": 2
       },
@@ -4135,6 +5159,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": true,
         "summary": "Sustento básico Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Ração de viagem (1 dia)",
+          "Peso": "1 Kg",
+          "Preço em Lz": "100 Lz",
+          "Função/Efeito": "Sustento básico",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 227",
         "schemaVersion": 2
       },
@@ -4154,6 +5185,16 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Cordas, fixadores, travas e ancoragem. Teste associado: Atletismo ou Acrobacia.",
+        "officialData": {
+          "Nome": "Kit de escalada",
+          "Peso": "2 Kg",
+          "Preço em Lz": "350 Lz",
+          "Função/Efeito": "Reduz dificuldade em escalada",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão.",
+          "Kit": "Kit de Escalada",
+          "Uso principal": "Cordas, fixadores, travas e ancoragem.",
+          "Perícia ou teste associado": "Atletismo ou Acrobacia."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 143",
         "schemaVersion": 2
       },
@@ -4170,6 +5211,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "10 min em ambiente tóxico Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Máscara de respiração",
+          "Peso": "1 Kg",
+          "Preço em Lz": "750 Lz",
+          "Função/Efeito": "10 min em ambiente tóxico",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 227",
         "schemaVersion": 2
       },
@@ -4186,6 +5234,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Evita penalidades em lama/neve Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Galocha reforçada",
+          "Peso": "1,5 Kg",
+          "Preço em Lz": "500 Lz",
+          "Função/Efeito": "Evita penalidades em lama/neve",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 227",
         "schemaVersion": 2
       },
@@ -4202,6 +5257,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Filtra até 30 min em área tóxica Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Máscara antigás",
+          "Peso": "2 Kg",
+          "Preço em Lz": "2.500 Lz",
+          "Função/Efeito": "Filtra até 30 min em área tóxica",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 227",
         "schemaVersion": 2
       },
@@ -4218,6 +5280,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Proteção básica, sem bônus Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Botas comuns",
+          "Peso": "2 Kg",
+          "Preço em Lz": "500 Lz",
+          "Função/Efeito": "Proteção básica, sem bônus",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 227",
         "schemaVersion": 2
       },
@@ -4234,6 +5303,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Resistência em terreno difícil Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Botas reforçadas",
+          "Peso": "3 Kg",
+          "Preço em Lz": "1.500 Lz",
+          "Função/Efeito": "Resistência em terreno difícil",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 227",
         "schemaVersion": 2
       },
@@ -4250,6 +5326,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Proteção contra chuva/frio Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Capa de pano",
+          "Peso": "1,5 Kg",
+          "Preço em Lz": "450 Lz",
+          "Função/Efeito": "Proteção contra chuva/frio",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 227",
         "schemaVersion": 2
       },
@@ -4266,6 +5349,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Reduz fadiga em climas frios Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Capa reforçada",
+          "Peso": "2,5 Kg",
+          "Preço em Lz": "1.400 Lz",
+          "Função/Efeito": "Reduz fadiga em climas frios",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 227",
         "schemaVersion": 2
       },
@@ -4282,6 +5372,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Protege de chuva, dano improvisado 1d2 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Guarda-chuva metálico",
+          "Peso": "1,5 Kg",
+          "Preço em Lz": "650 Lz",
+          "Função/Efeito": "Protege de chuva, dano improvisado 1d2",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 227",
         "schemaVersion": 2
       },
@@ -4298,6 +5395,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Reparo temporário por 1 cena (ação principal) Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Kit de reparo rápido",
+          "Peso": "1 Kg",
+          "Preço em Lz": "400 Lz",
+          "Função/Efeito": "Reparo temporário por 1 cena (ação principal)",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 228",
         "schemaVersion": 2
       },
@@ -4314,6 +5418,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Remove 1 Rachadura (1h) Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Kit de reparo pesado",
+          "Peso": "5 Kg",
+          "Preço em Lz": "1.250 Lz",
+          "Função/Efeito": "Remove 1 Rachadura (1h)",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 228",
         "schemaVersion": 2
       },
@@ -4330,6 +5441,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Alimenta 1 dispositivo pequeno por 6h Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Bateria portátil (energia baixa)",
+          "Peso": "0,8 Kg",
+          "Preço em Lz": "1.100 Lz",
+          "Função/Efeito": "Alimenta 1 dispositivo pequeno por 6h",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 228",
         "schemaVersion": 2
       },
@@ -4346,6 +5464,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Substitui kit simples, dano improvisado 1d2 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Ferramenta multiuso",
+          "Peso": "1 Kg",
+          "Preço em Lz": "250 Lz",
+          "Função/Efeito": "Substitui kit simples, dano improvisado 1d2",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4362,6 +5487,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Repara couro/tecido Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Kit de costura",
+          "Peso": "0,5 Kg",
+          "Preço em Lz": "75 Lz",
+          "Função/Efeito": "Repara couro/tecido",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4378,6 +5510,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ferramenta, dano improvisado 1d3 concussão Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Martelo de pedreiro",
+          "Peso": "2 Kg",
+          "Preço em Lz": "125 Lz",
+          "Função/Efeito": "Ferramenta, dano improvisado 1d3 concussão",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4394,6 +5533,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Auxilia em testes de sobrevivência aquática Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Kit de pesca simples",
+          "Peso": "1 Kg",
+          "Preço em Lz": "150 Lz",
+          "Função/Efeito": "Auxilia em testes de sobrevivência aquática",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4410,6 +5556,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Aprisiona alvo Pequeno (teste FOR) Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Rede de caça",
+          "Peso": "2,5 Kg",
+          "Preço em Lz": "225 Lz",
+          "Função/Efeito": "Aprisiona alvo Pequeno (teste FOR)",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4427,6 +5580,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": true,
         "summary": "Incendia área pequena, dano 1d3 (fogo) Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Óleo inflamável (frasco)",
+          "Peso": "0,7 Kg",
+          "Preço em Lz": "150 Lz",
+          "Função/Efeito": "Incendia área pequena, dano 1d3 (fogo)",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4443,6 +5603,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Facilita perícias de investigação Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Lupa de cristal",
+          "Peso": "0,3 Kg",
+          "Preço em Lz": "250 Lz",
+          "Função/Efeito": "Facilita perícias de investigação",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4459,6 +5626,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Aguenta até 2.500N, dano improvisado 1d3 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Corrente de ferro (2m)",
+          "Peso": "3 Kg",
+          "Preço em Lz": "250 Lz",
+          "Função/Efeito": "Aguenta até 2.500N, dano improvisado 1d3",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4475,6 +5649,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Escavação, dano improvisado 1d3 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Pá metálica",
+          "Peso": "2,5 Kg",
+          "Preço em Lz": "300 Lz",
+          "Função/Efeito": "Escavação, dano improvisado 1d3",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4491,6 +5672,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Agricultura, dano improvisado 1d3 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Enxada",
+          "Peso": "3 Kg",
+          "Preço em Lz": "350 Lz",
+          "Função/Efeito": "Agricultura, dano improvisado 1d3",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4507,6 +5695,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Cozinha, dano improvisado 1d3 concussão Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Panela de ferro",
+          "Peso": "4 Kg",
+          "Preço em Lz": "500 Lz",
+          "Função/Efeito": "Cozinha, dano improvisado 1d3 concussão",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4523,6 +5718,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Utensílio, dano improvisado 1d3 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Faca de cozinha",
+          "Peso": "0,7 Kg",
+          "Preço em Lz": "200 Lz",
+          "Função/Efeito": "Utensílio, dano improvisado 1d3",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4539,6 +5741,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ferramenta, dano improvisado 1d4 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Machado de lenha",
+          "Peso": "3,5 Kg",
+          "Preço em Lz": "800 Lz",
+          "Função/Efeito": "Ferramenta, dano improvisado 1d4",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4555,6 +5764,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Utensílio, dano improvisado 1d2 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Tesoura de metal",
+          "Peso": "0,6 Kg",
+          "Preço em Lz": "150 Lz",
+          "Função/Efeito": "Utensílio, dano improvisado 1d2",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4571,6 +5787,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Construção básica Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Prego (x50)",
+          "Peso": "1 Kg",
+          "Preço em Lz": "100 Lz",
+          "Função/Efeito": "Construção básica",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4587,6 +5810,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Construção, dano improvisado 1d2 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Martelo de carpinteiro",
+          "Peso": "1,5 Kg",
+          "Preço em Lz": "175 Lz",
+          "Função/Efeito": "Construção, dano improvisado 1d2",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4603,6 +5833,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Madeira, dano improvisado 1d2 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Serra de mão",
+          "Peso": "2 Kg",
+          "Preço em Lz": "350 Lz",
+          "Função/Efeito": "Madeira, dano improvisado 1d2",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4619,6 +5856,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ferramentas para construção, manutenção Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Caixa de ferramentas completa",
+          "Peso": "8 Kg",
+          "Preço em Lz": "2.000 Lz",
+          "Função/Efeito": "Ferramentas para construção, manutenção",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4635,6 +5879,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Apoio em marcha, dano improvisado 1d2 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Bengala de ferro",
+          "Peso": "1,5 Kg",
+          "Preço em Lz": "450 Lz",
+          "Função/Efeito": "Apoio em marcha, dano improvisado 1d2",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4651,6 +5902,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Caminhada, dano improvisado 1d3 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Cajado simples",
+          "Peso": "2,5 Kg",
+          "Preço em Lz": "600 Lz",
+          "Função/Efeito": "Caminhada, dano improvisado 1d3",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4667,6 +5925,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Corte leve, dano improvisado 1d2 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Estilete",
+          "Peso": "0,3 Kg",
+          "Preço em Lz": "200 Lz",
+          "Função/Efeito": "Corte leve, dano improvisado 1d2",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4683,6 +5948,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Agricultura, dano improvisado 1d3 corte Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Foice agrícola",
+          "Peso": "2,5 Kg",
+          "Preço em Lz": "550 Lz",
+          "Função/Efeito": "Agricultura, dano improvisado 1d3 corte",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4699,6 +5971,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Mineração, dano improvisado 1d3 concussão Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Picareta de ferro",
+          "Peso": "3 Kg",
+          "Preço em Lz": "700 Lz",
+          "Função/Efeito": "Mineração, dano improvisado 1d3 concussão",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4715,6 +5994,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Cozinha, dano improvisado 1d2 perfuração Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Espeto de ferro",
+          "Peso": "0,9 Kg",
+          "Preço em Lz": "250 Lz",
+          "Função/Efeito": "Cozinha, dano improvisado 1d2 perfuração",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4731,6 +6017,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Caminhada, dano improvisado 1d3 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Cajado metálico",
+          "Peso": "3 Kg",
+          "Preço em Lz": "1.000 Lz",
+          "Função/Efeito": "Caminhada, dano improvisado 1d3",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4747,6 +6040,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Caminhada, dano improvisado 1d2 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Bastão de madeira",
+          "Peso": "2 Kg",
+          "Preço em Lz": "500 Lz",
+          "Função/Efeito": "Caminhada, dano improvisado 1d2",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4763,6 +6063,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Improvisado de combate, 1d3 concussão Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Bastão reforçado",
+          "Peso": "3,5 Kg",
+          "Preço em Lz": "1.250 Lz",
+          "Função/Efeito": "Improvisado de combate, 1d3 concussão",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4779,6 +6086,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Usada em armadilhas, dano 1d2 perfuração Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Estaca de madeira",
+          "Peso": "1 Kg",
+          "Preço em Lz": "300 Lz",
+          "Função/Efeito": "Usada em armadilhas, dano 1d2 perfuração",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4795,6 +6109,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Mais resistente, dano 1d3 perfuração Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Estaca metálica",
+          "Peso": "1,2 Kg",
+          "Preço em Lz": "600 Lz",
+          "Função/Efeito": "Mais resistente, dano 1d3 perfuração",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4811,6 +6132,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Luxo, podem ferir 1d2 Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Garras artificiais (decorativas)",
+          "Peso": "1 Kg",
+          "Preço em Lz": "1.500 Lz",
+          "Função/Efeito": "Luxo, podem ferir 1d2",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4827,6 +6155,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ornamental, dano improvisado 1d3 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Lança decorativa",
+          "Peso": "4 Kg",
+          "Preço em Lz": "10.000 Lz",
+          "Função/Efeito": "Ornamental, dano improvisado 1d3",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4843,6 +6178,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Dano improvisado 1d3, pode quebrar Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Espada enferrujada",
+          "Peso": "3 Kg",
+          "Preço em Lz": "300 Lz",
+          "Função/Efeito": "Dano improvisado 1d3, pode quebrar",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4859,6 +6201,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Dano improvisado 1d3 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Machado enferrujado",
+          "Peso": "4 Kg",
+          "Preço em Lz": "400 Lz",
+          "Função/Efeito": "Dano improvisado 1d3",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4875,6 +6224,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Improvisado, dano 1d2 arremesso Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Pedregulho pequeno",
+          "Peso": "2 Kg",
+          "Preço em Lz": "25 Lz",
+          "Função/Efeito": "Improvisado, dano 1d2 arremesso",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4891,6 +6247,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Improvisado, dano 1d2 corte Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Pedra afiada",
+          "Peso": "1 Kg",
+          "Preço em Lz": "50 Lz",
+          "Função/Efeito": "Improvisado, dano 1d2 corte",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4907,6 +6270,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Improvisado, dano 1d2 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Garrafa de vinho vazia",
+          "Peso": "0,6 Kg",
+          "Preço em Lz": "75 Lz",
+          "Função/Efeito": "Improvisado, dano 1d2",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4923,6 +6293,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Improvisado, dano 1d2 corte Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Garrafa quebrada",
+          "Peso": "0,5 Kg",
+          "Preço em Lz": "100 Lz",
+          "Função/Efeito": "Improvisado, dano 1d2 corte",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4939,6 +6316,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Improvisado, dano 1d3 concussão Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Cadeira de madeira",
+          "Peso": "6 Kg",
+          "Preço em Lz": "450 Lz",
+          "Função/Efeito": "Improvisado, dano 1d3 concussão",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4955,6 +6339,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Improvisado, dano 1d3 concussão Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Cadeira metálica",
+          "Peso": "8 Kg",
+          "Preço em Lz": "750 Lz",
+          "Função/Efeito": "Improvisado, dano 1d3 concussão",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4971,6 +6362,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Improvisado, 1d3 concussão, frágil Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Mesa pequena",
+          "Peso": "10 Kg",
+          "Preço em Lz": "1.250 Lz",
+          "Função/Efeito": "Improvisado, 1d3 concussão, frágil",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 229",
         "schemaVersion": 2
       },
@@ -4987,6 +6385,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Amplia visão em até ×2 Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Binóculo simples",
+          "Peso": "1 Kg",
+          "Preço em Lz": "450 Lz",
+          "Função/Efeito": "Amplia visão em até ×2",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 230",
         "schemaVersion": 2
       },
@@ -5003,6 +6408,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Amplia visão ×5, frágil Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Binóculo de precisão",
+          "Peso": "1,5 Kg",
+          "Preço em Lz": "15.000 Lz",
+          "Função/Efeito": "Amplia visão ×5, frágil",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 230",
         "schemaVersion": 2
       },
@@ -5019,6 +6431,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Usado para sinalização sonora Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Gongo portátil",
+          "Peso": "2 Kg",
+          "Preço em Lz": "350 Lz",
+          "Função/Efeito": "Usado para sinalização sonora",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 230",
         "schemaVersion": 2
       },
@@ -5035,6 +6454,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Sinal sonoro de longo alcance Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Apito metálico",
+          "Peso": "0,2 Kg",
+          "Preço em Lz": "100 Lz",
+          "Função/Efeito": "Sinal sonoro de longo alcance",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 230",
         "schemaVersion": 2
       },
@@ -5051,6 +6477,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Marca horas com precisão Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Relógio mecânico",
+          "Peso": "0,2 Kg",
+          "Preço em Lz": "750 Lz",
+          "Função/Efeito": "Marca horas com precisão",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 230",
         "schemaVersion": 2
       },
@@ -5067,6 +6500,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Cronômetro, memória simples Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Relógio digital",
+          "Peso": "0,1 Kg",
+          "Preço em Lz": "1.750 Lz",
+          "Função/Efeito": "Cronômetro, memória simples",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 230",
         "schemaVersion": 2
       },
@@ -5083,6 +6523,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Reflexo de luz em sinais Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Espelho de bolso",
+          "Peso": "0,3 Kg",
+          "Preço em Lz": "200 Lz",
+          "Função/Efeito": "Reflexo de luz em sinais",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 230",
         "schemaVersion": 2
       },
@@ -5099,6 +6546,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Sinal sonoro de longo alcance Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Trombeta metálica",
+          "Peso": "3 Kg",
+          "Preço em Lz": "750 Lz",
+          "Função/Efeito": "Sinal sonoro de longo alcance",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 230",
         "schemaVersion": 2
       },
@@ -5115,6 +6569,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Marca tempo (1h) Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Ampulheta de vidro",
+          "Peso": "0,7 Kg",
+          "Preço em Lz": "750 Lz",
+          "Função/Efeito": "Marca tempo (1h)",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 230",
         "schemaVersion": 2
       },
@@ -5131,6 +6592,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Acessório básico Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Cinto comum",
+          "Peso": "0,5 Kg",
+          "Preço em Lz": "200 Lz",
+          "Função/Efeito": "Acessório básico",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 232",
         "schemaVersion": 2
       },
@@ -5147,6 +6615,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Aguenta até 30 Kg sem rasgar Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Cinto reforçado",
+          "Peso": "0,8 Kg",
+          "Preço em Lz": "900 Lz",
+          "Função/Efeito": "Aguenta até 30 Kg sem rasgar",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 232",
         "schemaVersion": 2
       },
@@ -5163,6 +6638,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Para registros/mapas Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Papel e tinta",
+          "Peso": "0,2 Kg",
+          "Preço em Lz": "40 Lz",
+          "Função/Efeito": "Para registros/mapas",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 233",
         "schemaVersion": 2
       },
@@ -5179,6 +6661,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Utensílio de escrita Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Caneta de metal",
+          "Peso": "0,1 Kg",
+          "Preço em Lz": "75 Lz",
+          "Função/Efeito": "Utensílio de escrita",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 233",
         "schemaVersion": 2
       },
@@ -5195,6 +6684,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Contém canetas, tinta e papel Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Estojo de escrita",
+          "Peso": "0,5 Kg",
+          "Preço em Lz": "400 Lz",
+          "Função/Efeito": "Contém canetas, tinta e papel",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 233",
         "schemaVersion": 2
       },
@@ -5211,6 +6707,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Conhecimento básico, sem efeito mecânico Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Livro comum",
+          "Peso": "1 Kg",
+          "Preço em Lz": "300 Lz",
+          "Função/Efeito": "Conhecimento básico, sem efeito mecânico",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 233",
         "schemaVersion": 2
       },
@@ -5227,6 +6730,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Utensílio, dano improvisado 1d2 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Garfo de metal",
+          "Peso": "0,8 Kg",
+          "Preço em Lz": "150 Lz",
+          "Função/Efeito": "Utensílio, dano improvisado 1d2",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 234",
         "schemaVersion": 2
       },
@@ -5243,6 +6753,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Utensílio, dano improvisado 1 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Colher de ferro",
+          "Peso": "0,5 Kg",
+          "Preço em Lz": "100 Lz",
+          "Função/Efeito": "Utensílio, dano improvisado 1",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 234",
         "schemaVersion": 2
       },
@@ -5259,6 +6776,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Utensílio, dano improvisado 1 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Caneca metálica",
+          "Peso": "0,3 Kg",
+          "Preço em Lz": "150 Lz",
+          "Função/Efeito": "Utensílio, dano improvisado 1",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 234",
         "schemaVersion": 2
       },
@@ -5275,6 +6799,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Utensílios, garfo pode ferir 1d2 Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Talheres metálicos (x3)",
+          "Peso": "0,4 Kg",
+          "Preço em Lz": "100 Lz",
+          "Função/Efeito": "Utensílios, garfo pode ferir 1d2",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 234",
         "schemaVersion": 2
       },
@@ -5291,6 +6822,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Utensílio pesado, dano 1d2 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Tigela de pedra",
+          "Peso": "2 Kg",
+          "Preço em Lz": "400 Lz",
+          "Função/Efeito": "Utensílio pesado, dano 1d2",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 234",
         "schemaVersion": 2
       },
@@ -5307,6 +6845,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Muito pesada, decorativa Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Mesa grande",
+          "Peso": "40 Kg",
+          "Preço em Lz": "40.000 Lz",
+          "Função/Efeito": "Muito pesada, decorativa",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 234",
         "schemaVersion": 2
       },
@@ -5323,6 +6868,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ornamental, frágil Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Taça de cristal",
+          "Peso": "0,4 Kg",
+          "Preço em Lz": "1.000 Lz",
+          "Função/Efeito": "Ornamental, frágil",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5339,6 +6891,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Valor monetário Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Joia de Ourium",
+          "Peso": "0,2 Kg",
+          "Preço em Lz": "5.000 Lz",
+          "Função/Efeito": "Valor monetário",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5355,6 +6914,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Item de luxo, status social Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Roupas finas",
+          "Peso": "2 Kg",
+          "Preço em Lz": "750 Lz",
+          "Função/Efeito": "Item de luxo, status social",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5371,6 +6937,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ornamento caro Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Estátua decorativa",
+          "Peso": "5 Kg",
+          "Preço em Lz": "25.000 Lz",
+          "Função/Efeito": "Ornamento caro",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5387,6 +6960,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Luxo, item narrativo Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Vinho estelar raro",
+          "Peso": "1,5 Kg",
+          "Preço em Lz": "15.000 Lz",
+          "Função/Efeito": "Luxo, item narrativo",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5403,6 +6983,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Aroma raro Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Perfume alienígena",
+          "Peso": "0,3 Kg",
+          "Preço em Lz": "400 Lz",
+          "Função/Efeito": "Aroma raro",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5419,6 +7006,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Item cultural/luxo Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Caixa de música",
+          "Peso": "1 Kg",
+          "Preço em Lz": "600 Lz",
+          "Função/Efeito": "Item cultural/luxo",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5435,6 +7029,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Valor cultural, pesquisa ou luxo Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Livro raro",
+          "Peso": "2 Kg",
+          "Preço em Lz": "10.000 Lz",
+          "Função/Efeito": "Valor cultural, pesquisa ou luxo",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5451,6 +7052,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Item de luxo, usada em rituais Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Máscara decorativa",
+          "Peso": "0,8 Kg",
+          "Preço em Lz": "600 Lz",
+          "Função/Efeito": "Item de luxo, usada em rituais",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5467,6 +7075,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Arte rara, coleção Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Estatueta alienígena",
+          "Peso": "2 Kg",
+          "Preço em Lz": "20.000 Lz",
+          "Função/Efeito": "Arte rara, coleção",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5483,6 +7098,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Item cultural, usado em barganhas Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Colar tribal",
+          "Peso": "0,5 Kg",
+          "Preço em Lz": "900 Lz",
+          "Função/Efeito": "Item cultural, usado em barganhas",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5499,6 +7121,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ornamental, frágil Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Espelho grande",
+          "Peso": "5 Kg",
+          "Preço em Lz": "10.000 Lz",
+          "Função/Efeito": "Ornamental, frágil",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5515,6 +7144,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Símbolo cultural, honra em combate Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Bandeira de clã",
+          "Peso": "2 Kg",
+          "Preço em Lz": "5.000 Lz",
+          "Função/Efeito": "Símbolo cultural, honra em combate",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5531,6 +7167,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Luxo, valor cultural Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Tapete decorativo",
+          "Peso": "3 Kg",
+          "Preço em Lz": "10.000 Lz",
+          "Função/Efeito": "Luxo, valor cultural",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5547,6 +7190,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Item de luxo Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Almofada de seda",
+          "Peso": "2 Kg",
+          "Preço em Lz": "5.000 Lz",
+          "Função/Efeito": "Item de luxo",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5563,6 +7213,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ornamento valioso Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Estatueta dourada",
+          "Peso": "3 Kg",
+          "Preço em Lz": "25.000 Lz",
+          "Função/Efeito": "Ornamento valioso",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5579,6 +7236,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Item de luxo, colecionável Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Quadro artístico",
+          "Peso": "4 Kg",
+          "Preço em Lz": "15.000 Lz",
+          "Função/Efeito": "Item de luxo, colecionável",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5595,6 +7259,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Item cultural, sem efeito Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Máscara tribal",
+          "Peso": "0,8 Kg",
+          "Preço em Lz": "1.000 Lz",
+          "Função/Efeito": "Item cultural, sem efeito",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5611,6 +7282,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Item de luxo raro Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Relíquia alienígena",
+          "Peso": "2 Kg",
+          "Preço em Lz": "40.000 Lz",
+          "Função/Efeito": "Item de luxo raro",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5627,6 +7305,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Item de luxo, iluminação fraca Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Lanterna decorada",
+          "Peso": "2 Kg",
+          "Preço em Lz": "5.000 Lz",
+          "Função/Efeito": "Item de luxo, iluminação fraca",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5643,6 +7328,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Artefato cultural raro Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Caixa musical alienígena",
+          "Peso": "3 Kg",
+          "Preço em Lz": "20.000 Lz",
+          "Função/Efeito": "Artefato cultural raro",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5659,6 +7351,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Produz sons graves Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Instrumento de sopro simples",
+          "Peso": "1,5 Kg",
+          "Preço em Lz": "900 Lz",
+          "Função/Efeito": "Produz sons graves",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5675,6 +7374,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Música, item de luxo Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Instrumento de corda",
+          "Peso": "3,5 Kg",
+          "Preço em Lz": "10.000 Lz",
+          "Função/Efeito": "Música, item de luxo",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5691,6 +7397,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Usada em rituais de clãs Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Trombeta cerimonial",
+          "Peso": "2 Kg",
+          "Preço em Lz": "5.000 Lz",
+          "Função/Efeito": "Usada em rituais de clãs",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5707,6 +7420,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Luxo, ilumina até 6 velas Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Candelabro metálico",
+          "Peso": "3 Kg",
+          "Preço em Lz": "1.000 Lz",
+          "Função/Efeito": "Luxo, ilumina até 6 velas",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5723,6 +7443,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Luxo, sem poder real Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Grimório decorativo",
+          "Peso": "2 Kg",
+          "Preço em Lz": "15.000 Lz",
+          "Função/Efeito": "Luxo, sem poder real",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5739,6 +7466,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ornamento pesado Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Estátua de mármore",
+          "Peso": "15 Kg",
+          "Preço em Lz": "50.000 Lz",
+          "Função/Efeito": "Ornamento pesado",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5755,6 +7489,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ornamento decorativo Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Estátua pequena de bronze",
+          "Peso": "5 Kg",
+          "Preço em Lz": "10.000 Lz",
+          "Função/Efeito": "Ornamento decorativo",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5771,6 +7512,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Símbolo cultural, sem efeito Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Medalha de honra",
+          "Peso": "0,2 Kg",
+          "Preço em Lz": "20.000 Lz",
+          "Função/Efeito": "Símbolo cultural, sem efeito",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5787,6 +7535,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Luxo Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Corrente de prata",
+          "Peso": "0,3 Kg",
+          "Preço em Lz": "5.000 Lz",
+          "Função/Efeito": "Luxo",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5803,6 +7558,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Luxo, ostentação Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Corrente dourada",
+          "Peso": "0,4 Kg",
+          "Preço em Lz": "15.000 Lz",
+          "Função/Efeito": "Luxo, ostentação",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5819,6 +7581,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Valor cultural, sem efeito Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Amuleto tribal",
+          "Peso": "0,3 Kg",
+          "Preço em Lz": "1.000 Lz",
+          "Função/Efeito": "Valor cultural, sem efeito",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5835,6 +7604,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Artefato religioso, sem efeito Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Amuleto cósmico",
+          "Peso": "0,4 Kg",
+          "Preço em Lz": "25.000 Lz",
+          "Função/Efeito": "Artefato religioso, sem efeito",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5851,6 +7627,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Luxo exótico Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Bracelete alienígena",
+          "Peso": "0,5 Kg",
+          "Preço em Lz": "15.000 Lz",
+          "Função/Efeito": "Luxo exótico",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5867,6 +7650,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Item de luxo Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Brincos ornamentais",
+          "Peso": "0,1 Kg",
+          "Preço em Lz": "900 Lz",
+          "Função/Efeito": "Item de luxo",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5883,6 +7673,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Símbolo de status Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Coroa de metal",
+          "Peso": "1,5 Kg",
+          "Preço em Lz": "40.000 Lz",
+          "Função/Efeito": "Símbolo de status",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5899,6 +7696,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Luxo extremo Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Coroa de cristal",
+          "Peso": "2 Kg",
+          "Preço em Lz": "75.000 Lz",
+          "Função/Efeito": "Luxo extremo",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5915,6 +7719,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Luxo Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Tiara ornamentada",
+          "Peso": "0,8 Kg",
+          "Preço em Lz": "20.000 Lz",
+          "Função/Efeito": "Luxo",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5931,6 +7742,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Cerimônias, dano improvisado 1d3 Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Cajado ritual",
+          "Peso": "3 Kg",
+          "Preço em Lz": "30.000 Lz",
+          "Função/Efeito": "Cerimônias, dano improvisado 1d3",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5947,6 +7765,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Luxo, usada em rituais Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Máscara cerimonial",
+          "Peso": "1,2 Kg",
+          "Preço em Lz": "5.000 Lz",
+          "Função/Efeito": "Luxo, usada em rituais",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5963,6 +7788,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Música e rituais Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Tambores tribais",
+          "Peso": "4 Kg",
+          "Preço em Lz": "15.000 Lz",
+          "Função/Efeito": "Música e rituais",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5979,6 +7811,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Música, luxo Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Flauta alienígena",
+          "Peso": "0,5 Kg",
+          "Preço em Lz": "5.000 Lz",
+          "Função/Efeito": "Música, luxo",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -5995,6 +7834,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Música, item de luxo Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Guitarra de metal",
+          "Peso": "4 Kg",
+          "Preço em Lz": "30.000 Lz",
+          "Função/Efeito": "Música, item de luxo",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -6011,6 +7857,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Música, raridade Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Violino antigo",
+          "Peso": "3 Kg",
+          "Preço em Lz": "50.000 Lz",
+          "Função/Efeito": "Música, raridade",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -6027,6 +7880,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Usado em rituais culturais Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Gongo cerimonial",
+          "Peso": "5 Kg",
+          "Preço em Lz": "40.000 Lz",
+          "Função/Efeito": "Usado em rituais culturais",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -6043,6 +7903,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Símbolo cultural Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Bandeira alienígena",
+          "Peso": "2 Kg",
+          "Preço em Lz": "20.000 Lz",
+          "Função/Efeito": "Símbolo cultural",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -6059,6 +7926,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Símbolo de facção Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Bandeira militar",
+          "Peso": "3 Kg",
+          "Preço em Lz": "25.000 Lz",
+          "Função/Efeito": "Símbolo de facção",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 235",
         "schemaVersion": 2
       },
@@ -6075,6 +7949,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Pode ser quebrada, dano improvisado 1d2 corte Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar.",
+        "officialData": {
+          "Nome": "Garrafa de vidro",
+          "Peso": "0,5 Kg",
+          "Preço em Lz": "50 Lz",
+          "Função/Efeito": "Pode ser quebrada, dano improvisado 1d2 corte",
+          "Observação": "Possui uso improvisado ou bônus situacional; aplicar apenas se a cena justificar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 236",
         "schemaVersion": 2
       },
@@ -6092,6 +7973,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Carbonita Bruta",
+          "Tier": "F/E",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "1.500 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6109,6 +7996,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Ferrita",
+          "Tier": "F/E",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "2.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6126,6 +8019,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Ferro Reciclado",
+          "Tier": "F/E",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "1.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6143,6 +8042,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Sucata Metálica",
+          "Tier": "F/E",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "750 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6160,6 +8065,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Placas de Cobre",
+          "Tier": "F/E",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "1.250 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6177,6 +8088,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Vidro Reciclado",
+          "Tier": "F/E",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "1.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6194,6 +8111,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Alumínio Comum",
+          "Tier": "F/E",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "750 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6211,6 +8134,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Couro de Kudrogo",
+          "Tier": "F/E",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "2.500 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6228,6 +8157,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Ossos de Muldrog",
+          "Tier": "F/E",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "2.250 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6245,6 +8180,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Dente de Muldrog",
+          "Tier": "F/E",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "3.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6262,6 +8203,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Pele de Animal Especial",
+          "Tier": "F/E",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "1.500 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6279,6 +8226,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Esporos Luminescentes",
+          "Tier": "F/E",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "1.750 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6296,6 +8249,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Energético"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Poeira de Cosmos Fraca",
+          "Tier": "F/E",
+          "Tipo": "Energético",
+          "Preço Médio Atual": "3.750 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6313,6 +8272,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Energético"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Cristais Imperfeitos",
+          "Tier": "F/E",
+          "Tipo": "Energético",
+          "Preço Médio Atual": "2.500 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6330,6 +8295,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Tecnológico"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Circuitos Reciclados",
+          "Tier": "F/E",
+          "Tipo": "Tecnológico",
+          "Preço Médio Atual": "2.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6347,6 +8318,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Energético"
         ],
         "summary": "Material de crafting. Tier recomendado: F/E.",
+        "officialData": {
+          "Material": "Núcleo de Bateria Comum",
+          "Tier": "F/E",
+          "Tipo": "Energético",
+          "Preço Médio Atual": "3.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6364,6 +8341,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: D/C.",
+        "officialData": {
+          "Material": "Paralatum Refinado",
+          "Tier": "D/C",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "7.500 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6381,6 +8364,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: D/C.",
+        "officialData": {
+          "Material": "Aço Temperado",
+          "Tier": "D/C",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "6.600 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6398,6 +8387,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: D/C.",
+        "officialData": {
+          "Material": "Cerâmica Balística",
+          "Tier": "D/C",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "6.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6415,6 +8410,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: D/C.",
+        "officialData": {
+          "Material": "Fibra de Titânio",
+          "Tier": "D/C",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "9.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6432,6 +8433,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: D/C.",
+        "officialData": {
+          "Material": "Obsidiana Espacial",
+          "Tier": "D/C",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "5.400 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6449,6 +8456,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: D/C.",
+        "officialData": {
+          "Material": "Escamas de Zerak",
+          "Tier": "D/C",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "8.400 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6466,6 +8479,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: D/C.",
+        "officialData": {
+          "Material": "Quitina Alienígena",
+          "Tier": "D/C",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "6.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6483,6 +8502,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: D/C.",
+        "officialData": {
+          "Material": "Tecidos Luminescentes",
+          "Tier": "D/C",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "6.600 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6500,6 +8525,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: D/C.",
+        "officialData": {
+          "Material": "Glândulas Alienígenas",
+          "Tier": "D/C",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "7.500 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6517,6 +8548,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Energético"
         ],
         "summary": "Material de crafting. Tier recomendado: D/C.",
+        "officialData": {
+          "Material": "Núcleo de Energia Instável",
+          "Tier": "D/C",
+          "Tipo": "Energético",
+          "Preço Médio Atual": "10.500 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6534,6 +8571,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Energético"
         ],
         "summary": "Material de crafting. Tier recomendado: D/C.",
+        "officialData": {
+          "Material": "Cristal de Fóton",
+          "Tier": "D/C",
+          "Tipo": "Energético",
+          "Preço Médio Atual": "8.400 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6551,6 +8594,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: B/A.",
+        "officialData": {
+          "Material": "Adamantita Estelar",
+          "Tier": "B/A",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "36.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6568,6 +8617,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: B/A.",
+        "officialData": {
+          "Material": "Nano-Ligas Híbridas",
+          "Tier": "B/A",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "34.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6585,6 +8640,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: B/A.",
+        "officialData": {
+          "Material": "Placas de Titânio Cósmico",
+          "Tier": "B/A",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "30.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6602,6 +8663,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: B/A.",
+        "officialData": {
+          "Material": "Tungstênio Lunar",
+          "Tier": "B/A",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "28.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6619,6 +8686,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: B/A.",
+        "officialData": {
+          "Material": "Carapaça Alienígena",
+          "Tier": "B/A",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "26.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6636,6 +8709,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: B/A.",
+        "officialData": {
+          "Material": "Tecidos Regenerativos",
+          "Tier": "B/A",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "32.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6653,6 +8732,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: B/A.",
+        "officialData": {
+          "Material": "Sangue Cristalizado",
+          "Tier": "B/A",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "34.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6670,6 +8755,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Energético"
         ],
         "summary": "Material de crafting. Tier recomendado: B/A.",
+        "officialData": {
+          "Material": "Cristais Laminados de Energia",
+          "Tier": "B/A",
+          "Tipo": "Energético",
+          "Preço Médio Atual": "38.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6687,6 +8778,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Energético"
         ],
         "summary": "Material de crafting. Tier recomendado: B/A.",
+        "officialData": {
+          "Material": "Núcleo de Fusão Menor",
+          "Tier": "B/A",
+          "Tipo": "Energético",
+          "Preço Médio Atual": "40.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6704,6 +8801,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: S/S+.",
+        "officialData": {
+          "Material": "Cristal Estelar Puro",
+          "Tier": "S/S+",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "150.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6721,6 +8824,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: S/S+.",
+        "officialData": {
+          "Material": "Metal Vivo",
+          "Tier": "S/S+",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "125.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6738,6 +8847,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Mineral"
         ],
         "summary": "Material de crafting. Tier recomendado: S/S+.",
+        "officialData": {
+          "Material": "Fragmento de Meteoro Divino",
+          "Tier": "S/S+",
+          "Tipo": "Mineral",
+          "Preço Médio Atual": "140.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6755,6 +8870,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: S/S+.",
+        "officialData": {
+          "Material": "Ossos de Titãs Cósmicos",
+          "Tier": "S/S+",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "175.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6772,6 +8893,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: S/S+.",
+        "officialData": {
+          "Material": "Tecidos Etéreos",
+          "Tier": "S/S+",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "160.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6789,6 +8916,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Orgânico"
         ],
         "summary": "Material de crafting. Tier recomendado: S/S+.",
+        "officialData": {
+          "Material": "Coração de Besta Estelar",
+          "Tier": "S/S+",
+          "Tipo": "Orgânico",
+          "Preço Médio Atual": "180.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6806,6 +8939,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Energético"
         ],
         "summary": "Material de crafting. Tier recomendado: S/S+.",
+        "officialData": {
+          "Material": "Núcleo de Singularidade",
+          "Tier": "S/S+",
+          "Tipo": "Energético",
+          "Preço Médio Atual": "200.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6823,6 +8962,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Energético"
         ],
         "summary": "Material de crafting. Tier recomendado: S/S+.",
+        "officialData": {
+          "Material": "Fragmento de Estrela Morta",
+          "Tier": "S/S+",
+          "Tipo": "Energético",
+          "Preço Médio Atual": "190.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6840,6 +8985,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Energético"
         ],
         "summary": "Material de crafting. Tier recomendado: S/S+.",
+        "officialData": {
+          "Material": "Antimatéria Encapsulada",
+          "Tier": "S/S+",
+          "Tipo": "Energético",
+          "Preço Médio Atual": "250.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6857,6 +9008,12 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Energético"
         ],
         "summary": "Material de crafting. Tier recomendado: S/S+.",
+        "officialData": {
+          "Material": "Cristal Temporal Instável",
+          "Tier": "S/S+",
+          "Tipo": "Energético",
+          "Preço Médio Atual": "210.000 Lz"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 136",
         "schemaVersion": 2
       },
@@ -6874,6 +9031,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Estancar, estabilizar e tratar ferimentos. Teste associado: Medicina.",
+        "officialData": {
+          "Kit": "Kit Médico",
+          "Uso principal": "Estancar, estabilizar e tratar ferimentos.",
+          "Perícia ou teste associado": "Medicina."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 143",
         "schemaVersion": 2
       },
@@ -6891,6 +9053,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Remendar item, aliviar Jammed, reparo emergencial. Teste associado: Engenharia ou Tecnologia.",
+        "officialData": {
+          "Kit": "Kit de Reparo",
+          "Uso principal": "Remendar item, aliviar Jammed, reparo emergencial.",
+          "Perícia ou teste associado": "Engenharia ou Tecnologia."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 143",
         "schemaVersion": 2
       },
@@ -6908,6 +9075,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Cabos, sensores, circuitos e invasão local. Teste associado: Tecnologia.",
+        "officialData": {
+          "Kit": "Kit Tecnológico",
+          "Uso principal": "Cabos, sensores, circuitos e invasão local.",
+          "Perícia ou teste associado": "Tecnologia."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 143",
         "schemaVersion": 2
       },
@@ -6925,6 +9097,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Coleta de amostras, venenos, órgãos e toxinas. Teste associado: Biologia.",
+        "officialData": {
+          "Kit": "Kit Biológico",
+          "Uso principal": "Coleta de amostras, venenos, órgãos e toxinas.",
+          "Perícia ou teste associado": "Biologia."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 143",
         "schemaVersion": 2
       },
@@ -6942,6 +9119,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Ácido, gás, toxina e neutralização. Teste associado: Biologia ou Medicina.",
+        "officialData": {
+          "Kit": "Kit Químico",
+          "Uso principal": "Ácido, gás, toxina e neutralização.",
+          "Perícia ou teste associado": "Biologia ou Medicina."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 143",
         "schemaVersion": 2
       },
@@ -6959,6 +9141,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Abrigo, filtragem básica, fogo e orientação prática. Teste associado: Busca, Coleta, Culinária, Tecnologia ou JPF com CON, conforme a ação.",
+        "officialData": {
+          "Kit": "Kit de Campo",
+          "Uso principal": "Abrigo, filtragem básica, fogo e orientação prática.",
+          "Perícia ou teste associado": "Busca, Coleta, Culinária, Tecnologia ou JPF com CON, conforme a ação."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 143",
         "schemaVersion": 2
       },
@@ -6976,6 +9163,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Cristal, amostra perigosa ou material instável. Teste associado: Engenharia, Cosmos ou Memória Cósmica.",
+        "officialData": {
+          "Kit": "Kit de Contenção",
+          "Uso principal": "Cristal, amostra perigosa ou material instável.",
+          "Perícia ou teste associado": "Engenharia, Cosmos ou Memória Cósmica."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 143",
         "schemaVersion": 2
       },
@@ -6993,6 +9185,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Coleta de minério, perfuração e extração. Teste associado: Coleta ou Engenharia.",
+        "officialData": {
+          "Kit": "Kit de Mineração",
+          "Uso principal": "Coleta de minério, perfuração e extração.",
+          "Perícia ou teste associado": "Coleta ou Engenharia."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 143",
         "schemaVersion": 2
       },
@@ -7010,6 +9207,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Cargas, cortes e explosivos controlados. Teste associado: Demolição ou Engenharia.",
+        "officialData": {
+          "Kit": "Kit de Demolição",
+          "Uso principal": "Cargas, cortes e explosivos controlados.",
+          "Perícia ou teste associado": "Demolição ou Engenharia."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 143",
         "schemaVersion": 2
       },
@@ -7028,6 +9230,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "consumível"
         ],
         "summary": "Área: 3 m. Dano perfurante/explosivo. Tier E: 1d6. Tier D: 2d6. Defesa: JPR com REF reduz dano ou evita parte do efeito.",
+        "officialData": {
+          "Granada": "Fragmentação",
+          "Tier comum": "E/D",
+          "Área": "3 m",
+          "Efeito principal": "Dano perfurante/explosivo. Tier E: 1d6. Tier D: 2d6.",
+          "Defesa comum": "JPR com REF reduz dano ou evita parte do efeito."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 146",
         "schemaVersion": 2,
         "consumable": true,
@@ -7049,6 +9258,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "consumível"
         ],
         "summary": "Área: 1,5-3 m. 1d6 fogo inicial; área Queimando por 1d4 rodadas. Defesa: JPR com REF evita Queimando.",
+        "officialData": {
+          "Granada": "Incendiária",
+          "Tier comum": "E/D",
+          "Área": "1,5-3 m",
+          "Efeito principal": "1d6 fogo inicial; área Queimando por 1d4 rodadas.",
+          "Defesa comum": "JPR com REF evita Queimando."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 146",
         "schemaVersion": 2,
         "consumable": true,
@@ -7070,6 +9286,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "consumível"
         ],
         "summary": "Área: 3 m. Aplica Jammed em drones, torretas, sensores e armas inteligentes. Defesa: Resistência tecnológica, Tecnologia contra SR ou defesa do alvo.",
+        "officialData": {
+          "Granada": "EMP",
+          "Tier comum": "D/C",
+          "Área": "3 m",
+          "Efeito principal": "Aplica Jammed em drones, torretas, sensores e armas inteligentes.",
+          "Defesa comum": "Resistência tecnológica, Tecnologia contra SR ou defesa do alvo."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 146",
         "schemaVersion": 2,
         "consumable": true,
@@ -7091,6 +9314,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "consumível"
         ],
         "summary": "Área: 3-6 m. Cria cobertura visual e dificulta ataques à distância e Busca visual. Defesa: Normalmente sem JP; sensores especiais podem ignorar.",
+        "officialData": {
+          "Granada": "Fumaça",
+          "Tier comum": "F/E",
+          "Área": "3-6 m",
+          "Efeito principal": "Cria cobertura visual e dificulta ataques à distância e Busca visual.",
+          "Defesa comum": "Normalmente sem JP; sensores especiais podem ignorar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 146",
         "schemaVersion": 2,
         "consumable": true,
@@ -7112,6 +9342,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "consumível"
         ],
         "summary": "Área: 3 m. Pode causar Cego ou Tonto por 1 rodada; revela sombras e criaturas ocultas. Defesa: JPR com REF ou JPC com MEN, conforme origem do efeito.",
+        "officialData": {
+          "Granada": "Luz",
+          "Tier comum": "E/D",
+          "Área": "3 m",
+          "Efeito principal": "Pode causar Cego ou Tonto por 1 rodada; revela sombras e criaturas ocultas.",
+          "Defesa comum": "JPR com REF ou JPC com MEN, conforme origem do efeito."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 146",
         "schemaVersion": 2,
         "consumable": true,
@@ -7133,6 +9370,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "consumível"
         ],
         "summary": "Área: 3 m. Tonto, perda de reação ou desorientação. Defesa: JPF com CON ou JPC com MEN.",
+        "officialData": {
+          "Granada": "Sônica",
+          "Tier comum": "D/C",
+          "Área": "3 m",
+          "Efeito principal": "Tonto, perda de reação ou desorientação.",
+          "Defesa comum": "JPF com CON ou JPC com MEN."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 146",
         "schemaVersion": 2,
         "consumable": true,
@@ -7154,6 +9398,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "consumível"
         ],
         "summary": "Área: 1,5 m. 1d6 ácido; pode causar Corroído ou rachadura em equipamento. Defesa: JPR com REF.",
+        "officialData": {
+          "Granada": "Ácida",
+          "Tier comum": "D/C",
+          "Área": "1,5 m",
+          "Efeito principal": "1d6 ácido; pode causar Corroído ou rachadura em equipamento.",
+          "Defesa comum": "JPR com REF."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 146",
         "schemaVersion": 2,
         "consumable": true,
@@ -7175,6 +9426,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "consumível"
         ],
         "summary": "Área: 3 m. Reduz movimento, apaga fogo, congela água ou atrasa inimigos. Defesa: JPF com CON.",
+        "officialData": {
+          "Granada": "Criogênica",
+          "Tier comum": "C/B",
+          "Área": "3 m",
+          "Efeito principal": "Reduz movimento, apaga fogo, congela água ou atrasa inimigos.",
+          "Defesa comum": "JPF com CON."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 146",
         "schemaVersion": 2,
         "consumable": true,
@@ -7196,6 +9454,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "consumível"
         ],
         "summary": "Área: 1,5-3 m. Rede, espuma, campo ou pulso que Imobiliza. Defesa: JPF com FOR para romper ou JPR com REF para escapar.",
+        "officialData": {
+          "Granada": "Contenção",
+          "Tier comum": "C/B",
+          "Área": "1,5-3 m",
+          "Efeito principal": "Rede, espuma, campo ou pulso que Imobiliza.",
+          "Defesa comum": "JPF com FOR para romper ou JPR com REF para escapar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 146",
         "schemaVersion": 2,
         "consumable": true,
@@ -7217,6 +9482,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "consumível"
         ],
         "summary": "Área: Variável. Veneno, esporos, repelente, atrativo ou feromônio. Defesa: JPF com CON ou teste específico.",
+        "officialData": {
+          "Granada": "Biológica",
+          "Tier comum": "D/C",
+          "Área": "Variável",
+          "Efeito principal": "Veneno, esporos, repelente, atrativo ou feromônio.",
+          "Defesa comum": "JPF com CON ou teste específico."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 146",
         "schemaVersion": 2,
         "consumable": true,
@@ -7238,6 +9510,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "consumível"
         ],
         "summary": "Área: Variável. Silêncio Cósmico, luz de Falaris, distorção, memória ou contenção Tharan. Defesa: JPC com MEN ou PRE; sempre há risco.",
+        "officialData": {
+          "Granada": "Cósmica",
+          "Tier comum": "B/A/S",
+          "Área": "Variável",
+          "Efeito principal": "Silêncio Cósmico, luz de Falaris, distorção, memória ou contenção Tharan.",
+          "Defesa comum": "JPC com MEN ou PRE; sempre há risco."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 146",
         "schemaVersion": 2,
         "consumable": true,
@@ -7258,6 +9537,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Defesa simples, corredor, acampamento.",
+        "officialData": {
+          "Tipo": "Torreta Leve",
+          "Tier comum": "E",
+          "Função": "Defesa simples, corredor, acampamento."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 151",
         "schemaVersion": 2
       },
@@ -7275,6 +9559,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Dano confiável, usa munição.",
+        "officialData": {
+          "Tipo": "Torreta Balística",
+          "Tier comum": "D",
+          "Função": "Dano confiável, usa munição."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 151",
         "schemaVersion": 2
       },
@@ -7292,6 +9581,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Controle forte de corredor, alto dano, montagem mais difícil.",
+        "officialData": {
+          "Tipo": "Torreta Pesada",
+          "Tier comum": "C/B",
+          "Função": "Controle forte de corredor, alto dano, montagem mais difícil."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 151",
         "schemaVersion": 2
       },
@@ -7309,6 +9603,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Dano energético, consome bateria.",
+        "officialData": {
+          "Tipo": "Torreta Laser",
+          "Tier comum": "C",
+          "Função": "Dano energético, consome bateria."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 151",
         "schemaVersion": 2
       },
@@ -7326,6 +9625,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Aplica Jammed em drones, armas e sistemas.",
+        "officialData": {
+          "Tipo": "Torreta EMP",
+          "Tier comum": "C/B",
+          "Função": "Aplica Jammed em drones, armas e sistemas."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 151",
         "schemaVersion": 2
       },
@@ -7343,6 +9647,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Fogo contra fungos, teias e enxames.",
+        "officialData": {
+          "Tipo": "Torreta Incendiária",
+          "Tier comum": "D/C",
+          "Função": "Fogo contra fungos, teias e enxames."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 151",
         "schemaVersion": 2
       },
@@ -7360,6 +9669,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Tonto, afastamento e controle contra criaturas sensíveis.",
+        "officialData": {
+          "Tipo": "Torreta Sônica",
+          "Tier comum": "C",
+          "Função": "Tonto, afastamento e controle contra criaturas sensíveis."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 151",
         "schemaVersion": 2
       },
@@ -7377,6 +9691,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Rede, espuma, campo, captura viva.",
+        "officialData": {
+          "Tipo": "Torreta de Contenção",
+          "Tier comum": "C/B",
+          "Função": "Rede, espuma, campo, captura viva."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 151",
         "schemaVersion": 2
       },
@@ -7394,6 +9713,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Dano cósmico, Silêncio Cósmico ou distorção. Sempre arriscada.",
+        "officialData": {
+          "Tipo": "Torreta Cósmica",
+          "Tier comum": "B/A/S",
+          "Função": "Dano cósmico, Silêncio Cósmico ou distorção. Sempre arriscada."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 151",
         "schemaVersion": 2
       },
@@ -7411,6 +9735,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Exploração, câmera, microfone, luz e mapeamento simples.",
+        "officialData": {
+          "Drone": "Drone de Reconhecimento",
+          "Função": "Exploração, câmera, microfone, luz e mapeamento simples."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 157",
         "schemaVersion": 2
       },
@@ -7428,6 +9756,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Luz forte, sinalizador ou bioluz artificial.",
+        "officialData": {
+          "Drone": "Drone de Iluminação",
+          "Função": "Luz forte, sinalizador ou bioluz artificial."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 157",
         "schemaVersion": 2
       },
@@ -7445,6 +9777,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Transporta item pequeno, kit, munição ou corda leve. Não substitui mochila.",
+        "officialData": {
+          "Drone": "Drone de Carga Leve",
+          "Função": "Transporta item pequeno, kit, munição ou corda leve. Não substitui mochila."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 157",
         "schemaVersion": 2
       },
@@ -7462,6 +9798,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Leva coagulante, escaneia sinais vitais ou ajuda estabilização com mod adequado.",
+        "officialData": {
+          "Drone": "Drone Médico",
+          "Função": "Leva coagulante, escaneia sinais vitais ou ajuda estabilização com mod adequado."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 157",
         "schemaVersion": 2
       },
@@ -7479,6 +9819,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Possui arma leve e apoia combate.",
+        "officialData": {
+          "Drone": "Drone de Ataque",
+          "Função": "Possui arma leve e apoia combate."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 157",
         "schemaVersion": 2
       },
@@ -7496,6 +9840,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Emite som, luz, calor ou isca. Atrai monstros ou desloca guardas.",
+        "officialData": {
+          "Drone": "Drone de Distração",
+          "Função": "Emite som, luz, calor ou isca. Atrai monstros ou desloca guardas."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 157",
         "schemaVersion": 2
       },
@@ -7513,6 +9861,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Detecta calor, gás, radiação, movimento ou energia.",
+        "officialData": {
+          "Drone": "Drone Sensorial",
+          "Função": "Detecta calor, gás, radiação, movimento ou energia."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 157",
         "schemaVersion": 2
       },
@@ -7530,6 +9882,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Interfere em sistemas tecnológicos.",
+        "officialData": {
+          "Drone": "Drone EMP",
+          "Função": "Interfere em sistemas tecnológicos."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 157",
         "schemaVersion": 2
       },
@@ -7547,6 +9903,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Menor, silencioso, difícil de detectar.",
+        "officialData": {
+          "Drone": "Drone Furtivo",
+          "Função": "Menor, silencioso, difícil de detectar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 157",
         "schemaVersion": 2
       },
@@ -7564,6 +9924,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "utilitário"
         ],
         "summary": "Usa cristal ou foco. Detecta ressonância, mas tem risco.",
+        "officialData": {
+          "Drone": "Drone Cósmico",
+          "Função": "Usa cristal ou foco. Detecta ressonância, mas tem risco."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 157",
         "schemaVersion": 2
       },
@@ -7581,6 +9945,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "energia"
         ],
         "summary": "Lanternas, sensores pequenos, drones Tier baixo.",
+        "officialData": {
+          "Tipo": "Bateria simples",
+          "Uso comum": "Lanternas, sensores pequenos, drones Tier baixo."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 158",
         "schemaVersion": 2
       },
@@ -7598,6 +9966,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "energia"
         ],
         "summary": "Drones profissionais, torretas leves, equipamentos de campo.",
+        "officialData": {
+          "Tipo": "Bateria média",
+          "Uso comum": "Drones profissionais, torretas leves, equipamentos de campo."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 158",
         "schemaVersion": 2
       },
@@ -7615,6 +9987,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "energia"
         ],
         "summary": "Torretas médias, ferramentas pesadas, sistemas de acampamento.",
+        "officialData": {
+          "Tipo": "Bateria grande",
+          "Uso comum": "Torretas médias, ferramentas pesadas, sistemas de acampamento."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 158",
         "schemaVersion": 2
       },
@@ -7632,6 +10008,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "energia"
         ],
         "summary": "Torretas avançadas, drones de combate, utilitários restritos.",
+        "officialData": {
+          "Tipo": "Bateria militar",
+          "Uso comum": "Torretas avançadas, drones de combate, utilitários restritos."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 158",
         "schemaVersion": 2
       },
@@ -7649,6 +10029,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "energia"
         ],
         "summary": "Veículos, robôs, sistemas maiores e itens de Tier alto.",
+        "officialData": {
+          "Tipo": "Núcleo energético",
+          "Uso comum": "Veículos, robôs, sistemas maiores e itens de Tier alto."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 158",
         "schemaVersion": 2
       },
@@ -7666,6 +10050,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "energia"
         ],
         "summary": "Equipamentos híbridos ou cósmicos.",
+        "officialData": {
+          "Tipo": "Cristal energético",
+          "Uso comum": "Equipamentos híbridos ou cósmicos."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 158",
         "schemaVersion": 2
       },
@@ -7683,6 +10071,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "energia"
         ],
         "summary": "Utilitários cósmicos, focos e contenção. Sempre arriscada.",
+        "officialData": {
+          "Tipo": "Bateria cósmica",
+          "Uso comum": "Utilitários cósmicos, focos e contenção. Sempre arriscada."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 158",
         "schemaVersion": 2
       },
@@ -7699,6 +10091,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Preço oficial sugerido: 7.000 a 90.000 Luzentis.",
+        "officialData": {
+          "Veículo": "Moto simples",
+          "Preço sugerido em Luzentis": "7.000 a 90.000"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 200",
         "schemaVersion": 2,
         "mods": 1,
@@ -7717,6 +10113,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Preço oficial sugerido: 90.000 a 180.000 Luzentis.",
+        "officialData": {
+          "Veículo": "Buggy",
+          "Preço sugerido em Luzentis": "90.000 a 180.000"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 200",
         "schemaVersion": 2,
         "mods": 2,
@@ -7735,6 +10135,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Preço oficial sugerido: 120.000 a 280.000 Luzentis.",
+        "officialData": {
+          "Veículo": "Carro comum",
+          "Preço sugerido em Luzentis": "120.000 a 280.000"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 200",
         "schemaVersion": 2,
         "mods": 3,
@@ -7753,6 +10157,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Preço oficial sugerido: 250.000 a 550.000 Luzentis.",
+        "officialData": {
+          "Veículo": "Jipe de expedição",
+          "Preço sugerido em Luzentis": "250.000 a 550.000"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 200",
         "schemaVersion": 2,
         "mods": 4,
@@ -7771,6 +10179,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Preço oficial sugerido: 350.000 a 800.000 Luzentis.",
+        "officialData": {
+          "Veículo": "Caminhonete",
+          "Preço sugerido em Luzentis": "350.000 a 800.000"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 200",
         "schemaVersion": 2,
         "mods": 0,
@@ -7789,6 +10201,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Preço oficial sugerido: 500.000 a 1.200.000 Luzentis.",
+        "officialData": {
+          "Veículo": "Van",
+          "Preço sugerido em Luzentis": "500.000 a 1.200.000"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 200",
         "schemaVersion": 2,
         "mods": 5,
@@ -7807,6 +10223,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Preço oficial sugerido: 900.000 a 2.500.000 Luzentis.",
+        "officialData": {
+          "Veículo": "Caminhão comum",
+          "Preço sugerido em Luzentis": "900.000 a 2.500.000"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 200",
         "schemaVersion": 2,
         "mods": 6,
@@ -7825,6 +10245,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Preço oficial sugerido: 2.000.000 a 6.000.000 Luzentis.",
+        "officialData": {
+          "Veículo": "Caminhão oficina ou laboratório móvel",
+          "Preço sugerido em Luzentis": "2.000.000 a 6.000.000"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 200",
         "schemaVersion": 2,
         "mods": 6,
@@ -7843,6 +10267,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Preço oficial sugerido: 3.000.000 a 9.000.000 Luzentis.",
+        "officialData": {
+          "Veículo": "Blindado leve",
+          "Preço sugerido em Luzentis": "3.000.000 a 9.000.000"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 200",
         "schemaVersion": 2,
         "mods": 8,
@@ -7861,6 +10289,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Preço oficial sugerido: 10.000.000+ Luzentis.",
+        "officialData": {
+          "Veículo": "Blindado pesado",
+          "Preço sugerido em Luzentis": "10.000.000+"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 200",
         "schemaVersion": 2,
         "mods": 8,
@@ -7879,6 +10311,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Preço oficial sugerido: 15.000.000+ ou acesso por facção. Luzentis.",
+        "officialData": {
+          "Veículo": "Nave pequena",
+          "Preço sugerido em Luzentis": "15.000.000+ ou acesso por facção."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 200",
         "schemaVersion": 2,
         "mods": 8,
@@ -7897,6 +10333,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Preço oficial sugerido: 50.000.000+ ou recompensa de campanha. Luzentis.",
+        "officialData": {
+          "Veículo": "Nave cargueira",
+          "Preço sugerido em Luzentis": "50.000.000+ ou recompensa de campanha."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 200",
         "schemaVersion": 2,
         "mods": 12,
@@ -7915,6 +10355,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Preço oficial sugerido: Não disponível em mercado comum. Luzentis.",
+        "officialData": {
+          "Veículo": "Nave militar",
+          "Preço sugerido em Luzentis": "Não disponível em mercado comum."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 200",
         "schemaVersion": 2,
         "mods": 14,
@@ -7934,6 +10378,15 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "chassi"
         ],
         "summary": "Custo base: 8.000 Luzentis. PV 4, CA 10, slots 1, carga 1 kg.",
+        "officialData": {
+          "Chassi": "Micro",
+          "Custo base": "8.000 Luzentis",
+          "Tamanho": "Muito pequeno",
+          "PV base": "4",
+          "CA base": "10",
+          "Slots": "1",
+          "Carga": "1 kg"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 218",
         "schemaVersion": 2,
         "pv": "4",
@@ -7955,6 +10408,15 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "chassi"
         ],
         "summary": "Custo base: 1.8.000 Luzentis. PV 8, CA 11, slots 2, carga 10 kg.",
+        "officialData": {
+          "Chassi": "Pequeno",
+          "Custo base": "1.8.000 Luzentis",
+          "Tamanho": "Pequeno",
+          "PV base": "8",
+          "CA base": "11",
+          "Slots": "2",
+          "Carga": "10 kg"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 218",
         "schemaVersion": 2,
         "pv": "8",
@@ -7976,6 +10438,15 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "chassi"
         ],
         "summary": "Custo base: 75.000 Luzentis. PV 16, CA 12, slots 4, carga 30 kg.",
+        "officialData": {
+          "Chassi": "Médio",
+          "Custo base": "75.000 Luzentis",
+          "Tamanho": "Médio",
+          "PV base": "16",
+          "CA base": "12",
+          "Slots": "4",
+          "Carga": "30 kg"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 218",
         "schemaVersion": 2,
         "pv": "16",
@@ -7997,6 +10468,15 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "chassi"
         ],
         "summary": "Custo base: 175.000 Luzentis. PV 28, CA 13, slots 6, carga 80 kg.",
+        "officialData": {
+          "Chassi": "Grande",
+          "Custo base": "175.000 Luzentis",
+          "Tamanho": "Grande",
+          "PV base": "28",
+          "CA base": "13",
+          "Slots": "6",
+          "Carga": "80 kg"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 218",
         "schemaVersion": 2,
         "pv": "28",
@@ -8018,6 +10498,15 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "chassi"
         ],
         "summary": "Custo base: 600.000 Luzentis. PV 45, CA 14, slots 8, carga 150 kg.",
+        "officialData": {
+          "Chassi": "Pesado",
+          "Custo base": "600.000 Luzentis",
+          "Tamanho": "Grande/Pesado",
+          "PV base": "45",
+          "CA base": "14",
+          "Slots": "8",
+          "Carga": "150 kg"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 218",
         "schemaVersion": 2,
         "pv": "45",
@@ -8039,6 +10528,15 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "chassi"
         ],
         "summary": "Custo base: 1.500.000 Luzentis ou mais ou campanha. PV 80+, CA 15+, slots 12+, carga 300 kg+.",
+        "officialData": {
+          "Chassi": "Colossal",
+          "Custo base": "1.500.000 Luzentis ou mais ou campanha",
+          "Tamanho": "Enorme",
+          "PV base": "80+",
+          "CA base": "15+",
+          "Slots": "12+",
+          "Carga": "300 kg+"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 218",
         "schemaVersion": 2,
         "pv": "80+",
@@ -8061,6 +10559,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "+5 cubos de carga leve Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Mochila de couro",
+          "Peso": "1,5 Kg",
+          "Preço em Lz": "200 Lz",
+          "Função/Efeito": "+5 cubos de carga leve",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8077,6 +10582,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Pode armazenar líquidos Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Pote de vidro (1L)",
+          "Peso": "1 Kg",
+          "Preço em Lz": "50 Lz",
+          "Função/Efeito": "Pode armazenar líquidos",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8093,6 +10605,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Contêiner trancável, difícil de quebrar Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Caixa de ferro (pequena)",
+          "Peso": "3 Kg",
+          "Preço em Lz": "400 Lz",
+          "Função/Efeito": "Contêiner trancável, difícil de quebrar",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8110,6 +10629,15 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "+10 cubos de carga Sem Tier, slots, rachaduras ou Jammed por padrão. Capacidade sugerida: 6 cubos. Mais robusta, pode gerar penalidade em Furtividade.",
+        "officialData": {
+          "Nome": "Mochila reforçada",
+          "Peso": "2,5 Kg",
+          "Preço em Lz": "1.500 Lz",
+          "Função/Efeito": "+10 cubos de carga",
+          "Observação": "Mais robusta, pode gerar penalidade em Furtividade.",
+          "Suporte": "Mochila reforcada",
+          "Capacidade sugerida": "6 cubos"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2,
         "cubeSupport": 6
@@ -8127,6 +10655,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "5 compartimentos de fácil acesso Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Cinto utilitário",
+          "Peso": "1 Kg",
+          "Preço em Lz": "750 Lz",
+          "Função/Efeito": "5 compartimentos de fácil acesso",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8143,6 +10678,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Transporte de carga leve Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Cesta de palha",
+          "Peso": "1,2 Kg",
+          "Preço em Lz": "150 Lz",
+          "Função/Efeito": "Transporte de carga leve",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8159,6 +10701,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Transporte de documentos Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Maleta de couro",
+          "Peso": "2 Kg",
+          "Preço em Lz": "750 Lz",
+          "Função/Efeito": "Transporte de documentos",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8175,6 +10724,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Armazena até 5 Kg Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Bolsa de pano",
+          "Peso": "0,8 Kg",
+          "Preço em Lz": "150 Lz",
+          "Função/Efeito": "Armazena até 5 Kg",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8191,6 +10747,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Armazenamento básico Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Cesto de metal",
+          "Peso": "3 Kg",
+          "Preço em Lz": "350 Lz",
+          "Função/Efeito": "Armazenamento básico",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8207,6 +10770,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Armazena até 20L Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Barril pequeno",
+          "Peso": "5 Kg",
+          "Preço em Lz": "300 Lz",
+          "Função/Efeito": "Armazena até 20L",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8223,6 +10793,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Armazena até 100L Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Barril grande",
+          "Peso": "20 Kg",
+          "Preço em Lz": "10.000 Lz",
+          "Função/Efeito": "Armazena até 100L",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8239,6 +10816,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Transporte de líquidos Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Balde de madeira",
+          "Peso": "2 Kg",
+          "Preço em Lz": "200 Lz",
+          "Função/Efeito": "Transporte de líquidos",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8255,6 +10839,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Resistente, pode ferir (1d2 concussão) Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Balde de metal",
+          "Peso": "3 Kg",
+          "Preço em Lz": "400 Lz",
+          "Função/Efeito": "Resistente, pode ferir (1d2 concussão)",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8271,6 +10862,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Armazena até 15 Kg Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Caixa de madeira",
+          "Peso": "4 Kg",
+          "Preço em Lz": "350 Lz",
+          "Função/Efeito": "Armazena até 15 Kg",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8287,6 +10885,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Mais resistente, trancável Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Caixa reforçada",
+          "Peso": "8 Kg",
+          "Preço em Lz": "900 Lz",
+          "Função/Efeito": "Mais resistente, trancável",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8303,6 +10908,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Armazena itens pequenos Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Estojo de couro",
+          "Peso": "0,6 Kg",
+          "Preço em Lz": "250 Lz",
+          "Função/Efeito": "Armazena itens pequenos",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8319,6 +10931,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Organização prática Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Bolsa com compartimentos",
+          "Peso": "1,2 Kg",
+          "Preço em Lz": "600 Lz",
+          "Função/Efeito": "Organização prática",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8335,6 +10954,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Armazenamento de líquidos Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Frasco de metal (500ml)",
+          "Peso": "0,5 Kg",
+          "Preço em Lz": "300 Lz",
+          "Função/Efeito": "Armazenamento de líquidos",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8351,6 +10977,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Frágil, fácil de quebrar Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Frasco de vidro (500ml)",
+          "Peso": "0,4 Kg",
+          "Preço em Lz": "200 Lz",
+          "Função/Efeito": "Frágil, fácil de quebrar",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8367,6 +11000,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Armazenamento de líquidos Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Jarra de cerâmica",
+          "Peso": "1,5 Kg",
+          "Preço em Lz": "350 Lz",
+          "Função/Efeito": "Armazenamento de líquidos",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8383,6 +11023,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Luxo, sem função Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Caixa de jóias vazia",
+          "Peso": "1 Kg",
+          "Preço em Lz": "600 Lz",
+          "Função/Efeito": "Luxo, sem função",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8399,6 +11046,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Luxo, armazenamento pequeno Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Caixa de madeira entalhada",
+          "Peso": "2 Kg",
+          "Preço em Lz": "600 Lz",
+          "Função/Efeito": "Luxo, armazenamento pequeno",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8415,6 +11069,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Contêiner resistente Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Baú de ferro",
+          "Peso": "12 Kg",
+          "Preço em Lz": "40.000 Lz",
+          "Função/Efeito": "Contêiner resistente",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8431,6 +11092,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Proteção contra arrombamentos Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Cofre pequeno",
+          "Peso": "18 Kg",
+          "Preço em Lz": "60.000 Lz",
+          "Função/Efeito": "Proteção contra arrombamentos",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8447,6 +11115,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Muito resistente, imóvel Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Cofre grande",
+          "Peso": "50 Kg",
+          "Preço em Lz": "125.000 Lz",
+          "Função/Efeito": "Muito resistente, imóvel",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8463,6 +11138,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Ornamento e armazenamento Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Armário de madeira",
+          "Peso": "60 Kg",
+          "Preço em Lz": "60.000 Lz",
+          "Função/Efeito": "Ornamento e armazenamento",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8479,6 +11161,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Mais resistente, sem efeito mecânico Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Armário metálico",
+          "Peso": "80 Kg",
+          "Preço em Lz": "90.000 Lz",
+          "Função/Efeito": "Mais resistente, sem efeito mecânico",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8495,6 +11184,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Armazena até 50 livros Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Estante de livros",
+          "Peso": "30 Kg",
+          "Preço em Lz": "50.000 Lz",
+          "Função/Efeito": "Armazena até 50 livros",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 231",
         "schemaVersion": 2
       },
@@ -8511,6 +11207,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Suporte de arma leve Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Coldre simples",
+          "Peso": "0,8 Kg",
+          "Preço em Lz": "300 Lz",
+          "Função/Efeito": "Suporte de arma leve",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 236",
         "schemaVersion": 2
       },
@@ -8527,6 +11230,13 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         ],
         "consumable": false,
         "summary": "Reduz saque de arma em −1 ação Sem Tier, slots, rachaduras ou Jammed por padrão.",
+        "officialData": {
+          "Nome": "Coldre reforçado",
+          "Peso": "1,2 Kg",
+          "Preço em Lz": "750 Lz",
+          "Função/Efeito": "Reduz saque de arma em −1 ação",
+          "Observação": "Sem Tier, slots, rachaduras ou Jammed por padrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 236",
         "schemaVersion": 2
       },
@@ -8544,6 +11254,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "suporte de cubos"
         ],
         "summary": "Capacidade sugerida: 5 cubos. Padrão inicial.",
+        "officialData": {
+          "Suporte": "Mochila leve",
+          "Capacidade sugerida": "5 cubos",
+          "Observação": "Padrão inicial."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 98",
         "schemaVersion": 2,
         "cubeSupport": 5
@@ -8562,6 +11277,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "suporte de cubos"
         ],
         "summary": "Capacidade sugerida: 7 cubos. Feita para expedições, mais cara e volumosa.",
+        "officialData": {
+          "Suporte": "Mochila de exploracao",
+          "Capacidade sugerida": "7 cubos",
+          "Observação": "Feita para expedições, mais cara e volumosa."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 98",
         "schemaVersion": 2,
         "cubeSupport": 7
@@ -8580,6 +11300,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "suporte de cubos"
         ],
         "summary": "Capacidade sugerida: 8 cubos ou mais. Equipamento pesado, melhor para missão logistica.",
+        "officialData": {
+          "Suporte": "Suporte cargueiro",
+          "Capacidade sugerida": "8 cubos ou mais",
+          "Observação": "Equipamento pesado, melhor para missão logistica."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 98",
         "schemaVersion": 2,
         "cubeSupport": 8
@@ -8598,6 +11323,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "suporte de cubos"
         ],
         "summary": "Capacidade sugerida: Capacidade da ficha. Pode ser destruido, hackeado ou perdido.",
+        "officialData": {
+          "Suporte": "Drone cargueiro",
+          "Capacidade sugerida": "Capacidade da ficha",
+          "Observação": "Pode ser destruido, hackeado ou perdido."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 98",
         "schemaVersion": 2,
         "cubeSupport": 0
@@ -8616,6 +11346,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "suporte de cubos"
         ],
         "summary": "Capacidade sugerida: Capacidade do modelo. Exige combustivel, energia, manutenção e proteção.",
+        "officialData": {
+          "Suporte": "Veículo",
+          "Capacidade sugerida": "Capacidade do modelo",
+          "Observação": "Exige combustivel, energia, manutenção e proteção."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 98",
         "schemaVersion": 2,
         "cubeSupport": 0
@@ -8637,6 +11372,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "simple"
         ],
         "summary": "Isola 1 item, amostra, relíquia, cristal ou componente perigoso. Exemplos: Cristal instável, núcleo energetico, amostra biológica, relíquia pequena.",
+        "officialData": {
+          "Cubo": "Cubo Simples",
+          "Função": "Isola 1 item, amostra, relíquia, cristal ou componente perigoso.",
+          "Exemplos": "Cristal instável, núcleo energetico, amostra biológica, relíquia pequena."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 96",
         "schemaVersion": 2
       },
@@ -8655,6 +11395,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "cargo"
         ],
         "summary": "Transporta até 10 unidades de um unico recurso. Exemplos: Agua, racoes, balas leves, ferrita, cabos, baterias simples.",
+        "officialData": {
+          "Cubo": "Cubo de Carga",
+          "Função": "Transporta até 10 unidades de um unico recurso.",
+          "Exemplos": "Agua, racoes, balas leves, ferrita, cabos, baterias simples."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 96",
         "schemaVersion": 2
       },
@@ -8673,6 +11418,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "specialized"
         ],
         "summary": "Transporta até 10 unidades dentro de uma categoria técnica. Exemplos: Medicina, Engenharia, Tecnologia, Munição, Explosivos, Coleta, Biologia, Cristais, Energia, Suprimentos.",
+        "officialData": {
+          "Cubo": "Cubo Especializado",
+          "Função": "Transporta até 10 unidades dentro de uma categoria técnica.",
+          "Exemplos": "Medicina, Engenharia, Tecnologia, Munição, Explosivos, Coleta, Biologia, Cristais, Energia, Suprimentos."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 96",
         "schemaVersion": 2
       },
@@ -8692,6 +11442,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "especializado"
         ],
         "summary": "Conteúdo adequado: Curativos, coagulantes, antitoxinas, seringas, analgesicos, capsulas estabilizadoras, instrumentos pequenos.",
+        "officialData": {
+          "Cubo especializado": "Cubo de Medicina",
+          "Conteudo adequado": "Curativos, coagulantes, antitoxinas, seringas, analgesicos, capsulas estabilizadoras, instrumentos pequenos."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 97",
         "schemaVersion": 2
       },
@@ -8711,6 +11465,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "especializado"
         ],
         "summary": "Conteúdo adequado: Cabos, placas, selantes, ferramentas pequenas, pecas de reparo, fita condutora, microcomponentes.",
+        "officialData": {
+          "Cubo especializado": "Cubo de Engenharia",
+          "Conteudo adequado": "Cabos, placas, selantes, ferramentas pequenas, pecas de reparo, fita condutora, microcomponentes."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 97",
         "schemaVersion": 2
       },
@@ -8730,6 +11488,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "especializado"
         ],
         "summary": "Conteúdo adequado: Interfaces, cabos, baterias pequenas, modulos de dados, conectores, ferramentas de invasao.",
+        "officialData": {
+          "Cubo especializado": "Cubo de Tecnologia",
+          "Conteudo adequado": "Interfaces, cabos, baterias pequenas, modulos de dados, conectores, ferramentas de invasao."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 97",
         "schemaVersion": 2
       },
@@ -8749,6 +11511,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "especializado"
         ],
         "summary": "Conteúdo adequado: Carregadores, balas, cartuchos, celulas, dardos, munições especiais e cargas leves.",
+        "officialData": {
+          "Cubo especializado": "Cubo de Munição",
+          "Conteudo adequado": "Carregadores, balas, cartuchos, celulas, dardos, munições especiais e cargas leves."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 97",
         "schemaVersion": 2
       },
@@ -8768,6 +11534,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "especializado"
         ],
         "summary": "Conteúdo adequado: Granadas, cargas pequenas, detonadores e material de seguranca.",
+        "officialData": {
+          "Cubo especializado": "Cubo de Explosivos",
+          "Conteudo adequado": "Granadas, cargas pequenas, detonadores e material de seguranca."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 97",
         "schemaVersion": 2
       },
@@ -8787,6 +11557,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "especializado"
         ],
         "summary": "Conteúdo adequado: Sucata, materiais, amostras comuns, ferramentas de coleta e compartimentos de separacao.",
+        "officialData": {
+          "Cubo especializado": "Cubo de Coleta",
+          "Conteudo adequado": "Sucata, materiais, amostras comuns, ferramentas de coleta e compartimentos de separacao."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 97",
         "schemaVersion": 2
       },
@@ -8806,6 +11580,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "especializado"
         ],
         "summary": "Conteúdo adequado: Amostras vivas, toxinas, fungos, fluidos, tecidos e recipientes de contenção.",
+        "officialData": {
+          "Cubo especializado": "Cubo Biológico",
+          "Conteudo adequado": "Amostras vivas, toxinas, fungos, fluidos, tecidos e recipientes de contenção."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 97",
         "schemaVersion": 2
       },
@@ -8825,6 +11603,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "especializado"
         ],
         "summary": "Conteúdo adequado: Cristais brutos, fragmentos instaveis, condutores cósmicos e amostras de ressonancia.",
+        "officialData": {
+          "Cubo especializado": "Cubo de Cristais",
+          "Conteudo adequado": "Cristais brutos, fragmentos instaveis, condutores cósmicos e amostras de ressonancia."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 97",
         "schemaVersion": 2
       },
@@ -8844,6 +11626,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "especializado"
         ],
         "summary": "Conteúdo adequado: Baterias, celulas, microgeradores, cabos energeticos e carregadores.",
+        "officialData": {
+          "Cubo especializado": "Cubo de Energia",
+          "Conteudo adequado": "Baterias, celulas, microgeradores, cabos energeticos e carregadores."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 97",
         "schemaVersion": 2
       },
@@ -8863,6 +11649,10 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "especializado"
         ],
         "summary": "Conteúdo adequado: Racoes, filtros, mantas, sinalizadores, cantis, luz, cordas e itens de sobrevivencia.",
+        "officialData": {
+          "Cubo especializado": "Cubo de Suprimentos",
+          "Conteudo adequado": "Racoes, filtros, mantas, sinalizadores, cantis, luz, cordas e itens de sobrevivencia."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 97",
         "schemaVersion": 2
       }
@@ -8886,6 +11676,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Deslocamento +1 m enquanto o usuário estiver sem sobrecarga acima de 100%.",
+        "officialData": {
+          "#": "1",
+          "Nome": "Passos Rápidos",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / pernas",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Deslocamento +1 m enquanto o usuário estiver sem sobrecarga acima de 100%.",
+          "Materiais sugeridos": "Carbonita bruta; osso de Muldrog; poeira de Cosmos pequena; fibra vegetal; pó de Comum",
+          "Falha / Limite": "Se a armadura/medula tiver 3+ rachaduras, o bônus é perdido até reparo."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -8907,6 +11708,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Ao saltar ganha +1 m de salto horizontal ou vertical.",
+        "officialData": {
+          "#": "2",
+          "Nome": "Pernas Elásticas",
+          "Tipo": "Ativo",
+          "Instalação": "Interface medular / pernas",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Ao saltar ganha +1 m de salto horizontal ou vertical.",
+          "Materiais sugeridos": "Couro de Kudrogo; glândula de anfíbio; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Em falha crítica no teste de movimento, o usuário cai ou ganha +1 Estresse."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -8928,6 +11740,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Recebe +1 em JPF contra fumaça, gás fraco, sufocamento leve ou poeira tóxica.",
+        "officialData": {
+          "#": "3",
+          "Nome": "Pulmões Reforçados",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / suporte vital",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Recebe +1 em JPF contra fumaça, gás fraco, sufocamento leve ou poeira tóxica.",
+          "Materiais sugeridos": "Dente de Muldrog; escamas pequenas; glândula de peixe; núcleo aquático; cristal fraco",
+          "Falha / Limite": "Não protege contra vácuo, veneno forte ou atmosfera letal."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -8949,6 +11772,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Reduz 1 ponto de dano de concussão recebido uma vez por rodada.",
+        "officialData": {
+          "#": "4",
+          "Nome": "Pele de Veyrkan",
+          "Tipo": "Passivo",
+          "Instalação": "Armadura / revestimento",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Reduz 1 ponto de dano de concussão recebido uma vez por rodada.",
+          "Materiais sugeridos": "Pele de Veyrkan; couro curtido; glândula reptiliana; escamas pequenas; pó de Cosmos",
+          "Falha / Limite": "Não acumula com outra redução física da mesma fonte."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -8970,6 +11804,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1 CA",
+        "officialData": {
+          "#": "5",
+          "Nome": "Pele Dura",
+          "Tipo": "Passivo",
+          "Instalação": "Armadura / placas leves",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1 CA",
+          "Materiais sugeridos": "Osso bruto; couro grosso; osso comum; escama rígida; pó de Cosmos",
+          "Falha / Limite": "Aumeta a CA passiva"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -8991,6 +11836,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Enxerga até 10 m no escuro comum. Não atravessa escuridão cósmica.",
+        "officialData": {
+          "#": "6",
+          "Nome": "Visão Noturna Simples",
+          "Tipo": "Passivo",
+          "Instalação": "Sensor ocular / capacete",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Enxerga até 10 m no escuro comum. Não atravessa escuridão cósmica.",
+          "Materiais sugeridos": "Olho de Notropo; glândula noturna; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Luz forte repentina impõe -1 no próximo teste de Percepção."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9012,6 +11868,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Ataques desarmados causam +1 de dano cortante",
+        "officialData": {
+          "#": "7",
+          "Nome": "Unhas Reforçadas",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / mãos",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Ataques desarmados causam +1 de dano cortante",
+          "Materiais sugeridos": "Carbonita; osso pequeno; garra animal; escama fina; pó de Cosmos",
+          "Falha / Limite": "Não funciona com manoplas equipadas."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9033,6 +11900,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Recebe 1d4 PV temporários no inicio da batalha",
+        "officialData": {
+          "#": "8",
+          "Nome": "Pele Endurecida",
+          "Tipo": "Ativo",
+          "Instalação": "Armadura / revestimento dérmico",
+          "Slots": "1",
+          "Ativação": "1x por descanso",
+          "Efeito mecânico revisado": "Recebe 1d4 PV temporários no inicio da batalha",
+          "Materiais sugeridos": "Ferrita; couro curtido; escamas grossas; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "PV temporário não acumula com outro efeito temporário."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9054,6 +11932,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Move +1,5 m extra por rodada durante 1d4 rodadas.",
+        "officialData": {
+          "#": "9",
+          "Nome": "Corrida Básica",
+          "Tipo": "Ativo",
+          "Instalação": "Interface medular / pernas",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Move +1,5 m extra por rodada durante 1d4 rodadas.",
+          "Materiais sugeridos": "Couro de Kudrogo; fibra vegetal; glândula adrenal; pó de Cosmos",
+          "Falha / Limite": "Ao terminar, se o usuário estiver em Estresse 5+, sofre +1 Estresse."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9075,6 +11964,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Reduz 1 ponto de dano em quedas leves ou impacto ambiental.",
+        "officialData": {
+          "#": "10",
+          "Nome": "Órgão Rígido",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / órgãos",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Reduz 1 ponto de dano em quedas leves ou impacto ambiental.",
+          "Materiais sugeridos": "Ferrita; osso grosso; glândula rígida; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Não reduz dano de ataques comuns."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9096,6 +11996,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1 em testes de Mãos Leves para abrir fechaduras, manipular circuitos pequenos ou desarmar mecanismos simples.",
+        "officialData": {
+          "#": "11",
+          "Nome": "Tato Fino",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / mãos",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1 em testes de Mãos Leves para abrir fechaduras, manipular circuitos pequenos ou desarmar mecanismos simples.",
+          "Materiais sugeridos": "Paralatum bruto; nervos secos; glândula sensorial; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Em falha crítica, o mecanismo sofre dano ou trava."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9117,6 +12028,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Recebe +1 em uma jogada de ataque à distância ou teste de reparo delicado.",
+        "officialData": {
+          "#": "12",
+          "Nome": "Mãos Firmes",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / mãos",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Recebe +1 em uma jogada de ataque à distância ou teste de reparo delicado.",
+          "Materiais sugeridos": "Ferrita; couro das mãos; osso de dedo; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Escolha usar antes de rolar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9138,6 +12060,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1 em Percepção passiva para não ser surpreendido por emboscadas físicas.",
+        "officialData": {
+          "#": "13",
+          "Nome": "Instinto Alerta",
+          "Tipo": "Passivo",
+          "Instalação": "Sensor neural",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1 em Percepção passiva para não ser surpreendido por emboscadas físicas.",
+          "Materiais sugeridos": "Carbonita; ouvido animal; glândula auditiva; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Não detecta emboscadas digitais, cósmicas ou ilusórias."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9159,6 +12092,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Vantagem em JPF contra comida estragada, água turva ou intoxicação alimentar leve.",
+        "officialData": {
+          "#": "14",
+          "Nome": "Estômago Adaptado",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / digestivo",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Vantagem em JPF contra comida estragada, água turva ou intoxicação alimentar leve.",
+          "Materiais sugeridos": "Ferrita; glândula digestiva; osso pequeno; couro curtido; pó de Cosmos",
+          "Falha / Limite": "Não neutraliza veneno forte, ácido ou toxina alienígena rara."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9180,6 +12124,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1 em Percepção para detectar sons a distância curta ou rastrear ruídos.",
+        "officialData": {
+          "#": "15",
+          "Nome": "Audição Aguçada",
+          "Tipo": "Passivo",
+          "Instalação": "Sensor auditivo",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1 em Percepção para detectar sons a distância curta ou rastrear ruídos.",
+          "Materiais sugeridos": "Tímpano bruto; ouvido seco; nervo auditivo; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Ruídos muito altos causam -1 no próximo teste de Percepção."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9201,6 +12156,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Aumenta a capacidade de carga em +1 cubo ou +5 kg, o que for mais útil na ficha usada.",
+        "officialData": {
+          "#": "16",
+          "Nome": "Músculos Tensos",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / musculatura",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Aumenta a capacidade de carga em +1 cubo ou +5 kg, o que for mais útil na ficha usada.",
+          "Materiais sugeridos": "Carbonita; fibra muscular seca; couro grosso; osso pequeno; pó de Cosmos",
+          "Falha / Limite": "Não altera dano, ataque ou FOR."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9222,6 +12188,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1 em Persuasão quando o personagem fala com calma, autoridade ou comando.",
+        "officialData": {
+          "#": "17",
+          "Nome": "Voz Firme",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / voz",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1 em Persuasão quando o personagem fala com calma, autoridade ou comando.",
+          "Materiais sugeridos": "Cartilagem; fibras vocais; poeira de Cosmos",
+          "Falha / Limite": "Não funciona em blefe, atuação exagerada ou intimidação física."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9243,6 +12220,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Recebe +1 em JPF contra veneno respiratório leve ou esforço prolongado.",
+        "officialData": {
+          "#": "18",
+          "Nome": "Respiração Ritmada",
+          "Tipo": "Ativo",
+          "Instalação": "Interface medular / respiração",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Recebe +1 em JPF contra veneno respiratório leve ou esforço prolongado.",
+          "Materiais sugeridos": "Pulmão seco; fibra vegetal; couro leve; pó de Cosmos",
+          "Falha / Limite": "Não substitui equipamento de respiração."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9264,6 +12252,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1 na jogada de ataque contra inimigos a até 6 m que estejam visíveis.",
+        "officialData": {
+          "#": "19",
+          "Nome": "Olhos Atentos",
+          "Tipo": "Passivo",
+          "Instalação": "Sensor ocular",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1 na jogada de ataque contra inimigos a até 6 m que estejam visíveis.",
+          "Materiais sugeridos": "Carbonita; olho animal; glândula ocular; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Não funciona contra invisibilidade, cobertura total ou escuridão cósmica."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9285,6 +12284,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Ignora penalidade de mãos trêmulas causada por Estresse 3-4 uma vez por cena.",
+        "officialData": {
+          "#": "20",
+          "Nome": "Calma nas Mãos",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / emocional",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Ignora penalidade de mãos trêmulas causada por Estresse 3-4 uma vez por cena.",
+          "Materiais sugeridos": "Ferrita; couro das mãos; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Não remove Estresse; apenas ignora um efeito por cena."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9306,6 +12316,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Recebe +1 CA contra um ataque à distância depois que o ataque for declarado, antes da rolagem.",
+        "officialData": {
+          "#": "21",
+          "Nome": "Reflexo Básico",
+          "Tipo": "Ativo",
+          "Instalação": "Interface medular / reflexos",
+          "Slots": "1",
+          "Ativação": "1x por descanso",
+          "Efeito mecânico revisado": "Recebe +1 CA contra um ataque à distância depois que o ataque for declarado, antes da rolagem.",
+          "Materiais sugeridos": "Paralatum bruto; nervos secos; couro leve; fibra vegetal; cristal frágil",
+          "Falha / Limite": "Não pode ser usado se estiver imobilizado."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9327,6 +12348,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Reduz em 1 a CD de testes para se equilibrar, não cair ou atravessar terreno estreito.",
+        "officialData": {
+          "#": "22",
+          "Nome": "Equilíbrio Estável",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / equilíbrio",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Reduz em 1 a CD de testes para se equilibrar, não cair ou atravessar terreno estreito.",
+          "Materiais sugeridos": "Carbonita; pé de animal; osso leve; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Não ajuda contra empurrões fortes ou agarrões."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9348,6 +12380,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Recebe +1 em JPC contra medo, terror, pânico ou pressão emocional.",
+        "officialData": {
+          "#": "23",
+          "Nome": "Pulso Frio",
+          "Tipo": "Ativo",
+          "Instalação": "Interface medular / emocional",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Recebe +1 em JPC contra medo, terror, pânico ou pressão emocional.",
+          "Materiais sugeridos": "Ferro nervoso; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Se falhar mesmo assim, sofre +1 Estresse adicional."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9369,6 +12412,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Aumenta em 3 m o deslocamento em água calma ou reduz em 1 a CD de Natação.",
+        "officialData": {
+          "#": "24",
+          "Nome": "Nadador Iniciante",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / natação",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Aumenta em 3 m o deslocamento em água calma ou reduz em 1 a CD de Natação.",
+          "Materiais sugeridos": "Carbonita; brânquias secas; escamas aquáticas; couro leve; cristal fraco",
+          "Falha / Limite": "Não permite respirar debaixo d’água."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9390,6 +12444,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Ignora insolação leve e reduz em 1 a CD contra calor ambiental fraco.",
+        "officialData": {
+          "#": "25",
+          "Nome": "Pele Resistente ao Sol",
+          "Tipo": "Passivo",
+          "Instalação": "Armadura / revestimento térmico",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Ignora insolação leve e reduz em 1 a CD contra calor ambiental fraco.",
+          "Materiais sugeridos": "Paralatum bruto; couro curtido; glândula sudorípara; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Não protege contra fogo direto."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9411,6 +12476,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1 em testes para achar direção, retornar por uma rota curta ou evitar se perder em área conhecida.",
+        "officialData": {
+          "#": "26",
+          "Nome": "Orientação Simples",
+          "Tipo": "Passivo",
+          "Instalação": "Sensor neural / navegação",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1 em testes para achar direção, retornar por uma rota curta ou evitar se perder em área conhecida.",
+          "Materiais sugeridos": "Couro seco; osso orientador; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Não funciona em distorção gravitacional ou tempestade cósmica."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9432,6 +12508,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Permite escolher 3 habilidades cósmicas conhecidas pelo usuário como “marcadas”. Ao usar uma marcada, +1 no teste de controle apenas 1x por descanso.",
+        "officialData": {
+          "#": "27",
+          "Nome": "Orientação Cósmica Fraquíssima",
+          "Tipo": "Passivo",
+          "Instalação": "Sensor cósmico",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Permite escolher 3 habilidades cósmicas conhecidas pelo usuário como “marcadas”. Ao usar uma marcada, +1 no teste de controle apenas 1x por descanso.",
+          "Materiais sugeridos": "Glândula energética; cristais de Cosmos comuns; couro animal; pó de Cosmos",
+          "Falha / Limite": "Não ensina habilidade nova e não reduz custo de Cosmos."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9453,6 +12540,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Pode selar 1 ferimento leve ou permitir teste de Medicina durante o próprio turno como ação simples.",
+        "officialData": {
+          "#": "28",
+          "Nome": "Primeiros Socorros",
+          "Tipo": "Ativo",
+          "Instalação": "Interface medular / medicina",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Pode selar 1 ferimento leve ou permitir teste de Medicina durante o próprio turno como ação simples.",
+          "Materiais sugeridos": "Couro curtido; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Não estabiliza automaticamente personagem em 0 PV."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 46",
         "schemaVersion": 2
       },
@@ -9474,6 +12572,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Libera uma faísca interna: o usuário pode fazer uma ação simples adicional no turno.",
+        "officialData": {
+          "#": "1",
+          "Nome": "Surto de Energia",
+          "Tipo": "Ativo",
+          "Instalação": "Sistema energético / armadura",
+          "Slots": "1",
+          "Ativação": "1x por descanso de vigília",
+          "Efeito mecânico revisado": "Libera uma faísca interna: o usuário pode fazer uma ação simples adicional no turno.",
+          "Materiais sugeridos": "Liga ferrita refinada; osso médio; glândula energética; fibra vegetal; cristal de Cosmos",
+          "Falha / Limite": "Após usar, o item ganha 1 nível de aquecimento; se repetir antes de descanso, sofre +1 Estresse."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9495,6 +12604,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Ganha 2d4 PV temporários.",
+        "officialData": {
+          "#": "2",
+          "Nome": "Escudo Temporário",
+          "Tipo": "Ativo",
+          "Instalação": "Armadura / campo defensivo",
+          "Slots": "1",
+          "Ativação": "1x por descanso",
+          "Efeito mecânico revisado": "Ganha 2d4 PV temporários.",
+          "Materiais sugeridos": "Carbonita; couro grosso; escama rígida; glândula estabilizadora; pó de Cosmos refinado",
+          "Falha / Limite": "PV temporários não acumulam com outros escudos."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9516,6 +12636,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Recebe vantagem em Furtividade apenas para deslocamento silencioso em piso comum.",
+        "officialData": {
+          "#": "3",
+          "Nome": "Passos Silenciosos",
+          "Tipo": "Passivo",
+          "Instalação": "Armadura / pernas",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Recebe vantagem em Furtividade apenas para deslocamento silencioso em piso comum.",
+          "Materiais sugeridos": "Ferrita polida; couro de Kudrogo; glândula furtiva; fibra vegetal; cristal frágil",
+          "Falha / Limite": "Não funciona em metal solto, água rasa, cascalho ou armaduras pesadas."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9537,6 +12668,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1 em testes de REF ligados a esquiva, equilíbrio ou reação rápida.",
+        "officialData": {
+          "#": "4",
+          "Nome": "Reflexo de Getlyk",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / reflexos",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1 em testes de REF ligados a esquiva, equilíbrio ou reação rápida.",
+          "Materiais sugeridos": "Paralatum bruto; escama ágil; nervos secos; osso leve; pó de Cosmos",
+          "Falha / Limite": "Não aumenta atributo REF nem jogadas de ataque."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9558,6 +12700,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1 em testes de FOR ligados a empurrar, erguer, quebrar ou resistir agarrão.",
+        "officialData": {
+          "#": "5",
+          "Nome": "Força de Grakuk",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / força",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1 em testes de FOR ligados a empurrar, erguer, quebrar ou resistir agarrão.",
+          "Materiais sugeridos": "Carbonita; osso denso; fibra muscular seca; escama rígida; pó de Cosmos",
+          "Falha / Limite": "Não aumenta dano de arma."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9579,6 +12732,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1 em JPC contra possessão emocional ou colapso psicológico.",
+        "officialData": {
+          "#": "6",
+          "Nome": "Espírito de Yndra",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / controle emocional",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1 em JPC contra possessão emocional ou colapso psicológico.",
+          "Materiais sugeridos": "Ferrita; pena de Yndra; glândula espiritual; couro leve; cristal frágil",
+          "Falha / Limite": "Não remove Estresse já adquirido."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9600,6 +12764,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1 em testes de MEN para memória, análise cósmica, intuição e percepção cósmica.",
+        "officialData": {
+          "#": "7",
+          "Nome": "Mente de Khoril",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / mentalidade",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1 em testes de MEN para memória, análise cósmica, intuição e percepção cósmica.",
+          "Materiais sugeridos": "Paralatum bruto; carapaça de Khoril; nervos secos; glândula sensorial; pó de Cosmos refinado",
+          "Falha / Limite": "Não aumenta ataque cósmico diretamente."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9621,6 +12796,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Altera a aparência superficial da armadura ou roupa por 1d4 minutos, dando +1 em disfarce visual simples.",
+        "officialData": {
+          "#": "8",
+          "Nome": "Pele Mutável",
+          "Tipo": "Ativo",
+          "Instalação": "Armadura / camuflagem",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Altera a aparência superficial da armadura ou roupa por 1d4 minutos, dando +1 em disfarce visual simples.",
+          "Materiais sugeridos": "Carbonita; couro mutável; glândula camaleônica; fibra vegetal; cristal frágil",
+          "Falha / Limite": "Não muda voz, altura, cheiro, chip, biometria ou assinatura cósmica."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9642,6 +12828,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Escolha 1 tipo de alvo observado na cena; recebe +1 em Busca ou Percepção para rastreá-lo até o fim da cena.",
+        "officialData": {
+          "#": "9",
+          "Nome": "Instinto Predador",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / caça",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Escolha 1 tipo de alvo observado na cena; recebe +1 em Busca ou Percepção para rastreá-lo até o fim da cena.",
+          "Materiais sugeridos": "Dente de predador; glândula adrenal; osso de caça; pó de Cosmos refinado",
+          "Falha / Limite": "Não concede bônus de ataque."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9663,6 +12860,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Aprende 2 idiomas adicionais, desde que tenha contato ou base de treinamento.",
+        "officialData": {
+          "#": "10",
+          "Nome": "Poliglota Cósmico",
+          "Tipo": "Passivo",
+          "Instalação": "Interface neural / linguagem",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Aprende 2 idiomas adicionais, desde que tenha contato ou base de treinamento.",
+          "Materiais sugeridos": "Paralatum bruto; glândula mnemônica; nervos secos; fibra vegetal; cristal de Cosmos",
+          "Falha / Limite": "Não decifra automaticamente idiomas antigos, códigos ou glifos secretos."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9684,6 +12892,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Marca um alvo visível por 1d4 turnos; você recebe +1 em ataques contra ele enquanto mantiver linha de visão.",
+        "officialData": {
+          "#": "11",
+          "Nome": "Marca da Presa",
+          "Tipo": "Ativo",
+          "Instalação": "Sensor / rastreamento",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Marca um alvo visível por 1d4 turnos; você recebe +1 em ataques contra ele enquanto mantiver linha de visão.",
+          "Materiais sugeridos": "Carbonita; sangue de predador; olho animal; couro leve; pó de Cosmos refinado",
+          "Falha / Limite": "Se perder linha de visão, a marca termina."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9705,6 +12924,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Invoca uma lâmina cósmica que causa 1d6 dano cósmico por 1 turno ou 1 ataque como ação simples",
+        "officialData": {
+          "#": "12",
+          "Nome": "Lâmina de Luz",
+          "Tipo": "Ativo",
+          "Instalação": "Arma corpo a corpo / canalizador",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Invoca uma lâmina cósmica que causa 1d6 dano cósmico por 1 turno ou 1 ataque como ação simples",
+          "Materiais sugeridos": "Ferrita; cristal de Cosmos; osso leve; pó de Cosmos refinado",
+          "Falha / Limite": "Conta como uso cósmico e pode gerar Falha Cósmica."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9726,6 +12956,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Explosão em área de 3 m: alvos testam JPC ou sofrem 1d4 dano cósmico.",
+        "officialData": {
+          "#": "13",
+          "Nome": "Estouro Cósmico",
+          "Tipo": "Ativo",
+          "Instalação": "Canalizador cósmico",
+          "Slots": "1",
+          "Ativação": "1x por descanso de vigília",
+          "Efeito mecânico revisado": "Explosão em área de 3 m: alvos testam JPC ou sofrem 1d4 dano cósmico.",
+          "Materiais sugeridos": "Carbonita; escama rígida; glândula energética; fibra vegetal; pó de Cosmos refinado",
+          "Falha / Limite": "Usuário também testa JPC; falha causa +1 Estresse."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9747,6 +12988,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Cura 1d4 PV em alvo tocado.",
+        "officialData": {
+          "#": "14",
+          "Nome": "Toque Curativo",
+          "Tipo": "Ativo",
+          "Instalação": "Armadura / suporte médico",
+          "Slots": "1",
+          "Ativação": "1x por descanso de vigília",
+          "Efeito mecânico revisado": "Cura 1d4 PV em alvo tocado.",
+          "Materiais sugeridos": "Paralatum bruto; glândula vital; osso pequeno; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Não remove condição, veneno ou sangramento grave."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9768,6 +13020,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Disparo cósmico com alcance 10 m, ataque por MEN, dano 1d4 cósmico.",
+        "officialData": {
+          "#": "15",
+          "Nome": "Disparo de Fóton",
+          "Tipo": "Ativo",
+          "Instalação": "Arma à distância / canalizador",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Disparo cósmico com alcance 10 m, ataque por MEN, dano 1d4 cósmico.",
+          "Materiais sugeridos": "Ferrita; cristal energético; glândula ocular; fibra vegetal; pó de Cosmos refinado",
+          "Falha / Limite": "Se errar por 5 ou mais, o item ganha +1 rachadura."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9789,6 +13052,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Gera luz fraca de 10 m por 1d4 turnos e causa +1 elétrico no próximo acerto da arma.",
+        "officialData": {
+          "#": "16",
+          "Nome": "Faísca Persistente",
+          "Tipo": "Ativo",
+          "Instalação": "Arma / sistema elétrico",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Gera luz fraca de 10 m por 1d4 turnos e causa +1 elétrico no próximo acerto da arma.",
+          "Materiais sugeridos": "Ferrita; fibra muscular; osso pequeno; cristal frágil",
+          "Falha / Limite": "Não acumula com outro bônus elétrico."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9810,6 +13084,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Inimigos em contato corpo a corpo devem passar em JPF CD 12 ou são empurrados 1 m.",
+        "officialData": {
+          "#": "17",
+          "Nome": "Aura de Repulsão",
+          "Tipo": "Ativo",
+          "Instalação": "Armadura / campo defensivo",
+          "Slots": "1",
+          "Ativação": "1x por descanso de vigília",
+          "Efeito mecânico revisado": "Inimigos em contato corpo a corpo devem passar em JPF CD 12 ou são empurrados 1 m.",
+          "Materiais sugeridos": "Contraluz; couro leve; nervo seco; glândula elétrica; pó de Cosmos refinado",
+          "Falha / Limite": "Não empurra criaturas grandes ou presas ao terreno."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9831,6 +13116,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Aliados que acertarem o mesmo alvo até o início do seu próximo turno causam +1 dano.",
+        "officialData": {
+          "#": "18",
+          "Nome": "Centelha de Dano",
+          "Tipo": "Ativo",
+          "Instalação": "Arma / energia",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Aliados que acertarem o mesmo alvo até o início do seu próximo turno causam +1 dano.",
+          "Materiais sugeridos": "Paralatum bruto; osso comum; fibra vegetal; escama rígida; cristal frágil",
+          "Falha / Limite": "Só afeta um alvo por vez."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9852,6 +13148,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Gasta 1 Cosmos e causa +1d6 de dano cósmico em um ataque ou habilidade.",
+        "officialData": {
+          "#": "19",
+          "Nome": "Fluxo Instável",
+          "Tipo": "Ativo",
+          "Instalação": "Canalizador cósmico",
+          "Slots": "1",
+          "Ativação": "1x por descanso",
+          "Efeito mecânico revisado": "Gasta 1 Cosmos e causa +1d6 de dano cósmico em um ataque ou habilidade.",
+          "Materiais sugeridos": "Ferrita; escama energética; osso leve; fibra vegetal; pó de Cosmos refinado",
+          "Falha / Limite": "Após usar, teste JPC CD 12; falha causa +1 Estresse."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9873,6 +13180,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Ataque causa +1d4 elétrico; alvo testa JPF CD 12 ou perde 1 m de movimento no próximo turno.",
+        "officialData": {
+          "#": "20",
+          "Nome": "Choque Vertiginoso",
+          "Tipo": "Ativo",
+          "Instalação": "Arma / elétrico",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Ataque causa +1d4 elétrico; alvo testa JPF CD 12 ou perde 1 m de movimento no próximo turno.",
+          "Materiais sugeridos": "Contraluz; glândula elétrica; couro grosso; cristal frágil",
+          "Falha / Limite": "Não funciona contra alvos imunes a eletricidade."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9894,6 +13212,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Telepatia simples com 1 aliado em até 9 m por 1d4 turnos.",
+        "officialData": {
+          "#": "21",
+          "Nome": "Vínculo Mental",
+          "Tipo": "Ativo",
+          "Instalação": "Interface neural / comunicação",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Telepatia simples com 1 aliado em até 9 m por 1d4 turnos.",
+          "Materiais sugeridos": "Ferrita; nervos secos; glândula neural; fibra vegetal; cristal frágil",
+          "Falha / Limite": "Não permite ler mente nem transmitir imagens complexas."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9915,6 +13244,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Revela sons, ecos e presenças físicas em área de 6 m, mesmo sem visão direta.",
+        "officialData": {
+          "#": "22",
+          "Nome": "Pulso de Eco",
+          "Tipo": "Ativo",
+          "Instalação": "Sensor / exploração",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Revela sons, ecos e presenças físicas em área de 6 m, mesmo sem visão direta.",
+          "Materiais sugeridos": "Carbonita; osso de morcego; glândula auditiva; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Não atravessa paredes grossas, campos de força ou escuridão cósmica."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9936,6 +13276,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "Ao terminar uma cena de combate, se estiver consciente, recupera +1 PV.",
+        "officialData": {
+          "#": "23",
+          "Nome": "Regeneração Lenta",
+          "Tipo": "Passivo",
+          "Instalação": "Armadura / suporte vital",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "Ao terminar uma cena de combate, se estiver consciente, recupera +1 PV.",
+          "Materiais sugeridos": "Paralatum bruto; glândula vital; osso pequeno; escama; pó de Cosmos",
+          "Falha / Limite": "Não funciona se o usuário estiver em 0 PV."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9957,6 +13308,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Ganha +1 no próximo teste de ataque ou de resistência feito até o fim do turno.",
+        "officialData": {
+          "#": "24",
+          "Nome": "Pulso Estimulante",
+          "Tipo": "Ativo",
+          "Instalação": "Interface medular / adrenalina",
+          "Slots": "1",
+          "Ativação": "1x por descanso de vigília",
+          "Efeito mecânico revisado": "Ganha +1 no próximo teste de ataque ou de resistência feito até o fim do turno.",
+          "Materiais sugeridos": "Ferrita; glândula elétrica; osso pequeno; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "Se o teste falhar, recebe +1 Estresse."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9978,6 +13340,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Aliados em 3 m ignoram terreno difícil leve por 1d4 turnos.",
+        "officialData": {
+          "#": "25",
+          "Nome": "Campo de Estabilidade",
+          "Tipo": "Ativo",
+          "Instalação": "Armadura / campo de suporte",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Aliados em 3 m ignoram terreno difícil leve por 1d4 turnos.",
+          "Materiais sugeridos": "Carbonita; escama rígida; nervos secos; cristal frágil",
+          "Falha / Limite": "Não afeta terreno instável extremo, gravidade anômala ou lama profunda."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -9999,6 +13372,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Marca um alvo; o próximo ataque contra ele feito por você recebe +1.",
+        "officialData": {
+          "#": "26",
+          "Nome": "Marca de Alvo",
+          "Tipo": "Ativo",
+          "Instalação": "Arma / mira",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Marca um alvo; o próximo ataque contra ele feito por você recebe +1.",
+          "Materiais sugeridos": "Paralatum bruto; olho animal; glândula sensorial; fibra vegetal; pó de Cosmos",
+          "Falha / Limite": "A marca termina após o primeiro ataque, acertando ou errando."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -10020,6 +13404,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Inimigo a 6 m testa JPC; falha sofre -1 no próximo ataque até o fim do turno.",
+        "officialData": {
+          "#": "27",
+          "Nome": "Pulso Desestabilizador",
+          "Tipo": "Ativo",
+          "Instalação": "Arma ou canalizador",
+          "Slots": "1",
+          "Ativação": "1x por descanso de vigília",
+          "Efeito mecânico revisado": "Inimigo a 6 m testa JPC; falha sofre -1 no próximo ataque até o fim do turno.",
+          "Materiais sugeridos": "Ferrita; glândula cinética; osso leve; escama energética; cristal frágil",
+          "Falha / Limite": "Não afeta criaturas sem mente ou máquinas sem núcleo sensível."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -10041,6 +13436,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Escolha 2 habilidades cósmicas conhecidas. Uma vez por dia, pode usar uma delas com -1 no custo mínimo de Cosmos, mínimo 1.",
+        "officialData": {
+          "#": "28",
+          "Nome": "Estrelação Cósmica Fraquíssima",
+          "Tipo": "Ativo",
+          "Instalação": "Canalizador cósmico",
+          "Slots": "1",
+          "Ativação": "1x por descanso completo",
+          "Efeito mecânico revisado": "Escolha 2 habilidades cósmicas conhecidas. Uma vez por dia, pode usar uma delas com -1 no custo mínimo de Cosmos, mínimo 1.",
+          "Materiais sugeridos": "Cristal energético; osso de fera; nervos cósmicos; couro animal; pó de Cosmos",
+          "Falha / Limite": "Se gerar Falha Cósmica, sofre +2 Estresse em vez de +1."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 47",
         "schemaVersion": 2
       },
@@ -10062,6 +13468,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1 em JPF contra veneno, fadiga, sangramento e efeitos físicos contínuos.",
+        "officialData": {
+          "#": "1",
+          "Nome": "Nervo Estabilizador",
+          "Tipo": "Passivo",
+          "Instalação": "Interface medular / resistência",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1 em JPF contra veneno, fadiga, sangramento e efeitos físicos contínuos.",
+          "Materiais sugeridos": "2 Circuitos neurais; osso bioferrítico; glândula instintiva",
+          "Falha / Limite": "Não acumula com outro bônus fixo de JPF."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 48",
         "schemaVersion": 2
       },
@@ -10083,6 +13500,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Reação"
         ],
         "summary": "Recebe +2 na iniciativa ou move até 2 m antes do primeiro turno, se não estiver surpreso.",
+        "officialData": {
+          "#": "2",
+          "Nome": "Passo Antecipado D-02",
+          "Tipo": "Reação",
+          "Instalação": "Interface medular / mobilidade",
+          "Slots": "1",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Recebe +2 na iniciativa ou move até 2 m antes do primeiro turno, se não estiver surpreso.",
+          "Materiais sugeridos": "Velo ferruginoso; cristal frágil",
+          "Falha / Limite": "Se estiver em armadura pesada, o movimento é reduzido para 1 m."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 48",
         "schemaVersion": 2
       },
@@ -10104,6 +13532,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "O primeiro +1 Estresse da cena é ignorado.",
+        "officialData": {
+          "#": "3",
+          "Nome": "Filtro Neural D-03",
+          "Tipo": "Passivo",
+          "Instalação": "Interface neural / Estresse",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "O primeiro +1 Estresse da cena é ignorado.",
+          "Materiais sugeridos": "Núcleo viscoso; nervos luminescentes; circuito sensorial",
+          "Falha / Limite": "Não ignora Estresse causado por Falha Cósmica grave."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 48",
         "schemaVersion": 2
       },
@@ -10125,6 +13564,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Recebe +1 para acertar o mesmo alvo em sequência por até 2 ataques.",
+        "officialData": {
+          "#": "4",
+          "Nome": "Trava de Mira D-04",
+          "Tipo": "Ativo",
+          "Instalação": "Arma à distância / mira",
+          "Slots": "2",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Recebe +1 para acertar o mesmo alvo em sequência por até 2 ataques.",
+          "Materiais sugeridos": "Servo-motores; presa afiada; lente óptica",
+          "Falha / Limite": "Perde o efeito se trocar de alvo ou se mover mais de 3 m."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 48",
         "schemaVersion": 2
       },
@@ -10146,6 +13596,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "+1 m de deslocamento após atacar ou usar ação de movimento.",
+        "officialData": {
+          "#": "5",
+          "Nome": "Sinapse Cinética D-05",
+          "Tipo": "Ativo",
+          "Instalação": "Interface medular / aceleração",
+          "Slots": "2",
+          "Ativação": "1x por descanso de vigília",
+          "Efeito mecânico revisado": "+1 m de deslocamento após atacar ou usar ação de movimento.",
+          "Materiais sugeridos": "Atuador muscular; fragmento ósseo; cristal de lodo",
+          "Falha / Limite": "Não permite ultrapassar travamento, imobilização ou agarrão."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 48",
         "schemaVersion": 2
       },
@@ -10167,6 +13628,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Reação"
         ],
         "summary": "Recebe +1 CA se o ataque acertou por pouco, fazendo com que o ataque não acerte",
+        "officialData": {
+          "#": "6",
+          "Nome": "Reflexo de Impacto D-06",
+          "Tipo": "Reação",
+          "Instalação": "Armadura / absorção",
+          "Slots": "2",
+          "Ativação": "1x por cena",
+          "Efeito mecânico revisado": "Recebe +1 CA se o ataque acertou por pouco, fazendo com que o ataque não acerte",
+          "Materiais sugeridos": "2 Placas de ferrita; fragmento de carapaça; gel amortecedor",
+          "Falha / Limite": "Se ainda for acertado, a armadura ganha +1 rachadura."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 48",
         "schemaVersion": 2
       },
@@ -10188,6 +13660,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1 em testes de Memória Cósmica, Tecnologia ou Engenharia para lembrar procedimento técnico.",
+        "officialData": {
+          "#": "7",
+          "Nome": "Anel de Memória D-07",
+          "Tipo": "Passivo",
+          "Instalação": "Interface neural / conhecimento",
+          "Slots": "1",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1 em testes de Memória Cósmica, Tecnologia ou Engenharia para lembrar procedimento técnico.",
+          "Materiais sugeridos": "Chip cognitivo; fragmento mnemônico; esporos",
+          "Falha / Limite": "Não concede conhecimento que o personagem nunca teve chance de aprender."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 48",
         "schemaVersion": 2
       },
@@ -10209,6 +13692,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Ativo"
         ],
         "summary": "Reduz 1d4 pontos de Estresse de si mesmo ou de um aliado tocado.",
+        "officialData": {
+          "#": "8",
+          "Nome": "Equalizador de Estresse D-08",
+          "Tipo": "Ativo",
+          "Instalação": "Interface neural / emocional",
+          "Slots": "2",
+          "Ativação": "1x por descanso",
+          "Efeito mecânico revisado": "Reduz 1d4 pontos de Estresse de si mesmo ou de um aliado tocado.",
+          "Materiais sugeridos": "Circuitos calmantes; seiva fúngica; núcleo viscoso",
+          "Falha / Limite": "Se rolar 1 no dado de redução, o usuário sofre -1 no próximo teste mental."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 48",
         "schemaVersion": 2
       },
@@ -10230,6 +13724,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1 no ataque ou teste de controle ao usar uma habilidade cósmica de custo 1 ou 2.",
+        "officialData": {
+          "#": "9",
+          "Nome": "Condutor Fino D-09",
+          "Tipo": "Passivo",
+          "Instalação": "Canalizador cósmico",
+          "Slots": "2",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1 no ataque ou teste de controle ao usar uma habilidade cósmica de custo 1 ou 2.",
+          "Materiais sugeridos": "Cristal cósmico rachado; filamento energético; regulador",
+          "Falha / Limite": "Em Falha Cósmica, o item ganha +1 rachadura adicional."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 48",
         "schemaVersion": 2
       },
@@ -10251,6 +13756,17 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Passivo"
         ],
         "summary": "+1d4 de dano no primeiro ataque corpo a corpo ou à distância feito em cada cena.",
+        "officialData": {
+          "#": "10",
+          "Nome": "Servo de Precisão D-10",
+          "Tipo": "Passivo",
+          "Instalação": "Arma / estabilização",
+          "Slots": "2",
+          "Ativação": "Sempre ativo",
+          "Efeito mecânico revisado": "+1d4 de dano no primeiro ataque corpo a corpo ou à distância feito em cada cena.",
+          "Materiais sugeridos": "Atuadores finos; lente sensorial; fragmento metálico",
+          "Falha / Limite": "Não funciona em rajadas, ataques em área ou ataques cósmicos."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 48",
         "schemaVersion": 2
       }
@@ -10269,6 +13785,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "+1 em aceleração, melhor consumo ou Overdrive mais seguro. Risco: Vazamento, explosão, consumo dobrado ou falha de motor se danificado.",
+        "officialData": {
+          "Mod": "Bico comum/reforçado/de alta pressão",
+          "Efeito possível": "+1 em aceleração, melhor consumo ou Overdrive mais seguro.",
+          "Risco": "Vazamento, explosão, consumo dobrado ou falha de motor se danificado."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 194",
         "schemaVersion": 2
       },
@@ -10285,6 +13806,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Aumenta redução de dano e proteção da tripulação. Risco: Pode reduzir velocidade, aumentar consumo e exigir motor melhor.",
+        "officialData": {
+          "Mod": "Carenagem reforçada/blindada/militar",
+          "Efeito possível": "Aumenta redução de dano e proteção da tripulação.",
+          "Risco": "Pode reduzir velocidade, aumentar consumo e exigir motor melhor."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 194",
         "schemaVersion": 2
       },
@@ -10301,6 +13827,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Reduz penalidade em lama, entulho, areia ou pedra. Risco: Pode quebrar em colisão ou salto ruim.",
+        "officialData": {
+          "Mod": "Suspensão de terreno difícil",
+          "Efeito possível": "Reduz penalidade em lama, entulho, areia ou pedra.",
+          "Risco": "Pode quebrar em colisão ou salto ruim."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 194",
         "schemaVersion": 2
       },
@@ -10317,6 +13848,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Melhora Busca, Tecnologia ou detecção de calor/movimento. Risco: Pode sofrer Jammed, interferência ou falso positivo.",
+        "officialData": {
+          "Mod": "Sensor IR/rastreador",
+          "Efeito possível": "Melhora Busca, Tecnologia ou detecção de calor/movimento.",
+          "Risco": "Pode sofrer Jammed, interferência ou falso positivo."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 194",
         "schemaVersion": 2
       },
@@ -10333,6 +13869,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Protege contra esporos, poeira, gás, radiação leve ou pântano. Risco: Consome bateria/filtro e pode prender passageiros se falhar.",
+        "officialData": {
+          "Mod": "Cabine selada/filtro ambiental",
+          "Efeito possível": "Protege contra esporos, poeira, gás, radiação leve ou pântano.",
+          "Risco": "Consome bateria/filtro e pode prender passageiros se falhar."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 194",
         "schemaVersion": 2
       },
@@ -10349,6 +13890,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "veículo"
         ],
         "summary": "Reduz risco de Jammed tecnológico. Risco: Caro, raro e pode ocupar muitos slots.",
+        "officialData": {
+          "Mod": "Sistema anti-EMP",
+          "Efeito possível": "Reduz risco de Jammed tecnológico.",
+          "Risco": "Caro, raro e pode ocupar muitos slots."
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 194",
         "schemaVersion": 2
       },
@@ -10364,6 +13910,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "Permite pegar, puxar, abrir, carregar",
+        "officialData": {
+          "Módulo": "Braço manipulador",
+          "Slots": "1",
+          "Efeito": "Permite pegar, puxar, abrir, carregar"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10379,6 +13930,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "Levanta peso, empurra, golpeia",
+        "officialData": {
+          "Módulo": "Braço pesado",
+          "Slots": "2",
+          "Efeito": "Levanta peso, empurra, golpeia"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10394,6 +13950,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "Ajuda em Engenharia",
+        "officialData": {
+          "Módulo": "Ferramenta de reparo",
+          "Slots": "1",
+          "Efeito": "Ajuda em Engenharia"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10409,6 +13970,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "Permite suporte médico básico",
+        "officialData": {
+          "Módulo": "Kit médico integrado",
+          "Slots": "1",
+          "Efeito": "Permite suporte médico básico"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10424,6 +13990,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "Ataque simples",
+        "officialData": {
+          "Módulo": "Arma leve",
+          "Slots": "1",
+          "Efeito": "Ataque simples"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10439,6 +14010,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "Ataque forte",
+        "officialData": {
+          "Módulo": "Arma pesada",
+          "Slots": "2+",
+          "Efeito": "Ataque forte"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10454,6 +14030,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "Detecta calor",
+        "officialData": {
+          "Módulo": "Sensor IR",
+          "Slots": "1",
+          "Efeito": "Detecta calor"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10469,6 +14050,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "Detecta gás, toxina, esporos",
+        "officialData": {
+          "Módulo": "Sensor químico",
+          "Slots": "1",
+          "Efeito": "Detecta gás, toxina, esporos"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10484,6 +14070,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "+1 CA ou PV",
+        "officialData": {
+          "Módulo": "Blindagem leve",
+          "Slots": "1",
+          "Efeito": "+1 CA ou PV"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10499,6 +14090,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "+2 CA ou PV maior, reduz movimento",
+        "officialData": {
+          "Módulo": "Blindagem pesada",
+          "Slots": "2",
+          "Efeito": "+2 CA ou PV maior, reduz movimento"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10514,6 +14110,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "Aumenta autonomia",
+        "officialData": {
+          "Módulo": "Núcleo auxiliar",
+          "Slots": "1",
+          "Efeito": "Aumenta autonomia"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10529,6 +14130,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "Rotinas automáticas",
+        "officialData": {
+          "Módulo": "IA simples",
+          "Slots": "1",
+          "Efeito": "Rotinas automáticas"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10544,6 +14150,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "Comandos de voz avançados",
+        "officialData": {
+          "Módulo": "Interface Voxlink",
+          "Slots": "1",
+          "Efeito": "Comandos de voz avançados"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10559,6 +14170,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "Transporta cubos ou objetos",
+        "officialData": {
+          "Módulo": "Gancho de carga",
+          "Slots": "1",
+          "Efeito": "Transporta cubos ou objetos"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10574,6 +14190,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "Imobiliza ou segura alvo",
+        "officialData": {
+          "Módulo": "Campo de contenção",
+          "Slots": "2",
+          "Efeito": "Imobiliza ou segura alvo"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       },
@@ -10589,6 +14210,11 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "robô"
         ],
         "summary": "Aplica Jammed em tecnologia",
+        "officialData": {
+          "Módulo": "Módulo EMP",
+          "Slots": "2",
+          "Efeito": "Aplica Jammed em tecnologia"
+        },
         "source": "Livro 5 - Tabelas oficiais, Tabela 210",
         "schemaVersion": 2
       }

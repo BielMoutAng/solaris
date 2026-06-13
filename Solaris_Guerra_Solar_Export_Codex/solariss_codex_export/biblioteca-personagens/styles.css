@@ -4238,6 +4238,12 @@ textarea:focus {
   border-color: var(--accent);
 }
 
+.pagination-ellipsis {
+  min-width: 24px;
+  color: var(--muted);
+  text-align: center;
+}
+
 .danger-zone {
   border-color: rgba(233, 104, 79, 0.34);
   box-shadow: inset 3px 0 0 rgba(233, 104, 79, 0.5);
@@ -4715,6 +4721,72 @@ textarea:focus {
   margin: 0;
   color: var(--gold);
   font-size: 0.9rem;
+}
+
+.universal-detail-book-section header {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.universal-detail-book-section header small {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.rulebook-detail-blocks {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.rulebook-detail-blocks p,
+.rulebook-detail-blocks blockquote,
+.rulebook-detail-blocks aside {
+  margin: 0;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.rulebook-detail-blocks blockquote,
+.rulebook-detail-blocks aside {
+  padding: 10px 12px;
+  border-left: 3px solid var(--gold);
+  background: rgba(202, 156, 58, 0.08);
+}
+
+.rulebook-detail-list {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.rulebook-detail-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid rgba(100, 217, 201, 0.18);
+}
+
+.rulebook-detail-table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.rulebook-detail-table th,
+.rulebook-detail-table td {
+  padding: 9px 10px;
+  border: 1px solid rgba(100, 217, 201, 0.14);
+  text-align: left;
+  vertical-align: top;
+  white-space: pre-line;
+}
+
+.rulebook-detail-table th {
+  position: sticky;
+  top: 0;
+  color: var(--accent);
+  background: #07191d;
 }
 
 .universal-detail-subfields {

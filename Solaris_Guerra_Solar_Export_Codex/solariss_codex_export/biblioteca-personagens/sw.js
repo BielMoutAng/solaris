@@ -1,14 +1,15 @@
-const STATIC_CACHE = "solaris-biblioteca-static-20260612e";
-const RUNTIME_CACHE = "solaris-biblioteca-runtime-20260612e";
+const STATIC_CACHE = "solaris-biblioteca-static-20260613e";
+const RUNTIME_CACHE = "solaris-biblioteca-runtime-20260613e";
 
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css?v=20260612e",
+  "./styles.css?v=20260613e",
   "./official-books-data.js?v=20260612a",
   "./official-book5-catalog.js?v=20260612a",
+  "./official-rulebook-compendium.js?v=20260613a",
   "./HumanisVitalHUD.js?v=20260606e",
-  "./app.js?v=20260612e",
+  "./app.js?v=20260613e",
   "./src/domain/solaris-domain-architecture.js",
   "./manifest.webmanifest",
   "./assets/icons/solaris-icon.svg",

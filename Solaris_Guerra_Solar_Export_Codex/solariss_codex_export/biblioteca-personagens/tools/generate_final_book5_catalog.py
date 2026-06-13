@@ -124,6 +124,10 @@ def unique_by_name(entries: list[dict]) -> list[dict]:
             previous = result[positions[key]]
             merged = {**previous, **{field: value for field, value in entry.items() if value not in ("", None, [], {})}}
             merged["tags"] = list(dict.fromkeys([*previous.get("tags", []), *entry.get("tags", [])]))
+            merged["officialData"] = {
+                **previous.get("officialData", {}),
+                **entry.get("officialData", {}),
+            }
             result[positions[key]] = merged
             continue
         positions[key] = len(result)
@@ -149,6 +153,7 @@ def weapon_entry(
     price: int | None = None,
     summary: str = "",
     table_index: int,
+    official_data: dict[str, str] | None = None,
 ) -> dict:
     details = [summary, f"Empunhadura: {handling}" if handling else "", f"Falha/Jammed: {jammed}" if jammed else ""]
     return {
@@ -170,6 +175,7 @@ def weapon_entry(
         "price": price,
         "tags": list(dict.fromkeys(filter(None, ["arma", clean(weapon_type), clean(tier), clean(attack)]))),
         "summary": " ".join(filter(None, details)),
+        "officialData": official_data or {},
         "source": source_ref(table_index),
         "schemaVersion": 2,
     }
@@ -197,6 +203,7 @@ def build_weapons(document: Document) -> list[dict]:
                 legality=legality,
                 price=price,
                 table_index=54,
+                official_data=row,
             )
         )
 
@@ -215,6 +222,7 @@ def build_weapons(document: Document) -> list[dict]:
                 price=price,
                 summary=row["Material/Origem"],
                 table_index=55,
+                official_data=row,
             )
         )
 
@@ -237,6 +245,7 @@ def build_weapons(document: Document) -> list[dict]:
                     price=price,
                     summary=row["Observações"],
                     table_index=table_index,
+                    official_data=row,
                 )
             )
 
@@ -260,6 +269,7 @@ def build_weapons(document: Document) -> list[dict]:
                     price=price,
                     summary=row["Observações"],
                     table_index=table_index,
+                    official_data=row,
                 )
             )
 
@@ -294,6 +304,7 @@ def armor_entry(values: dict[str, str], table_index: int) -> dict:
         "cosmicSpellSlots": first_number(spell_match.group(1)) if spell_match else 0,
         "tags": list(dict.fromkeys(filter(None, ["armadura", values.get("Tier", ""), values.get("Tipo", ""), values.get("Categoria", "")]))),
         "summary": " ".join(filter(None, [property_text, observations, values.get("Material/Origem", ""), values.get("Falha", "")])),
+        "officialData": values,
         "source": source_ref(table_index),
         "schemaVersion": 2,
     }
@@ -344,6 +355,7 @@ def common_item_entry(row: dict[str, str], group: str, table_index: int) -> dict
         "tags": tags,
         "consumable": consumable,
         "summary": " ".join(filter(None, [row.get("Função/Efeito", ""), row.get("Observação", "")])),
+        "officialData": row,
         "source": source_ref(table_index),
         "schemaVersion": 2,
     }
@@ -359,6 +371,7 @@ def reference_item(
     price: int | None = None,
     category: str = "item",
     tags: list[str] | None = None,
+    official_data: dict[str, str] | None = None,
     **extra,
 ) -> dict:
     return {
@@ -370,6 +383,7 @@ def reference_item(
         "price": price,
         "tags": list(dict.fromkeys(["item", clean(item_type), *(tags or [])])),
         "summary": clean(summary),
+        "officialData": official_data or {},
         "source": source_ref(table_index),
         "schemaVersion": 2,
         **extra,
@@ -386,6 +400,7 @@ def build_materials(document: Document) -> list[dict]:
             tier=row["Tier"],
             price=exact_price(row["Preço Médio Atual"]),
             tags=["material", row["Tipo"]],
+            official_data=row,
         )
         for row in rows_as_dicts(document, 136)
     ]
@@ -402,6 +417,7 @@ def build_reference_items(document: Document) -> list[dict]:
                 summary=f"{row['Uso principal']} Teste associado: {row['Perícia ou teste associado']}",
                 table_index=143,
                 tags=["kit", "utilitário"],
+                official_data=row,
             )
         )
 
@@ -417,6 +433,7 @@ def build_reference_items(document: Document) -> list[dict]:
                 consumable=True,
                 area=row["Área"],
                 defense=row["Defesa comum"],
+                official_data=row,
             )
         )
 
@@ -429,6 +446,7 @@ def build_reference_items(document: Document) -> list[dict]:
                 table_index=151,
                 tier=row["Tier comum"],
                 tags=["torreta", "utilitário"],
+                official_data=row,
             )
         )
 
@@ -441,6 +459,7 @@ def build_reference_items(document: Document) -> list[dict]:
                 table_index=157,
                 category="drone",
                 tags=["drone", "utilitário"],
+                official_data=row,
             )
         )
 
@@ -452,6 +471,7 @@ def build_reference_items(document: Document) -> list[dict]:
                 summary=row["Uso comum"],
                 table_index=158,
                 tags=["bateria", "energia"],
+                official_data=row,
             )
         )
 
@@ -476,6 +496,7 @@ def build_reference_items(document: Document) -> list[dict]:
                 tags=["veículo"],
                 mods=first_number(slot_text),
                 priceRange=row["Preço sugerido em Luzentis"],
+                official_data=row,
             )
         )
 
@@ -506,6 +527,7 @@ def build_reference_items(document: Document) -> list[dict]:
                 ca=stats.get("CA base", ""),
                 mods=first_number(stats.get("Slots", "")),
                 weight=stats.get("Carga", ""),
+                official_data={**row, **stats},
             )
         )
 
@@ -550,6 +572,7 @@ def build_cubes(document: Document) -> list[dict]:
                 "price": None,
                 "tags": ["cubo", kind],
                 "summary": f"{row['Função']} Exemplos: {row['Exemplos']}",
+                "officialData": row,
                 "source": source_ref(96),
                 "schemaVersion": 2,
             }
@@ -570,6 +593,7 @@ def build_cubes(document: Document) -> list[dict]:
                 "price": None,
                 "tags": ["cubo", "especializado"],
                 "summary": f"Conteúdo adequado: {row['Conteudo adequado']}",
+                "officialData": row,
                 "source": source_ref(97),
                 "schemaVersion": 2,
             }
@@ -588,6 +612,10 @@ def build_storage_supports(document: Document, storage_items: list[dict]) -> lis
         if existing:
             existing["summary"] = f"{existing['summary']} {summary}"
             existing["cubeSupport"] = capacity
+            existing["officialData"] = {
+                **existing.get("officialData", {}),
+                **row,
+            }
             existing["tags"] = list(dict.fromkeys([*existing["tags"], "suporte de cubos"]))
             continue
         supports.append(
@@ -598,6 +626,7 @@ def build_storage_supports(document: Document, storage_items: list[dict]) -> lis
                 table_index=98,
                 tags=["armazenamento", "suporte de cubos"],
                 cubeSupport=capacity,
+                official_data=row,
             )
         )
     return unique_by_name(supports)
@@ -624,6 +653,7 @@ def build_modifier_chips(document: Document) -> list[dict]:
                     "failure": row["Falha / Limite"],
                     "tags": ["chip modificador", rank, row["Tipo"]],
                     "summary": row["Efeito mecânico revisado"],
+                    "officialData": row,
                     "source": source_ref(table_index),
                     "schemaVersion": 2,
                 }
@@ -649,6 +679,7 @@ def build_mods(document: Document) -> list[dict]:
                 "risk": risk,
                 "tags": ["mod", "veículo"],
                 "summary": f"{row['Efeito possível']} Risco: {risk}",
+                "officialData": row,
                 "source": source_ref(194),
                 "schemaVersion": 2,
             }
@@ -666,6 +697,7 @@ def build_mods(document: Document) -> list[dict]:
                 "slots": max(1, first_number(row["Slots"], 1)),
                 "tags": ["mod", "robô"],
                 "summary": row["Efeito"],
+                "officialData": row,
                 "source": source_ref(210),
                 "schemaVersion": 2,
             }

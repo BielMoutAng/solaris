@@ -28,6 +28,13 @@ const OFFICIAL_BOOK5 = globalThis.SOLARIS_OFFICIAL_BOOK5 || {
   templates: [],
   catalog: { weapons: [], armors: [], items: [], storage: [], cubes: [], modifierChips: [], mods: [] },
 };
+const RULEBOOK_COMPENDIUM = globalThis.SOLARIS_RULEBOOK_COMPENDIUM || {
+  sources: [],
+  sections: [],
+};
+const RULEBOOK_SECTIONS = Array.isArray(RULEBOOK_COMPENDIUM.sections)
+  ? RULEBOOK_COMPENDIUM.sections
+  : [];
 const CUBE_WEIGHT_KG = 1;
 const CURRENCY_NAME = "Luzentis";
 const LEVEL_UP_REQUIREMENTS = {
@@ -1179,7 +1186,10 @@ const levelRuleData = Object.entries(LEVEL_UP_REQUIREMENTS).map(([level, require
   summary: `Requer ${requirement.xp.toLocaleString("pt-BR")} XP total, ${requirement.material}, ${requirement.cost || 500 * Number(level)} Luzentis, ${requirement.time} e uma Estação de Evolução funcional. Ao concluir, role 1d6 na tabela do nível ${level}.`,
 }));
 
-const ruleData = mergeCatalogByName([...OFFICIAL_BOOKS.rules, ...raceRuleData, ...levelRuleData], legacyRuleData);
+const ruleData = mergeCatalogByName(
+  [...OFFICIAL_BOOKS.rules, ...raceRuleData, ...levelRuleData, ...RULEBOOK_SECTIONS],
+  legacyRuleData
+);
 
 const actionData = [
   { name: "Atacar", context: "Combate", tags: ["ação", "arma"], summary: "Faça uma jogada de ataque com arma, corpo a corpo ou habilidade ofensiva. Em acerto, role o dano." },
@@ -1301,7 +1311,7 @@ const libraryMap = {
   armaduras: { title: "Armaduras", kicker: "CA e mods", items: armorData, market: true },
   itens: { title: "Itens comuns", kicker: "Utilidades e suprimentos", items: commonItemData, market: true },
   monstros: { title: "Monstros", kicker: "Livro 3 - Bestiário", items: monsterData },
-  regras: { title: "Regras", kicker: "Livros 1, 2 e 5", items: ruleData },
+  regras: { title: "Regras", kicker: "Livros oficiais 1 a 5", items: ruleData },
   acoes: { title: "Ações possíveis", kicker: "Combate, cena e downtime", items: actionData },
 };
 
@@ -2022,7 +2032,11 @@ function bindEvents() {
     }
     const raceCard = event.target.closest("[data-race-id]");
     if (!raceCard || state.activeLibrary !== "racas") return;
-    openRaceDetail(raceCard.dataset.raceId);
+    window.clearTimeout(raceCardClickTimer);
+    raceCardClickTimer = window.setTimeout(() => {
+      openRaceDetail(raceCard.dataset.raceId);
+      raceCardClickTimer = null;
+    }, 240);
   });
 
   el.monsterSessionPanel.addEventListener("click", (event) => {
@@ -2125,6 +2139,7 @@ function bindEvents() {
   });
   el.cubePageContent.addEventListener("dblclick", (event) => {
     if (!(event.target instanceof Element)) return;
+    if (event.target.closest("[data-card-details-toggle]")) return;
     const cubeCard = event.target.closest("[data-cube-drop-uid]");
     if (!cubeCard) return;
     openCubeInterior(cubeCard.dataset.cubeDropUid);
@@ -2336,10 +2351,10 @@ function renderRaceDetail(race = findRace(state.activeRaceId)) {
     <div class="race-detail-shell">
       <button class="back-button" id="raceBackButton" type="button">Voltar para raças</button>
 
-      <section class="race-hero">
+      <section class="race-hero" data-detail-kind="library" data-detail-view="racas" data-detail-id="${escapeHtml(race.id)}">
         <div class="race-hero-copy">
           <p>Povo jogável</p>
-          <h2>${escapeHtml(race.name)}</h2>
+          <h2>${renderCardTitleButton(race.name)}</h2>
           <strong>${escapeHtml(race.summary)}</strong>
           ${tags ? `<div class="tag-row">${tags}</div>` : ""}
         </div>
@@ -3192,11 +3207,11 @@ function renderEquipmentCombatPanel(equippedWeapon) {
   const attackAttr = weaponAttackAttribute(group);
   return `
     <div class="combat-panel">
-      <div class="equipment-visual ${broken ? "broken" : ""}">
+      <div class="equipment-visual ${broken ? "broken" : ""}" ${equippedWeapon ? `data-detail-kind="inventory" data-detail-id="${escapeHtml(equippedWeapon.id)}" data-detail-uid="${escapeHtml(equippedWeaponEntry?.uid || "")}"` : ""}>
         ${renderWeaponSketch(group)}
         <div>
           <span class="ability-source">${escapeHtml(group.label)}</span>
-          <h4>${escapeHtml(equippedWeapon?.name || "Nenhuma arma equipada")}</h4>
+          <h4>${equippedWeapon ? renderCardTitleButton(equippedWeapon.name) : escapeHtml("Nenhuma arma equipada")}</h4>
           <p>${escapeHtml(equippedWeapon ? marketMeta(equippedWeapon) : "Equipe uma arma para habilitar ataque e dano.")}</p>
           <div class="crack-track" aria-label="Graus de rachadura">
             ${Array.from({ length: ITEM_CRACK_MAX }, (_, index) => `<span class="${index < crack ? "filled" : ""}"></span>`).join("")}
@@ -3263,8 +3278,9 @@ function renderCosmosPage(derived) {
         ${renderDetailRow("Canalização", channelers)}
       </div>
     </section>
-    <section class="inventory-panel">
+    <section class="inventory-panel" data-detail-kind="library" data-detail-view="profissoes" data-detail-id="${escapeHtml(profession.id)}">
       <h3>Chip escolhido</h3>
+      <h4>${renderCardTitleButton(profession.name)}</h4>
       <div class="detail-list">
         ${renderDetailRow("Chip", profession.name)}
         ${renderDetailRow("Foco", profession.focus || "—")}
@@ -3474,13 +3490,13 @@ function renderCubeCard(entry) {
   const status = contents.length >= capacity ? "Cheio" : contents.length === 0 ? "Vazio" : "Parcial";
   const selected = state.openCubeUid === entry.uid;
   return `
-    <article class="cube-card compact-card ${selected ? "selected" : ""}" tabindex="0" data-cube-drop-uid="${escapeHtml(entry.uid)}" style="--cube-hue:${hue}; --cube-fill:${Math.round(ratio * 100)}%">
+    <article class="cube-card compact-card ${selected ? "selected" : ""}" tabindex="0" data-cube-drop-uid="${escapeHtml(entry.uid)}" data-detail-kind="inventory" data-detail-id="${escapeHtml(entry.itemId)}" data-detail-uid="${escapeHtml(entry.uid)}" style="--cube-hue:${hue}; --cube-fill:${Math.round(ratio * 100)}%">
       <div class="cube-core" aria-hidden="true">
         <span></span>
       </div>
       <div class="cube-card-body">
         <span class="ability-source">${escapeHtml(cubeTypeLabel(entry))}</span>
-        <h4>${escapeHtml(cubeDisplayName(entry))}</h4>
+        <h4>${renderCardTitleButton(cubeDisplayName(entry))}</h4>
         <p class="card-meta-line">${contents.length}/${capacity} unidades - ${escapeHtml(status)}</p>
         <p class="inventory-note">${escapeHtml(cubeRuleText(entry))}</p>
       </div>
@@ -3923,6 +3939,12 @@ const universalDetailFieldLabels = {
   officialData: "Campos oficiais",
   fields: "Campos oficiais",
   details: "Texto detalhado do livro",
+  contentBlocks: "Conteúdo integral do livro",
+  bookExcerpts: "Trechos oficiais relacionados",
+  bookLabel: "Livro",
+  bookTitle: "Título do livro",
+  number: "Seção",
+  breadcrumb: "Localização no livro",
   tags: "Tags",
   inventoryState: "Estado na ficha",
   training: "Treinamento",
@@ -3939,6 +3961,9 @@ const universalDetailFieldLabels = {
 const universalDetailHiddenFields = new Set([
   "id",
   "name",
+  "title",
+  "bookId",
+  "level",
   "schemaVersion",
   "imageDataUrl",
   "imageName",
@@ -3966,6 +3991,8 @@ const universalDetailFieldOrder = [
   "summary",
   "effect",
   "context",
+  "contentBlocks",
+  "bookExcerpts",
   "details",
   "tier",
   "rank",
@@ -4036,10 +4063,11 @@ const universalDetailFieldOrder = [
 
 let universalDetailReturnFocus = null;
 let testRollClickTimer = null;
+let raceCardClickTimer = null;
 
 function handleUniversalDetailDoubleClick(event) {
   if (!(event.target instanceof Element)) return;
-  if (event.target.closest("[data-cube-drop-uid]")) return;
+  if (event.target.closest("[data-cube-drop-uid]") && !event.target.closest("[data-card-details-toggle]")) return;
 
   const interactive = event.target.closest("button, input, select, textarea, label, a");
   if (interactive && !interactive.matches("[data-detail-kind], [data-card-details-toggle]")) return;
@@ -4052,6 +4080,8 @@ function handleUniversalDetailDoubleClick(event) {
   event.preventDefault();
   window.clearTimeout(testRollClickTimer);
   testRollClickTimer = null;
+  window.clearTimeout(raceCardClickTimer);
+  raceCardClickTimer = null;
   closeCardDetails();
   openUniversalDetail(payload);
 }
@@ -4077,6 +4107,7 @@ function resolveUniversalDetail(dataset) {
         modifier: formatMod(attributeModifier(totals[id])),
         formula: "3d6 + modificador do atributo + bônus situacional",
         relatedSkills: skillData.filter((skill) => skill.attr === id).map((skill) => skill.name),
+        bookExcerpts: findRulebookReferences(detail.name, ["book1"]),
         source: "Livro 1 - atributos e testes",
       },
     };
@@ -4094,6 +4125,7 @@ function resolveUniversalDetail(dataset) {
         training: training === "trained" ? "Perito: vantagem no teste" : training === "ignorant" ? "Ignorante: desvantagem no teste" : "Sem especialização",
         modifier: formatMod(skillModifier(skill)),
         formula: `3d6 + MOD ${skill.attr} + bônus situacional`,
+        bookExcerpts: findRulebookReferences(skill.name, ["book1"]),
         source: "Livro 1 - perícias",
       },
     };
@@ -4110,6 +4142,7 @@ function resolveUniversalDetail(dataset) {
         ...protection,
         type: attrs.join(" ou "),
         formula: `3d6 + ${attrs.map((attr) => `MOD ${attr}`).join(" ou ")} + bônus situacional`,
+        bookExcerpts: findRulebookReferences(protection.name, ["book1", "book2"]),
         source: "Livro 1 - Jogadas de Proteção",
       },
     };
@@ -4122,7 +4155,7 @@ function resolveUniversalDetail(dataset) {
     return {
       kicker: libraryMap[view]?.title || "Biblioteca",
       title: item.name,
-      record: item,
+      record: enrichDetailRecordWithRulebooks(item, view),
     };
   }
 
@@ -4133,7 +4166,7 @@ function resolveUniversalDetail(dataset) {
     return {
       kicker: "Inventário do personagem",
       title: item.name,
-      record: {
+      record: enrichDetailRecordWithRulebooks({
         ...item,
         inventoryState: inventoryEntry ? {
           localização: inventoryLocationLabel(inventoryEntry),
@@ -4142,7 +4175,7 @@ function resolveUniversalDetail(dataset) {
           suporte: inventoryEntry.supportSlot ? externalSupportTypeLabel(inventoryEntry.supportSlot) : "",
           cubo: inventoryEntry.cubeUid || inventoryEntry.inCube ? "Armazenado em cubo" : "",
         } : {},
-      },
+      }, libraryViewForItem(item)),
     };
   }
 
@@ -4153,10 +4186,26 @@ function resolveUniversalDetail(dataset) {
     ));
     if (!entry) return null;
     const linkedRecord = resolveLinkedAbilityRecord(entry);
+    const linkedView = entry.source === "Arma"
+      ? "armas"
+      : entry.source === "Armadura"
+        ? "armaduras"
+        : entry.source === "Cosmos"
+          ? "magias"
+          : entry.source === "Chip modificador"
+            ? "chipsMod"
+            : entry.source === "Raça"
+              ? "racas"
+              : entry.source === "Chip de profissão"
+                ? "profissoes"
+                : "";
     return {
       kicker: entry.source || "Habilidade",
       title: entry.name,
-      record: linkedRecord ? { ...linkedRecord, effect: entry.effect || linkedRecord.effect || linkedRecord.summary } : entry,
+      record: enrichDetailRecordWithRulebooks(
+        linkedRecord ? { ...linkedRecord, effect: entry.effect || linkedRecord.effect || linkedRecord.summary } : entry,
+        linkedView
+      ),
     };
   }
 
@@ -4168,7 +4217,7 @@ function resolveUniversalDetail(dataset) {
     return {
       kicker: "Mod instalado",
       title: mod.name || "Mod sem nome",
-      record: { ...(libraryMod || {}), ...mod },
+      record: enrichDetailRecordWithRulebooks({ ...(libraryMod || {}), ...mod }, "mods"),
     };
   }
 
@@ -4183,6 +4232,86 @@ function resolveLinkedAbilityRecord(entry) {
   if (entry.source === "Raça") return findRace(state.current.race);
   if (entry.source === "Chip de profissão") return findProfession(state.current.profession);
   return null;
+}
+
+const rulebookReferenceCache = new Map();
+const preferredRulebooksByView = {
+  racas: ["book1"],
+  profissoes: ["book1", "book5"],
+  magias: ["book1", "book5"],
+  chipsMod: ["book5", "book1"],
+  mods: ["book5"],
+  armas: ["book5"],
+  armaduras: ["book5"],
+  itens: ["book5"],
+  armazenamento: ["book5"],
+  monstros: ["book3"],
+  regras: ["book1", "book2", "book3", "book4", "book5"],
+};
+
+function findRulebookReferences(term, preferredBooks = [], limit = 4) {
+  const normalizedTerm = normalizeSearch(term).trim();
+  if (normalizedTerm.length < 3) return [];
+  const cacheKey = `${preferredBooks.join(",")}|${normalizedTerm}|${limit}`;
+  if (rulebookReferenceCache.has(cacheKey)) return rulebookReferenceCache.get(cacheKey);
+
+  const preferred = new Set(preferredBooks);
+  const references = RULEBOOK_SECTIONS
+    .map((section) => {
+      const title = normalizeSearch(section.title || section.name);
+      let score = Number.POSITIVE_INFINITY;
+      if (title === normalizedTerm) score = 0;
+      else if (title.startsWith(`${normalizedTerm} `) || title.endsWith(` ${normalizedTerm}`)) score = 1;
+      else if (title.includes(normalizedTerm)) score = 2;
+      else if (normalizedTerm.includes(title) && title.length >= 5) score = 3;
+      if (!Number.isFinite(score)) return null;
+      if (preferred.size && !preferred.has(section.bookId)) score += 10;
+      return { section, score };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.score - b.score || Number(a.section.level || 9) - Number(b.section.level || 9))
+    .slice(0, limit)
+    .map(({ section }) => ({
+      bookLabel: section.bookLabel,
+      title: section.title,
+      number: section.number,
+      source: section.source,
+      contentBlocks: section.contentBlocks,
+    }));
+
+  rulebookReferenceCache.set(cacheKey, references);
+  return references;
+}
+
+function enrichDetailRecordWithRulebooks(record, view) {
+  if (!record || record.contentBlocks?.length || record.bookExcerpts?.length) return record;
+  const ignoredGenericTerms = new Set(["item", "arma", "armadura", "mod", "cubo", "criatura", "monstro"]);
+  const referenceTerms = [record.name, record.type, record.kind, record.role]
+    .filter((term, index, terms) => {
+      const normalized = normalizeSearch(term).trim();
+      return normalized.length >= 3 && !ignoredGenericTerms.has(normalized) && terms.indexOf(term) === index;
+    });
+  const seen = new Set();
+  const references = referenceTerms
+    .flatMap((term) => findRulebookReferences(term, preferredRulebooksByView[view] || [], 3))
+    .filter((reference) => {
+      const key = `${reference.bookLabel}|${reference.number}|${reference.title}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 5);
+  return references.length ? { ...record, bookExcerpts: references } : record;
+}
+
+function libraryViewForItem(item) {
+  const category = item?.category || "";
+  if (category === "weapon") return "armas";
+  if (category === "armor") return "armaduras";
+  if (category === "chip-mod") return "chipsMod";
+  if (category === "mod") return "mods";
+  if (category === "cube" || category === "storage") return "armazenamento";
+  return "itens";
 }
 
 function openUniversalDetail({ kicker, title, record }) {
@@ -4213,7 +4342,8 @@ function renderUniversalDetailContent(record) {
     : "";
   const keys = [...universalDetailFieldOrder, ...Object.keys(record)]
     .filter((key, index, all) => all.indexOf(key) === index)
-    .filter((key) => !universalDetailHiddenFields.has(key) && key !== "source" && key !== "tags" && detailValueIsPresent(record[key]));
+    .filter((key) => !universalDetailHiddenFields.has(key) && key !== "source" && key !== "tags" && detailValueIsPresent(record[key]))
+    .filter((key) => !(key === "category" && record[key] === "rulebook-section"));
   return `
     ${source || tags ? `<div class="universal-detail-meta">${source}${tags}</div>` : ""}
     ${image}
@@ -4236,11 +4366,25 @@ function renderUniversalDetailField(key, value) {
 function renderUniversalDetailValue(value, key = "") {
   if (typeof value === "boolean") return value ? "Sim" : "Não";
   if (Array.isArray(value)) {
+    if (key === "contentBlocks") return renderRulebookBlocks(value);
+    if (key === "bookExcerpts") {
+      return value.map((reference) => `
+        <section class="universal-detail-book-section">
+          <header>
+            <h3>${escapeHtml([reference.bookLabel, reference.number, reference.title].filter(Boolean).join(" · "))}</h3>
+            ${reference.source ? `<small>${escapeHtml(reference.source)}</small>` : ""}
+          </header>
+          ${renderRulebookBlocks(reference.contentBlocks || [])}
+        </section>
+      `).join("");
+    }
     if (key === "details") {
       return value.map((group) => `
         <section class="universal-detail-book-section">
           ${group?.label ? `<h3>${escapeHtml(group.label)}</h3>` : ""}
-          <ul>${(group?.items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+          ${Array.isArray(group?.blocks)
+            ? renderRulebookBlocks(group.blocks)
+            : `<ul>${(group?.items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`}
         </section>
       `).join("");
     }
@@ -4265,6 +4409,44 @@ function renderUniversalDetailValue(value, key = "") {
   }
   if (key === "price" && Number.isFinite(Number(value))) return escapeHtml(formatCurrency(Number(value)));
   return `<span class="universal-detail-text">${escapeHtml(value)}</span>`;
+}
+
+function renderRulebookBlocks(blocks) {
+  let html = "";
+  let listItems = [];
+  const flushList = () => {
+    if (!listItems.length) return;
+    html += `<ul class="rulebook-detail-list">${listItems.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+    listItems = [];
+  };
+
+  (blocks || []).forEach((block) => {
+    if (!block) return;
+    if (block.type === "list") {
+      listItems.push(block.text || "");
+      return;
+    }
+    flushList();
+    if (block.type === "table") {
+      const headers = Array.isArray(block.headers) ? block.headers : [];
+      const rows = Array.isArray(block.rows) ? block.rows : [];
+      html += `
+        <div class="rulebook-detail-table-wrap">
+          <table class="rulebook-detail-table">
+            ${headers.some(Boolean) ? `<thead><tr>${headers.map((header) => `<th>${escapeHtml(header)}</th>`).join("")}</tr></thead>` : ""}
+            <tbody>
+              ${rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+      return;
+    }
+    const tag = block.type === "quote" ? "blockquote" : block.type === "note" ? "aside" : "p";
+    html += `<${tag} class="rulebook-detail-${escapeHtml(block.type || "paragraph")}">${escapeHtml(block.text || "")}</${tag}>`;
+  });
+  flushList();
+  return `<div class="rulebook-detail-blocks">${html}</div>`;
 }
 
 function universalDetailFieldLabel(key) {
@@ -5440,7 +5622,7 @@ function renderLibrary() {
   if (isMonsterLibrary) renderMonsterSessionPanel();
 
   const filtered = sortLibraryItems(libraryItems.filter((item) => {
-    const matchesSearch = itemSearchText(item).includes(query);
+    const matchesSearch = !query || itemSearchText(item).includes(query);
     const matchesGroup = !selectedGroup || getLibraryGroupValues(item, state.activeLibrary).includes(selectedGroup);
     return matchesSearch && matchesGroup;
   }), sortMode, state.activeLibrary);
@@ -5537,9 +5719,21 @@ function paginateItems(items, page, pageSize = PAGE_SIZE) {
 
 function renderPaginationControls(pagination, key) {
   if (!pagination || pagination.total <= pagination.pageSize) return "";
-  const pageButtons = Array.from({ length: pagination.pageCount }, (_, index) => index + 1)
-    .map((page) => `<button class="mini-button ${page === pagination.page ? "active" : ""}" type="button" data-page-key="${escapeHtml(key)}" data-page-value="${page}" aria-current="${page === pagination.page ? "page" : "false"}">Página ${page}</button>`)
-    .join("");
+  const visiblePages = new Set([
+    1,
+    pagination.pageCount,
+    pagination.page - 2,
+    pagination.page - 1,
+    pagination.page,
+    pagination.page + 1,
+    pagination.page + 2,
+  ].filter((page) => page >= 1 && page <= pagination.pageCount));
+  const pageButtons = [...visiblePages]
+    .sort((a, b) => a - b)
+    .reduce((markup, page, index, pages) => {
+      const hasGap = index > 0 && page - pages[index - 1] > 1;
+      return `${markup}${hasGap ? '<span class="pagination-ellipsis" aria-hidden="true">...</span>' : ""}<button class="mini-button ${page === pagination.page ? "active" : ""}" type="button" data-page-key="${escapeHtml(key)}" data-page-value="${page}" aria-label="Página ${page}" aria-current="${page === pagination.page ? "page" : "false"}">${page}</button>`;
+    }, "");
   return `
     <button class="mini-button" type="button" data-page-key="${escapeHtml(key)}" data-page-value="${pagination.page - 1}" ${pagination.page <= 1 ? "disabled" : ""}>Anterior</button>
     ${pageButtons}
@@ -5918,6 +6112,7 @@ function getLibraryFilterConfig(view) {
     itens: { allLabel: "Todas as categorias", prefix: "", type: "text" },
     armazenamento: { allLabel: "Todos os tipos", prefix: "", type: "text" },
     monstros: { allLabel: "Todos os tiers", prefix: "Tier", type: "tier" },
+    regras: { allLabel: "Todos os livros", prefix: "", type: "text" },
   };
   return configs[view] || null;
 }
@@ -5936,6 +6131,7 @@ function getLibraryGroupValues(item, view) {
     return [domainEntityTypeLabel(definition.entityType)];
   }
   if (view === "monstros") return item.tier ? [String(item.tier)] : [];
+  if (view === "regras") return item.bookLabel ? [String(item.bookLabel)] : [];
   return [];
 }
 
@@ -6019,9 +6215,17 @@ function tierSortValue(value) {
   return index >= 0 ? index : TIER_ORDER.length + 1;
 }
 
+const itemSearchCache = new WeakMap();
+
 function itemSearchText(item) {
-  return normalizeSearch([
+  if (item && typeof item === "object" && itemSearchCache.has(item)) return itemSearchCache.get(item);
+  const result = normalizeSearch([
     item.name,
+    item.title,
+    item.bookLabel,
+    item.bookTitle,
+    item.number,
+    item.breadcrumb,
     item.context,
     item.tier,
     item.type,
@@ -6050,8 +6254,19 @@ function itemSearchText(item) {
     item.focus,
     item.skill,
     item.category,
+    flattenDetailSearchValue(item.officialData),
+    flattenDetailSearchValue(item.contentBlocks),
+    flattenDetailSearchValue(item.details),
     ...(item.tags || []),
   ].filter((value) => value !== undefined && value !== null && value !== "").join(" "));
+  if (item && typeof item === "object") itemSearchCache.set(item, result);
+  return result;
+}
+
+function flattenDetailSearchValue(value) {
+  if (Array.isArray(value)) return value.map(flattenDetailSearchValue).join(" ");
+  if (value && typeof value === "object") return Object.values(value).map(flattenDetailSearchValue).join(" ");
+  return value === undefined || value === null ? "" : String(value);
 }
 
 function normalizeSearch(value) {
@@ -6670,12 +6885,12 @@ function renderMonsterSessionCard(sheet) {
     ? monster.conditions.map((condition) => `<button class="tag" type="button" title="Clique para remover" data-monster-session-action="remove-condition" data-monster-session-id="${escapeHtml(monster.id)}" data-condition-id="${escapeHtml(condition.id)}">${escapeHtml(condition.label)}</button>`).join("")
     : '<span class="inventory-note">Nenhuma condição</span>';
   return `
-    <article class="monster-session-card" data-monster-session-card="${escapeHtml(monster.id)}">
+    <article class="monster-session-card" data-monster-session-card="${escapeHtml(monster.id)}" data-detail-kind="library" data-detail-view="monstros" data-detail-id="${escapeHtml(sheet.definition.id)}">
       <header>
         ${monster.image ? `<img src="${escapeHtml(monster.image)}" alt="${escapeHtml(monster.name)}" />` : '<span class="monster-session-avatar" aria-hidden="true">M</span>'}
         <div>
           <span class="ability-source">${escapeHtml([monster.tier ? `Tier ${monster.tier}` : "", monster.type].filter(Boolean).join(" - ") || "Criatura")}</span>
-          <h3>${escapeHtml(monster.name)}</h3>
+          <h3>${renderCardTitleButton(monster.name)}</h3>
           <p>${escapeHtml(monster.description || "Ficha de sessão Solaris.")}</p>
         </div>
       </header>
