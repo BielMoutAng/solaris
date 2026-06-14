@@ -6,21 +6,21 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "id": "book1",
       "label": "Livro 1",
       "title": "Livro Básico do Jogador",
-      "file": "livro 1 base para jogadores.docx",
+      "file": "Livro_1_Basico_do_Jogador_punhos_corrigido.docx",
       "sections": 798,
-      "paragraphs": 5255,
+      "paragraphs": 5256,
       "tables": 209,
-      "characters": 528792
+      "characters": 529252
     },
     {
       "id": "book2",
       "label": "Livro 2",
       "title": "Guia do Mestre",
-      "file": "Livro_2_Guia_do_Mestre_Guerra_Solar_formatado_enumerado.docx",
+      "file": "Livro_2_Guia_do_Mestre_rifles_corrigido.docx",
       "sections": 1050,
       "paragraphs": 10499,
       "tables": 235,
-      "characters": 496260
+      "characters": 496280
     },
     {
       "id": "book3",
@@ -46,11 +46,11 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "id": "book5",
       "label": "Livro 5",
       "title": "Itens, Equipamentos e Habilidades",
-      "file": "livro 5 tabelas.docx",
+      "file": "Livro_5_Itens_Equipamentos_Habilidades_punhos_corrigido.docx",
       "sections": 391,
-      "paragraphs": 4086,
+      "paragraphs": 4087,
       "tables": 254,
-      "characters": 392489
+      "characters": 392868
     }
   ],
   "sections": [
@@ -1325,7 +1325,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
         },
         {
           "type": "paragraph",
-          "text": "Uma porta automática pode precisar de manivela. Um rifle avançado pode depender de bateria reaproveitada. Uma nave pode voar com três sistemas improvisados e uma oração. Um robô pode carregar peças de cinco fabricantes diferentes, nenhum deles ainda existente.",
+          "text": "Uma porta automática pode precisar de manivela. Um rifle de precisão avançado pode depender de bateria reaproveitada. Uma nave pode voar com três sistemas improvisados e uma oração. Um robô pode carregar peças de cinco fabricantes diferentes, nenhum deles ainda existente.",
           "style": "Normal"
         },
         {
@@ -10600,7 +10600,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
         },
         {
           "type": "paragraph",
-          "text": "Em combate desarmado, o dano base sugerido é 1d6 + modificadores aplicáveis se o personagem tiver treino, manoplas ou talento apropriado. Sem treino ou sem condição adequada, o mestre pode reduzir ou ajustar o dano.",
+          "text": "Em combate desarmado, o dano base oficial é 1d4 + MOD FOR de dano de concussão. Treino, profissão ou talento pode conceder vantagem, crítico ampliado ou outro benefício, mas não altera esse dano, salvo se a regra específica disser. Manoplas usam a ficha da arma.",
           "style": "Normal"
         },
         {
@@ -14695,7 +14695,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "contentBlocks": [
         {
           "type": "paragraph",
-          "text": "Foco: Ataques com armas longas de precisão.",
+          "text": "Foco: Ataques com armas de longo alcance de precisão.",
           "style": "Normal"
         },
         {
@@ -14705,7 +14705,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
         },
         {
           "type": "paragraph",
-          "text": "Kit inicial: Visor de estabilização. Concede +1 no primeiro ataque do combate com arma longa ou de precisão.",
+          "text": "Kit inicial: Visor de estabilização. Concede +1 no primeiro ataque do combate com arma de longo alcance ou de precisão.",
           "style": "Normal"
         },
         {
@@ -14721,7 +14721,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       ],
       "source": "Livro 1, Atirador de Elite",
       "schemaVersion": 1,
-      "summary": "Foco: Ataques com armas longas de precisão."
+      "summary": "Foco: Ataques com armas de longo alcance de precisão."
     },
     {
       "id": "book1-8-13-profissoes-de-armas-de-fogo",
@@ -14746,6 +14746,11 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
         {
           "type": "paragraph",
           "text": "Essas profissões representam especialistas em categorias específicas de armas de disparo. O Foco delas normalmente concede +1 em ataques com o tipo de arma escolhido.",
+          "style": "Normal"
+        },
+        {
+          "type": "paragraph",
+          "text": "Padronização de termos: armas de longo alcance são rifles de precisão, fuzis e carabinas. O termo sniper não é usado como foco, tipo de arma ou categoria mecânica; quando aparecer apenas como apelido narrativo, ele se refere a rifle de precisão.",
           "style": "Normal"
         }
       ],
@@ -15639,7 +15644,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "Atirador de Elite",
-              "Armas longas",
+              "Armas de longo alcance",
               "Precisão"
             ],
             [
@@ -15659,7 +15664,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "Perito em Rifles de Precisão",
-              "Snipers",
+              "Rifles de precisão",
               "Longo alcance"
             ],
             [
@@ -32022,7 +32027,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
         },
         {
           "type": "paragraph",
-          "text": "Exemplo: Campeão de LSR com Golpe Limpo gera acerto crítico em 19 ou 20 natural com ataques desarmados. Isso não altera ataques com pistolas, rifles ou espadas.",
+          "text": "Exemplo: Campeão de LSR com Golpe Limpo gera acerto crítico em 19 ou 20 natural com ataques desarmados. Isso não altera ataques com pistolas, rifles de precisão ou espadas.",
           "style": "Normal"
         },
         {
@@ -32301,7 +32306,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "contentBlocks": [
         {
           "type": "paragraph",
-          "text": "Algumas armas são ruins em distância muito curta, como rifles de precisão, metralhadoras pesadas, lançadores e armas longas demais.",
+          "text": "Algumas armas são ruins em distância muito curta, como rifles de precisão, metralhadoras pesadas, lançadores e armas compridas demais.",
           "style": "Normal"
         },
         {
@@ -32317,7 +32322,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       ],
       "source": "Livro 1, 17.19",
       "schemaVersion": 1,
-      "summary": "Algumas armas são ruins em distância muito curta, como rifles de precisão, metralhadoras pesadas, lançadores e armas longas demais."
+      "summary": "Algumas armas são ruins em distância muito curta, como rifles de precisão, metralhadoras pesadas, lançadores e armas compridas demais."
     },
     {
       "id": "book1-17-20-atirar-em-combate-corpo-a-corpo",
@@ -32356,7 +32361,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "-1 na jogada de ataque."
             ],
             [
-              "Fuzil, rifle, metralhadora ou arma longa em combate próximo",
+              "Fuzil, rifle de precisão, carabina, metralhadora ou arma de longo alcance em combate próximo",
               "Desvantagem."
             ],
             [
@@ -32808,7 +32813,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
         },
         {
           "type": "paragraph",
-          "text": "Regra padrão: ataque desarmado usa Briga com FOR. Dano base sem treinamento: 1d4 + MOD FOR. Com treino, manoplas, profissão ou talento apropriado, o dano pode aumentar.",
+          "text": "Regra padrão: ataque desarmado usa Briga com FOR. Dano base oficial: 1d4 + MOD FOR de dano de concussão. Manoplas e armas de briga substituem esse dano pelo dano da ficha. A Manopla de Kuldrus causa 1d4+1+MOD FOR de dano de concussão.",
           "style": "Normal"
         },
         {
@@ -107821,7 +107826,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
         },
         {
           "type": "paragraph",
-          "text": "Armas longas têm penalidade em espaços muito apertados.",
+          "text": "Armas de longo alcance têm penalidade em espaços muito apertados.",
           "style": "Normal"
         },
         {
@@ -120965,7 +120970,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             "Tier",
             "Corpo a corpo",
             "Armas curtas",
-            "Armas longas",
+            "Armas de longo alcance",
             "Precisão",
             "Pesadas"
           ],
@@ -157266,6 +157271,11 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
           "type": "paragraph",
           "text": "As características de categoria não são habilidades especiais de uma arma específica. Todas as armas daquela categoria seguem essas regras, salvo protótipos, relíquias, itens únicos ou equipamentos alterados por modificações futuras.",
           "style": "Normal"
+        },
+        {
+          "type": "paragraph",
+          "text": "Padronização de termos: armas de longo alcance são rifles de precisão, fuzis e carabinas. Rifle de precisão é o termo mecânico oficial para armas de sniper. O termo sniper não deve ser usado como categoria, foco ou tipo de arma; pode aparecer apenas como apelido narrativo.",
+          "style": "Normal"
         }
       ],
       "source": "Livro 5, 1.4",
@@ -158549,7 +158559,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "Dano",
-              "Baixo ou médio; concussão"
+              "Dano da ficha; manoplas físicas somam MOD FOR. A Manopla de Kuldrus causa 1d4+1+MOD FOR de dano de concussão."
             ],
             [
               "Alcance",
@@ -162664,7 +162674,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "contentBlocks": [
         {
           "type": "paragraph",
-          "text": "Em Guerra Solar, equipamento conta uma história. Uma faca Tier F pode ser apenas sucata afiada, mas talvez seja a única coisa entre um personagem e a morte. Uma pistola Tier E pode ser velha, mas confiável. Um rifle Tier C pode mudar completamente a forma como o grupo aborda uma missão. Uma armadura Tier B pode permitir atravessar lugares onde outros morreriam em minutos. Um foco Tier S pode não ser apenas uma arma, mas uma relíquia capaz de alterar o destino de uma campanha.",
+          "text": "Em Guerra Solar, equipamento conta uma história. Uma faca Tier F pode ser apenas sucata afiada, mas talvez seja a única coisa entre um personagem e a morte. Uma pistola Tier E pode ser velha, mas confiável. Um rifle de precisão Tier C pode mudar completamente a forma como o grupo aborda uma missão. Uma armadura Tier B pode permitir atravessar lugares onde outros morreriam em minutos. Um foco Tier S pode não ser apenas uma arma, mas uma relíquia capaz de alterar o destino de uma campanha.",
           "style": "Normal"
         },
         {
@@ -162680,7 +162690,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       ],
       "source": "Livro 5, Livro 5 — Itens, Equipamentos e Habilidades",
       "schemaVersion": 1,
-      "summary": "Em Guerra Solar, equipamento conta uma história. Uma faca Tier F pode ser apenas sucata afiada, mas talvez seja a única coisa entre um personagem e a morte. Uma pistola Tier E pode ser velha, mas confiável. Um rifle Tier C pode mudar completamente a forma como o grupo aborda uma missão. Uma armadura Tier B pode permitir atravessar lugares onde outros morreri..."
+      "summary": "Em Guerra Solar, equipamento conta uma história. Uma faca Tier F pode ser apenas sucata afiada, mas talvez seja a única coisa entre um personagem e a morte. Uma pistola Tier E pode ser velha, mas confiável. Um rifle de precisão Tier C pode mudar completamente a forma como o grupo aborda uma missão. Uma armadura Tier B pode permitir atravessar lugares onde ou..."
     },
     {
       "id": "book5-3-1-onde-este-capitulo-entra",
@@ -163192,7 +163202,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "Manopla de Kuldrus",
               "Manopla",
               "Briga",
-              "1d4 concussão",
+              "1d4+1+MOD FOR concussão",
               "Corpo a corpo",
               "Presa às mãos",
               "Comum / 5.500 Lz",

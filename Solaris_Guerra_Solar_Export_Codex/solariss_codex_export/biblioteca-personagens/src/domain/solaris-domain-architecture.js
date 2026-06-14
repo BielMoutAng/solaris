@@ -846,7 +846,12 @@ export class Inventory {
   getTotalWeight({ carriedOnly = true } = {}) {
     return this.entities.reduce((total, entity) => {
       if (!entity.physical) return total;
-      if (carriedOnly && [LOCATION_KINDS.BASE, LOCATION_KINDS.VEHICLE].includes(entity.location.kind)) return total;
+      if (carriedOnly && [
+        LOCATION_KINDS.EQUIPPED,
+        LOCATION_KINDS.CUBE,
+        LOCATION_KINDS.BASE,
+        LOCATION_KINDS.VEHICLE,
+      ].includes(entity.location.kind)) return total;
       return total + entity.weight * entity.quantity;
     }, 0);
   }
@@ -1578,8 +1583,28 @@ export function parseLegacyWeight(value) {
   return match ? Math.max(0, numeric(match[0], 0)) : 0;
 }
 
+function legacyStorageCapacity(item = {}) {
+  const explicit = numeric(item.maxSlots ?? item.cubeSupport, NaN);
+  if (Number.isFinite(explicit) && explicit > 0) return explicit;
+  const official = item.officialData || {};
+  const capacityText = [
+    official["Capacidade sugerida"],
+    official["Capacidade"],
+    official["Função/Efeito"],
+    item.summary,
+  ].filter(Boolean).join(" ");
+  const match = capacityText.replace(",", ".").match(/(\d+(?:\.\d+)?)\s*(?:cubos?|kg|espaços?|itens?)/i);
+  return match ? Math.max(1, numeric(match[1], 5)) : 5;
+}
+
 export function definitionFromLegacyItem(item = {}) {
-  const text = `${item.name || ""} ${item.category || ""} ${arrayOf(item.tags).join(" ")}`.toLowerCase();
+  const text = [
+    item.name,
+    item.category,
+    item.type,
+    item.summary,
+    ...arrayOf(item.tags),
+  ].filter(Boolean).join(" ").toLowerCase();
   const sourceReference = {
     book: item.source?.startsWith?.("Livro") ? item.source : "",
     chapter: "",
@@ -1633,6 +1658,17 @@ export function definitionFromLegacyItem(item = {}) {
   }
   if (/gancho/.test(text)) {
     return new HookDefinition({ ...common, maxSlots: item.maxSlots || 1 });
+  }
+  if (
+    /armazenamento|recipiente|mochila|bolsa|maleta|pote|frasco|caixa|cesta|cesto|barril|balde|saco|estojo/.test(text)
+  ) {
+    return new StorageDefinition({
+      ...common,
+      storageType: STORAGE_TYPES.CONTAINER,
+      maxSlots: legacyStorageCapacity(item),
+      allowedTypes: [ENTITY_TYPES.ITEM, ENTITY_TYPES.WEAPON, ENTITY_TYPES.CUBE],
+      quickAccess: false,
+    });
   }
   if (item.category === "chip-mod" || item.category === "chip") {
     return new ChipModDefinition(common);

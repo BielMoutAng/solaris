@@ -154,10 +154,10 @@
                 <strong>Skills</strong>
                 <small>Profissões e magias</small>
               </button>
-              <button class="tablet-app-button" type="button" data-launcher-view="rulesHub">
+              <button class="tablet-app-button" type="button" data-launcher-view="booksHub">
                 <span data-icon="book"></span>
-                <strong>Regras</strong>
-                <small>Sistema e criação</small>
+                <strong>Livros</strong>
+                <small>Acervo oficial 1 a 5</small>
               </button>
               <button class="tablet-app-button" type="button" data-launcher-library="monstros">
                 <span data-icon="skull"></span>
@@ -186,7 +186,7 @@
             </button>
             <button class="tablet-utility-button tablet-rules-launcher" type="button" data-launcher-view="rulesHub">
               <span data-icon="book"></span>
-              <span><strong>Regras e ações</strong><small>Consulta rápida</small></span>
+              <span><strong>Ações e guia</strong><small>Consulta rápida</small></span>
             </button>
           </div>
         </section>
@@ -229,18 +229,37 @@
           </div>
         </section>
 
+        <section class="launcher-hub view" id="booksHubView">
+          <div class="launcher-hub-shell">
+            <div class="launcher-hub-header">
+              <div>
+                <p>Biblioteca oficial</p>
+                <h2>Livros de Guerra Solar</h2>
+                <span>Escolha um volume para consultar seu conteúdo completo.</span>
+              </div>
+              <button class="ghost-button" type="button" data-launcher-view="inicio"><span data-icon="orbit"></span>Início</button>
+            </div>
+            <div class="launcher-category-grid launcher-category-grid-compact">
+              <button class="launcher-category" type="button" data-launcher-book="Livro 1"><span data-icon="book"></span><strong>Livro 1</strong><small>Básico do Jogador</small></button>
+              <button class="launcher-category" type="button" data-launcher-book="Livro 2"><span data-icon="book"></span><strong>Livro 2</strong><small>Guia do Mestre</small></button>
+              <button class="launcher-category" type="button" data-launcher-book="Livro 3"><span data-icon="book"></span><strong>Livro 3</strong><small>Bestiário</small></button>
+              <button class="launcher-category" type="button" data-launcher-book="Livro 4"><span data-icon="book"></span><strong>Livro 4</strong><small>Cenários e História</small></button>
+              <button class="launcher-category" type="button" data-launcher-book="Livro 5"><span data-icon="book"></span><strong>Livro 5</strong><small>Itens, Equipamentos e Habilidades</small></button>
+            </div>
+          </div>
+        </section>
+
         <section class="launcher-hub view" id="rulesHubView">
           <div class="launcher-hub-shell">
             <div class="launcher-hub-header">
               <div>
                 <p>Aplicativo Solaris</p>
-                <h2>Regras e orientação</h2>
-                <span>Consulta do sistema fora da ficha.</span>
+                <h2>Ações e orientação</h2>
+                <span>Consulta rápida para jogar e criar personagens.</span>
               </div>
               <button class="ghost-button" type="button" data-launcher-view="inicio"><span data-icon="orbit"></span>Início</button>
             </div>
             <div class="launcher-category-grid launcher-category-grid-compact">
-              <button class="launcher-category" type="button" data-launcher-library="regras"><span data-icon="book"></span><strong>Regras</strong><small>Livros e sistemas principais</small></button>
               <button class="launcher-category" type="button" data-launcher-library="acoes"><span data-icon="spark"></span><strong>Ações</strong><small>Combate, cenas e timeskip</small></button>
               <button class="launcher-category" type="button" data-launcher-view="guia"><span data-icon="user"></span><strong>Guia de criação</strong><small>Passo a passo do personagem</small></button>
             </div>
@@ -938,8 +957,8 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <script src="./official-books-data.js?v=20260612a"></script>
-    <script src="./official-book5-catalog.js?v=20260612a"></script>
-    <script src="./official-rulebook-compendium.js?v=20260613a"></script>
+    <script src="./official-book5-catalog.js?v=20260614c"></script>
+    <script src="./official-rulebook-compendium.js?v=20260614c"></script>
     <script type="importmap">
       {
         "imports": {
@@ -949,6 +968,6 @@
       }
     </script>
     <script src="./HumanisVitalHUD.js?v=20260606e"></script>
-    <script type="module" src="./app.js?v=20260613e"></script>
+    <script type="module" src="./app.js?v=20260614c"></script>
   </body>
 </html>

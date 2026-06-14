@@ -6,7 +6,7 @@ import {
   MonsterSheet,
   definitionFromLegacyItem,
   migrateLegacyCharacterData,
-} from "./src/domain/solaris-domain-architecture.js";
+} from "./src/domain/solaris-domain-architecture.js?v=20260614c";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -1315,6 +1315,14 @@ const libraryMap = {
   acoes: { title: "Ações possíveis", kicker: "Combate, cena e downtime", items: actionData },
 };
 
+const rulebookTitles = {
+  "Livro 1": "Básico do Jogador",
+  "Livro 2": "Guia do Mestre",
+  "Livro 3": "Bestiário",
+  "Livro 4": "Cenários e História",
+  "Livro 5": "Itens, Equipamentos e Habilidades",
+};
+
 const CUSTOM_LIBRARY_VIEWS = ["magias", "chipsMod", "mods", "armazenamento", "armas", "armaduras", "itens"];
 const emptyCustomLibraryContent = () => CUSTOM_LIBRARY_VIEWS.reduce((content, view) => {
   content[view] = [];
@@ -1374,6 +1382,7 @@ const emptyCharacter = () => ({
 const state = {
   activeView: "inicio",
   activeLibrary: "racas",
+  libraryPresetFilter: "",
   activeRaceId: null,
   activeCharacterPage: "ficha",
   openCubeUid: "",
@@ -1403,6 +1412,7 @@ const el = {
   tabletHomeView: document.querySelector("#tabletHomeView"),
   itemsHubView: document.querySelector("#itemsHubView"),
   skillsHubView: document.querySelector("#skillsHubView"),
+  booksHubView: document.querySelector("#booksHubView"),
   rulesHubView: document.querySelector("#rulesHubView"),
   characterManagerView: document.querySelector("#characterManagerView"),
   topbar: document.querySelector(".topbar"),
@@ -1706,7 +1716,13 @@ function bindEvents() {
     button.addEventListener("click", () => switchView(button.dataset.launcherView));
   });
   document.querySelectorAll("[data-launcher-library]").forEach((button) => {
-    button.addEventListener("click", () => switchView(button.dataset.launcherLibrary));
+    button.addEventListener("click", () => {
+      state.libraryPresetFilter = "";
+      switchView(button.dataset.launcherLibrary);
+    });
+  });
+  document.querySelectorAll("[data-launcher-book]").forEach((button) => {
+    button.addEventListener("click", () => openRulebookLibrary(button.dataset.launcherBook));
   });
   el.homeButton.addEventListener("click", () => switchView("inicio"));
 
@@ -2248,6 +2264,7 @@ function switchView(view) {
   const hubViews = {
     itensHub: el.itemsHubView,
     skillsHub: el.skillsHubView,
+    booksHub: el.booksHubView,
     rulesHub: el.rulesHubView,
     criador: el.characterManagerView,
   };
@@ -2304,7 +2321,14 @@ function switchView(view) {
   el.libraryTierFilter.value = "";
   el.librarySort.value = "default";
   renderLibrary();
+  state.libraryPresetFilter = "";
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function openRulebookLibrary(bookLabel) {
+  if (!rulebookTitles[bookLabel]) return;
+  state.libraryPresetFilter = bookLabel;
+  switchView("regras");
 }
 
 function switchCharacterPage(page) {
@@ -3060,15 +3084,32 @@ function isStorageInventoryEntry(entry) {
   return isStorageMarketItem(findMarketItem(entry?.itemId));
 }
 
+function inventoryStorageType(entry) {
+  const storedType = entry?.domainEntity?.storage?.storageType;
+  if (storedType) return storedType;
+  const item = findMarketItem(entry?.itemId);
+  if (!item) return "";
+  if (item.category === "cube" || normalizeSearch(item.name).includes("cubo")) return "cube";
+  const text = normalizeSearch([item.name, item.type, ...(item.tags || [])].filter(Boolean).join(" "));
+  if (/coldre/.test(text)) return "holster";
+  if (/bandoleira/.test(text)) return "bandolier";
+  if (/gancho/.test(text)) return "hook";
+  return isStorageMarketItem(item) ? "container" : "";
+}
+
 function groupInventoryForEquipment(entries = state.current.inventory) {
-  const groups = { equipped: [], active: [], hooks: [], holsters: [], cubes: [], common: [], unassigned: [] };
+  const groups = { equipped: [], active: [], hooks: [], holsters: [], containers: [], cubes: [], common: [], unassigned: [] };
   entries.forEach((entry) => {
     const kind = entryLocationKind(entry);
+    const storageType = inventoryStorageType(entry);
     if (kind === LOCATION_KINDS.EQUIPPED) groups.equipped.push(entry);
     else if (kind === LOCATION_KINDS.ACTIVE) groups.active.push(entry);
     else if (kind === LOCATION_KINDS.HOOK) groups.hooks.push(entry);
     else if ([LOCATION_KINDS.HOLSTER, LOCATION_KINDS.BANDOLIER].includes(kind)) groups.holsters.push(entry);
-    else if (isStorageInventoryEntry(entry) || kind === LOCATION_KINDS.CUBE) groups.cubes.push(entry);
+    else if (kind === LOCATION_KINDS.CONTAINER || storageType === "container") groups.containers.push(entry);
+    else if (storageType === "hook") groups.hooks.push(entry);
+    else if (["holster", "bandolier"].includes(storageType)) groups.holsters.push(entry);
+    else if (storageType === "cube" || kind === LOCATION_KINDS.CUBE) groups.cubes.push(entry);
     else if (kind === LOCATION_KINDS.UNASSIGNED) groups.unassigned.push(entry);
     else groups.common.push(entry);
   });
@@ -3140,6 +3181,7 @@ function renderEquipmentPage(derived) {
     ${renderInventoryLocationSection("Ativos / acesso rápido", inventoryGroups.active, "Itens preparados para uso imediato durante uma cena.")}
     ${renderInventoryLocationSection("Ganchos", inventoryGroups.hooks, "Itens presos em ganchos externos.")}
     ${renderInventoryLocationSection("Coldres / bandoleiras", inventoryGroups.holsters, "Armas e itens presos em suportes de acesso rápido.")}
+    ${renderInventoryLocationSection("Mochilas / recipientes", inventoryGroups.containers, "O armazenador e tudo que estiver dentro dele continuam contando para a carga carregada.")}
     ${renderInventoryLocationSection("Cubos", inventoryGroups.cubes, "Cubos, armazenadores e os itens vinculados a eles.")}
     ${renderInventoryLocationSection("Itens comuns", inventoryGroups.common, "Itens guardados em base, veículo ou outro armazenador.")}
     ${renderInventoryLocationSection(
@@ -3878,7 +3920,8 @@ function closeCardDetails(exceptCard = null) {
 
 const universalDetailFieldLabels = {
   source: "Fonte oficial",
-  summary: "Descrição",
+  usageGuide: "Guia de utilização",
+  summary: "Descrição resumida",
   effect: "Efeito",
   context: "Contexto",
   tier: "Tier",
@@ -3901,16 +3944,16 @@ const universalDetailFieldLabels = {
   moral: "Moral",
   resources: "Recursos coletáveis",
   campaign: "Uso em campanha",
-  attack: "Jogada de ataque",
+  attack: "Atributo da jogada de ataque",
   damage: "Dano",
   range: "Alcance",
   ammo: "Munição",
-  capacity: "Capacidade",
+  capacity: "Capacidade / Cadência",
   handling: "Empunhadura",
   mods: "Espaços de mod",
-  cracks: "Rachaduras",
-  jammed: "Jammed / falha",
-  failure: "Falha",
+  cracks: "Limite de rachaduras",
+  jammed: "Condição de falha (Jammed)",
+  failure: "Falha ou limite",
   legality: "Legalidade",
   price: "Preço",
   weight: "Peso",
@@ -3919,13 +3962,13 @@ const universalDetailFieldLabels = {
   interface: "Interface",
   electronics: "Eletrônica",
   cosmicSpellSlots: "Espaços de magia cósmica",
-  cost: "Custo",
+  cost: "Custo em Cosmos",
   duration: "Duração",
-  rank: "Rank",
-  installation: "Instalação",
-  slots: "Espaços ocupados",
-  activation: "Ativação",
-  materials: "Materiais",
+  rank: "Tier do chip",
+  installation: "Local de instalação",
+  slots: "Espaços de mod ocupados",
+  activation: "Tipo de ativação",
+  materials: "Materiais sugeridos",
   risk: "Risco",
   focus: "Foco",
   talent: "Talento",
@@ -3936,11 +3979,11 @@ const universalDetailFieldLabels = {
   progression: "Progressão",
   profile: "Perfil racial",
   passiveEffects: "Efeitos passivos",
-  officialData: "Campos oficiais",
+  officialData: "Ficha técnica oficial",
   fields: "Campos oficiais",
   details: "Texto detalhado do livro",
   contentBlocks: "Conteúdo integral do livro",
-  bookExcerpts: "Trechos oficiais relacionados",
+  bookExcerpts: "Regras oficiais aplicáveis",
   bookLabel: "Livro",
   bookTitle: "Título do livro",
   number: "Seção",
@@ -3965,6 +4008,12 @@ const universalDetailHiddenFields = new Set([
   "bookId",
   "level",
   "schemaVersion",
+  "category",
+  "notes",
+  "documentNotes",
+  "metadata",
+  "sourceReference",
+  "sourceRow",
   "imageDataUrl",
   "imageName",
   "official",
@@ -3988,6 +4037,7 @@ const universalDetailHiddenFields = new Set([
 ]);
 
 const universalDetailFieldOrder = [
+  "usageGuide",
   "summary",
   "effect",
   "context",
@@ -4249,6 +4299,28 @@ const preferredRulebooksByView = {
   regras: ["book1", "book2", "book3", "book4", "book5"],
 };
 
+const weaponRuleSectionMatchers = [
+  [/pistola/, "1.4.3"],
+  [/revolver/, "1.4.4"],
+  [/escopeta/, "1.4.5"],
+  [/carabina/, "1.4.6"],
+  [/rifle de precisao|sniper/, "1.4.7"],
+  [/submetralhadora/, "1.4.8"],
+  [/fuzil/, "1.4.9"],
+  [/metralhadora/, "1.4.10"],
+  [/lancador/, "1.4.11"],
+  [/arremesso/, "1.4.12"],
+  [/adaga|faca/, "1.4.13"],
+  [/espada/, "1.4.14"],
+  [/sabre|katana/, "1.4.15"],
+  [/machado|foice/, "1.4.16"],
+  [/martelo|maca/, "1.4.17"],
+  [/lanca|alabarda|tridente/, "1.4.18"],
+  [/manopla|punho|briga/, "1.4.19"],
+  [/improvisad/, "1.4.20"],
+  [/cosmic/, "1.4.21"],
+];
+
 function findRulebookReferences(term, preferredBooks = [], limit = 4) {
   const normalizedTerm = normalizeSearch(term).trim();
   if (normalizedTerm.length < 3) return [];
@@ -4283,25 +4355,223 @@ function findRulebookReferences(term, preferredBooks = [], limit = 4) {
   return references;
 }
 
-function enrichDetailRecordWithRulebooks(record, view) {
-  if (!record || record.contentBlocks?.length || record.bookExcerpts?.length) return record;
-  const ignoredGenericTerms = new Set(["item", "arma", "armadura", "mod", "cubo", "criatura", "monstro"]);
-  const referenceTerms = [record.name, record.type, record.kind, record.role]
-    .filter((term, index, terms) => {
-      const normalized = normalizeSearch(term).trim();
-      return normalized.length >= 3 && !ignoredGenericTerms.has(normalized) && terms.indexOf(term) === index;
-    });
+function rulebookReferenceByNumber(bookId, number) {
+  const section = RULEBOOK_SECTIONS.find((entry) => entry.bookId === bookId && entry.number === number);
+  if (!section) return null;
+  return {
+    bookLabel: section.bookLabel,
+    title: section.title,
+    number: section.number,
+    source: section.source,
+    contentBlocks: section.contentBlocks,
+  };
+}
+
+function exactRulebookReferences(terms, preferredBooks = [], limit = 3) {
+  const normalizedTerms = new Set(
+    terms.map((term) => normalizeSearch(term).trim()).filter((term) => term.length >= 3)
+  );
+  if (!normalizedTerms.size) return [];
+  const preferred = new Set(preferredBooks);
+  return RULEBOOK_SECTIONS
+    .filter((section) => normalizedTerms.has(normalizeSearch(section.title || section.name).trim()))
+    .sort((a, b) => (
+      Number(preferred.has(b.bookId)) - Number(preferred.has(a.bookId))
+      || Number(a.level || 9) - Number(b.level || 9)
+    ))
+    .slice(0, limit)
+    .map((section) => ({
+      bookLabel: section.bookLabel,
+      title: section.title,
+      number: section.number,
+      source: section.source,
+      contentBlocks: section.contentBlocks,
+    }));
+}
+
+function detailRulebookReferences(record, view) {
+  if (!record || view === "chipsMod") return [];
+  const references = exactRulebookReferences(
+    [record.name, record.title],
+    preferredRulebooksByView[view] || [],
+    2
+  );
+  if (view === "armas") {
+    const weaponText = normalizeSearch([record.type, record.name, ...(record.tags || [])].filter(Boolean).join(" "));
+    const match = weaponRuleSectionMatchers.find(([pattern]) => pattern.test(weaponText));
+    const categoryReference = match ? rulebookReferenceByNumber("book5", match[1]) : null;
+    const operationReference = rulebookReferenceByNumber("book5", "1.4.2");
+    if (categoryReference) references.push(categoryReference);
+    if (operationReference) references.push(operationReference);
+  } else if (view === "armaduras") {
+    references.push(
+      rulebookReferenceByNumber("book5", "3.7.2"),
+      rulebookReferenceByNumber("book5", "3.7.5")
+    );
+  } else if (view === "mods") {
+    references.push(rulebookReferenceByNumber("book5", "2.26"));
+  } else if (view === "armazenamento") {
+    const text = normalizeSearch([record.name, record.type, ...(record.tags || [])].filter(Boolean).join(" "));
+    if (/cubo/.test(text)) references.push(rulebookReferenceByNumber("book5", "4.2"));
+    if (/mochila|bolsa|suporte de cubos/.test(text)) references.push(rulebookReferenceByNumber("book5", "4.4"));
+    if (/gancho|coldre|bandoleira|acesso rapido/.test(text)) references.push(rulebookReferenceByNumber("book5", "4.5"));
+  }
   const seen = new Set();
-  const references = referenceTerms
-    .flatMap((term) => findRulebookReferences(term, preferredRulebooksByView[view] || [], 3))
+  return references
+    .filter(Boolean)
     .filter((reference) => {
       const key = `${reference.bookLabel}|${reference.number}|${reference.title}`;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
     })
-    .slice(0, 5);
-  return references.length ? { ...record, bookExcerpts: references } : record;
+    .slice(0, 4);
+}
+
+function sanitizeOfficialDetailData(value) {
+  if (Array.isArray(value)) return value.map(sanitizeOfficialDetailData);
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([key, item]) => key !== "#" && detailValueIsPresent(item))
+      .map(([key, item]) => [key, sanitizeOfficialDetailData(item)])
+  );
+}
+
+function compactGuide(fields) {
+  return Object.fromEntries(
+    Object.entries(fields).filter(([, value]) => detailValueIsPresent(value))
+  );
+}
+
+function standardizedDetailSummary(record) {
+  const official = record.officialData || {};
+  if (record.category === "weapon" || record.category === "armor") {
+    return official["Observações"] || official["Observação"] || record.summary;
+  }
+  if (record.category === "chip-mod") {
+    return official["Efeito mecânico revisado"] || official["Efeito"] || record.summary;
+  }
+  if (["item", "storage", "cube", "mod"].includes(record.category)) {
+    return official["Função/Efeito"] || official["Efeito mecânico revisado"] || official["Efeito"] || record.summary;
+  }
+  return record.summary;
+}
+
+function detailTransportGuide(record, { equipped = false } = {}) {
+  const weight = record.weight ? `Peso informado: ${record.weight}. ` : "";
+  return `${weight}${equipped
+    ? "Enquanto estiver equipado, não entra na carga carregada. Fora do equipamento e fora de um cubo, seu peso entra normalmente."
+    : "Fora de um cubo, seu peso entra na carga carregada, inclusive em mochila, coldre, bandoleira ou gancho."}`;
+}
+
+function buildUsageGuide(record, view) {
+  if (!record || view === "regras" || record.category === "rulebook-section") return {};
+  if (view === "armas" || record.category === "weapon") {
+    return compactGuide({
+      "Função": [record.type || "Arma", record.tier ? `Tier ${record.tier}` : ""].filter(Boolean).join(" - "),
+      "Teste de ataque": record.attack ? `Role usando ${record.attack}. Aplique vantagens, desvantagens e bônus situacionais indicados pela categoria ou pela arma.` : "",
+      "Em caso de acerto": record.damage ? `Cause ${record.damage}.` : "",
+      "Alcance e operação": [record.range && `Alcance: ${record.range}`, record.handling && `Empunhadura: ${record.handling}`].filter(Boolean).join(". "),
+      "Munição e cadência": [record.ammo && `Munição: ${record.ammo}`, record.capacity && `Capacidade/Cadência: ${record.capacity}`].filter(Boolean).join(". "),
+      "Mods e integridade": [detailValueIsPresent(record.mods) && `${record.mods} espaço(s) de mod`, record.cracks && `rachaduras ${record.cracks}`, record.jammed && `falha: ${record.jammed}`].filter(Boolean).join(". "),
+      "Limites próprios": record.summary,
+      "Transporte": detailTransportGuide(record, { equipped: true }),
+    });
+  }
+  if (view === "armaduras" || record.category === "armor") {
+    return compactGuide({
+      "Função": [record.type || "Armadura", record.kind, record.tier ? `Tier ${record.tier}` : ""].filter(Boolean).join(" - "),
+      "Proteção": [detailValueIsPresent(record.ca) && `CA ${record.ca}`, record.reduction && `redução ${record.reduction}`, record.movement && `movimento ${record.movement}`].filter(Boolean).join(". "),
+      "Suportes e interface": [detailValueIsPresent(record.hooks) && `${record.hooks} gancho(s)`, record.interface && `interface ${record.interface}`, record.electronics && `eletrônica ${record.electronics}`].filter(Boolean).join(". "),
+      "Mods e integridade": [detailValueIsPresent(record.mods) && `${record.mods} espaço(s) de mod`, record.cracks && `rachaduras ${record.cracks}`, record.failure && `falha: ${record.failure}`].filter(Boolean).join(". "),
+      "Limites próprios": record.summary,
+      "Transporte": detailTransportGuide(record, { equipped: true }),
+    });
+  }
+  if (view === "chipsMod" || record.category === "chip-mod") {
+    return compactGuide({
+      "Tipo": `Chip modificador${record.tier || record.rank ? ` Tier ${record.tier || record.rank}` : ""}${record.type ? ` - ${record.type}` : ""}`,
+      "Instalação": record.installation,
+      "Ativação": record.activation,
+      "Efeito": record.summary || record.effect,
+      "Espaços": detailValueIsPresent(record.slots) ? `Ocupa ${record.slots} espaço(s) de mod.` : "",
+      "Limite": record.failure,
+      "Materiais": record.materials,
+    });
+  }
+  if (view === "mods" || record.category === "mod") {
+    return compactGuide({
+      "Tipo": [record.type || "Mod", record.tier ? `Tier ${record.tier}` : ""].filter(Boolean).join(" - "),
+      "Instalação": record.installation,
+      "Ativação": record.activation,
+      "Efeito": record.summary || record.effect,
+      "Espaços": detailValueIsPresent(record.slots) ? `Ocupa ${record.slots} espaço(s).` : "",
+      "Limite": record.failure || record.risk,
+      "Materiais": record.materials,
+    });
+  }
+  if (view === "magias" || ["cosmos", "cosmic-spell"].includes(record.category)) {
+    return compactGuide({
+      "Conjuração": detailValueIsPresent(record.cost) ? `Gaste ${record.cost} ponto(s) de Cosmos para usar a habilidade.` : "",
+      "Efeito": record.summary || record.effect,
+      "Duração": record.duration,
+      "Aquisição": "A magia precisa ocupar um espaço disponível, obtido por treino, grimório, equipamento ou chip compatível.",
+    });
+  }
+  if (view === "armazenamento" || ["cube", "storage"].includes(record.category) || isStorageMarketItem(record)) {
+    const isCube = record.category === "cube" || normalizeSearch(record.name).includes("cubo");
+    return compactGuide({
+      "Finalidade": record.summary || "Armazenar e transportar itens.",
+      "Capacidade": [record.cubeCapacity && `${record.cubeCapacity} unidade(s)`, record.cubeSupport && `suporta ${record.cubeSupport} cubo(s)`].filter(Boolean).join(". "),
+      "Organização": isCube
+        ? "Itens colocados dentro do cubo deixam de contar individualmente para a carga; o próprio cubo pesa 1 kg."
+        : "Itens guardados neste suporte continuam contando para a carga carregada.",
+      "Transporte": detailTransportGuide(record),
+    });
+  }
+  if (view === "itens" || record.category === "item") {
+    return compactGuide({
+      "Finalidade": record.summary || record.effect,
+      "Como usar": record.consumable
+        ? "Item consumível: ao registrar o uso, uma unidade é removida do inventário."
+        : "Item reutilizável, salvo quando a descrição oficial indicar perda, quebra ou consumo.",
+      "Transporte": detailTransportGuide(record),
+    });
+  }
+  if (view === "monstros") {
+    return compactGuide({
+      "Papel em cena": [record.type, record.role, record.tier ? `Tier ${record.tier}` : ""].filter(Boolean).join(" - "),
+      "Combate": [detailValueIsPresent(record.pv) && `PV ${record.pv}`, detailValueIsPresent(record.ca) && `CA ${record.ca}`, record.movement && `Movimento ${record.movement}`].filter(Boolean).join(". "),
+      "Uso pelo mestre": record.behavior || record.summary || record.campaign,
+    });
+  }
+  return compactGuide({
+    "Finalidade": record.summary || record.effect || record.context,
+    "Aplicação": record.activation || record.duration || record.formula,
+  });
+}
+
+function enrichDetailRecordWithRulebooks(record, view) {
+  if (!record) return record;
+  const sanitized = { ...record };
+  ["notes", "documentNotes", "metadata", "sourceReference", "sourceRow"].forEach((key) => delete sanitized[key]);
+  if (sanitized.officialData) sanitized.officialData = sanitizeOfficialDetailData(sanitized.officialData);
+  sanitized.summary = standardizedDetailSummary(sanitized);
+  const usageGuide = buildUsageGuide(sanitized, view);
+  if (Object.keys(usageGuide).length) sanitized.usageGuide = usageGuide;
+  if (sanitized.contentBlocks?.length) return sanitized;
+  if (view === "chipsMod") {
+    delete sanitized.bookExcerpts;
+    delete sanitized.passiveEffects;
+    return sanitized;
+  }
+  const references = sanitized.bookExcerpts?.length
+    ? sanitized.bookExcerpts
+    : detailRulebookReferences(sanitized, view);
+  if (references.length) sanitized.bookExcerpts = references;
+  else delete sanitized.bookExcerpts;
+  return sanitized;
 }
 
 function libraryViewForItem(item) {
@@ -5602,7 +5872,11 @@ function getLibraryItemsForView(view) {
 function renderLibrary() {
   const library = libraryMap[state.activeLibrary];
   const libraryItems = getLibraryItemsForView(state.activeLibrary);
-  const selectedGroup = syncLibraryFilterOptions(libraryItems, state.activeLibrary);
+  const selectedGroup = syncLibraryFilterOptions(
+    libraryItems,
+    state.activeLibrary,
+    state.libraryPresetFilter
+  );
   const sortMode = el.librarySort.value || "default";
   const query = normalizeSearch(el.librarySearch.value.trim());
   const isRaceLibrary = state.activeLibrary === "racas";
@@ -5615,8 +5889,16 @@ function renderLibrary() {
   const modSlots = modifierSlotState();
   const cosmicSpellSlots = cosmicSpellSlotState();
   const learnedAbilityIds = new Set((state.current.knownAbilities || []).map((ability) => ability.id));
-  el.libraryTitle.textContent = library.title;
-  el.libraryKicker.textContent = library.kicker;
+  const selectedRulebookTitle = state.activeLibrary === "regras" && selectedGroup
+    ? rulebookTitles[selectedGroup]
+    : "";
+  el.libraryTitle.textContent = selectedRulebookTitle
+    ? `${selectedGroup} - ${selectedRulebookTitle}`
+    : library.title;
+  el.libraryKicker.textContent = selectedRulebookTitle ? "Biblioteca oficial" : library.kicker;
+  el.viewTitle.textContent = selectedRulebookTitle
+    ? `${selectedGroup} - ${selectedRulebookTitle}`
+    : library.title;
   el.createMonsterButton.hidden = !isMonsterLibrary;
   el.monsterSessionPanel.hidden = !isMonsterLibrary;
   if (isMonsterLibrary) renderMonsterSessionPanel();
@@ -6071,7 +6353,7 @@ function bulkDeleteCharacterContent(kind) {
   showToast("Conteúdo removido sem reembolso.");
 }
 
-function syncLibraryFilterOptions(items, view) {
+function syncLibraryFilterOptions(items, view, preferredValue = "") {
   const config = getLibraryFilterConfig(view);
   if (!config) {
     el.libraryTierControl.hidden = true;
@@ -6080,7 +6362,7 @@ function syncLibraryFilterOptions(items, view) {
     return "";
   }
 
-  const previousValue = el.libraryTierFilter.value;
+  const previousValue = preferredValue || el.libraryTierFilter.value;
   const options = [...new Set(items.flatMap((item) => getLibraryGroupValues(item, view)).filter(Boolean))]
     .sort((a, b) => compareGroupValues(a, b, config));
 
@@ -7595,7 +7877,27 @@ function domainCharacterFromLegacy(character = state.current) {
   domain.currentCosmos = character.cosmosCurrent;
   domain.stress = character.stress;
   domain.rollHistory = structuredCloneSafe(character.diceLog || []);
+  reconcileDomainInventoryDefinitions(domain);
   return domain;
+}
+
+function reconcileDomainInventoryDefinitions(domain) {
+  domain.inventory.getAll().forEach((entity) => {
+    const item = findMarketItem(entity.definitionId);
+    if (!item) return;
+    const definition = domainDefinitionForItem(item);
+    const template = definition.createInstance({ id: entity.id, location: entity.location });
+    entity.weight = template.weight;
+    entity.definitionSnapshot = definition.toJSON();
+    if (!template.storage) return;
+    const previousStorage = entity.storage || {};
+    entity.storage = {
+      ...template.storage,
+      ...previousStorage,
+      maxSlots: Math.max(template.storage.maxSlots, numberValue(previousStorage.maxSlots, 0)),
+      storedEntityIds: [...new Set(previousStorage.storedEntityIds || [])],
+    };
+  });
 }
 
 function syncDomainCharacterToLegacy(domain, character = state.current) {
@@ -7859,6 +8161,7 @@ function applyLevelUpBenefit(benefit, choice = "") {
 
 function inventoryLocationLabel(entry) {
   const location = entry?.location || {};
+  if (location.kind === LOCATION_KINDS.CONTAINER && location.label) return location.label;
   const labels = {
     [LOCATION_KINDS.EQUIPPED]: "Equipado",
     [LOCATION_KINDS.ACTIVE]: "Acesso rápido",
@@ -8250,7 +8553,13 @@ function parseWeightKg(value) {
 
 function carriedLoadWeightKg() {
   return (state.current.inventory || []).reduce((total, entry) => {
-    if (entry.cubeUid || entry.inCube) return total;
+    const locationKind = entryLocationKind(entry);
+    if ([
+      LOCATION_KINDS.EQUIPPED,
+      LOCATION_KINDS.CUBE,
+      LOCATION_KINDS.BASE,
+      LOCATION_KINDS.VEHICLE,
+    ].includes(locationKind)) return total;
     const item = findMarketItem(entry.itemId);
     if (!item) return total;
     return total + (isCubeEntry(entry) ? CUBE_WEIGHT_KG : parseWeightKg(item.weight));

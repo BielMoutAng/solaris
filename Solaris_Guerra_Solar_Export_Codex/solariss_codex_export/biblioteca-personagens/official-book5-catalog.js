@@ -1,7 +1,7 @@
 /* Gerado automaticamente a partir das tabelas oficiais do Livro 5. */
 globalThis.SOLARIS_OFFICIAL_BOOK5 = {
   "schemaVersion": 2,
-  "source": "livro 5 tabelas.docx",
+  "source": "Livro_5_Itens_Equipamentos_Habilidades_punhos_corrigido.docx",
   "sourceLabel": "Livro 5 - Tabelas oficiais",
   "cubeWeightKg": 1,
   "templates": [
@@ -2684,7 +2684,7 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
         "tier": "F",
         "type": "Manopla",
         "attack": "Briga",
-        "damage": "1d4 concussão",
+        "damage": "1d4+1+MOD FOR concussão",
         "range": "Corpo a corpo",
         "ammo": "",
         "capacity": "",
@@ -2705,7 +2705,7 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
           "Nome": "Manopla de Kuldrus",
           "Categoria": "Manopla",
           "Ataque": "Briga",
-          "Dano": "1d4 concussão",
+          "Dano": "1d4+1+MOD FOR concussão",
           "Alcance": "Corpo a corpo",
           "Empunhadura": "Presa às mãos",
           "Legalidade/Preço": "Comum / 5.500 Lz",

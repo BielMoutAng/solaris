@@ -9,12 +9,15 @@ import {
   EFFECT_OPERATIONS,
   Effect,
   HolsterDefinition,
+  ItemDefinition,
   LOCATION_KINDS,
   MonsterDefinition,
   MonsterSheet,
   ResourcePool,
   Rachaduras,
+  StorageDefinition,
   WeaponDefinition,
+  definitionFromLegacyItem,
   migrateLegacyCharacterData,
 } from "../src/domain/solaris-domain-architecture.js";
 
@@ -65,6 +68,77 @@ test("armazenadores validam tipo, capacidade e movimentação", () => {
     () => character.moveEntityTo(armor.id, { kind: LOCATION_KINDS.HOLSTER, containerId: holster.id }),
     /não pode armazenar/
   );
+});
+
+test("mochilas legadas viram armazenadores e preservam a regra de carga", () => {
+  const character = new Character({ luzentis: 10000 });
+  const equippedWeapon = character.buyEntity(new WeaponDefinition({
+    id: "rifle-equipado",
+    name: "Rifle equipado",
+    price: 0,
+    weight: 4,
+  }));
+  const cube = character.buyEntity(new CubeDefinition({
+    id: "cubo-simples",
+    name: "Cubo Simples",
+    price: 0,
+    weight: 1,
+    maxSlots: 1,
+    allowedTypes: ["item"],
+  }));
+  const cubeContent = character.buyEntity(new ItemDefinition({
+    id: "material-no-cubo",
+    name: "Material no cubo",
+    price: 0,
+    weight: 8,
+  }));
+  const holster = character.buyEntity(new HolsterDefinition({
+    id: "coldre",
+    name: "Coldre",
+    price: 0,
+    weight: 0.5,
+    maxSlots: 1,
+  }));
+  const holsteredWeapon = character.buyEntity(new WeaponDefinition({
+    id: "pistola-no-coldre",
+    name: "Pistola no coldre",
+    price: 0,
+    weight: 2,
+  }));
+  const backpackDefinition = definitionFromLegacyItem({
+    id: "mochila",
+    name: "Mochila reforçada",
+    category: "item",
+    type: "Armazenamento, transporte e recipientes",
+    weight: "1,5 Kg",
+    price: 0,
+    cubeSupport: 5,
+  });
+  const backpack = character.buyEntity(backpackDefinition);
+  const backpackItem = character.buyEntity(new ItemDefinition({
+    id: "item-na-mochila",
+    name: "Item na mochila",
+    price: 0,
+    weight: 3,
+  }));
+  const baseItem = character.buyEntity(new ItemDefinition({
+    id: "item-na-base",
+    name: "Item na base",
+    price: 0,
+    weight: 50,
+  }));
+
+  assert.ok(backpackDefinition instanceof StorageDefinition);
+  assert.equal(backpackDefinition.maxSlots, 5);
+
+  character.equipEntity(equippedWeapon.id, "mainWeapon");
+  character.moveEntityTo(cubeContent.id, { kind: LOCATION_KINDS.CUBE, containerId: cube.id });
+  character.moveEntityTo(holsteredWeapon.id, { kind: LOCATION_KINDS.HOLSTER, containerId: holster.id });
+  character.moveEntityTo(backpackItem.id, { kind: LOCATION_KINDS.CONTAINER, containerId: backpack.id });
+  character.moveEntityTo(baseItem.id, { kind: LOCATION_KINDS.BASE });
+
+  assert.equal(character.inventory.getTotalWeight(), 8);
+  assert.equal(character.inventory.getTotalWeight({ carriedOnly: false }), 70);
 });
 
 test("venda usa metade do custo por padrão e limpa o loadout", () => {
