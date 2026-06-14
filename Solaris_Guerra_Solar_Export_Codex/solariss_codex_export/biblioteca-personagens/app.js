@@ -1,12 +1,14 @@
 import {
   Character as DomainCharacter,
   ENTITY_TYPES,
+  INVENTORY_SIZES,
   LOCATION_KINDS,
   MonsterDefinition,
   MonsterSheet,
   definitionFromLegacyItem,
+  inferLegacyInventorySize,
   migrateLegacyCharacterData,
-} from "./src/domain/solaris-domain-architecture.js?v=20260614c";
+} from "./src/domain/solaris-domain-architecture.js?v=20260614f";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -189,7 +191,7 @@ const EXTERNAL_SUPPORT_TYPES = [
     label: "Bandoleiras",
     singular: "Bandoleira",
     keywords: ["bandoleira", "bandoleiras"],
-    accepts: ["weapon"],
+    accepts: ["item", "weapon"],
   },
 ];
 
@@ -963,6 +965,21 @@ const cubeData = (Array.isArray(OFFICIAL_BOOK5.catalog.cubes) ? OFFICIAL_BOOK5.c
 const storageMarketData = [
   ...cubeData,
   ...(Array.isArray(OFFICIAL_BOOK5.catalog.storage) ? OFFICIAL_BOOK5.catalog.storage : []),
+  {
+    id: "system-item-bandoleira-tatica",
+    category: "item",
+    name: "Bandoleira tática",
+    type: "Suporte externo",
+    weight: "1 Kg",
+    price: 750,
+    maxSlots: 1,
+    inventorySize: "medium",
+    tags: ["item", "armazenamento", "bandoleira", "suporte externo"],
+    consumable: false,
+    summary: "Suporte para 1 item ou arma de porte médio ou grande. O objeto preso continua contando pelo peso real na sobrecarga.",
+    source: "Complemento do sistema Solaris",
+    schemaVersion: 2,
+  },
 ];
 const commonItemData = itemData;
 
@@ -1393,6 +1410,7 @@ const state = {
   monsterSheets: {},
   monsterSession: [],
   activeMonsterId: "",
+  activeMonsterImageId: "",
   activeMonsterAssetCategory: "weapon",
   pagination: {},
   pendingLocationEntityId: "",
@@ -1456,6 +1474,7 @@ const el = {
   diceChatLog: document.querySelector("#diceChatLog"),
   rollDiceButton: document.querySelector("#rollDiceButton"),
   rollInitiativeButton: document.querySelector("#rollInitiativeButton"),
+  diceLockNotice: document.querySelector("#diceLockNotice"),
   manualCreateForm: document.querySelector("#manualCreateForm"),
   manualCreatedContent: document.querySelector("#manualCreatedContent"),
   manualFormatGuide: document.querySelector("#manualFormatGuide"),
@@ -1514,6 +1533,14 @@ const el = {
   monsterEditorFields: document.querySelector("#monsterEditorFields"),
   closeMonsterEditor: document.querySelector("#closeMonsterEditor"),
   deleteMonsterButton: document.querySelector("#deleteMonsterButton"),
+  monsterImageModal: document.querySelector("#monsterImageModal"),
+  monsterImageTitle: document.querySelector("#monsterImageTitle"),
+  monsterImageDropzone: document.querySelector("#monsterImageDropzone"),
+  monsterImageInput: document.querySelector("#monsterImageInput"),
+  monsterImagePreview: document.querySelector("#monsterImagePreview"),
+  monsterImagePlaceholder: document.querySelector("#monsterImagePlaceholder"),
+  removeMonsterImageButton: document.querySelector("#removeMonsterImageButton"),
+  closeMonsterImage: document.querySelector("#closeMonsterImage"),
   monsterAssetsModal: document.querySelector("#monsterAssetsModal"),
   monsterAssetsTitle: document.querySelector("#monsterAssetsTitle"),
   closeMonsterAssets: document.querySelector("#closeMonsterAssets"),
@@ -1908,6 +1935,30 @@ function bindEvents() {
     if (event.target instanceof Element && event.target.closest("[data-monster-editor-close]")) closeMonsterEditor();
   });
   el.deleteMonsterButton.addEventListener("click", deleteActiveMonsterSheet);
+  el.monsterImageDropzone.addEventListener("click", () => el.monsterImageInput.click());
+  el.monsterImageInput.addEventListener("change", (event) => {
+    const file = event.target.files?.[0];
+    if (file) setMonsterImage(file);
+    event.target.value = "";
+  });
+  el.monsterImageDropzone.addEventListener("dragover", (event) => {
+    event.preventDefault();
+    el.monsterImageDropzone.classList.add("dragging");
+  });
+  el.monsterImageDropzone.addEventListener("dragleave", () => {
+    el.monsterImageDropzone.classList.remove("dragging");
+  });
+  el.monsterImageDropzone.addEventListener("drop", (event) => {
+    event.preventDefault();
+    el.monsterImageDropzone.classList.remove("dragging");
+    const file = event.dataTransfer?.files?.[0];
+    if (file) setMonsterImage(file);
+  });
+  el.removeMonsterImageButton.addEventListener("click", removeMonsterImage);
+  el.closeMonsterImage.addEventListener("click", closeMonsterImageDialog);
+  el.monsterImageModal.addEventListener("click", (event) => {
+    if (event.target instanceof Element && event.target.closest("[data-monster-image-close]")) closeMonsterImageDialog();
+  });
   el.closeMonsterAssets.addEventListener("click", closeMonsterAssets);
   el.monsterAssetsModal.addEventListener("click", (event) => {
     if (event.target instanceof Element && event.target.closest("[data-monster-assets-close]")) closeMonsterAssets();
@@ -1985,6 +2036,7 @@ function bindEvents() {
     if (event.key !== "Escape") return;
     if (!el.vitalHudModal.hidden) closeVitalHud();
     if (!el.monsterEditorModal.hidden) closeMonsterEditor();
+    if (!el.monsterImageModal.hidden) closeMonsterImageDialog();
     if (!el.monsterAssetsModal.hidden) closeMonsterAssets();
     if (!el.inventoryLocationModal.hidden) closeInventoryLocationDialog();
     if (!el.levelUpModal.hidden) closeLevelUpDialog();
@@ -2024,6 +2076,11 @@ function bindEvents() {
     const editMonsterButton = event.target.closest("[data-monster-edit]");
     if (editMonsterButton) {
       openMonsterEditor(editMonsterButton.dataset.monsterEdit);
+      return;
+    }
+    const monsterImageButton = event.target.closest("[data-monster-image]");
+    if (monsterImageButton) {
+      openMonsterImageDialog(monsterImageButton.dataset.monsterImage);
       return;
     }
     const monsterAssetsButton = event.target.closest("[data-monster-assets]");
@@ -2121,28 +2178,33 @@ function bindEvents() {
     el.equipmentPageContent.querySelectorAll(".support-drop-active").forEach((target) => target.classList.remove("support-drop-active"));
   });
   el.equipmentPageContent.addEventListener("dragover", (event) => {
-    const target = event.target instanceof Element ? event.target.closest("[data-support-drop-kind]") : null;
+    const target = event.target instanceof Element
+      ? event.target.closest("[data-support-drop-kind], [data-storage-drop-uid]")
+      : null;
     if (!target) return;
     event.preventDefault();
     target.classList.add("support-drop-active");
     if (event.dataTransfer) event.dataTransfer.dropEffect = "move";
   });
   el.equipmentPageContent.addEventListener("dragleave", (event) => {
-    const target = event.target instanceof Element ? event.target.closest("[data-support-drop-kind]") : null;
+    const target = event.target instanceof Element
+      ? event.target.closest("[data-support-drop-kind], [data-storage-drop-uid]")
+      : null;
     if (target && (!(event.relatedTarget instanceof Node) || !target.contains(event.relatedTarget))) {
       target.classList.remove("support-drop-active");
     }
   });
   el.equipmentPageContent.addEventListener("drop", (event) => {
-    const target = event.target instanceof Element ? event.target.closest("[data-support-drop-kind]") : null;
+    const target = event.target instanceof Element
+      ? event.target.closest("[data-support-drop-kind], [data-storage-drop-uid]")
+      : null;
     if (!target || !event.dataTransfer) return;
     event.preventDefault();
     target.classList.remove("support-drop-active");
     el.equipmentPageContent.classList.remove("support-dragging");
-    moveInventoryItemToExternalSupport(
-      event.dataTransfer.getData("text/solaris-inventory-uid"),
-      target.dataset.supportDropKind
-    );
+    const entityId = event.dataTransfer.getData("text/solaris-inventory-uid");
+    if (target.dataset.storageDropUid) moveInventoryItemToStorage(entityId, target.dataset.storageDropUid);
+    else moveInventoryItemToExternalSupport(entityId, target.dataset.supportDropKind);
   });
 
   el.cubePageContent.addEventListener("submit", (event) => {
@@ -3017,6 +3079,7 @@ function renderInitialAttributeRoller() {
 }
 
 function rollInitialAttributePool() {
+  if (!ensureDiceRollAllowed()) return;
   readForm();
   const rolls = Array.from({ length: 7 }, () => Math.floor(Math.random() * 6) + 1);
   const discardedIndex = rolls.reduce((lowestIndex, value, index) => (
@@ -3200,7 +3263,7 @@ function renderExternalSupportPanel(supportState = externalSupportState()) {
     <div class="external-support-summary">
       <div>
         <span class="ability-source">Acesso rápido</span>
-        <p class="inventory-note">Itens presos em ganchos, coldres e bandoleiras ficam fora dos cubos. Suportes de armadura só contam quando a armadura está equipada.</p>
+        <p class="inventory-note">Itens presos em ganchos, coldres e bandoleiras ficam fora dos cubos e contam pelo peso real. Suportes de armadura só funcionam quando a armadura está equipada.</p>
       </div>
       <strong>${supportState.totalUsed}/${supportState.totalCapacity}</strong>
     </div>
@@ -3682,9 +3745,35 @@ function renderAbilitiesPage() {
   `;
 }
 
+function unassignedInventoryEntries() {
+  return (state.current.inventory || []).filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.UNASSIGNED);
+}
+
+function diceLockMessage(entries = unassignedInventoryEntries()) {
+  const names = entries.slice(0, 3).map((entry) => findMarketItem(entry.itemId)?.name || "Item sem nome");
+  const remaining = Math.max(0, entries.length - names.length);
+  return `Organize ${names.join(", ")}${remaining ? ` e mais ${remaining}` : ""} antes de rolar dados.`;
+}
+
+function ensureDiceRollAllowed() {
+  const unassigned = unassignedInventoryEntries();
+  if (!unassigned.length) return true;
+  showToast(diceLockMessage(unassigned), "tech-error");
+  renderDicePage();
+  return false;
+}
+
 function renderDicePage() {
   const log = state.current.diceLog || [];
   const latest = log[0];
+  const unassigned = unassignedInventoryEntries();
+  const rollsLocked = unassigned.length > 0;
+  el.rollDiceButton.disabled = rollsLocked;
+  el.rollInitiativeButton.disabled = rollsLocked;
+  el.diceLockNotice.hidden = !rollsLocked;
+  el.diceLockNotice.textContent = rollsLocked
+    ? `ROLAGENS BLOQUEADAS: ${diceLockMessage(unassigned)}`
+    : "";
   el.diceResultDisplay.classList.toggle("empty-state", !latest);
   el.diceResultDisplay.innerHTML = latest ? `
     <div class="dice-total">
@@ -3867,10 +3956,11 @@ function renderKnownAbilityActions(entry) {
 }
 
 function renderCardImage(entry) {
-  if (!entry?.imageDataUrl) return "";
+  const image = entry?.imageDataUrl || entry?.image || "";
+  if (!image) return "";
   return `
     <div class="item-card-image">
-      <img src="${escapeHtml(entry.imageDataUrl)}" alt="${escapeHtml(entry.imageName || entry.name || "Imagem do item")}" />
+      <img src="${escapeHtml(image)}" alt="${escapeHtml(entry.imageName || entry.name || "Imagem do item")}" />
     </div>
   `;
 }
@@ -4744,7 +4834,7 @@ function renderInventoryCards(entries, options = {}) {
         if (!item) return "";
         const definition = domainDefinitionForItem(item);
         const entityType = entry.domainEntityType || definition.entityType;
-        const storageEntity = [ENTITY_TYPES.CUBE, ENTITY_TYPES.HOOK, ENTITY_TYPES.HOLSTER, ENTITY_TYPES.BANDOLIER].includes(entityType);
+        const storageEntity = isStorageMarketItem(item);
         const equipped = isInventoryEquipped(entry);
         const cubeLabel = entry.cubeUid || entry.inCube ? "Tirar do cubo" : "Guardar no cubo";
         const cubeAction = entry.cubeUid ? "cube-remove" : "cube";
@@ -4753,6 +4843,9 @@ function renderInventoryCards(entries, options = {}) {
         const salePrice = Number.isFinite(item.price) ? Math.floor(item.price / 2) : 0;
         const draggableAttrs = options.draggable && (canStoreEntryInPhysicalCube(entry) || canAttachToExternalSupport(entry))
           ? ` draggable="true" data-drag-inventory-uid="${escapeHtml(entry.uid)}"`
+          : "";
+        const storageDropAttrs = storageEntity
+          ? ` data-storage-drop-uid="${escapeHtml(entry.uid)}"`
           : "";
         const supportState = options.supportState || externalSupportState();
         const supportTarget = options.showSupportAction && !entry.supportSlot ? findAvailableExternalSupport(entry, supportState) : null;
@@ -4770,7 +4863,7 @@ function renderInventoryCards(entries, options = {}) {
         const chipInstalled = entityType === ENTITY_TYPES.CHIP_MOD && entry.location?.slotId === "chip";
         const consumable = isConsumableItem(item);
         return `
-          <article class="inventory-card compact-card ${item.imageDataUrl ? "with-image" : ""}" tabindex="0" data-detail-kind="inventory" data-detail-id="${escapeHtml(item.id)}" data-detail-uid="${escapeHtml(entry.uid)}"${draggableAttrs}>
+          <article class="inventory-card compact-card ${item.imageDataUrl ? "with-image" : ""}" tabindex="0" data-detail-kind="inventory" data-detail-id="${escapeHtml(item.id)}" data-detail-uid="${escapeHtml(entry.uid)}"${draggableAttrs}${storageDropAttrs}>
             ${renderCardImage(item)}
             <div class="card-face">
               <span class="ability-source">${escapeHtml(domainEntityTypeLabel(entityType))}${consumable ? ' · <span class="inventory-consumable-tag">Consumível</span>' : ""}</span>
@@ -4907,6 +5000,7 @@ function unequipModifierChip(abilityId) {
 
 function rollDice() {
   readForm();
+  if (!ensureDiceRollAllowed()) return;
   const count = clamp(numberValue(document.querySelector("#diceCount").value, 1), 1, 20);
   const sides = clamp(numberValue(document.querySelector("#diceSides").value, 6), 2, 100);
   const bonus = numberValue(document.querySelector("#diceBonus").value, 0);
@@ -4919,6 +5013,7 @@ function rollDice() {
 
 function rollInitiative() {
   readForm();
+  if (!ensureDiceRollAllowed()) return;
   const totals = totalAttributes();
   const modifier = attributeModifier(totals.REF);
   const pool = rollDicePool(1, 20);
@@ -4976,6 +5071,7 @@ function openTestDialog({
   mode = "normal",
 } = {}) {
   readForm();
+  if (!ensureDiceRollAllowed()) return;
   const totals = totalAttributes();
   const passiveBonus = kind === "Perícia" ? passiveSkillBonus(name) : kind === "Proteção" ? passiveProtectionBonus(name) : 0;
   const attributeOptions = selectableAttributes.filter((attribute) => ATTRIBUTES.includes(attribute));
@@ -5035,6 +5131,10 @@ function renderPendingTestFormula() {
 function submitTestRoll(event) {
   event.preventDefault();
   if (!state.pendingTest) return;
+  if (!ensureDiceRollAllowed()) {
+    closeTestDialog();
+    return;
+  }
   const testName = state.pendingTest.name;
   const bonus = numberValue(el.testBonus.value, 0);
   const mode = el.testMode.value;
@@ -5201,6 +5301,7 @@ function showHolographicDiceOverlay(entry) {
 }
 
 function handleEquipmentRoll(kind) {
+  if (!ensureDiceRollAllowed()) return;
   const weapon = getEquippedMarketItem("weapon");
   if (!weapon) {
     showToast("Equipe uma arma antes de rolar.");
@@ -5226,6 +5327,7 @@ function handleEquipmentRoll(kind) {
 }
 
 function rollWeaponDamage(weapon) {
+  if (!ensureDiceRollAllowed()) return;
   const expression = parseDiceExpression(weapon.damage);
   if (!expression) {
     showToast("Essa arma não tem dano em formato de dado.");
@@ -5589,10 +5691,9 @@ function handleInventoryAction(action, uid, trigger = null) {
       return;
     }
     const contents = domain.inventory.getStoredIn(uid);
-    const capacity = storage.storage.maxSlots;
-    const used = capacity - storage.getAvailableSlots(domain.inventory);
+    const capacity = storageCapacityLabel(storage, domain.inventory);
     const contentNames = contents.map((entity) => entity.name).join(", ") || "Vazio";
-    window.alert(`${storage.name}\nCapacidade: ${used}/${capacity}\nConteúdo: ${contentNames}`);
+    window.alert(`${storage.name}\nCapacidade: ${capacity}\nConteúdo: ${contentNames}`);
     return;
   }
 
@@ -5934,7 +6035,7 @@ function renderLibrary() {
         : library.learn === "cosmos" ? "Adicionar magia" : "Adicionar chip";
     const cardOpen = isRaceLibrary
       ? `<button class="library-card race-card compact-card" type="button" data-race-id="${escapeHtml(item.id)}" data-detail-kind="library" data-detail-view="${escapeHtml(state.activeLibrary)}" data-detail-id="${escapeHtml(item.id)}" aria-label="Abrir página da raça ${escapeHtml(item.name)}">`
-      : `<article class="library-card compact-card ${isMonsterLibrary ? "with-actions monster-library-card" : ""} ${item.priceEditable ? "with-price-editor" : ""} ${item.imageDataUrl ? "with-image" : ""}" tabindex="0" data-detail-kind="library" data-detail-view="${escapeHtml(state.activeLibrary)}" data-detail-id="${escapeHtml(item.id)}">`;
+      : `<article class="library-card compact-card ${isMonsterLibrary ? "with-actions monster-library-card" : ""} ${item.priceEditable ? "with-price-editor" : ""} ${item.imageDataUrl || item.image ? "with-image" : ""}" tabindex="0" data-detail-kind="library" data-detail-view="${escapeHtml(state.activeLibrary)}" data-detail-id="${escapeHtml(item.id)}">`;
     const cardClose = isRaceLibrary ? "</button>" : "</article>";
     return `
       ${cardOpen}
@@ -5950,6 +6051,7 @@ function renderLibrary() {
           <div class="inventory-actions monster-card-actions">
             <button class="mini-button" type="button" data-monster-session-add="${escapeHtml(item.id)}">Adicionar à sessão</button>
             <button class="mini-button" type="button" data-monster-playable="${escapeHtml(item.id)}">Criar ficha jogável</button>
+            <button class="mini-button" type="button" data-monster-image="${escapeHtml(item.id)}">${item.imageDataUrl || item.image ? "Alterar imagem" : "Adicionar imagem"}</button>
             <button class="mini-button" type="button" data-monster-assets="${escapeHtml(item.id)}">Conteúdo</button>
             ${item.official ? `<button class="mini-button" type="button" data-monster-edit="${escapeHtml(item.id)}">Editar cópia</button>` : `<button class="mini-button danger-mini-button" type="button" data-monster-delete="${escapeHtml(item.id)}">Excluir</button>`}
           </div>
@@ -7232,6 +7334,7 @@ function monsterAttributeModifier(monster, attribute) {
 }
 
 function rollMonsterDamageFormula(monster, label, value) {
+  if (!ensureDiceRollAllowed()) return;
   const expressions = monsterDiceExpressions(value);
   if (!expressions.length) {
     showToast("Este ataque ou habilidade não possui dano em dados.", "tech-error");
@@ -7264,6 +7367,7 @@ function handleMonsterSessionAction(action, instanceId, actionElement = null) {
   if (!sheet) return;
   const monster = sheet.instance;
   if (action === "attack") {
+    if (!ensureDiceRollAllowed()) return;
     const attacks = monsterSessionAttacks(monster);
     const attackIndex = Math.max(0, numberValue(actionElement?.dataset.monsterAttackIndex, 0));
     const attack = attacks[attackIndex] || attacks[0];
@@ -7358,6 +7462,90 @@ function closeMonsterEditor() {
   el.monsterEditorModal.hidden = true;
   state.activeMonsterId = "";
   syncModalOpenState();
+}
+
+function openMonsterImageDialog(monsterId) {
+  const monster = findMonsterSheet(monsterId);
+  if (!monster) return;
+  state.activeMonsterImageId = monsterId;
+  el.monsterImageTitle.textContent = `Imagem de ${monster.name}`;
+  renderMonsterImagePreview(monster);
+  el.monsterImageModal.hidden = false;
+  document.body.classList.add("modal-open");
+}
+
+function closeMonsterImageDialog() {
+  state.activeMonsterImageId = "";
+  el.monsterImageModal.hidden = true;
+  syncModalOpenState();
+}
+
+function renderMonsterImagePreview(monster = findMonsterSheet(state.activeMonsterImageId)) {
+  const image = monster?.imageDataUrl || monster?.image || "";
+  const hasImage = Boolean(image);
+  el.monsterImageDropzone.classList.toggle("has-image", hasImage);
+  el.removeMonsterImageButton.classList.toggle("visible", hasImage);
+  el.monsterImagePreview.hidden = !hasImage;
+  if (hasImage) {
+    el.monsterImagePreview.src = image;
+    el.monsterImagePreview.alt = monster?.name ? `Imagem de ${monster.name}` : "Imagem da criatura";
+  } else {
+    el.monsterImagePreview.removeAttribute("src");
+    el.monsterImagePreview.alt = "";
+  }
+}
+
+function syncMonsterImageToSession(monsterId, image) {
+  (state.monsterSession || []).forEach((sheet) => {
+    if (sheet.definition.id !== monsterId) return;
+    sheet.definition.image = image;
+    sheet.instance.image = image;
+  });
+  persistMonsterSession();
+  renderMonsterSessionPanel();
+}
+
+async function setMonsterImage(file) {
+  const monsterId = state.activeMonsterImageId;
+  const current = findMonsterSheet(monsterId);
+  if (!monsterId || !current) return;
+  const looksLikeImage = file.type.startsWith("image/") || /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(file.name);
+  if (!looksLikeImage) {
+    showToast("Escolha um arquivo de imagem.", "tech-error");
+    return;
+  }
+
+  try {
+    const imageDataUrl = await imageFileToDataUrl(file, 720);
+    const monster = ensureEditableMonster(monsterId);
+    monster.imageDataUrl = imageDataUrl;
+    monster.imageName = file.name;
+    monster.updatedAt = new Date().toISOString();
+    state.monsterSheets[monster.id] = monster;
+    persistMonsterSheets();
+    syncMonsterImageToSession(monsterId, imageDataUrl);
+    renderMonsterImagePreview(monster);
+    renderLibrary();
+    showToast(`Imagem de ${monster.name} salva no bestiário.`);
+  } catch {
+    showToast("Não foi possível salvar essa imagem.", "tech-error");
+  }
+}
+
+function removeMonsterImage() {
+  const monsterId = state.activeMonsterImageId;
+  const monster = ensureEditableMonster(monsterId);
+  if (!monster) return;
+  monster.imageDataUrl = "";
+  monster.imageName = "";
+  monster.image = "";
+  monster.updatedAt = new Date().toISOString();
+  state.monsterSheets[monster.id] = monster;
+  persistMonsterSheets();
+  syncMonsterImageToSession(monsterId, "");
+  renderMonsterImagePreview(monster);
+  renderLibrary();
+  showToast(`Imagem de ${monster.name} removida.`);
 }
 
 function renderMonsterEditorFields(monster = {}, sheetType = "full") {
@@ -7466,6 +7654,7 @@ function syncModalOpenState() {
   const anyOpen = [
     el.vitalHudModal,
     el.monsterEditorModal,
+    el.monsterImageModal,
     el.monsterAssetsModal,
     el.inventoryLocationModal,
     el.levelUpModal,
@@ -7891,10 +8080,15 @@ function reconcileDomainInventoryDefinitions(domain) {
     entity.definitionSnapshot = definition.toJSON();
     if (!template.storage) return;
     const previousStorage = entity.storage || {};
+    const usesWeightCapacity = template.storage.maxWeight > 0;
     entity.storage = {
       ...template.storage,
       ...previousStorage,
-      maxSlots: Math.max(template.storage.maxSlots, numberValue(previousStorage.maxSlots, 0)),
+      maxSlots: usesWeightCapacity
+        ? template.storage.maxSlots
+        : Math.max(template.storage.maxSlots, numberValue(previousStorage.maxSlots, 0)),
+      maxWeight: template.storage.maxWeight,
+      allowedSizes: [...(template.storage.allowedSizes || [])],
       storedEntityIds: [...new Set(previousStorage.storedEntityIds || [])],
     };
   });
@@ -8059,6 +8253,7 @@ function handleLevelUpSubmit(event) {
   const cost = 500 * targetLevel;
 
   if (!state.pendingLevelUp) {
+    if (!ensureDiceRollAllowed()) return;
     if (numberValue(state.current.experience, 0) < requirement.xp) {
       showToast(`Faltam ${(requirement.xp - numberValue(state.current.experience, 0)).toLocaleString("pt-BR")} XP para o nível ${targetLevel}.`, "tech-error");
       return;
@@ -8198,6 +8393,17 @@ function decodeLocationOption(value) {
   }
 }
 
+function storageCapacityLabel(storage, inventory) {
+  if (storage.storage.maxWeight > 0) {
+    const availableWeight = storage.getAvailableWeight(inventory);
+    return `${formatWeight(availableWeight)} kg livres de ${formatWeight(storage.storage.maxWeight)} kg`;
+  }
+  const availableSlots = storage.getAvailableSlots(inventory);
+  return Number.isFinite(availableSlots)
+    ? `${availableSlots} espaço${availableSlots === 1 ? "" : "s"} livre${availableSlots === 1 ? "" : "s"}`
+    : "sem limite por unidades";
+}
+
 function getInventoryLocationOptions(domain, entity) {
   const options = [
     { label: "Sem local definido (gera alerta)", location: { kind: LOCATION_KINDS.UNASSIGNED } },
@@ -8215,9 +8421,8 @@ function getInventoryLocationOptions(domain, entity) {
   }
   domain.inventory.getStorageEntities().forEach((storage) => {
     if (storage.id === entity.id || !storage.canStore(entity, domain.inventory)) return;
-    const available = storage.getAvailableSlots(domain.inventory);
     options.push({
-      label: `${storage.name} (${available} espaço${available === 1 ? "" : "s"} livre${available === 1 ? "" : "s"})`,
+      label: `${storage.name} (${storageCapacityLabel(storage, domain.inventory)})`,
       location: {
         kind: storageLocationKind(storage.storage.storageType),
         containerId: storage.id,
@@ -8225,6 +8430,26 @@ function getInventoryLocationOptions(domain, entity) {
       },
     });
   });
+  const legacyEntry = getInventoryEntry(entity.id);
+  if (legacyEntry) {
+    const supportState = externalSupportState();
+    supportTypesForEntry(legacyEntry).forEach((supportType) => {
+      const typeState = supportState.types.find((entry) => entry.id === supportType.id);
+      if (!typeState?.free) return;
+      const locationKinds = {
+        gancho: LOCATION_KINDS.HOOK,
+        coldre: LOCATION_KINDS.HOLSTER,
+        bandoleira: LOCATION_KINDS.BANDOLIER,
+      };
+      options.push({
+        label: `${supportType.singular} externo (${typeState.free} livre${typeState.free === 1 ? "" : "s"})`,
+        location: {
+          kind: locationKinds[supportType.id],
+          label: supportType.singular,
+        },
+      });
+    });
+  }
   return options;
 }
 
@@ -8349,7 +8574,9 @@ function supportProviderCounts(entry) {
   const itemCounts = supportCountsFromItem(item);
   const hasAnySupport = EXTERNAL_SUPPORT_TYPES.some((type) => itemCounts[type.id] > 0);
   if (!hasAnySupport) return counts;
-  const looseSupportItem = item.category === "item";
+  const supportLocation = entryLocationKind(entry);
+  const looseSupportItem = item.category === "item"
+    && ![LOCATION_KINDS.BASE, LOCATION_KINDS.VEHICLE, LOCATION_KINDS.CONTAINER].includes(supportLocation);
   const equippedSupportEquipment = ["weapon", "armor"].includes(item.category) && isInventoryEquipped(entry);
   if (!looseSupportItem && !equippedSupportEquipment) return counts;
   return itemCounts;
@@ -8363,20 +8590,43 @@ function isSupportProviderEntry(entry) {
 function supportTypesForEntry(entry) {
   const item = findMarketItem(entry?.itemId);
   if (!item || isCubeEntry(entry) || entry.cubeUid || entry.inCube || isSupportProviderEntry(entry)) return [];
-  if (item.category === "item") return [externalSupportType("gancho")].filter(Boolean);
+  const size = inferLegacyInventorySize(item);
+  if (item.category === "item") {
+    const supports = size === INVENTORY_SIZES.SMALL ? ["gancho"] : ["bandoleira", "gancho"];
+    return supports.map(externalSupportType).filter(Boolean);
+  }
   if (item.category !== "weapon") return [];
-  const group = classifyWeapon(item);
-  if (["firearm", "blade", "unarmed"].includes(group.key)) {
-    return ["coldre", "gancho"].map(externalSupportType).filter(Boolean);
-  }
-  if (["rifle", "launcher", "polearm", "blunt", "axe"].includes(group.key)) {
-    return ["bandoleira", "gancho"].map(externalSupportType).filter(Boolean);
-  }
-  return ["bandoleira", "coldre", "gancho"].map(externalSupportType).filter(Boolean);
+  const supports = size === INVENTORY_SIZES.SMALL ? ["coldre", "gancho"] : ["bandoleira", "gancho"];
+  return supports.map(externalSupportType).filter(Boolean);
 }
 
 function canAttachToExternalSupport(entry) {
   return supportTypesForEntry(entry).length > 0;
+}
+
+function moveInventoryItemToStorage(entityId, storageId) {
+  if (!entityId || !storageId || entityId === storageId) return;
+  const domain = domainCharacterFromLegacy();
+  const entity = domain.inventory.findById(entityId);
+  const storage = domain.inventory.findById(storageId);
+  if (!entity || !storage?.isStorage()) return;
+  if (!storage.canStore(entity, domain.inventory)) {
+    showToast(`${storage.name} não possui espaço ou não aceita o porte de ${entity.name}.`, "tech-error");
+    return;
+  }
+  try {
+    domain.moveEntityTo(entity.id, {
+      kind: storageLocationKind(storage.storage.storageType),
+      containerId: storage.id,
+      label: storage.name,
+    });
+    syncDomainCharacterToLegacy(domain);
+    persistCurrentCharacterSilently();
+    renderSummary();
+    showToast(`${entity.name} guardado em ${storage.name}.`);
+  } catch (error) {
+    showToast(error.message || "Não foi possível guardar o item.", "tech-error");
+  }
 }
 
 function externalSupportState() {
@@ -8600,10 +8850,10 @@ function renderCubeLoadMonitor(load = cubeLoadStats(derivedStats(totalAttributes
   el.cubeLoadMonitor.className = `cube-load-monitor ${stateClass}`;
   el.cubeLoadMonitor.innerHTML = `
     <div class="cube-load-head">
-      <span>Carga de cubos</span>
+      <span>Carga transportada</span>
       <strong>${escapeHtml(load.statusLabel)}</strong>
     </div>
-    <div class="cube-load-meter" aria-label="Carga de cubos">
+    <div class="cube-load-meter" aria-label="Carga transportada">
       <span style="width:${load.meterPercent}%"></span>
     </div>
     <div class="cube-load-readout">

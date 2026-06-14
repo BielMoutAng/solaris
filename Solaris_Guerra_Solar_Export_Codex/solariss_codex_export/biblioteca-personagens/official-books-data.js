@@ -4,7 +4,7 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
   "sources": {
     "book1": "C:\\Users\\Gabriel\\Desktop\\Solaris\\livros de regras\\versão final\\livro 1 base para jogadores.docx",
     "book2": "C:\\Users\\Gabriel\\Desktop\\Solaris\\livros de regras\\versão final\\Livro_2_Guia_do_Mestre_Guerra_Solar_formatado_enumerado.docx",
-    "book3": "Livro_3_Bestiario_Guerra_Solar_revisado_coerencia_fichas.docx",
+    "book3": "Livro_3_Bestiario_Guerra_Solar_Edicao_Visual.docx",
     "book5": "Livro_5_Guerra_Solar_COMPILADO_COMPLETO_FINAL.docx"
   },
   "templates": [
@@ -6495,7 +6495,7 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
   },
   "bestiary": [
     {
-      "id": "livro3-2-4-rasktorian-jovem",
+      "id": "livro3-2-1-rasktorian-jovem",
       "category": "monster",
       "name": "Rasktorian Jovem",
       "tier": "E",
@@ -6506,17 +6506,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 11,
       "movement": "9 m",
       "habitat": "ruínas rasas, campos rochosos, bordas de pântano e estradas abandonadas",
-      "behavior": "caça em dupla ou trio, ataca presas isoladas e foge de grupos organizados",
+      "behavior": "",
       "attributes": "FOR 12/MOD +1",
-      "attacks": "Ataques:\nGarra: 1d6 cortante.\nMordida: 1d4 perfurante.",
-      "abilities": "Habilidade — Salto Curto:\nUma vez por cena, o Rasktorian Jovem pode saltar até um alvo próximo, ignorando terreno difícil leve. Se acertar o ataque após o salto, causa +1 dano.\nHabilidade — Caçador Inexperiente:\nSe sofrer dano alto ou perder metade dos PV, deve testar moral. Em falha, recua ou tenta fugir.",
-      "resistances": "Resistências:\nNenhuma especial.",
-      "weaknesses": "Fraquezas:\nSom alto, luz súbita ou fogo podem fazê-lo hesitar por 1 rodada, a critério do Mestre.",
-      "senses": "Sentidos:\nOlfato aguçado.\nBoa audição.",
-      "moral": "Moral:\nFoge se estiver sozinho e cair abaixo da metade dos PV.",
-      "resources": "Recursos coletáveis:\nGarras pequenas.\nDentes.\nCouro.\nTendões.",
-      "campaign": "Uso em campanha:\nRasktorians Jovens são bons para missões iniciais. Eles ensinam que criaturas podem atacar, recuar e voltar depois com vantagem.",
-      "summary": "caça em dupla ou trio, ataca presas isoladas e foge de grupos organizados",
+      "attacks": "◆ Garra: 1d6 cortante.\n◆ Mordida: 1d4 perfurante.",
+      "abilities": "◆ Uma vez por cena, o Rasktorian Jovem pode saltar até um alvo próximo, ignorando terreno difícil leve. Se acertar o ataque após o salto, causa +1 dano.\n◆ Se sofrer dano alto ou perder metade dos PV, deve testar moral. Em falha, recua ou tenta fugir.",
+      "resistances": "◆ Nenhuma especial.",
+      "weaknesses": "◆ Som alto, luz súbita ou fogo podem fazê-lo hesitar por 1 rodada, a critério do Mestre.",
+      "senses": "◆ Olfato aguçado.\n◆ Boa audição.",
+      "moral": "◆ Foge se estiver sozinho e cair abaixo da metade dos PV.",
+      "resources": "◆ Garras pequenas.\n◆ Dentes.\n◆ Couro.\n◆ Tendões.",
+      "campaign": "◆ Rasktorians Jovens são bons para missões iniciais. Eles ensinam que criaturas podem atacar, recuar e voltar depois com vantagem.\nFONTE OFICIAL // Livro 3, 2.4",
+      "summary": "◆ Rasktorians Jovens são bons para missões iniciais. Eles ensinam que criaturas podem atacar, recuar e voltar depois com vantagem.\nFONTE OFICIAL // Livro 3, 2.4",
       "tags": [
         "E",
         "predador biológico",
@@ -6527,54 +6527,98 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: E.",
-            "Tipo: predador biológico.",
-            "Papel: predador rápido.",
-            "Tamanho: médio.",
-            "Habitat: ruínas rasas, campos rochosos, bordas de pântano e estradas abandonadas.",
-            "Comportamento: caça em dupla ou trio, ataca presas isoladas e foge de grupos organizados.",
-            "PV: 14.",
-            "CA: 11.",
-            "Movimento: 9 m.",
-            "Atributos importantes:",
-            "FOR 12/MOD +1.",
-            "REF 14/MOD +2.",
-            "CON 12/MOD +1.",
-            "MEN 10/MOD +0.",
-            "Ataques:",
-            "Garra: 1d6 cortante.",
-            "Mordida: 1d4 perfurante.",
-            "Habilidade — Salto Curto:",
-            "Uma vez por cena, o Rasktorian Jovem pode saltar até um alvo próximo, ignorando terreno difícil leve. Se acertar o ataque após o salto, causa +1 dano.",
-            "Habilidade — Caçador Inexperiente:",
-            "Se sofrer dano alto ou perder metade dos PV, deve testar moral. Em falha, recua ou tenta fugir.",
-            "Resistências:",
-            "Nenhuma especial.",
-            "Fraquezas:",
-            "Som alto, luz súbita ou fogo podem fazê-lo hesitar por 1 rodada, a critério do Mestre.",
-            "Sentidos:",
-            "Olfato aguçado.",
-            "Boa audição.",
-            "Moral:",
-            "Foge se estiver sozinho e cair abaixo da metade dos PV.",
-            "Recursos coletáveis:",
-            "Garras pequenas.",
-            "Dentes.",
-            "Couro.",
-            "Tendões.",
-            "Uso em campanha:",
-            "Rasktorians Jovens são bons para missões iniciais. Eles ensinam que criaturas podem atacar, recuar e voltar depois com vantagem."
+            "REGISTRO VISUAL // E // predador biológico",
+            "Tier: E",
+            "Tipo: predador biológico",
+            "Papel: predador rápido",
+            "Tamanho: médio",
+            "Habitat: ruínas rasas, campos rochosos, bordas de pântano e estradas abandonadas",
+            "PV: 14",
+            "CA: 11",
+            "Movimento: 9 m",
+            "Atributos importantes: FOR 12/MOD +1",
+            "◆ FOR 12/MOD +1.",
+            "◆ REF 14/MOD +2.",
+            "◆ CON 12/MOD +1.",
+            "◆ MEN 10/MOD +0."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Garra: 1d6 cortante.",
+            "◆ Mordida: 1d4 perfurante."
+          ]
+        },
+        {
+          "label": "Habilidade — Salto Curto",
+          "items": [
+            "◆ Uma vez por cena, o Rasktorian Jovem pode saltar até um alvo próximo, ignorando terreno difícil leve. Se acertar o ataque após o salto, causa +1 dano."
+          ]
+        },
+        {
+          "label": "Habilidade — Caçador Inexperiente",
+          "items": [
+            "◆ Se sofrer dano alto ou perder metade dos PV, deve testar moral. Em falha, recua ou tenta fugir."
+          ]
+        },
+        {
+          "label": "Resistências",
+          "items": [
+            "◆ Nenhuma especial."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Som alto, luz súbita ou fogo podem fazê-lo hesitar por 1 rodada, a critério do Mestre."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Olfato aguçado.",
+            "◆ Boa audição."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Foge se estiver sozinho e cair abaixo da metade dos PV."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Garras pequenas.",
+            "◆ Dentes.",
+            "◆ Couro.",
+            "◆ Tendões."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Rasktorians Jovens são bons para missões iniciais. Eles ensinam que criaturas podem atacar, recuar e voltar depois com vantagem.",
+            "FONTE OFICIAL // Livro 3, 2.4"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.4",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Rasktorian Jovem",
+          "url": "./assets/bestiary/rasktorian-jovem.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.1",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/rasktorian-jovem.jpg"
     },
     {
-      "id": "livro3-2-5-rasktorian-adulto",
+      "id": "livro3-2-2-rasktorian-adulto",
       "category": "monster",
       "name": "Rasktorian Adulto",
       "tier": "D",
@@ -6585,17 +6629,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 13,
       "movement": "10 m",
       "habitat": "ruínas, rotas abandonadas, áreas rochosas, florestas secas e campos de caça",
-      "behavior": "observa antes de atacar, foca alvos feridos e tenta derrubar presas",
+      "behavior": "",
       "attributes": "FOR 14/MOD +2",
-      "attacks": "Ataques:\nGarra: 1d8 cortante.\nMordida: 1d6 perfurante.",
-      "abilities": "Habilidade — Investida Rasgante:\nSe o Rasktorian Adulto se mover pelo menos 6 m antes de atacar e acertar, o alvo faz JPR com REF. Em falha, fica Derrubado.\nHabilidade — Cheiro de Sangue:\nRecebe +1 em testes para rastrear ou atacar alvo Sangrando.\nHabilidade — Arrastar Presa:\nSe acertar um alvo Derrubado com Mordida, pode tentar arrastá-lo 2 m como parte do ataque, se vencer disputa de FOR.",
-      "resistances": "Resistências:\nResistência leve contra frio ambiental.",
-      "weaknesses": "Fraquezas:\nPode ser distraído por carne fresca, sangue ou isca bem posicionada.",
-      "senses": "Sentidos:\nOlfato aguçado.\nVisão noturna limitada.",
-      "moral": "Moral:\nRecua se estiver gravemente ferido, mas pode voltar com emboscada.",
-      "resources": "Recursos coletáveis:\nCarapaça leve.\nGarras.\nDentes.\nCouro resistente.\nSangue adrenal.",
-      "campaign": "Uso em campanha:\nRasktorian Adulto é uma ameaça padrão de rota perigosa. Um único adulto pode ser encontro médio para grupo iniciante; dois ou três podem ser extremamente perigosos.",
-      "summary": "observa antes de atacar, foca alvos feridos e tenta derrubar presas",
+      "attacks": "◆ Garra: 1d8 cortante.\n◆ Mordida: 1d6 perfurante.",
+      "abilities": "◆ Se o Rasktorian Adulto se mover pelo menos 6 m antes de atacar e acertar, o alvo faz JPR com REF. Em falha, fica Derrubado.\n◆ Recebe +1 em testes para rastrear ou atacar alvo Sangrando.\n◆ Se acertar um alvo Derrubado com Mordida, pode tentar arrastá-lo 2 m como parte do ataque, se vencer disputa de FOR.",
+      "resistances": "",
+      "weaknesses": "◆ Pode ser distraído por carne fresca, sangue ou isca bem posicionada.",
+      "senses": "◆ Olfato aguçado.\n◆ Visão noturna limitada.",
+      "moral": "◆ Recua se estiver gravemente ferido, mas pode voltar com emboscada.",
+      "resources": "◆ Carapaça leve.\n◆ Garras.\n◆ Dentes.\n◆ Couro resistente.\n◆ Sangue adrenal.",
+      "campaign": "◆ Rasktorian Adulto é uma ameaça padrão de rota perigosa. Um único adulto pode ser encontro médio para grupo iniciante; dois ou três podem ser extremamente perigosos.\nFONTE OFICIAL // Livro 3, 2.5",
+      "summary": "◆ Rasktorian Adulto é uma ameaça padrão de rota perigosa. Um único adulto pode ser encontro médio para grupo iniciante; dois ou três podem ser extremamente perigosos.\nFONTE OFICIAL // Livro 3, 2.5",
       "tags": [
         "D",
         "predador biológico",
@@ -6606,57 +6650,99 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: D.",
-            "Tipo: predador biológico.",
-            "Papel: predador rápido/brutamontes leve.",
-            "Tamanho: médio.",
-            "Habitat: ruínas, rotas abandonadas, áreas rochosas, florestas secas e campos de caça.",
-            "Comportamento: observa antes de atacar, foca alvos feridos e tenta derrubar presas.",
-            "PV: 24.",
-            "CA: 13.",
-            "Movimento: 10 m.",
-            "Atributos importantes:",
-            "FOR 14/MOD +2.",
-            "REF 14/MOD +2.",
-            "CON 14/MOD +2.",
-            "MEN 12/MOD +1.",
-            "Ataques:",
-            "Garra: 1d8 cortante.",
-            "Mordida: 1d6 perfurante.",
-            "Habilidade — Investida Rasgante:",
-            "Se o Rasktorian Adulto se mover pelo menos 6 m antes de atacar e acertar, o alvo faz JPR com REF. Em falha, fica Derrubado.",
-            "Habilidade — Cheiro de Sangue:",
-            "Recebe +1 em testes para rastrear ou atacar alvo Sangrando.",
-            "Habilidade — Arrastar Presa:",
-            "Se acertar um alvo Derrubado com Mordida, pode tentar arrastá-lo 2 m como parte do ataque, se vencer disputa de FOR.",
-            "Resistências:",
-            "Resistência leve contra frio ambiental.",
-            "Fraquezas:",
-            "Pode ser distraído por carne fresca, sangue ou isca bem posicionada.",
-            "Sentidos:",
-            "Olfato aguçado.",
-            "Visão noturna limitada.",
-            "Moral:",
-            "Recua se estiver gravemente ferido, mas pode voltar com emboscada.",
-            "Recursos coletáveis:",
-            "Carapaça leve.",
-            "Garras.",
-            "Dentes.",
-            "Couro resistente.",
-            "Sangue adrenal.",
-            "Uso em campanha:",
-            "Rasktorian Adulto é uma ameaça padrão de rota perigosa. Um único adulto pode ser encontro médio para grupo iniciante; dois ou três podem ser extremamente perigosos."
+            "REGISTRO VISUAL // D // predador biológico",
+            "Tier: D",
+            "Tipo: predador biológico",
+            "Papel: predador rápido/brutamontes leve",
+            "Tamanho: médio",
+            "Habitat: ruínas, rotas abandonadas, áreas rochosas, florestas secas e campos de caça",
+            "PV: 24",
+            "CA: 13",
+            "Movimento: 10 m",
+            "Atributos importantes: FOR 14/MOD +2",
+            "◆ FOR 14/MOD +2.",
+            "◆ REF 14/MOD +2.",
+            "◆ CON 14/MOD +2.",
+            "◆ MEN 12/MOD +1."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Garra: 1d8 cortante.",
+            "◆ Mordida: 1d6 perfurante."
+          ]
+        },
+        {
+          "label": "Habilidade — Investida Rasgante",
+          "items": [
+            "◆ Se o Rasktorian Adulto se mover pelo menos 6 m antes de atacar e acertar, o alvo faz JPR com REF. Em falha, fica Derrubado."
+          ]
+        },
+        {
+          "label": "Habilidade — Cheiro de Sangue",
+          "items": [
+            "◆ Recebe +1 em testes para rastrear ou atacar alvo Sangrando."
+          ]
+        },
+        {
+          "label": "Habilidade — Arrastar Presa",
+          "items": [
+            "◆ Se acertar um alvo Derrubado com Mordida, pode tentar arrastá-lo 2 m como parte do ataque, se vencer disputa de FOR."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Pode ser distraído por carne fresca, sangue ou isca bem posicionada."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Olfato aguçado.",
+            "◆ Visão noturna limitada."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Recua se estiver gravemente ferido, mas pode voltar com emboscada."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Carapaça leve.",
+            "◆ Garras.",
+            "◆ Dentes.",
+            "◆ Couro resistente.",
+            "◆ Sangue adrenal."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Rasktorian Adulto é uma ameaça padrão de rota perigosa. Um único adulto pode ser encontro médio para grupo iniciante; dois ou três podem ser extremamente perigosos.",
+            "FONTE OFICIAL // Livro 3, 2.5"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.5",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Rasktorian Adulto",
+          "url": "./assets/bestiary/rasktorian-adulto.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.2",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/rasktorian-adulto.jpg"
     },
     {
-      "id": "livro3-2-6-rasktorian-alfa",
+      "id": "livro3-2-3-rasktorian-alfa",
       "category": "monster",
       "name": "Rasktorian Alfa",
       "tier": "B",
@@ -6667,17 +6753,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 16,
       "movement": "12 m",
       "habitat": "território dominado por bando Rasktorian",
-      "behavior": "protege território, comanda outros Rasktorians e testa a força do grupo antes de arriscar a própria vida",
+      "behavior": "",
       "attributes": "FOR 18/MOD +4",
-      "attacks": "Ataques:\nGarra Pesada: 1d10 cortante.\nMordida: 1d8 perfurante.\nCauda ou Impacto: 1d8 concussão.",
-      "abilities": "Habilidade — Rugido de Domínio:\nUma vez por cena, todas as criaturas inimigas próximas fazem teste de MEN ou PRE. Em falha, recebem -1 no próximo ataque contra o Alfa ou +1 Estresse, conforme o tom da campanha.\nHabilidade — Comando de Bando:\nNo início de cada rodada, um Rasktorian aliado próximo pode se mover até metade do deslocamento ou fazer um ataque simples.\nHabilidade — Fúria Ferida:\nQuando cair abaixo da metade dos PV, o Alfa causa +1 dano em ataques corpo a corpo, mas se torna mais agressivo e fácil de atrair para armadilhas.\nHabilidade — Predador Experiente:\nO Alfa não sofre penalidade em terreno difícil leve de seu próprio habitat.",
-      "resistances": "Resistências:\nResistência leve contra cortante comum.",
-      "weaknesses": "Fraquezas:\nOrgulho territorial. Pode ser atraído por desafio, invasão de território ou ameaça ao bando.",
-      "senses": "Sentidos:\nOlfato excelente.\nAudição aguçada.\nPercepção de vibração próxima.",
-      "moral": "Moral:\nNão foge por medo comum. Recua apenas para preservar o bando, proteger filhotes ou preparar nova emboscada.",
-      "resources": "Recursos coletáveis:\nCarapaça superior.\nPresa Alfa.\nCouro raro.\nSangue adrenal potente.\nGlândula de feromônio.",
-      "campaign": "Uso em campanha:\nRasktorian Alfa é chefe de arco local. Sua presença pode explicar desaparecimentos, rotas bloqueadas e migração de outros predadores.",
-      "summary": "protege território, comanda outros Rasktorians e testa a força do grupo antes de arriscar a própria vida",
+      "attacks": "◆ Garra Pesada: 1d10 cortante.\n◆ Mordida: 1d8 perfurante.\n◆ Cauda ou Impacto: 1d8 concussão.",
+      "abilities": "◆ Uma vez por cena, todas as criaturas inimigas próximas fazem teste de MEN ou PRE. Em falha, recebem -1 no próximo ataque contra o Alfa ou +1 Estresse, conforme o tom da campanha.\n◆ No início de cada rodada, um Rasktorian aliado próximo pode se mover até metade do deslocamento ou fazer um ataque simples.\n◆ Quando cair abaixo da metade dos PV, o Alfa causa +1 dano em ataques corpo a corpo, mas se torna mais agressivo e fácil de atrair para armadilhas.\n◆ O Alfa não sofre penalidade em terreno difícil leve de seu próprio habitat.",
+      "resistances": "",
+      "weaknesses": "◆ Orgulho territorial. Pode ser atraído por desafio, invasão de território ou ameaça ao bando.",
+      "senses": "◆ Olfato excelente.\n◆ Audição aguçada.\n◆ Percepção de vibração próxima.",
+      "moral": "◆ Não foge por medo comum. Recua apenas para preservar o bando, proteger filhotes ou preparar nova emboscada.",
+      "resources": "◆ Carapaça superior.\n◆ Presa Alfa.\n◆ Couro raro.\n◆ Sangue adrenal potente.\n◆ Glândula de feromônio.",
+      "campaign": "◆ Rasktorian Alfa é chefe de arco local. Sua presença pode explicar desaparecimentos, rotas bloqueadas e migração de outros predadores.\nFONTE OFICIAL // Livro 3, 2.6",
+      "summary": "◆ Rasktorian Alfa é chefe de arco local. Sua presença pode explicar desaparecimentos, rotas bloqueadas e migração de outros predadores.\nFONTE OFICIAL // Livro 3, 2.6",
       "tags": [
         "B",
         "predador Alfa",
@@ -6688,62 +6774,108 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: B.",
-            "Tipo: predador Alfa.",
-            "Papel: chefe/predador rápido.",
-            "Tamanho: grande.",
-            "Habitat: território dominado por bando Rasktorian.",
-            "Comportamento: protege território, comanda outros Rasktorians e testa a força do grupo antes de arriscar a própria vida.",
-            "PV: 65.",
-            "CA: 16.",
-            "Movimento: 12 m.",
-            "Atributos importantes:",
-            "FOR 18/MOD +4.",
-            "REF 16/MOD +3.",
-            "CON 18/MOD +4.",
-            "MEN 14/MOD +2.",
-            "PRE 14/MOD +2.",
-            "Ataques:",
-            "Garra Pesada: 1d10 cortante.",
-            "Mordida: 1d8 perfurante.",
-            "Cauda ou Impacto: 1d8 concussão.",
-            "Habilidade — Rugido de Domínio:",
-            "Uma vez por cena, todas as criaturas inimigas próximas fazem teste de MEN ou PRE. Em falha, recebem -1 no próximo ataque contra o Alfa ou +1 Estresse, conforme o tom da campanha.",
-            "Habilidade — Comando de Bando:",
-            "No início de cada rodada, um Rasktorian aliado próximo pode se mover até metade do deslocamento ou fazer um ataque simples.",
-            "Habilidade — Fúria Ferida:",
-            "Quando cair abaixo da metade dos PV, o Alfa causa +1 dano em ataques corpo a corpo, mas se torna mais agressivo e fácil de atrair para armadilhas.",
-            "Habilidade — Predador Experiente:",
-            "O Alfa não sofre penalidade em terreno difícil leve de seu próprio habitat.",
-            "Resistências:",
-            "Resistência leve contra cortante comum.",
-            "Fraquezas:",
-            "Orgulho territorial. Pode ser atraído por desafio, invasão de território ou ameaça ao bando.",
-            "Sentidos:",
-            "Olfato excelente.",
-            "Audição aguçada.",
-            "Percepção de vibração próxima.",
-            "Moral:",
-            "Não foge por medo comum. Recua apenas para preservar o bando, proteger filhotes ou preparar nova emboscada.",
-            "Recursos coletáveis:",
-            "Carapaça superior.",
-            "Presa Alfa.",
-            "Couro raro.",
-            "Sangue adrenal potente.",
-            "Glândula de feromônio.",
-            "Uso em campanha:",
-            "Rasktorian Alfa é chefe de arco local. Sua presença pode explicar desaparecimentos, rotas bloqueadas e migração de outros predadores."
+            "REGISTRO VISUAL // B // predador Alfa",
+            "Tier: B",
+            "Tipo: predador Alfa",
+            "Papel: chefe/predador rápido",
+            "Tamanho: grande",
+            "Habitat: território dominado por bando Rasktorian",
+            "PV: 65",
+            "CA: 16",
+            "Movimento: 12 m",
+            "Atributos importantes: FOR 18/MOD +4",
+            "◆ FOR 18/MOD +4.",
+            "◆ REF 16/MOD +3.",
+            "◆ CON 18/MOD +4.",
+            "◆ MEN 14/MOD +2.",
+            "◆ PRE 14/MOD +2."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Garra Pesada: 1d10 cortante.",
+            "◆ Mordida: 1d8 perfurante.",
+            "◆ Cauda ou Impacto: 1d8 concussão."
+          ]
+        },
+        {
+          "label": "Habilidade — Rugido de Domínio",
+          "items": [
+            "◆ Uma vez por cena, todas as criaturas inimigas próximas fazem teste de MEN ou PRE. Em falha, recebem -1 no próximo ataque contra o Alfa ou +1 Estresse, conforme o tom da campanha."
+          ]
+        },
+        {
+          "label": "Habilidade — Comando de Bando",
+          "items": [
+            "◆ No início de cada rodada, um Rasktorian aliado próximo pode se mover até metade do deslocamento ou fazer um ataque simples."
+          ]
+        },
+        {
+          "label": "Habilidade — Fúria Ferida",
+          "items": [
+            "◆ Quando cair abaixo da metade dos PV, o Alfa causa +1 dano em ataques corpo a corpo, mas se torna mais agressivo e fácil de atrair para armadilhas."
+          ]
+        },
+        {
+          "label": "Habilidade — Predador Experiente",
+          "items": [
+            "◆ O Alfa não sofre penalidade em terreno difícil leve de seu próprio habitat."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Orgulho territorial. Pode ser atraído por desafio, invasão de território ou ameaça ao bando."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Olfato excelente.",
+            "◆ Audição aguçada.",
+            "◆ Percepção de vibração próxima."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Não foge por medo comum. Recua apenas para preservar o bando, proteger filhotes ou preparar nova emboscada."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Carapaça superior.",
+            "◆ Presa Alfa.",
+            "◆ Couro raro.",
+            "◆ Sangue adrenal potente.",
+            "◆ Glândula de feromônio."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Rasktorian Alfa é chefe de arco local. Sua presença pode explicar desaparecimentos, rotas bloqueadas e migração de outros predadores.",
+            "FONTE OFICIAL // Livro 3, 2.6"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.6",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Rasktorian Alfa",
+          "url": "./assets/bestiary/rasktorian-alfa.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.3",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/rasktorian-alfa.jpg"
     },
     {
-      "id": "livro3-2-7-rasktorian-marcado",
+      "id": "livro3-2-4-rasktorian-marcado",
       "category": "monster",
       "name": "Rasktorian Marcado",
       "tier": "C ou B",
@@ -6754,17 +6886,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 15,
       "movement": "11 m",
       "habitat": "regiões com rachaduras azuis, cristais instáveis, ruínas antigas ou fragmentos de Falaris",
-      "behavior": "caça criaturas com Estresse alto, chips instáveis ou marcas cósmicas",
+      "behavior": "",
       "attributes": "FOR 16/MOD +3",
-      "attacks": "Ataques:\nGarra Cósmica: 1d8 cortante + 1d4 cósmico.\nMordida: 1d8 perfurante.",
-      "abilities": "Habilidade — Farejar Ressonância:\nRecebe +1 para rastrear personagens com Marca pelo Cosmos, Estresse 4 ou mais, ou item cósmico instável.\nHabilidade — Grito Partido:\nUma vez por cena, emite um grito que distorce sensores e causa desconforto. Todos próximos fazem JPC com MEN. Em falha, recebem +1 Estresse.\nHabilidade — Sangue Luminoso:\nQuando sofre crítico, seu sangue azul espirra. Quem estiver adjacente faz JPF com CON ou sofre Tonto até o fim do próximo turno.",
-      "resistances": "Resistências:\nResistência leve contra dano cósmico fraco.",
-      "weaknesses": "Fraquezas:\nSons harmônicos, símbolos de contenção ou luz branca intensa podem reduzir sua agressividade por 1 rodada.",
-      "senses": "Sentidos:\nOlfato.\nPercepção Cósmica instintiva.\nVisão no escuro.",
-      "moral": "Moral:\nInstável. Pode lutar até a morte ou fugir subitamente se a ressonância mudar.",
-      "resources": "Recursos coletáveis:\nSangue luminoso.\nGarra marcada.\nFragmento ósseo ressonante.\nGlândula cósmica instável.",
-      "campaign": "Uso em campanha:\nO Rasktorian Marcado mostra que o Cosmos começou a afetar a fauna local. Deve ser usado como sinal de que uma área está mudando.",
-      "summary": "caça criaturas com Estresse alto, chips instáveis ou marcas cósmicas",
+      "attacks": "◆ Garra Cósmica: 1d8 cortante + 1d4 cósmico.\n◆ Mordida: 1d8 perfurante.",
+      "abilities": "◆ Recebe +1 para rastrear personagens com Marca pelo Cosmos, Estresse 4 ou mais, ou item cósmico instável.\n◆ Uma vez por cena, emite um grito que distorce sensores e causa desconforto. Todos próximos fazem JPC com MEN. Em falha, recebem +1 Estresse.\n◆ Quando sofre crítico, seu sangue azul espirra. Quem estiver adjacente faz JPF com CON ou sofre Tonto até o fim do próximo turno.",
+      "resistances": "",
+      "weaknesses": "◆ Sons harmônicos, símbolos de contenção ou luz branca intensa podem reduzir sua agressividade por 1 rodada.",
+      "senses": "◆ Olfato.\n◆ Percepção Cósmica instintiva.\n◆ Visão no escuro.",
+      "moral": "◆ Instável. Pode lutar até a morte ou fugir subitamente se a ressonância mudar.",
+      "resources": "◆ Sangue luminoso.\n◆ Garra marcada.\n◆ Fragmento ósseo ressonante.\n◆ Glândula cósmica instável.",
+      "campaign": "◆ O Rasktorian Marcado mostra que o Cosmos começou a afetar a fauna local. Deve ser usado como sinal de que uma área está mudando.\nFONTE OFICIAL // Livro 3, 2.7",
+      "summary": "◆ O Rasktorian Marcado mostra que o Cosmos começou a afetar a fauna local. Deve ser usado como sinal de que uma área está mudando.\nFONTE OFICIAL // Livro 3, 2.7",
       "tags": [
         "C ou B",
         "predador cósmico/alterado",
@@ -6775,57 +6907,99 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: C ou B.",
-            "Tipo: predador cósmico/alterado.",
-            "Papel: predador rápido/ameaça cósmica.",
-            "Tamanho: médio ou grande.",
-            "Habitat: regiões com rachaduras azuis, cristais instáveis, ruínas antigas ou fragmentos de Falaris.",
-            "Comportamento: caça criaturas com Estresse alto, chips instáveis ou marcas cósmicas.",
-            "PV: 42.",
-            "CA: 15.",
-            "Movimento: 11 m.",
-            "Atributos importantes:",
-            "FOR 16/MOD +3.",
-            "REF 16/MOD +3.",
-            "CON 16/MOD +3.",
-            "MEN 14/MOD +2.",
-            "Ataques:",
-            "Garra Cósmica: 1d8 cortante + 1d4 cósmico.",
-            "Mordida: 1d8 perfurante.",
-            "Habilidade — Farejar Ressonância:",
-            "Recebe +1 para rastrear personagens com Marca pelo Cosmos, Estresse 4 ou mais, ou item cósmico instável.",
-            "Habilidade — Grito Partido:",
-            "Uma vez por cena, emite um grito que distorce sensores e causa desconforto. Todos próximos fazem JPC com MEN. Em falha, recebem +1 Estresse.",
-            "Habilidade — Sangue Luminoso:",
-            "Quando sofre crítico, seu sangue azul espirra. Quem estiver adjacente faz JPF com CON ou sofre Tonto até o fim do próximo turno.",
-            "Resistências:",
-            "Resistência leve contra dano cósmico fraco.",
-            "Fraquezas:",
-            "Sons harmônicos, símbolos de contenção ou luz branca intensa podem reduzir sua agressividade por 1 rodada.",
-            "Sentidos:",
-            "Olfato.",
-            "Percepção Cósmica instintiva.",
-            "Visão no escuro.",
-            "Moral:",
-            "Instável. Pode lutar até a morte ou fugir subitamente se a ressonância mudar.",
-            "Recursos coletáveis:",
-            "Sangue luminoso.",
-            "Garra marcada.",
-            "Fragmento ósseo ressonante.",
-            "Glândula cósmica instável.",
-            "Uso em campanha:",
-            "O Rasktorian Marcado mostra que o Cosmos começou a afetar a fauna local. Deve ser usado como sinal de que uma área está mudando."
+            "REGISTRO VISUAL // C ou B // predador cósmico/alterado",
+            "Tier: C ou B",
+            "Tipo: predador cósmico/alterado",
+            "Papel: predador rápido/ameaça cósmica",
+            "Tamanho: médio ou grande",
+            "Habitat: regiões com rachaduras azuis, cristais instáveis, ruínas antigas ou fragmentos de Falaris",
+            "PV: 42",
+            "CA: 15",
+            "Movimento: 11 m",
+            "Atributos importantes: FOR 16/MOD +3",
+            "◆ FOR 16/MOD +3.",
+            "◆ REF 16/MOD +3.",
+            "◆ CON 16/MOD +3.",
+            "◆ MEN 14/MOD +2."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Garra Cósmica: 1d8 cortante + 1d4 cósmico.",
+            "◆ Mordida: 1d8 perfurante."
+          ]
+        },
+        {
+          "label": "Habilidade — Farejar Ressonância",
+          "items": [
+            "◆ Recebe +1 para rastrear personagens com Marca pelo Cosmos, Estresse 4 ou mais, ou item cósmico instável."
+          ]
+        },
+        {
+          "label": "Habilidade — Grito Partido",
+          "items": [
+            "◆ Uma vez por cena, emite um grito que distorce sensores e causa desconforto. Todos próximos fazem JPC com MEN. Em falha, recebem +1 Estresse."
+          ]
+        },
+        {
+          "label": "Habilidade — Sangue Luminoso",
+          "items": [
+            "◆ Quando sofre crítico, seu sangue azul espirra. Quem estiver adjacente faz JPF com CON ou sofre Tonto até o fim do próximo turno."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Sons harmônicos, símbolos de contenção ou luz branca intensa podem reduzir sua agressividade por 1 rodada."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Olfato.",
+            "◆ Percepção Cósmica instintiva.",
+            "◆ Visão no escuro."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Instável. Pode lutar até a morte ou fugir subitamente se a ressonância mudar."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Sangue luminoso.",
+            "◆ Garra marcada.",
+            "◆ Fragmento ósseo ressonante.",
+            "◆ Glândula cósmica instável."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ O Rasktorian Marcado mostra que o Cosmos começou a afetar a fauna local. Deve ser usado como sinal de que uma área está mudando.",
+            "FONTE OFICIAL // Livro 3, 2.7"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.7",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Rasktorian Marcado",
+          "url": "./assets/bestiary/rasktorian-marcado.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.4",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/rasktorian-marcado.jpg"
     },
     {
-      "id": "livro3-2-9-viscerme-comum",
+      "id": "livro3-2-5-viscerme-comum",
       "category": "monster",
       "name": "Viscerme Comum",
       "tier": "E",
@@ -6836,17 +7010,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 10,
       "movement": "6 m, escavação curta em lama",
       "habitat": "lama, pântanos, aquedutos, esgotos e cavernas úmidas",
-      "behavior": "espera sob lama ou água rasa e ataca quando sente vibração",
+      "behavior": "",
       "attributes": "FOR 12/MOD +1",
-      "attacks": "Ataque:\nMordida Circular: 1d6 perfurante.",
-      "abilities": "Habilidade — Agarrar na Lama:\nEm sucesso completo, o alvo faz JPF com FOR ou fica Imobilizado até gastar uma ação para tentar se soltar.\nHabilidade — Oculto na Lama:\nRecebe +1 em Furtividade enquanto estiver em lama, água turva ou terreno pantanoso.",
-      "resistances": "Resistências:\nResistência leve contra concussão em lama.",
-      "weaknesses": "Fraquezas:\nTerreno seco reduz seu movimento pela metade.\nFogo o faz recuar.",
-      "senses": "Sentidos:\nVibração.\nOlfato fraco.",
-      "moral": "Moral:\nFoge se for retirado da lama ou sofrer fogo.",
-      "resources": "Recursos coletáveis:\nMandíbulas.\nSecreção pegajosa.\nGlândula digestiva.",
-      "campaign": "Uso em campanha:\nBom para travessias, pântanos e cenas onde personagens sobrecarregados podem ser punidos.",
-      "summary": "espera sob lama ou água rasa e ataca quando sente vibração",
+      "attacks": "◆ Mordida Circular: 1d6 perfurante.",
+      "abilities": "◆ Em sucesso completo, o alvo faz JPF com FOR ou fica Imobilizado até gastar uma ação para tentar se soltar.\n◆ Recebe +1 em Furtividade enquanto estiver em lama, água turva ou terreno pantanoso.",
+      "resistances": "",
+      "weaknesses": "◆ Terreno seco reduz seu movimento pela metade.\n◆ Fogo o faz recuar.",
+      "senses": "◆ Vibração.\n◆ Olfato fraco.",
+      "moral": "◆ Foge se for retirado da lama ou sofrer fogo.",
+      "resources": "◆ Mandíbulas.\n◆ Secreção pegajosa.\n◆ Glândula digestiva.",
+      "campaign": "◆ Bom para travessias, pântanos e cenas onde personagens sobrecarregados podem ser punidos.\nFONTE OFICIAL // Livro 3, 2.9",
+      "summary": "◆ Bom para travessias, pântanos e cenas onde personagens sobrecarregados podem ser punidos.\nFONTE OFICIAL // Livro 3, 2.9",
       "tags": [
         "E",
         "verme carnívoro",
@@ -6857,53 +7031,91 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: E.",
-            "Tipo: verme carnívoro.",
-            "Papel: controlador leve.",
-            "Tamanho: pequeno ou médio.",
-            "Habitat: lama, pântanos, aquedutos, esgotos e cavernas úmidas.",
-            "Comportamento: espera sob lama ou água rasa e ataca quando sente vibração.",
-            "PV: 12.",
-            "CA: 10.",
-            "Movimento: 6 m, escavação curta em lama.",
-            "Atributos importantes:",
-            "FOR 12/MOD +1.",
-            "REF 12/MOD +1.",
-            "CON 12/MOD +1.",
-            "MEN 8/MOD -1.",
-            "Ataque:",
-            "Mordida Circular: 1d6 perfurante.",
-            "Habilidade — Agarrar na Lama:",
-            "Em sucesso completo, o alvo faz JPF com FOR ou fica Imobilizado até gastar uma ação para tentar se soltar.",
-            "Habilidade — Oculto na Lama:",
-            "Recebe +1 em Furtividade enquanto estiver em lama, água turva ou terreno pantanoso.",
-            "Resistências:",
-            "Resistência leve contra concussão em lama.",
-            "Fraquezas:",
-            "Terreno seco reduz seu movimento pela metade.",
-            "Fogo o faz recuar.",
-            "Sentidos:",
-            "Vibração.",
-            "Olfato fraco.",
-            "Moral:",
-            "Foge se for retirado da lama ou sofrer fogo.",
-            "Recursos coletáveis:",
-            "Mandíbulas.",
-            "Secreção pegajosa.",
-            "Glândula digestiva.",
-            "Uso em campanha:",
-            "Bom para travessias, pântanos e cenas onde personagens sobrecarregados podem ser punidos."
+            "REGISTRO VISUAL // E // verme carnívoro",
+            "Tier: E",
+            "Tipo: verme carnívoro",
+            "Papel: controlador leve",
+            "Tamanho: pequeno ou médio",
+            "Habitat: lama, pântanos, aquedutos, esgotos e cavernas úmidas",
+            "PV: 12",
+            "CA: 10",
+            "Movimento: 6 m, escavação curta em lama",
+            "Atributos importantes: FOR 12/MOD +1",
+            "◆ FOR 12/MOD +1.",
+            "◆ REF 12/MOD +1.",
+            "◆ CON 12/MOD +1.",
+            "◆ MEN 8/MOD -1."
+          ]
+        },
+        {
+          "label": "Ataque",
+          "items": [
+            "◆ Mordida Circular: 1d6 perfurante."
+          ]
+        },
+        {
+          "label": "Habilidade — Agarrar na Lama",
+          "items": [
+            "◆ Em sucesso completo, o alvo faz JPF com FOR ou fica Imobilizado até gastar uma ação para tentar se soltar."
+          ]
+        },
+        {
+          "label": "Habilidade — Oculto na Lama",
+          "items": [
+            "◆ Recebe +1 em Furtividade enquanto estiver em lama, água turva ou terreno pantanoso."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Terreno seco reduz seu movimento pela metade.",
+            "◆ Fogo o faz recuar."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Vibração.",
+            "◆ Olfato fraco."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Foge se for retirado da lama ou sofrer fogo."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Mandíbulas.",
+            "◆ Secreção pegajosa.",
+            "◆ Glândula digestiva."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Bom para travessias, pântanos e cenas onde personagens sobrecarregados podem ser punidos.",
+            "FONTE OFICIAL // Livro 3, 2.9"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.9",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Viscerme Comum",
+          "url": "./assets/bestiary/viscerme-comum.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.5",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/viscerme-comum.jpg"
     },
     {
-      "id": "livro3-2-10-viscerme-inchado",
+      "id": "livro3-2-6-viscerme-inchado",
       "category": "monster",
       "name": "Viscerme Inchado",
       "tier": "D",
@@ -6914,17 +7126,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 11,
       "movement": "6 m, escavação curta em lama",
       "habitat": "pântanos contaminados, poços apodrecidos, zonas de esporos",
-      "behavior": "morde, prende e libera fluido tóxico quando ferido",
+      "behavior": "",
       "attributes": "FOR 14/MOD +2",
-      "attacks": "Ataques:\nMordida Ácida: 1d6 perfurante + 1 corrosivo.",
-      "abilities": "Habilidade — Fluido Viscoso:\nQuando sofre dano cortante, libera fluido em área próxima. Quem estiver adjacente faz JPR com REF ou sofre -1 em movimento até gastar uma ação limpando.\nHabilidade — Mordida Contaminante:\nEm crítico, o alvo faz JPF com CON ou fica Envenenado.",
-      "resistances": "Resistências:\nResistência contra tóxico.",
-      "weaknesses": "Fraquezas:\nFogo causa +1 dano.\nFrio intenso reduz suas ações por 1 rodada.",
-      "senses": "Sentidos:\nVibração.",
-      "moral": "Moral:\nLuta até perder metade dos PV, depois tenta afundar.",
-      "resources": "Recursos coletáveis:\nBolsa tóxica.\nSecreção corrosiva.\nTecido viscoso.",
-      "campaign": "Uso em campanha:\nViscerme Inchado é bom para pântanos contaminados e missões médicas. Pode fornecer material para antídotos ou ácidos.",
-      "summary": "morde, prende e libera fluido tóxico quando ferido",
+      "attacks": "◆ Mordida Ácida: 1d6 perfurante + 1 corrosivo.",
+      "abilities": "◆ Quando sofre dano cortante, libera fluido em área próxima. Quem estiver adjacente faz JPR com REF ou sofre -1 em movimento até gastar uma ação limpando.\n◆ Em crítico, o alvo faz JPF com CON ou fica Envenenado.",
+      "resistances": "",
+      "weaknesses": "◆ Fogo causa +1 dano.\n◆ Frio intenso reduz suas ações por 1 rodada.",
+      "senses": "◆ Vibração.",
+      "moral": "◆ Luta até perder metade dos PV, depois tenta afundar.",
+      "resources": "◆ Bolsa tóxica.\n◆ Secreção corrosiva.\n◆ Tecido viscoso.",
+      "campaign": "◆ Viscerme Inchado é bom para pântanos contaminados e missões médicas. Pode fornecer material para antídotos ou ácidos.\nFONTE OFICIAL // Livro 3, 2.10",
+      "summary": "◆ Viscerme Inchado é bom para pântanos contaminados e missões médicas. Pode fornecer material para antídotos ou ácidos.\nFONTE OFICIAL // Livro 3, 2.10",
       "tags": [
         "D",
         "verme tóxico",
@@ -6935,51 +7147,89 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: D.",
-            "Tipo: verme tóxico.",
-            "Papel: controlador/ameaça ambiental.",
-            "Tamanho: médio.",
-            "Habitat: pântanos contaminados, poços apodrecidos, zonas de esporos.",
-            "Comportamento: morde, prende e libera fluido tóxico quando ferido.",
-            "PV: 22.",
-            "CA: 11.",
-            "Movimento: 6 m, escavação curta em lama.",
-            "Atributos importantes:",
-            "FOR 14/MOD +2.",
-            "CON 16/MOD +3.",
-            "REF 10/MOD +0.",
-            "Ataques:",
-            "Mordida Ácida: 1d6 perfurante + 1 corrosivo.",
-            "Habilidade — Fluido Viscoso:",
-            "Quando sofre dano cortante, libera fluido em área próxima. Quem estiver adjacente faz JPR com REF ou sofre -1 em movimento até gastar uma ação limpando.",
-            "Habilidade — Mordida Contaminante:",
-            "Em crítico, o alvo faz JPF com CON ou fica Envenenado.",
-            "Resistências:",
-            "Resistência contra tóxico.",
-            "Fraquezas:",
-            "Fogo causa +1 dano.",
-            "Frio intenso reduz suas ações por 1 rodada.",
-            "Sentidos:",
-            "Vibração.",
-            "Moral:",
-            "Luta até perder metade dos PV, depois tenta afundar.",
-            "Recursos coletáveis:",
-            "Bolsa tóxica.",
-            "Secreção corrosiva.",
-            "Tecido viscoso.",
-            "Uso em campanha:",
-            "Viscerme Inchado é bom para pântanos contaminados e missões médicas. Pode fornecer material para antídotos ou ácidos."
+            "REGISTRO VISUAL // D // verme tóxico",
+            "Tier: D",
+            "Tipo: verme tóxico",
+            "Papel: controlador/ameaça ambiental",
+            "Tamanho: médio",
+            "Habitat: pântanos contaminados, poços apodrecidos, zonas de esporos",
+            "PV: 22",
+            "CA: 11",
+            "Movimento: 6 m, escavação curta em lama",
+            "Atributos importantes: FOR 14/MOD +2",
+            "◆ FOR 14/MOD +2.",
+            "◆ CON 16/MOD +3.",
+            "◆ REF 10/MOD +0."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Mordida Ácida: 1d6 perfurante + 1 corrosivo."
+          ]
+        },
+        {
+          "label": "Habilidade — Fluido Viscoso",
+          "items": [
+            "◆ Quando sofre dano cortante, libera fluido em área próxima. Quem estiver adjacente faz JPR com REF ou sofre -1 em movimento até gastar uma ação limpando."
+          ]
+        },
+        {
+          "label": "Habilidade — Mordida Contaminante",
+          "items": [
+            "◆ Em crítico, o alvo faz JPF com CON ou fica Envenenado."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Fogo causa +1 dano.",
+            "◆ Frio intenso reduz suas ações por 1 rodada."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Vibração."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Luta até perder metade dos PV, depois tenta afundar."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Bolsa tóxica.",
+            "◆ Secreção corrosiva.",
+            "◆ Tecido viscoso."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Viscerme Inchado é bom para pântanos contaminados e missões médicas. Pode fornecer material para antídotos ou ácidos.",
+            "FONTE OFICIAL // Livro 3, 2.10"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.10",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Viscerme Inchado",
+          "url": "./assets/bestiary/viscerme-inchado.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.6",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/viscerme-inchado.jpg"
     },
     {
-      "id": "livro3-2-12-voracnido-pequeno",
+      "id": "livro3-2-7-voracnido-pequeno",
       "category": "monster",
       "name": "Voracnido Pequeno",
       "tier": "F",
@@ -6990,17 +7240,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 10,
       "movement": "8 m, escalada 4 m",
       "habitat": "cavernas, pântanos, ruínas orgânicas, túneis",
-      "behavior": "ataca em grupo, morde e recua",
+      "behavior": "",
       "attributes": "REF 14/MOD +2",
-      "attacks": "Ataque:\nMandíbula: 1d4 perfurante.",
-      "abilities": "Habilidade — Enxame Faminto:\nSe houver outro Voracnido adjacente ao alvo, recebe +1 no ataque.",
-      "resistances": "Resistências:\nNenhuma.",
-      "weaknesses": "Fraquezas:\nFogo, fumaça e som agudo.",
-      "senses": "Sentidos:\nVibração.\nOlfato de sangue.",
-      "moral": "Moral:\nFoge se o enxame for dispersado.",
-      "resources": "Recursos coletáveis:\nMandíbulas pequenas.\nQuitina leve.",
-      "campaign": "Uso em campanha:\nBom para pressão inicial, especialmente se o grupo estiver ferido ou carregando carne.",
-      "summary": "ataca em grupo, morde e recua",
+      "attacks": "◆ Mandíbula: 1d4 perfurante.",
+      "abilities": "◆ Se houver outro Voracnido adjacente ao alvo, recebe +1 no ataque.",
+      "resistances": "◆ Nenhuma.",
+      "weaknesses": "◆ Fogo, fumaça e som agudo.",
+      "senses": "◆ Vibração.\n◆ Olfato de sangue.",
+      "moral": "◆ Foge se o enxame for dispersado.",
+      "resources": "◆ Mandíbulas pequenas.\n◆ Quitina leve.",
+      "campaign": "◆ Bom para pressão inicial, especialmente se o grupo estiver ferido ou carregando carne.\nFONTE OFICIAL // Livro 3, 2.12",
+      "summary": "◆ Bom para pressão inicial, especialmente se o grupo estiver ferido ou carregando carne.\nFONTE OFICIAL // Livro 3, 2.12",
       "tags": [
         "F",
         "predador insetoide",
@@ -7011,48 +7261,88 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: F.",
-            "Tipo: predador insetoide.",
-            "Papel: enxame/predador fraco.",
-            "Tamanho: pequeno.",
-            "Habitat: cavernas, pântanos, ruínas orgânicas, túneis.",
-            "Comportamento: ataca em grupo, morde e recua.",
-            "PV: 6.",
-            "CA: 10.",
-            "Movimento: 8 m, escalada 4 m.",
-            "Atributos importantes:",
-            "REF 14/MOD +2.",
-            "CON 10/MOD +0.",
-            "MEN 6/MOD -2.",
-            "Ataque:",
-            "Mandíbula: 1d4 perfurante.",
-            "Habilidade — Enxame Faminto:",
-            "Se houver outro Voracnido adjacente ao alvo, recebe +1 no ataque.",
-            "Resistências:",
-            "Nenhuma.",
-            "Fraquezas:",
-            "Fogo, fumaça e som agudo.",
-            "Sentidos:",
-            "Vibração.",
-            "Olfato de sangue.",
-            "Moral:",
-            "Foge se o enxame for dispersado.",
-            "Recursos coletáveis:",
-            "Mandíbulas pequenas.",
-            "Quitina leve.",
-            "Uso em campanha:",
-            "Bom para pressão inicial, especialmente se o grupo estiver ferido ou carregando carne."
+            "REGISTRO VISUAL // F // predador insetoide",
+            "Tier: F",
+            "Tipo: predador insetoide",
+            "Papel: enxame/predador fraco",
+            "Tamanho: pequeno",
+            "Habitat: cavernas, pântanos, ruínas orgânicas, túneis",
+            "PV: 6",
+            "CA: 10",
+            "Movimento: 8 m, escalada 4 m",
+            "Atributos importantes: REF 14/MOD +2",
+            "◆ REF 14/MOD +2.",
+            "◆ CON 10/MOD +0.",
+            "◆ MEN 6/MOD -2."
+          ]
+        },
+        {
+          "label": "Ataque",
+          "items": [
+            "◆ Mandíbula: 1d4 perfurante."
+          ]
+        },
+        {
+          "label": "Habilidade — Enxame Faminto",
+          "items": [
+            "◆ Se houver outro Voracnido adjacente ao alvo, recebe +1 no ataque."
+          ]
+        },
+        {
+          "label": "Resistências",
+          "items": [
+            "◆ Nenhuma."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Fogo, fumaça e som agudo."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Vibração.",
+            "◆ Olfato de sangue."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Foge se o enxame for dispersado."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Mandíbulas pequenas.",
+            "◆ Quitina leve."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Bom para pressão inicial, especialmente se o grupo estiver ferido ou carregando carne.",
+            "FONTE OFICIAL // Livro 3, 2.12"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.12",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Voracnido Pequeno",
+          "url": "./assets/bestiary/voracnido-pequeno.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.7",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/voracnido-pequeno.jpg"
     },
     {
-      "id": "livro3-2-13-voracnido-devorador",
+      "id": "livro3-2-8-voracnido-devorador",
       "category": "monster",
       "name": "Voracnido Devorador",
       "tier": "D",
@@ -7063,17 +7353,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 12,
       "movement": "9 m, escalada 6 m",
       "habitat": "ninhos de Voracnidos, cavernas quentes, ruínas com matéria orgânica",
-      "behavior": "avança contra a presa mais próxima, tenta derrubar e devorar",
+      "behavior": "",
       "attributes": "FOR 14/MOD +2",
-      "attacks": "Ataques:\nMandíbula Serrada: 1d8 perfurante.\nPatas Cortantes: 1d6 cortante.",
-      "abilities": "Habilidade — Devorar Caído:\nContra alvo Derrubado, causa +1d4 dano.\nHabilidade — Frenesi de Sangue:\nQuando uma criatura próxima fica Sangrando, o Voracnido pode se mover 2 m em direção a ela.",
-      "resistances": "Resistências:\nResistência leve contra perfurante comum.",
-      "weaknesses": "Fraquezas:\nFogo causa medo instintivo.",
-      "senses": "Sentidos:\nVibração.\nOlfato aguçado para sangue.",
-      "moral": "Moral:\nNão foge enquanto houver presa Sangrando próxima. Foge de fogo intenso.",
-      "resources": "Recursos coletáveis:\nQuitina.\nMandíbula serrada.\nGlândula digestiva.",
-      "campaign": "Uso em campanha:\nAmeaça boa para cavernas e ninhos. Funciona bem com Voracnidos Pequenos.",
-      "summary": "avança contra a presa mais próxima, tenta derrubar e devorar",
+      "attacks": "◆ Mandíbula Serrada: 1d8 perfurante.\n◆ Patas Cortantes: 1d6 cortante.",
+      "abilities": "◆ Contra alvo Derrubado, causa +1d4 dano.\n◆ Quando uma criatura próxima fica Sangrando, o Voracnido pode se mover 2 m em direção a ela.",
+      "resistances": "",
+      "weaknesses": "◆ Fogo causa medo instintivo.",
+      "senses": "◆ Vibração.\n◆ Olfato aguçado para sangue.",
+      "moral": "◆ Não foge enquanto houver presa Sangrando próxima. Foge de fogo intenso.",
+      "resources": "◆ Quitina.\n◆ Mandíbula serrada.\n◆ Glândula digestiva.",
+      "campaign": "◆ Ameaça boa para cavernas e ninhos. Funciona bem com Voracnidos Pequenos.\nFONTE OFICIAL // Livro 3, 2.13",
+      "summary": "◆ Ameaça boa para cavernas e ninhos. Funciona bem com Voracnidos Pequenos.\nFONTE OFICIAL // Livro 3, 2.13",
       "tags": [
         "D",
         "predador insetoide",
@@ -7084,212 +7374,91 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: D.",
-            "Tipo: predador insetoide.",
-            "Papel: brutamontes leve/enxame líder.",
-            "Tamanho: médio.",
-            "Habitat: ninhos de Voracnidos, cavernas quentes, ruínas com matéria orgânica.",
-            "Comportamento: avança contra a presa mais próxima, tenta derrubar e devorar.",
-            "PV: 26.",
-            "CA: 12.",
-            "Movimento: 9 m, escalada 6 m.",
-            "Atributos importantes:",
-            "FOR 14/MOD +2.",
-            "REF 14/MOD +2.",
-            "CON 14/MOD +2.",
-            "MEN 8/MOD -1.",
-            "Ataques:",
-            "Mandíbula Serrada: 1d8 perfurante.",
-            "Patas Cortantes: 1d6 cortante.",
-            "Habilidade — Devorar Caído:",
-            "Contra alvo Derrubado, causa +1d4 dano.",
-            "Habilidade — Frenesi de Sangue:",
-            "Quando uma criatura próxima fica Sangrando, o Voracnido pode se mover 2 m em direção a ela.",
-            "Resistências:",
-            "Resistência leve contra perfurante comum.",
-            "Fraquezas:",
-            "Fogo causa medo instintivo.",
-            "Sentidos:",
-            "Vibração.",
-            "Olfato aguçado para sangue.",
-            "Moral:",
-            "Não foge enquanto houver presa Sangrando próxima. Foge de fogo intenso.",
-            "Recursos coletáveis:",
-            "Quitina.",
-            "Mandíbula serrada.",
-            "Glândula digestiva.",
-            "Uso em campanha:",
-            "Ameaça boa para cavernas e ninhos. Funciona bem com Voracnidos Pequenos."
+            "REGISTRO VISUAL // D // predador insetoide",
+            "Tier: D",
+            "Tipo: predador insetoide",
+            "Papel: brutamontes leve/enxame líder",
+            "Tamanho: médio",
+            "Habitat: ninhos de Voracnidos, cavernas quentes, ruínas com matéria orgânica",
+            "PV: 26",
+            "CA: 12",
+            "Movimento: 9 m, escalada 6 m",
+            "Atributos importantes: FOR 14/MOD +2",
+            "◆ FOR 14/MOD +2.",
+            "◆ REF 14/MOD +2.",
+            "◆ CON 14/MOD +2.",
+            "◆ MEN 8/MOD -1."
           ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.13",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-2-15-silvari-das-folhas",
-      "category": "monster",
-      "name": "Silvari das Folhas",
-      "tier": "D",
-      "type": "predador natural",
-      "role": "emboscador/predador rápido",
-      "size": "médio",
-      "pv": 22,
-      "ca": 14,
-      "movement": "10 m, escalada 6 m",
-      "habitat": "florestas, pântanos densos, jardins antigos, ruínas tomadas por vegetação",
-      "behavior": "observa, isola e ataca alvos que invadem seu território",
-      "attributes": "REF 16/MOD +3",
-      "attacks": "Ataques:\nGarras Finas: 1d6 cortante.\nMordida: 1d6 perfurante.",
-      "abilities": "Habilidade — Camuflagem Natural:\nRecebe +1 em Furtividade em vegetação, sombra natural ou ruínas cobertas por plantas.\nHabilidade — Ataque Silencioso:\nSe atacar alvo que ainda não o percebeu, causa +1d4 dano.\nHabilidade — Recuo Ágil:\nApós atacar, pode se mover 2 m sem provocar reação, se houver cobertura natural próxima.",
-      "resistances": "Resistências:\nResistência leve contra terreno difícil natural.",
-      "weaknesses": "Fraquezas:\nFogo e destruição de vegetação o deixam agressivo ou assustado.",
-      "senses": "Sentidos:\nVisão em baixa luz.\nOlfato.\nAudição fina.",
-      "moral": "Moral:\nRecua se o território deixar de ser ameaçado. Luta ferozmente por filhotes.",
-      "resources": "Recursos coletáveis:\nGarras finas.\nCouro flexível.\nFolículos camuflados.",
-      "campaign": "Uso em campanha:\nSilvari das Folhas funciona bem em aventuras onde a natureza de Tarantus entra em conflito com exploração, coleta ou expansão.",
-      "summary": "observa, isola e ataca alvos que invadem seu território",
-      "tags": [
-        "D",
-        "predador natural",
-        "emboscador/predador rápido",
-        "médio"
-      ],
-      "details": [
+        },
         {
-          "label": "Resumo",
+          "label": "Ataques",
           "items": [
-            "Tier: D.",
-            "Tipo: predador natural.",
-            "Papel: emboscador/predador rápido.",
-            "Tamanho: médio.",
-            "Habitat: florestas, pântanos densos, jardins antigos, ruínas tomadas por vegetação.",
-            "Comportamento: observa, isola e ataca alvos que invadem seu território.",
-            "PV: 22.",
-            "CA: 14.",
-            "Movimento: 10 m, escalada 6 m.",
-            "Atributos importantes:",
-            "REF 16/MOD +3.",
-            "MEN 12/MOD +1.",
-            "FOR 12/MOD +1.",
-            "Ataques:",
-            "Garras Finas: 1d6 cortante.",
-            "Mordida: 1d6 perfurante.",
-            "Habilidade — Camuflagem Natural:",
-            "Recebe +1 em Furtividade em vegetação, sombra natural ou ruínas cobertas por plantas.",
-            "Habilidade — Ataque Silencioso:",
-            "Se atacar alvo que ainda não o percebeu, causa +1d4 dano.",
-            "Habilidade — Recuo Ágil:",
-            "Após atacar, pode se mover 2 m sem provocar reação, se houver cobertura natural próxima.",
-            "Resistências:",
-            "Resistência leve contra terreno difícil natural.",
-            "Fraquezas:",
-            "Fogo e destruição de vegetação o deixam agressivo ou assustado.",
-            "Sentidos:",
-            "Visão em baixa luz.",
-            "Olfato.",
-            "Audição fina.",
-            "Moral:",
-            "Recua se o território deixar de ser ameaçado. Luta ferozmente por filhotes.",
-            "Recursos coletáveis:",
-            "Garras finas.",
-            "Couro flexível.",
-            "Folículos camuflados.",
-            "Uso em campanha:",
-            "Silvari das Folhas funciona bem em aventuras onde a natureza de Tarantus entra em conflito com exploração, coleta ou expansão."
+            "◆ Mandíbula Serrada: 1d8 perfurante.",
+            "◆ Patas Cortantes: 1d6 cortante."
           ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.15",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-2-16-silvari-luminar",
-      "category": "monster",
-      "name": "Silvari Luminar",
-      "tier": "C",
-      "type": "criatura natural/cósmica leve",
-      "role": "emboscador/controlador",
-      "size": "médio",
-      "pv": 34,
-      "ca": 15,
-      "movement": "10 m, escalada 8 m",
-      "habitat": "bosques de cristais, ruínas verdes, áreas de ressonância Kairi",
-      "behavior": "evita combate, mas defende locais sagrados ou ressonantes",
-      "attributes": "REF 16/MOD +3",
-      "attacks": "Ataques:\nGarra Luminar: 1d8 cortante.\nPulso de Luz: 1d6 cósmico ou luminoso em curto alcance.",
-      "abilities": "Habilidade — Brilho Hipnótico:\nUma vez por cena, emite luz pulsante. Alvos próximos fazem JPC com MEN. Em falha, ficam Tontos até o fim do próximo turno.\nHabilidade — Passo Entre Folhas:\nEnquanto estiver em vegetação densa ou luz fragmentada, pode se reposicionar 4 m como reação ao ser atacado, uma vez por rodada.\nHabilidade — Guardião Natural:\nRecebe +1 em testes enquanto defender um local de ressonância.",
-      "resistances": "Resistências:\nResistência leve contra dano cósmico fraco.",
-      "weaknesses": "Fraquezas:\nMetal queimado, fogo industrial e ruído tecnológico intenso podem perturbá-lo.",
-      "senses": "Sentidos:\nPercepção Cósmica instintiva.\nVisão em baixa luz.",
-      "moral": "Moral:\nEvita matar sem necessidade. Pode deixar invasores vivos se recuarem.",
-      "resources": "Recursos coletáveis:\nPelo luminar.\nCristal orgânico pequeno.\nGarra translúcida.",
-      "campaign": "Uso em campanha:\nSilvari Luminar é ideal para conflitos morais: matar a criatura pode ser possível, mas talvez profane um lugar importante.",
-      "summary": "evita combate, mas defende locais sagrados ou ressonantes",
-      "tags": [
-        "C",
-        "criatura natural/cósmica leve",
-        "emboscador/controlador",
-        "médio"
-      ],
-      "details": [
+        },
         {
-          "label": "Resumo",
+          "label": "Habilidade — Devorar Caído",
           "items": [
-            "Tier: C.",
-            "Tipo: criatura natural/cósmica leve.",
-            "Papel: emboscador/controlador.",
-            "Tamanho: médio.",
-            "Habitat: bosques de cristais, ruínas verdes, áreas de ressonância Kairi.",
-            "Comportamento: evita combate, mas defende locais sagrados ou ressonantes.",
-            "PV: 34.",
-            "CA: 15.",
-            "Movimento: 10 m, escalada 8 m.",
-            "Atributos importantes:",
-            "REF 16/MOD +3.",
-            "MEN 14/MOD +2.",
-            "PRE 12/MOD +1.",
-            "Ataques:",
-            "Garra Luminar: 1d8 cortante.",
-            "Pulso de Luz: 1d6 cósmico ou luminoso em curto alcance.",
-            "Habilidade — Brilho Hipnótico:",
-            "Uma vez por cena, emite luz pulsante. Alvos próximos fazem JPC com MEN. Em falha, ficam Tontos até o fim do próximo turno.",
-            "Habilidade — Passo Entre Folhas:",
-            "Enquanto estiver em vegetação densa ou luz fragmentada, pode se reposicionar 4 m como reação ao ser atacado, uma vez por rodada.",
-            "Habilidade — Guardião Natural:",
-            "Recebe +1 em testes enquanto defender um local de ressonância.",
-            "Resistências:",
-            "Resistência leve contra dano cósmico fraco.",
-            "Fraquezas:",
-            "Metal queimado, fogo industrial e ruído tecnológico intenso podem perturbá-lo.",
-            "Sentidos:",
-            "Percepção Cósmica instintiva.",
-            "Visão em baixa luz.",
-            "Moral:",
-            "Evita matar sem necessidade. Pode deixar invasores vivos se recuarem.",
-            "Recursos coletáveis:",
-            "Pelo luminar.",
-            "Cristal orgânico pequeno.",
-            "Garra translúcida.",
-            "Uso em campanha:",
-            "Silvari Luminar é ideal para conflitos morais: matar a criatura pode ser possível, mas talvez profane um lugar importante."
+            "◆ Contra alvo Derrubado, causa +1d4 dano."
+          ]
+        },
+        {
+          "label": "Habilidade — Frenesi de Sangue",
+          "items": [
+            "◆ Quando uma criatura próxima fica Sangrando, o Voracnido pode se mover 2 m em direção a ela."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Fogo causa medo instintivo."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Vibração.",
+            "◆ Olfato aguçado para sangue."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Não foge enquanto houver presa Sangrando próxima. Foge de fogo intenso."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Quitina.",
+            "◆ Mandíbula serrada.",
+            "◆ Glândula digestiva."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Ameaça boa para cavernas e ninhos. Funciona bem com Voracnidos Pequenos.",
+            "FONTE OFICIAL // Livro 3, 2.13"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.16",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Voracnido Devorador",
+          "url": "./assets/bestiary/voracnido-devorador.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.8",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/voracnido-devorador.jpg"
     },
     {
-      "id": "livro3-2-18-tyrakth-jovem",
+      "id": "livro3-2-9-tyrakth-jovem",
       "category": "monster",
       "name": "Tyrakth Jovem",
       "tier": "C",
@@ -7300,17 +7469,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 14,
       "movement": "8 m",
       "habitat": "montanhas, planícies rochosas, ruínas abertas",
-      "behavior": "territorial, ataca se ameaçado ou ferido",
+      "behavior": "",
       "attributes": "FOR 18/MOD +4",
-      "attacks": "Ataques:\nChifre ou Cabeçada: 1d10 concussão.\nPisotear: 1d8 concussão.",
-      "abilities": "Habilidade — Carga Pesada:\nSe mover pelo menos 6 m em linha reta e acertar, o alvo faz JPF com FOR ou JPR com REF. Em falha, fica Derrubado.\nHabilidade — Couro Grosso:\nReduz em 1 dano físico comum.\nHabilidade — Quebrar Obstáculo:\nCausa +1d6 dano contra portas, barricadas e estruturas leves.",
-      "resistances": "Resistências:\nRedução 1 contra físico comum.",
-      "weaknesses": "Fraquezas:\nBaixa manobrabilidade. Sofre em terreno estreito, lama profunda ou armadilhas.",
-      "senses": "Sentidos:\nOlfato.\nAudição média.",
-      "moral": "Moral:\nRecua se for ferido gravemente e tiver rota de fuga. Luta até a morte se encurralado.",
-      "resources": "Recursos coletáveis:\nPlaca óssea.\nChifre.\nCouro grosso.\nTendões fortes.",
-      "campaign": "Uso em campanha:\nTyrakth Jovem é uma ameaça de ambiente aberto. Pode ser evitado com rota inteligente.",
-      "summary": "territorial, ataca se ameaçado ou ferido",
+      "attacks": "◆ Chifre ou Cabeçada: 1d10 concussão.\n◆ Pisotear: 1d8 concussão.",
+      "abilities": "◆ Se mover pelo menos 6 m em linha reta e acertar, o alvo faz JPF com FOR ou JPR com REF. Em falha, fica Derrubado.\n◆ Reduz em 1 dano físico comum.\n◆ Causa +1d6 dano contra portas, barricadas e estruturas leves.",
+      "resistances": "◆ Redução 1 contra físico comum.",
+      "weaknesses": "◆ Baixa manobrabilidade. Sofre em terreno estreito, lama profunda ou armadilhas.",
+      "senses": "◆ Olfato.\n◆ Audição média.",
+      "moral": "◆ Recua se for ferido gravemente e tiver rota de fuga. Luta até a morte se encurralado.",
+      "resources": "◆ Placa óssea.\n◆ Chifre.\n◆ Couro grosso.\n◆ Tendões fortes.",
+      "campaign": "◆ Tyrakth Jovem é uma ameaça de ambiente aberto. Pode ser evitado com rota inteligente.\nFONTE OFICIAL // Livro 3, 2.18",
+      "summary": "◆ Tyrakth Jovem é uma ameaça de ambiente aberto. Pode ser evitado com rota inteligente.\nFONTE OFICIAL // Livro 3, 2.18",
       "tags": [
         "C",
         "megafauna agressiva",
@@ -7321,56 +7490,104 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: C.",
-            "Tipo: megafauna agressiva.",
-            "Papel: brutamontes/tanque.",
-            "Tamanho: grande.",
-            "Habitat: montanhas, planícies rochosas, ruínas abertas.",
-            "Comportamento: territorial, ataca se ameaçado ou ferido.",
-            "PV: 45.",
-            "CA: 14.",
-            "Movimento: 8 m.",
-            "Atributos importantes:",
-            "FOR 18/MOD +4.",
-            "CON 18/MOD +4.",
-            "REF 8/MOD -1.",
-            "MEN 10/MOD +0.",
-            "Ataques:",
-            "Chifre ou Cabeçada: 1d10 concussão.",
-            "Pisotear: 1d8 concussão.",
-            "Habilidade — Carga Pesada:",
-            "Se mover pelo menos 6 m em linha reta e acertar, o alvo faz JPF com FOR ou JPR com REF. Em falha, fica Derrubado.",
-            "Habilidade — Couro Grosso:",
-            "Reduz em 1 dano físico comum.",
-            "Habilidade — Quebrar Obstáculo:",
-            "Causa +1d6 dano contra portas, barricadas e estruturas leves.",
-            "Resistências:",
-            "Redução 1 contra físico comum.",
-            "Fraquezas:",
-            "Baixa manobrabilidade. Sofre em terreno estreito, lama profunda ou armadilhas.",
-            "Sentidos:",
-            "Olfato.",
-            "Audição média.",
-            "Moral:",
-            "Recua se for ferido gravemente e tiver rota de fuga. Luta até a morte se encurralado.",
-            "Recursos coletáveis:",
-            "Placa óssea.",
-            "Chifre.",
-            "Couro grosso.",
-            "Tendões fortes.",
-            "Uso em campanha:",
-            "Tyrakth Jovem é uma ameaça de ambiente aberto. Pode ser evitado com rota inteligente."
+            "REGISTRO VISUAL // C // megafauna agressiva",
+            "Tier: C",
+            "Tipo: megafauna agressiva",
+            "Papel: brutamontes/tanque",
+            "Tamanho: grande",
+            "Habitat: montanhas, planícies rochosas, ruínas abertas",
+            "PV: 45",
+            "CA: 14",
+            "Movimento: 8 m",
+            "Atributos importantes: FOR 18/MOD +4",
+            "◆ FOR 18/MOD +4.",
+            "◆ CON 18/MOD +4.",
+            "◆ REF 8/MOD -1.",
+            "◆ MEN 10/MOD +0."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Chifre ou Cabeçada: 1d10 concussão.",
+            "◆ Pisotear: 1d8 concussão."
+          ]
+        },
+        {
+          "label": "Habilidade — Carga Pesada",
+          "items": [
+            "◆ Se mover pelo menos 6 m em linha reta e acertar, o alvo faz JPF com FOR ou JPR com REF. Em falha, fica Derrubado."
+          ]
+        },
+        {
+          "label": "Habilidade — Couro Grosso",
+          "items": [
+            "◆ Reduz em 1 dano físico comum."
+          ]
+        },
+        {
+          "label": "Habilidade — Quebrar Obstáculo",
+          "items": [
+            "◆ Causa +1d6 dano contra portas, barricadas e estruturas leves."
+          ]
+        },
+        {
+          "label": "Resistências",
+          "items": [
+            "◆ Redução 1 contra físico comum."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Baixa manobrabilidade. Sofre em terreno estreito, lama profunda ou armadilhas."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Olfato.",
+            "◆ Audição média."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Recua se for ferido gravemente e tiver rota de fuga. Luta até a morte se encurralado."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Placa óssea.",
+            "◆ Chifre.",
+            "◆ Couro grosso.",
+            "◆ Tendões fortes."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Tyrakth Jovem é uma ameaça de ambiente aberto. Pode ser evitado com rota inteligente.",
+            "FONTE OFICIAL // Livro 3, 2.18"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.18",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Tyrakth Jovem",
+          "url": "./assets/bestiary/tyrakth-jovem.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.9",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/tyrakth-jovem.jpg"
     },
     {
-      "id": "livro3-2-19-tyrakth-anciao",
+      "id": "livro3-2-10-tyrakth-anciao",
       "category": "monster",
       "name": "Tyrakth Ancião",
       "tier": "A",
@@ -7381,17 +7598,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 18,
       "movement": "8 m",
       "habitat": "território antigo, montanhas, vales isolados, ruínas abertas",
-      "behavior": "domina território amplo e não tolera invasão persistente",
+      "behavior": "",
       "attributes": "FOR 22/MOD +6",
-      "attacks": "Ataques:\nInvestida Ancestral: 2d6 concussão.\nChifre Monumental: 2d6 perfurante.\nPisoteio: 2d6 concussão em área próxima.",
-      "abilities": "Habilidade — Terremoto Curto:\nUma vez por cena, bate no chão. Todos próximos fazem JPR com REF ou ficam Derrubados.\nHabilidade — Couraça Ancestral:\nReduz 2 de dano físico comum.\nHabilidade — Imparável:\nNão pode ser empurrado por criaturas menores que grande, salvo efeito especial.\nHabilidade — Fúria Territorial:\nQuando sofre dano alto, pode destruir cobertura ou estrutura próxima como reação.",
-      "resistances": "Resistências:\nRedução 2 contra físico comum.\nResistência contra medo comum.",
-      "weaknesses": "Fraquezas:\nPontos sensíveis nas juntas, olhos e parte inferior da mandíbula. Descobrir exige Biologia, Busca, Biologia ou experiência.",
-      "senses": "Sentidos:\nOlfato poderoso.\nPercepção de vibração.",
-      "moral": "Moral:\nNão foge de ameaça pequena. Pode abandonar combate se o invasor sair de seu território.",
-      "resources": "Recursos coletáveis:\nChifre raro.\nPlacas ancestrais.\nCouro pesado.\nNúcleo ósseo mineral.",
-      "campaign": "Uso em campanha:\nTyrakth Ancião não deve ser encontro aleatório. Ele é evento, obstáculo ou guardião natural de região.",
-      "summary": "domina território amplo e não tolera invasão persistente",
+      "attacks": "◆ Investida Ancestral: 2d6 concussão.\n◆ Chifre Monumental: 2d6 perfurante.\n◆ Pisoteio: 2d6 concussão em área próxima.",
+      "abilities": "◆ Uma vez por cena, bate no chão. Todos próximos fazem JPR com REF ou ficam Derrubados.\n◆ Reduz 2 de dano físico comum.\n◆ Não pode ser empurrado por criaturas menores que grande, salvo efeito especial.\n◆ Quando sofre dano alto, pode destruir cobertura ou estrutura próxima como reação.",
+      "resistances": "◆ Redução 2 contra físico comum.",
+      "weaknesses": "◆ Pontos sensíveis nas juntas, olhos e parte inferior da mandíbula. Descobrir exige Biologia, Busca, Biologia ou experiência.",
+      "senses": "◆ Olfato poderoso.\n◆ Percepção de vibração.",
+      "moral": "◆ Não foge de ameaça pequena. Pode abandonar combate se o invasor sair de seu território.",
+      "resources": "◆ Chifre raro.\n◆ Placas ancestrais.\n◆ Couro pesado.\n◆ Núcleo ósseo mineral.",
+      "campaign": "◆ Tyrakth Ancião não deve ser encontro aleatório. Ele é evento, obstáculo ou guardião natural de região.\nFONTE OFICIAL // Livro 3, 2.19",
+      "summary": "◆ Tyrakth Ancião não deve ser encontro aleatório. Ele é evento, obstáculo ou guardião natural de região.\nFONTE OFICIAL // Livro 3, 2.19",
       "tags": [
         "A",
         "megafauna colossal",
@@ -7402,61 +7619,112 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: A.",
-            "Tipo: megafauna colossal.",
-            "Papel: chefe/tanque/brutamontes.",
-            "Tamanho: enorme.",
-            "Habitat: território antigo, montanhas, vales isolados, ruínas abertas.",
-            "Comportamento: domina território amplo e não tolera invasão persistente.",
-            "PV: 120.",
-            "CA: 18.",
-            "Movimento: 8 m.",
-            "Atributos importantes:",
-            "FOR 22/MOD +6.",
-            "CON 22/MOD +6.",
-            "REF 8/MOD -1.",
-            "MEN 12/MOD +1.",
-            "PRE 16/MOD +3.",
-            "Ataques:",
-            "Investida Ancestral: 2d6 concussão.",
-            "Chifre Monumental: 2d6 perfurante.",
-            "Pisoteio: 2d6 concussão em área próxima.",
-            "Habilidade — Terremoto Curto:",
-            "Uma vez por cena, bate no chão. Todos próximos fazem JPR com REF ou ficam Derrubados.",
-            "Habilidade — Couraça Ancestral:",
-            "Reduz 2 de dano físico comum.",
-            "Habilidade — Imparável:",
-            "Não pode ser empurrado por criaturas menores que grande, salvo efeito especial.",
-            "Habilidade — Fúria Territorial:",
-            "Quando sofre dano alto, pode destruir cobertura ou estrutura próxima como reação.",
-            "Resistências:",
-            "Redução 2 contra físico comum.",
-            "Resistência contra medo comum.",
-            "Fraquezas:",
-            "Pontos sensíveis nas juntas, olhos e parte inferior da mandíbula. Descobrir exige Biologia, Busca, Biologia ou experiência.",
-            "Sentidos:",
-            "Olfato poderoso.",
-            "Percepção de vibração.",
-            "Moral:",
-            "Não foge de ameaça pequena. Pode abandonar combate se o invasor sair de seu território.",
-            "Recursos coletáveis:",
-            "Chifre raro.",
-            "Placas ancestrais.",
-            "Couro pesado.",
-            "Núcleo ósseo mineral.",
-            "Uso em campanha:",
-            "Tyrakth Ancião não deve ser encontro aleatório. Ele é evento, obstáculo ou guardião natural de região."
+            "REGISTRO VISUAL // A // megafauna colossal",
+            "Tier: A",
+            "Tipo: megafauna colossal",
+            "Papel: chefe/tanque/brutamontes",
+            "Tamanho: enorme",
+            "Habitat: território antigo, montanhas, vales isolados, ruínas abertas",
+            "PV: 120",
+            "CA: 18",
+            "Movimento: 8 m",
+            "Atributos importantes: FOR 22/MOD +6",
+            "◆ FOR 22/MOD +6.",
+            "◆ CON 22/MOD +6.",
+            "◆ REF 8/MOD -1.",
+            "◆ MEN 12/MOD +1.",
+            "◆ PRE 16/MOD +3."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Investida Ancestral: 2d6 concussão.",
+            "◆ Chifre Monumental: 2d6 perfurante.",
+            "◆ Pisoteio: 2d6 concussão em área próxima."
+          ]
+        },
+        {
+          "label": "Habilidade — Terremoto Curto",
+          "items": [
+            "◆ Uma vez por cena, bate no chão. Todos próximos fazem JPR com REF ou ficam Derrubados."
+          ]
+        },
+        {
+          "label": "Habilidade — Couraça Ancestral",
+          "items": [
+            "◆ Reduz 2 de dano físico comum."
+          ]
+        },
+        {
+          "label": "Habilidade — Imparável",
+          "items": [
+            "◆ Não pode ser empurrado por criaturas menores que grande, salvo efeito especial."
+          ]
+        },
+        {
+          "label": "Habilidade — Fúria Territorial",
+          "items": [
+            "◆ Quando sofre dano alto, pode destruir cobertura ou estrutura próxima como reação."
+          ]
+        },
+        {
+          "label": "Resistências",
+          "items": [
+            "◆ Redução 2 contra físico comum."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Pontos sensíveis nas juntas, olhos e parte inferior da mandíbula. Descobrir exige Biologia, Busca, Biologia ou experiência."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Olfato poderoso.",
+            "◆ Percepção de vibração."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Não foge de ameaça pequena. Pode abandonar combate se o invasor sair de seu território."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Chifre raro.",
+            "◆ Placas ancestrais.",
+            "◆ Couro pesado.",
+            "◆ Núcleo ósseo mineral."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Tyrakth Ancião não deve ser encontro aleatório. Ele é evento, obstáculo ou guardião natural de região.",
+            "FONTE OFICIAL // Livro 3, 2.19"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.19",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Tyrakth Ancião",
+          "url": "./assets/bestiary/tyrakth-anciao.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.10",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/tyrakth-anciao.jpg"
     },
     {
-      "id": "livro3-2-21-laceris-comum",
+      "id": "livro3-2-11-laceris-comum",
       "category": "monster",
       "name": "Laceris Comum",
       "tier": "D",
@@ -7467,17 +7735,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 14,
       "movement": "10 m",
       "habitat": "túneis, corredores estreitos, cavernas secas, ruínas",
-      "behavior": "ataca de frestas, corta e recua",
+      "behavior": "",
       "attributes": "REF 16/MOD +3",
-      "attacks": "Ataques:\nLâminas Ósseas: 1d8 cortante.\nMordida Curta: 1d4 perfurante.",
-      "abilities": "Habilidade — Corte Profundo:\nEm crítico ou sucesso completo especial, o alvo faz JPF com CON. Em falha, fica Sangrando.\nHabilidade — Corpo Estreito:\nPode passar por aberturas pequenas e recebe +1 em Furtividade em corredores estreitos.\nHabilidade — Recuo Cortante:\nSe errar ataque corpo a corpo contra ele, o atacante sofre 1 dano cortante se estiver adjacente, uma vez por rodada.",
-      "resistances": "Resistências:\nNenhuma especial.",
-      "weaknesses": "Fraquezas:\nEspaços abertos reduzem sua vantagem. Luz forte dificulta emboscadas.",
-      "senses": "Sentidos:\nAudição aguçada.\nVisão no escuro.",
-      "moral": "Moral:\nRecua quando perde metade dos PV, mas pode seguir o grupo à distância.",
-      "resources": "Recursos coletáveis:\nLâmina óssea.\nCouro fino.\nSangue coagulante.",
-      "campaign": "Uso em campanha:\nLaceris é ótimo para horror de ruína e para ensinar que corredores estreitos favorecem certas criaturas.",
-      "summary": "ataca de frestas, corta e recua",
+      "attacks": "◆ Lâminas Ósseas: 1d8 cortante.\n◆ Mordida Curta: 1d4 perfurante.",
+      "abilities": "◆ Em crítico ou sucesso completo especial, o alvo faz JPF com CON. Em falha, fica Sangrando.\n◆ Pode passar por aberturas pequenas e recebe +1 em Furtividade em corredores estreitos.\n◆ Se errar ataque corpo a corpo contra ele, o atacante sofre 1 dano cortante se estiver adjacente, uma vez por rodada.",
+      "resistances": "◆ Nenhuma especial.",
+      "weaknesses": "◆ Espaços abertos reduzem sua vantagem. Luz forte dificulta emboscadas.",
+      "senses": "◆ Audição aguçada.\n◆ Visão no escuro.",
+      "moral": "◆ Recua quando perde metade dos PV, mas pode seguir o grupo à distância.",
+      "resources": "◆ Lâmina óssea.\n◆ Couro fino.\n◆ Sangue coagulante.",
+      "campaign": "◆ Laceris é ótimo para horror de ruína e para ensinar que corredores estreitos favorecem certas criaturas.\nFONTE OFICIAL // Livro 3, 2.21",
+      "summary": "◆ Laceris é ótimo para horror de ruína e para ensinar que corredores estreitos favorecem certas criaturas.\nFONTE OFICIAL // Livro 3, 2.21",
       "tags": [
         "D",
         "predador de ruína",
@@ -7488,54 +7756,102 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: D.",
-            "Tipo: predador de ruína.",
-            "Papel: emboscador/predador rápido.",
-            "Tamanho: médio.",
-            "Habitat: túneis, corredores estreitos, cavernas secas, ruínas.",
-            "Comportamento: ataca de frestas, corta e recua.",
-            "PV: 20.",
-            "CA: 14.",
-            "Movimento: 10 m.",
-            "Atributos importantes:",
-            "REF 16/MOD +3.",
-            "FOR 12/MOD +1.",
-            "MEN 12/MOD +1.",
-            "Ataques:",
-            "Lâminas Ósseas: 1d8 cortante.",
-            "Mordida Curta: 1d4 perfurante.",
-            "Habilidade — Corte Profundo:",
-            "Em crítico ou sucesso completo especial, o alvo faz JPF com CON. Em falha, fica Sangrando.",
-            "Habilidade — Corpo Estreito:",
-            "Pode passar por aberturas pequenas e recebe +1 em Furtividade em corredores estreitos.",
-            "Habilidade — Recuo Cortante:",
-            "Se errar ataque corpo a corpo contra ele, o atacante sofre 1 dano cortante se estiver adjacente, uma vez por rodada.",
-            "Resistências:",
-            "Nenhuma especial.",
-            "Fraquezas:",
-            "Espaços abertos reduzem sua vantagem. Luz forte dificulta emboscadas.",
-            "Sentidos:",
-            "Audição aguçada.",
-            "Visão no escuro.",
-            "Moral:",
-            "Recua quando perde metade dos PV, mas pode seguir o grupo à distância.",
-            "Recursos coletáveis:",
-            "Lâmina óssea.",
-            "Couro fino.",
-            "Sangue coagulante.",
-            "Uso em campanha:",
-            "Laceris é ótimo para horror de ruína e para ensinar que corredores estreitos favorecem certas criaturas."
+            "REGISTRO VISUAL // D // predador de ruína",
+            "Tier: D",
+            "Tipo: predador de ruína",
+            "Papel: emboscador/predador rápido",
+            "Tamanho: médio",
+            "Habitat: túneis, corredores estreitos, cavernas secas, ruínas",
+            "PV: 20",
+            "CA: 14",
+            "Movimento: 10 m",
+            "Atributos importantes: REF 16/MOD +3",
+            "◆ REF 16/MOD +3.",
+            "◆ FOR 12/MOD +1.",
+            "◆ MEN 12/MOD +1."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Lâminas Ósseas: 1d8 cortante.",
+            "◆ Mordida Curta: 1d4 perfurante."
+          ]
+        },
+        {
+          "label": "Habilidade — Corte Profundo",
+          "items": [
+            "◆ Em crítico ou sucesso completo especial, o alvo faz JPF com CON. Em falha, fica Sangrando."
+          ]
+        },
+        {
+          "label": "Habilidade — Corpo Estreito",
+          "items": [
+            "◆ Pode passar por aberturas pequenas e recebe +1 em Furtividade em corredores estreitos."
+          ]
+        },
+        {
+          "label": "Habilidade — Recuo Cortante",
+          "items": [
+            "◆ Se errar ataque corpo a corpo contra ele, o atacante sofre 1 dano cortante se estiver adjacente, uma vez por rodada."
+          ]
+        },
+        {
+          "label": "Resistências",
+          "items": [
+            "◆ Nenhuma especial."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Espaços abertos reduzem sua vantagem. Luz forte dificulta emboscadas."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Audição aguçada.",
+            "◆ Visão no escuro."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Recua quando perde metade dos PV, mas pode seguir o grupo à distância."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Lâmina óssea.",
+            "◆ Couro fino.",
+            "◆ Sangue coagulante."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Laceris é ótimo para horror de ruína e para ensinar que corredores estreitos favorecem certas criaturas.",
+            "FONTE OFICIAL // Livro 3, 2.21"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.21",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Laceris Comum",
+          "url": "./assets/bestiary/laceris-comum.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.11",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/laceris-comum.jpg"
     },
     {
-      "id": "livro3-2-22-laceris-serrilhado",
+      "id": "livro3-2-12-laceris-serrilhado",
       "category": "monster",
       "name": "Laceris Serrilhado",
       "tier": "C",
@@ -7546,17 +7862,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 15,
       "movement": "11 m",
       "habitat": "ruínas profundas, túneis de caça, zonas secas",
-      "behavior": "marca presas, sangra alvos e espera enfraquecimento",
+      "behavior": "",
       "attributes": "REF 18/MOD +4",
-      "attacks": "Ataques:\nGarras Serrilhadas: 1d10 cortante.",
-      "abilities": "Habilidade — Ferida Aberta:\nSe causar Sangrando em um alvo, esse Sangramento é mais difícil de estancar. Testes de Medicina contra essa ferida sofrem -1 sem kit adequado.\nHabilidade — Caçador de Ecos:\nRecebe +1 para rastrear alvos feridos dentro de ruínas ou túneis.\nHabilidade — Ataque de Fresta:\nPode atacar através de abertura estreita ou cobertura parcial sem se expor totalmente, se houver ambiente adequado.",
-      "resistances": "Resistências:\nResistência leve contra cortante.",
-      "weaknesses": "Fraquezas:\nSom grave ou vibração forte pode desorientá-lo por 1 rodada.",
-      "senses": "Sentidos:\nAudição excelente.\nVibração.",
-      "moral": "Moral:\nNão luta até a morte se puder continuar caçando depois.",
-      "resources": "Recursos coletáveis:\nGarras serrilhadas.\nMedula coagulante.\nPele flexível.",
-      "campaign": "Uso em campanha:\nLaceris Serrilhado funciona como ameaça recorrente que persegue o grupo dentro de uma ruína.",
-      "summary": "marca presas, sangra alvos e espera enfraquecimento",
+      "attacks": "◆ Garras Serrilhadas: 1d10 cortante.\n◆ Pode atacar através de abertura estreita ou cobertura parcial sem se expor totalmente, se houver ambiente adequado.",
+      "abilities": "◆ Se causar Sangrando em um alvo, esse Sangramento é mais difícil de estancar. Testes de Medicina contra essa ferida sofrem -1 sem kit adequado.\n◆ Recebe +1 para rastrear alvos feridos dentro de ruínas ou túneis.\n◆ Pode atacar através de abertura estreita ou cobertura parcial sem se expor totalmente, se houver ambiente adequado.",
+      "resistances": "",
+      "weaknesses": "◆ Som grave ou vibração forte pode desorientá-lo por 1 rodada.",
+      "senses": "◆ Audição excelente.\n◆ Vibração.",
+      "moral": "◆ Não luta até a morte se puder continuar caçando depois.",
+      "resources": "◆ Garras serrilhadas.\n◆ Medula coagulante.\n◆ Pele flexível.",
+      "campaign": "◆ Laceris Serrilhado funciona como ameaça recorrente que persegue o grupo dentro de uma ruína.\nFONTE OFICIAL // Livro 3, 2.22",
+      "summary": "◆ Laceris Serrilhado funciona como ameaça recorrente que persegue o grupo dentro de uma ruína.\nFONTE OFICIAL // Livro 3, 2.22",
       "tags": [
         "C",
         "predador especializado",
@@ -7567,53 +7883,95 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: C.",
-            "Tipo: predador especializado.",
-            "Papel: emboscador/controlador.",
-            "Tamanho: médio.",
-            "Habitat: ruínas profundas, túneis de caça, zonas secas.",
-            "Comportamento: marca presas, sangra alvos e espera enfraquecimento.",
-            "PV: 36.",
-            "CA: 15.",
-            "Movimento: 11 m.",
-            "Atributos importantes:",
-            "REF 18/MOD +4.",
-            "FOR 14/MOD +2.",
-            "MEN 12/MOD +1.",
-            "Ataques:",
-            "Garras Serrilhadas: 1d10 cortante.",
-            "Habilidade — Ferida Aberta:",
-            "Se causar Sangrando em um alvo, esse Sangramento é mais difícil de estancar. Testes de Medicina contra essa ferida sofrem -1 sem kit adequado.",
-            "Habilidade — Caçador de Ecos:",
-            "Recebe +1 para rastrear alvos feridos dentro de ruínas ou túneis.",
-            "Habilidade — Ataque de Fresta:",
-            "Pode atacar através de abertura estreita ou cobertura parcial sem se expor totalmente, se houver ambiente adequado.",
-            "Resistências:",
-            "Resistência leve contra cortante.",
-            "Fraquezas:",
-            "Som grave ou vibração forte pode desorientá-lo por 1 rodada.",
-            "Sentidos:",
-            "Audição excelente.",
-            "Vibração.",
-            "Moral:",
-            "Não luta até a morte se puder continuar caçando depois.",
-            "Recursos coletáveis:",
-            "Garras serrilhadas.",
-            "Medula coagulante.",
-            "Pele flexível.",
-            "Uso em campanha:",
-            "Laceris Serrilhado funciona como ameaça recorrente que persegue o grupo dentro de uma ruína."
+            "REGISTRO VISUAL // C // predador especializado",
+            "Tier: C",
+            "Tipo: predador especializado",
+            "Papel: emboscador/controlador",
+            "Tamanho: médio",
+            "Habitat: ruínas profundas, túneis de caça, zonas secas",
+            "PV: 36",
+            "CA: 15",
+            "Movimento: 11 m",
+            "Atributos importantes: REF 18/MOD +4",
+            "◆ REF 18/MOD +4.",
+            "◆ FOR 14/MOD +2.",
+            "◆ MEN 12/MOD +1."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Garras Serrilhadas: 1d10 cortante."
+          ]
+        },
+        {
+          "label": "Habilidade — Ferida Aberta",
+          "items": [
+            "◆ Se causar Sangrando em um alvo, esse Sangramento é mais difícil de estancar. Testes de Medicina contra essa ferida sofrem -1 sem kit adequado."
+          ]
+        },
+        {
+          "label": "Habilidade — Caçador de Ecos",
+          "items": [
+            "◆ Recebe +1 para rastrear alvos feridos dentro de ruínas ou túneis."
+          ]
+        },
+        {
+          "label": "Habilidade — Ataque de Fresta",
+          "items": [
+            "◆ Pode atacar através de abertura estreita ou cobertura parcial sem se expor totalmente, se houver ambiente adequado."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Som grave ou vibração forte pode desorientá-lo por 1 rodada."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Audição excelente.",
+            "◆ Vibração."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Não luta até a morte se puder continuar caçando depois."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Garras serrilhadas.",
+            "◆ Medula coagulante.",
+            "◆ Pele flexível."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Laceris Serrilhado funciona como ameaça recorrente que persegue o grupo dentro de uma ruína.",
+            "FONTE OFICIAL // Livro 3, 2.22"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.22",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Laceris Serrilhado",
+          "url": "./assets/bestiary/laceris-serrilhado.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.12",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/laceris-serrilhado.jpg"
     },
     {
-      "id": "livro3-2-24-morvak-carnical",
+      "id": "livro3-2-13-morvak-carnical",
       "category": "monster",
       "name": "Morvak Carniçal",
       "tier": "D",
@@ -7624,17 +7982,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 12,
       "movement": "7 m",
       "habitat": "ruínas com cadáveres, pântanos, zonas de descarte, campos de batalha",
-      "behavior": "defende fonte de alimento e tenta intimidar antes de atacar",
+      "behavior": "",
       "attributes": "FOR 14/MOD +2",
-      "attacks": "Ataques:\nPancada: 1d8 concussão.\nMordida Suja: 1d6 perfurante.",
-      "abilities": "Habilidade — Mordida Contaminada:\nEm sucesso completo, o alvo faz JPF com CON. Em falha, fica Envenenado leve ou Doente, conforme o ambiente.\nHabilidade — Pele Grossa:\nReduz 1 dano de concussão ou cortante comum, uma vez por rodada.\nHabilidade — Banquete Sombrio:\nSe gastar uma ação devorando cadáver ou carne próxima, recupera 1d4 PV. Só pode fazer isso se houver material orgânico disponível.",
-      "resistances": "Resistências:\nResistência contra doença comum.",
-      "weaknesses": "Fraquezas:\nFogo e cheiros químicos fortes.",
-      "senses": "Sentidos:\nOlfato excelente para cadáveres.",
-      "moral": "Moral:\nDefende alimento, mas foge de fogo intenso ou ameaça claramente superior.",
-      "resources": "Recursos coletáveis:\nCouro grosso.\nBile contaminante.\nDentes.",
-      "campaign": "Uso em campanha:\nMorvaks mostram que uma área teve morte demais. Podem indicar massacre, batalha antiga ou contaminação.",
-      "summary": "defende fonte de alimento e tenta intimidar antes de atacar",
+      "attacks": "◆ Pancada: 1d8 concussão.\n◆ Mordida Suja: 1d6 perfurante.",
+      "abilities": "◆ Em sucesso completo, o alvo faz JPF com CON. Em falha, fica Envenenado leve ou Doente, conforme o ambiente.\n◆ Reduz 1 dano de concussão ou cortante comum, uma vez por rodada.\n◆ Se gastar uma ação devorando cadáver ou carne próxima, recupera 1d4 PV. Só pode fazer isso se houver material orgânico disponível.",
+      "resistances": "",
+      "weaknesses": "◆ Fogo e cheiros químicos fortes.",
+      "senses": "◆ Olfato excelente para cadáveres.",
+      "moral": "◆ Defende alimento, mas foge de fogo intenso ou ameaça claramente superior.",
+      "resources": "◆ Couro grosso.\n◆ Bile contaminante.\n◆ Dentes.",
+      "campaign": "◆ Morvaks mostram que uma área teve morte demais. Podem indicar massacre, batalha antiga ou contaminação.\nFONTE OFICIAL // Livro 3, 2.24",
+      "summary": "◆ Morvaks mostram que uma área teve morte demais. Podem indicar massacre, batalha antiga ou contaminação.\nFONTE OFICIAL // Livro 3, 2.24",
       "tags": [
         "D",
         "carniceiro resistente",
@@ -7645,54 +8003,96 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: D.",
-            "Tipo: carniceiro resistente.",
-            "Papel: tanque/brutamontes leve.",
-            "Tamanho: médio.",
-            "Habitat: ruínas com cadáveres, pântanos, zonas de descarte, campos de batalha.",
-            "Comportamento: defende fonte de alimento e tenta intimidar antes de atacar.",
-            "PV: 28.",
-            "CA: 12.",
-            "Movimento: 7 m.",
-            "Atributos importantes:",
-            "FOR 14/MOD +2.",
-            "CON 16/MOD +3.",
-            "REF 10/MOD +0.",
-            "MEN 10/MOD +0.",
-            "Ataques:",
-            "Pancada: 1d8 concussão.",
-            "Mordida Suja: 1d6 perfurante.",
-            "Habilidade — Mordida Contaminada:",
-            "Em sucesso completo, o alvo faz JPF com CON. Em falha, fica Envenenado leve ou Doente, conforme o ambiente.",
-            "Habilidade — Pele Grossa:",
-            "Reduz 1 dano de concussão ou cortante comum, uma vez por rodada.",
-            "Habilidade — Banquete Sombrio:",
-            "Se gastar uma ação devorando cadáver ou carne próxima, recupera 1d4 PV. Só pode fazer isso se houver material orgânico disponível.",
-            "Resistências:",
-            "Resistência contra doença comum.",
-            "Fraquezas:",
-            "Fogo e cheiros químicos fortes.",
-            "Sentidos:",
-            "Olfato excelente para cadáveres.",
-            "Moral:",
-            "Defende alimento, mas foge de fogo intenso ou ameaça claramente superior.",
-            "Recursos coletáveis:",
-            "Couro grosso.",
-            "Bile contaminante.",
-            "Dentes.",
-            "Uso em campanha:",
-            "Morvaks mostram que uma área teve morte demais. Podem indicar massacre, batalha antiga ou contaminação."
+            "REGISTRO VISUAL // D // carniceiro resistente",
+            "Tier: D",
+            "Tipo: carniceiro resistente",
+            "Papel: tanque/brutamontes leve",
+            "Tamanho: médio",
+            "Habitat: ruínas com cadáveres, pântanos, zonas de descarte, campos de batalha",
+            "PV: 28",
+            "CA: 12",
+            "Movimento: 7 m",
+            "Atributos importantes: FOR 14/MOD +2",
+            "◆ FOR 14/MOD +2.",
+            "◆ CON 16/MOD +3.",
+            "◆ REF 10/MOD +0.",
+            "◆ MEN 10/MOD +0."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Pancada: 1d8 concussão.",
+            "◆ Mordida Suja: 1d6 perfurante."
+          ]
+        },
+        {
+          "label": "Habilidade — Mordida Contaminada",
+          "items": [
+            "◆ Em sucesso completo, o alvo faz JPF com CON. Em falha, fica Envenenado leve ou Doente, conforme o ambiente."
+          ]
+        },
+        {
+          "label": "Habilidade — Pele Grossa",
+          "items": [
+            "◆ Reduz 1 dano de concussão ou cortante comum, uma vez por rodada."
+          ]
+        },
+        {
+          "label": "Habilidade — Banquete Sombrio",
+          "items": [
+            "◆ Se gastar uma ação devorando cadáver ou carne próxima, recupera 1d4 PV. Só pode fazer isso se houver material orgânico disponível."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Fogo e cheiros químicos fortes."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Olfato excelente para cadáveres."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Defende alimento, mas foge de fogo intenso ou ameaça claramente superior."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Couro grosso.",
+            "◆ Bile contaminante.",
+            "◆ Dentes."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Morvaks mostram que uma área teve morte demais. Podem indicar massacre, batalha antiga ou contaminação.",
+            "FONTE OFICIAL // Livro 3, 2.24"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.24",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Morvak Carniçal",
+          "url": "./assets/bestiary/morvak-carnical.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.13",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/morvak-carnical.jpg"
     },
     {
-      "id": "livro3-2-25-morvak-putrefato",
+      "id": "livro3-2-14-morvak-putrefato",
       "category": "monster",
       "name": "Morvak Putrefato",
       "tier": "C",
@@ -7703,17 +8103,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 13,
       "movement": "6 m",
       "habitat": "fossas tóxicas, ruínas contaminadas, pântanos mortos",
-      "behavior": "lento, persistente e extremamente difícil de ignorar",
+      "behavior": "",
       "attributes": "FOR 16/MOD +3",
-      "attacks": "Ataques:\nPancada Pesada: 1d10 concussão.\nMordida Podre: 1d8 perfurante.\nAtaques corpo a corpo contra o Morvak Putrefato podem respingar fluido. Em erro crítico, o atacante faz JPF com CON ou fica Envenenado.",
-      "abilities": "Habilidade — Aura de Podridão:\nCriaturas adjacentes fazem JPF com CON ao início do turno se permanecerem próximas por muito tempo. Em falha, ficam Tontas ou Envenenadas leves.\nHabilidade — Corpo Imundo:\nHabilidade — Não Cai Fácil:\nNa primeira vez que chegaria a 0 PV, permanece com 1 PV e ganha uma última ação, salvo se for destruído por fogo, ácido forte ou dano massivo.",
-      "resistances": "Resistências:\nResistência contra doença, veneno comum e concussão.",
-      "weaknesses": "Fraquezas:\nFogo.\nÁcido purificador.\nAmbiente seco.",
-      "senses": "Sentidos:\nOlfato.\nPercepção por calor fraca.",
-      "moral": "Moral:\nQuase nunca foge. É mais instinto de decomposição do que medo.",
-      "resources": "Recursos coletáveis:\nBile putrefata.\nCouro contaminado.\nÓrgão resistente.",
-      "campaign": "Uso em campanha:\nMorvak Putrefato é bom como guardião de local contaminado ou obstáculo que força o grupo a pensar em purificação.",
-      "summary": "lento, persistente e extremamente difícil de ignorar",
+      "attacks": "◆ Pancada Pesada: 1d10 concussão.\n◆ Mordida Podre: 1d8 perfurante.\n◆ Ataques corpo a corpo contra o Morvak Putrefato podem respingar fluido. Em erro crítico, o atacante faz JPF com CON ou fica Envenenado.",
+      "abilities": "◆ Criaturas adjacentes fazem JPF com CON ao início do turno se permanecerem próximas por muito tempo. Em falha, ficam Tontas ou Envenenadas leves.\n◆ Ataques corpo a corpo contra o Morvak Putrefato podem respingar fluido. Em erro crítico, o atacante faz JPF com CON ou fica Envenenado.\n◆ Na primeira vez que chegaria a 0 PV, permanece com 1 PV e ganha uma última ação, salvo se for destruído por fogo, ácido forte ou dano massivo.",
+      "resistances": "",
+      "weaknesses": "◆ Fogo.\n◆ Ácido purificador.\n◆ Ambiente seco.",
+      "senses": "◆ Olfato.\n◆ Percepção por calor fraca.",
+      "moral": "◆ Quase nunca foge. É mais instinto de decomposição do que medo.",
+      "resources": "◆ Bile putrefata.\n◆ Couro contaminado.\n◆ Órgão resistente.",
+      "campaign": "◆ Morvak Putrefato é bom como guardião de local contaminado ou obstáculo que força o grupo a pensar em purificação.\nFONTE OFICIAL // Livro 3, 2.25",
+      "summary": "◆ Morvak Putrefato é bom como guardião de local contaminado ou obstáculo que força o grupo a pensar em purificação.\nFONTE OFICIAL // Livro 3, 2.25",
       "tags": [
         "C",
         "carniceiro contaminado",
@@ -7724,56 +8124,98 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: C.",
-            "Tipo: carniceiro contaminado.",
-            "Papel: tanque/ameaça ambiental.",
-            "Tamanho: grande.",
-            "Habitat: fossas tóxicas, ruínas contaminadas, pântanos mortos.",
-            "Comportamento: lento, persistente e extremamente difícil de ignorar.",
-            "PV: 48.",
-            "CA: 13.",
-            "Movimento: 6 m.",
-            "Atributos importantes:",
-            "FOR 16/MOD +3.",
-            "CON 20/MOD +5.",
-            "REF 8/MOD -1.",
-            "Ataques:",
-            "Pancada Pesada: 1d10 concussão.",
-            "Mordida Podre: 1d8 perfurante.",
-            "Habilidade — Aura de Podridão:",
-            "Criaturas adjacentes fazem JPF com CON ao início do turno se permanecerem próximas por muito tempo. Em falha, ficam Tontas ou Envenenadas leves.",
-            "Habilidade — Corpo Imundo:",
-            "Ataques corpo a corpo contra o Morvak Putrefato podem respingar fluido. Em erro crítico, o atacante faz JPF com CON ou fica Envenenado.",
-            "Habilidade — Não Cai Fácil:",
-            "Na primeira vez que chegaria a 0 PV, permanece com 1 PV e ganha uma última ação, salvo se for destruído por fogo, ácido forte ou dano massivo.",
-            "Resistências:",
-            "Resistência contra doença, veneno comum e concussão.",
-            "Fraquezas:",
-            "Fogo.",
-            "Ácido purificador.",
-            "Ambiente seco.",
-            "Sentidos:",
-            "Olfato.",
-            "Percepção por calor fraca.",
-            "Moral:",
-            "Quase nunca foge. É mais instinto de decomposição do que medo.",
-            "Recursos coletáveis:",
-            "Bile putrefata.",
-            "Couro contaminado.",
-            "Órgão resistente.",
-            "Uso em campanha:",
-            "Morvak Putrefato é bom como guardião de local contaminado ou obstáculo que força o grupo a pensar em purificação."
+            "REGISTRO VISUAL // C // carniceiro contaminado",
+            "Tier: C",
+            "Tipo: carniceiro contaminado",
+            "Papel: tanque/ameaça ambiental",
+            "Tamanho: grande",
+            "Habitat: fossas tóxicas, ruínas contaminadas, pântanos mortos",
+            "PV: 48",
+            "CA: 13",
+            "Movimento: 6 m",
+            "Atributos importantes: FOR 16/MOD +3",
+            "◆ FOR 16/MOD +3.",
+            "◆ CON 20/MOD +5.",
+            "◆ REF 8/MOD -1."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Pancada Pesada: 1d10 concussão.",
+            "◆ Mordida Podre: 1d8 perfurante."
+          ]
+        },
+        {
+          "label": "Habilidade — Aura de Podridão",
+          "items": [
+            "◆ Criaturas adjacentes fazem JPF com CON ao início do turno se permanecerem próximas por muito tempo. Em falha, ficam Tontas ou Envenenadas leves."
+          ]
+        },
+        {
+          "label": "Habilidade — Corpo Imundo",
+          "items": [
+            "◆ Ataques corpo a corpo contra o Morvak Putrefato podem respingar fluido. Em erro crítico, o atacante faz JPF com CON ou fica Envenenado."
+          ]
+        },
+        {
+          "label": "Habilidade — Não Cai Fácil",
+          "items": [
+            "◆ Na primeira vez que chegaria a 0 PV, permanece com 1 PV e ganha uma última ação, salvo se for destruído por fogo, ácido forte ou dano massivo."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Fogo.",
+            "◆ Ácido purificador.",
+            "◆ Ambiente seco."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Olfato.",
+            "◆ Percepção por calor fraca."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Quase nunca foge. É mais instinto de decomposição do que medo."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Bile putrefata.",
+            "◆ Couro contaminado.",
+            "◆ Órgão resistente."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Morvak Putrefato é bom como guardião de local contaminado ou obstáculo que força o grupo a pensar em purificação.",
+            "FONTE OFICIAL // Livro 3, 2.25"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.25",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Morvak Putrefato",
+          "url": "./assets/bestiary/morvak-putrefato.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.14",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/morvak-putrefato.jpg"
     },
     {
-      "id": "livro3-2-27-nyxaracne-menor",
+      "id": "livro3-2-15-nyxaracne-menor",
       "category": "monster",
       "name": "Nyxaracne Menor",
       "tier": "D",
@@ -7784,17 +8226,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 13,
       "movement": "8 m, escalada 8 m",
       "habitat": "cavernas, ruínas, túneis, tetos altos",
-      "behavior": "ataca de cima, prende alvos isolados e evita grupos com fogo",
+      "behavior": "",
       "attributes": "REF 16/MOD +3",
-      "attacks": "Ataques:\nPresas: 1d6 perfurante.",
-      "abilities": "Habilidade — Teia Escura:\nAlvo atingido por ataque especial faz JPR com REF. Em falha, fica Imobilizado. Pode gastar ação para tentar se soltar.\nHabilidade — Andar no Teto:\nIgnora terreno difícil no chão enquanto houver teto ou parede adequada.\nHabilidade — Silêncio de Teia:\nEm área com muitas teias, testes de Percepção baseados em som sofrem -1.",
-      "resistances": "Resistências:\nResistência leve contra queda.",
-      "weaknesses": "Fraquezas:\nFogo e luz intensa.",
-      "senses": "Sentidos:\nVisão no escuro.\nVibração em teias.",
-      "moral": "Moral:\nFoge se a teia principal for queimada ou se sofrer fogo.",
-      "resources": "Recursos coletáveis:\nTeia resistente.\nVeneno fraco.\nOlhos sensíveis.",
-      "campaign": "Uso em campanha:\nBoa ameaça para resgates em caverna e exploração vertical.",
-      "summary": "ataca de cima, prende alvos isolados e evita grupos com fogo",
+      "attacks": "◆ Presas: 1d6 perfurante.",
+      "abilities": "◆ Alvo atingido por ataque especial faz JPR com REF. Em falha, fica Imobilizado. Pode gastar ação para tentar se soltar.\n◆ Ignora terreno difícil no chão enquanto houver teto ou parede adequada.\n◆ Em área com muitas teias, testes de Percepção baseados em som sofrem -1.",
+      "resistances": "",
+      "weaknesses": "◆ Fogo e luz intensa.",
+      "senses": "◆ Visão no escuro.\n◆ Vibração em teias.",
+      "moral": "◆ Foge se a teia principal for queimada ou se sofrer fogo.",
+      "resources": "◆ Teia resistente.\n◆ Veneno fraco.\n◆ Olhos sensíveis.",
+      "campaign": "◆ Boa ameaça para resgates em caverna e exploração vertical.\nFONTE OFICIAL // Livro 3, 2.27",
+      "summary": "◆ Boa ameaça para resgates em caverna e exploração vertical.\nFONTE OFICIAL // Livro 3, 2.27",
       "tags": [
         "D",
         "aracnídeo de sombra",
@@ -7805,53 +8247,95 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: D.",
-            "Tipo: aracnídeo de sombra.",
-            "Papel: emboscador/controlador.",
-            "Tamanho: médio.",
-            "Habitat: cavernas, ruínas, túneis, tetos altos.",
-            "Comportamento: ataca de cima, prende alvos isolados e evita grupos com fogo.",
-            "PV: 20.",
-            "CA: 13.",
-            "Movimento: 8 m, escalada 8 m.",
-            "Atributos importantes:",
-            "REF 16/MOD +3.",
-            "FOR 12/MOD +1.",
-            "MEN 12/MOD +1.",
-            "Ataques:",
-            "Presas: 1d6 perfurante.",
-            "Habilidade — Teia Escura:",
-            "Alvo atingido por ataque especial faz JPR com REF. Em falha, fica Imobilizado. Pode gastar ação para tentar se soltar.",
-            "Habilidade — Andar no Teto:",
-            "Ignora terreno difícil no chão enquanto houver teto ou parede adequada.",
-            "Habilidade — Silêncio de Teia:",
-            "Em área com muitas teias, testes de Percepção baseados em som sofrem -1.",
-            "Resistências:",
-            "Resistência leve contra queda.",
-            "Fraquezas:",
-            "Fogo e luz intensa.",
-            "Sentidos:",
-            "Visão no escuro.",
-            "Vibração em teias.",
-            "Moral:",
-            "Foge se a teia principal for queimada ou se sofrer fogo.",
-            "Recursos coletáveis:",
-            "Teia resistente.",
-            "Veneno fraco.",
-            "Olhos sensíveis.",
-            "Uso em campanha:",
-            "Boa ameaça para resgates em caverna e exploração vertical."
+            "REGISTRO VISUAL // D // aracnídeo de sombra",
+            "Tier: D",
+            "Tipo: aracnídeo de sombra",
+            "Papel: emboscador/controlador",
+            "Tamanho: médio",
+            "Habitat: cavernas, ruínas, túneis, tetos altos",
+            "PV: 20",
+            "CA: 13",
+            "Movimento: 8 m, escalada 8 m",
+            "Atributos importantes: REF 16/MOD +3",
+            "◆ REF 16/MOD +3.",
+            "◆ FOR 12/MOD +1.",
+            "◆ MEN 12/MOD +1."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Presas: 1d6 perfurante."
+          ]
+        },
+        {
+          "label": "Habilidade — Teia Escura",
+          "items": [
+            "◆ Alvo atingido por ataque especial faz JPR com REF. Em falha, fica Imobilizado. Pode gastar ação para tentar se soltar."
+          ]
+        },
+        {
+          "label": "Habilidade — Andar no Teto",
+          "items": [
+            "◆ Ignora terreno difícil no chão enquanto houver teto ou parede adequada."
+          ]
+        },
+        {
+          "label": "Habilidade — Silêncio de Teia",
+          "items": [
+            "◆ Em área com muitas teias, testes de Percepção baseados em som sofrem -1."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Fogo e luz intensa."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Visão no escuro.",
+            "◆ Vibração em teias."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Foge se a teia principal for queimada ou se sofrer fogo."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Teia resistente.",
+            "◆ Veneno fraco.",
+            "◆ Olhos sensíveis."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Boa ameaça para resgates em caverna e exploração vertical.",
+            "FONTE OFICIAL // Livro 3, 2.27"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.27",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Nyxaracne Menor",
+          "url": "./assets/bestiary/nyxaracne-menor.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.15",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/nyxaracne-menor.jpg"
     },
     {
-      "id": "livro3-2-28-nyxaracne-tecela",
+      "id": "livro3-2-16-nyxaracne-tecela",
       "category": "monster",
       "name": "Nyxaracne Tecelã",
       "tier": "C",
@@ -7862,17 +8346,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 14,
       "movement": "8 m, escalada 8 m",
       "habitat": "ninhos, ruínas profundas, cavernas com muita teia",
-      "behavior": "controla território, separa invasores e usa filhotes",
+      "behavior": "",
       "attributes": "REF 16/MOD +3",
-      "attacks": "Ataques:\nPresas: 1d8 perfurante.",
-      "abilities": "Habilidade — Campo de Teias:\nCria área de teia que conta como terreno difícil. Quem correr dentro dela faz JPR com REF ou fica Imobilizado.\nHabilidade — Apagar Luz:\nUma vez por cena, cobre uma fonte de luz pequena ou média com teia escura, reduzindo visibilidade.\nHabilidade — Chamar Filhotes:\nSe estiver em ninho, pode chamar 1d4 Nyxaracnes pequenas, Larvas Vorazes ou criaturas menores, a critério do Mestre.\nHabilidade — Teia Condutora:\nEquipamentos tecnológicos presos na teia podem sofrer interferência leve.",
-      "resistances": "Resistências:\nResistência leve contra dano de queda.",
-      "weaknesses": "Fraquezas:\nFogo destrói teias rapidamente.\nLuz forte impede Apagar Luz por 1 rodada.",
-      "senses": "Sentidos:\nVibração em teias.\nVisão no escuro.\nPercepção de calor fraca.",
-      "moral": "Moral:\nDefende ninho. Se ovos forem destruídos, pode entrar em fúria ou fugir para reconstruir ninho.",
-      "resources": "Recursos coletáveis:\nTeia de alta qualidade.\nVeneno.\nCasulo.\nÓrgão sensorial.",
-      "campaign": "Uso em campanha:\nExcelente chefe de missão de resgate, exploração ou ninho.",
-      "summary": "controla território, separa invasores e usa filhotes",
+      "attacks": "◆ Presas: 1d8 perfurante.",
+      "abilities": "◆ Cria área de teia que conta como terreno difícil. Quem correr dentro dela faz JPR com REF ou fica Imobilizado.\n◆ Uma vez por cena, cobre uma fonte de luz pequena ou média com teia escura, reduzindo visibilidade.\n◆ Se estiver em ninho, pode chamar 1d4 Nyxaracnes pequenas, Larvas Vorazes ou criaturas menores, a critério do Mestre.\n◆ Equipamentos tecnológicos presos na teia podem sofrer interferência leve.",
+      "resistances": "",
+      "weaknesses": "◆ Fogo destrói teias rapidamente.\n◆ Luz forte impede Apagar Luz por 1 rodada.",
+      "senses": "◆ Vibração em teias.\n◆ Visão no escuro.\n◆ Percepção de calor fraca.",
+      "moral": "◆ Defende ninho. Se ovos forem destruídos, pode entrar em fúria ou fugir para reconstruir ninho.",
+      "resources": "◆ Teia de alta qualidade.\n◆ Veneno.\n◆ Casulo.\n◆ Órgão sensorial.",
+      "campaign": "◆ Excelente chefe de missão de resgate, exploração ou ninho.\nFONTE OFICIAL // Livro 3, 2.28",
+      "summary": "◆ Excelente chefe de missão de resgate, exploração ou ninho.\nFONTE OFICIAL // Livro 3, 2.28",
       "tags": [
         "C",
         "aracnídeo de sombra",
@@ -7883,146 +8367,974 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: C.",
-            "Tipo: aracnídeo de sombra.",
-            "Papel: controlador/suporte.",
-            "Tamanho: grande.",
-            "Habitat: ninhos, ruínas profundas, cavernas com muita teia.",
-            "Comportamento: controla território, separa invasores e usa filhotes.",
-            "PV: 38.",
-            "CA: 14.",
-            "Movimento: 8 m, escalada 8 m.",
-            "Atributos importantes:",
-            "REF 16/MOD +3.",
-            "MEN 14/MOD +2.",
-            "CON 14/MOD +2.",
-            "Ataques:",
-            "Presas: 1d8 perfurante.",
-            "Habilidade — Campo de Teias:",
-            "Cria área de teia que conta como terreno difícil. Quem correr dentro dela faz JPR com REF ou fica Imobilizado.",
-            "Habilidade — Apagar Luz:",
-            "Uma vez por cena, cobre uma fonte de luz pequena ou média com teia escura, reduzindo visibilidade.",
-            "Habilidade — Chamar Filhotes:",
-            "Se estiver em ninho, pode chamar 1d4 Nyxaracnes pequenas, Larvas Vorazes ou criaturas menores, a critério do Mestre.",
-            "Habilidade — Teia Condutora:",
-            "Equipamentos tecnológicos presos na teia podem sofrer interferência leve.",
-            "Resistências:",
-            "Resistência leve contra dano de queda.",
-            "Fraquezas:",
-            "Fogo destrói teias rapidamente.",
-            "Luz forte impede Apagar Luz por 1 rodada.",
-            "Sentidos:",
-            "Vibração em teias.",
-            "Visão no escuro.",
-            "Percepção de calor fraca.",
-            "Moral:",
-            "Defende ninho. Se ovos forem destruídos, pode entrar em fúria ou fugir para reconstruir ninho.",
-            "Recursos coletáveis:",
-            "Teia de alta qualidade.",
-            "Veneno.",
-            "Casulo.",
-            "Órgão sensorial.",
-            "Uso em campanha:",
-            "Excelente chefe de missão de resgate, exploração ou ninho."
+            "REGISTRO VISUAL // C // aracnídeo de sombra",
+            "Tier: C",
+            "Tipo: aracnídeo de sombra",
+            "Papel: controlador/suporte",
+            "Tamanho: grande",
+            "Habitat: ninhos, ruínas profundas, cavernas com muita teia",
+            "PV: 38",
+            "CA: 14",
+            "Movimento: 8 m, escalada 8 m",
+            "Atributos importantes: REF 16/MOD +3",
+            "◆ REF 16/MOD +3.",
+            "◆ MEN 14/MOD +2.",
+            "◆ CON 14/MOD +2."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Presas: 1d8 perfurante."
+          ]
+        },
+        {
+          "label": "Habilidade — Campo de Teias",
+          "items": [
+            "◆ Cria área de teia que conta como terreno difícil. Quem correr dentro dela faz JPR com REF ou fica Imobilizado."
+          ]
+        },
+        {
+          "label": "Habilidade — Apagar Luz",
+          "items": [
+            "◆ Uma vez por cena, cobre uma fonte de luz pequena ou média com teia escura, reduzindo visibilidade."
+          ]
+        },
+        {
+          "label": "Habilidade — Chamar Filhotes",
+          "items": [
+            "◆ Se estiver em ninho, pode chamar 1d4 Nyxaracnes pequenas, Larvas Vorazes ou criaturas menores, a critério do Mestre."
+          ]
+        },
+        {
+          "label": "Habilidade — Teia Condutora",
+          "items": [
+            "◆ Equipamentos tecnológicos presos na teia podem sofrer interferência leve."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Fogo destrói teias rapidamente.",
+            "◆ Luz forte impede Apagar Luz por 1 rodada."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Vibração em teias.",
+            "◆ Visão no escuro.",
+            "◆ Percepção de calor fraca."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Defende ninho. Se ovos forem destruídos, pode entrar em fúria ou fugir para reconstruir ninho."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Teia de alta qualidade.",
+            "◆ Veneno.",
+            "◆ Casulo.",
+            "◆ Órgão sensorial."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Excelente chefe de missão de resgate, exploração ou ninho.",
+            "FONTE OFICIAL // Livro 3, 2.28"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.28",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Nyxaracne Tecelã",
+          "url": "./assets/bestiary/nyxaracne-tecela.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.16",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/nyxaracne-tecela.jpg"
     },
     {
-      "id": "livro3-2-29-nyxaracne-matriarca",
+      "id": "livro3-2-17-nyxaracne-matriarca",
       "category": "monster",
       "name": "Nyxaracne Matriarca",
       "tier": "B",
-      "type": "aracnídeo superior",
-      "role": "chefe/controlador",
+      "type": "aracnídeo superior de sombra",
+      "role": "chefe, controlador e senhora de ninho",
       "size": "enorme",
       "pv": 78,
       "ca": 16,
-      "movement": "8 m, escalada 8 m",
-      "habitat": "ninho profundo, ruína tomada por teias, cavernas antigas",
-      "behavior": "raramente sai do ninho. Usa filhotes, teias e terreno para vencer",
-      "attributes": "FOR 16/MOD +3",
-      "attacks": "Ataques:\nPresas da Matriarca: 1d10 perfurante.\nPata Cortante: 1d8 cortante.",
-      "abilities": "Habilidade — Domínio do Ninho:\nEnquanto estiver no próprio ninho, a Matriarca recebe +1 CA e pode mover-se por teias sem penalidade.\nHabilidade — Teia Abissal:\nUma vez por rodada, escolhe uma área próxima com teia. Alvos na área fazem JPR com REF ou ficam Imobilizados.\nHabilidade — Ninhada:\nNo fim de cada rodada, se houver ovos ou casulos intactos, 1 criatura menor pode surgir ou se mover.\nHabilidade — Sombra Viva:\nUma vez por cena, apaga todas as luzes pequenas na área do ninho por 1 rodada, salvo luz cósmica forte ou fogo intenso.",
-      "resistances": "Resistências:\nResistência leve contra perfurante.\nResistência contra escuridão e terreno difícil de teia.",
-      "weaknesses": "Fraquezas:\nFogo intenso.\nDestruição dos ovos pode enfraquecer sua Ninhada, mas também pode fazê-la entrar em fúria.",
-      "senses": "Sentidos:\nVibração perfeita em teias.\nVisão no escuro.\nPercepção de calor.",
-      "moral": "Moral:\nLuta até proteger ovos ou rota de fuga. Pode abandonar ninho se a sobrevivência da espécie exigir.",
-      "resources": "Recursos coletáveis:\nTeia superior.\nVeneno concentrado.\nOlhos da Matriarca.\nQuitina escura.\nOvos.",
-      "campaign": "Uso em campanha:\nA Matriarca é chefe de arco subterrâneo. Pode controlar uma região inteira de túneis.",
-      "summary": "raramente sai do ninho. Usa filhotes, teias e terreno para vencer",
+      "movement": "8 m; escalada 8 m",
+      "habitat": "ninho profundo, ruína tomada por teias, cavernas antigas e túneis verticais",
+      "behavior": "",
+      "attributes": "FOR 16/MOD +3; REF 16/MOD +3; CON 18/MOD +4; INT 6/MOD -2; MEN 16/MOD +3; PRE 14/MOD +2",
+      "attacks": "◆ Ataques: Presas da Matriarca, 1d10 perfurante; Pata Cortante, 1d8 cortante.",
+      "abilities": "◆ Habilidade — Domínio do Ninho: enquanto estiver no próprio ninho, recebe +1 CA e ignora penalidade de teias.\n◆ Habilidade — Teia Abissal Menor: uma vez por rodada, escolhe área com teia. Alvos fazem JPR com REF ou ficam Imobilizados.\n◆ Habilidade — Ninhada: no fim de cada rodada, se houver ovos ou casulos intactos, uma criatura menor pode surgir, mover-se ou atrapalhar o grupo.\n◆ Habilidade — Sombra Viva: uma vez por cena, apaga fontes pequenas de luz por 1 rodada, salvo fogo intenso ou luz cósmica forte.",
+      "resistances": "◆ Resistências: resistência leve contra perfurante e contra terreno de teia.",
+      "weaknesses": "◆ Fraquezas: fogo, luz intensa e destruição dos pontos principais do ninho.",
+      "senses": "◆ Sentidos: vibração perfeita em teias, visão no escuro e percepção de calor fraca.",
+      "moral": "◆ Moral: protege ovos e rota de fuga. Pode abandonar o ninho se a espécie estiver ameaçada.",
+      "resources": "◆ Recursos coletáveis: teia superior, veneno concentrado, olhos da Matriarca, quitina escura e ovos.",
+      "campaign": "◆ Uso em campanha: chefe de arco subterrâneo. A Matriarca Abissal do Capítulo 3 é a versão lendária Tier A.\nFONTE OFICIAL // Livro 3, ficha consolidada de 2.29 e 4.16",
+      "summary": "◆ Uso em campanha: chefe de arco subterrâneo. A Matriarca Abissal do Capítulo 3 é a versão lendária Tier A.\nFONTE OFICIAL // Livro 3, ficha consolidada de 2.29 e 4.16",
       "tags": [
         "B",
-        "aracnídeo superior",
-        "chefe/controlador",
+        "aracnídeo superior de sombra",
+        "chefe, controlador e senhora de ninho",
         "enorme"
       ],
       "details": [
         {
           "label": "Resumo",
           "items": [
-            "Tier: B.",
-            "Tipo: aracnídeo superior.",
-            "Papel: chefe/controlador.",
-            "Tamanho: enorme.",
-            "Habitat: ninho profundo, ruína tomada por teias, cavernas antigas.",
-            "Comportamento: raramente sai do ninho. Usa filhotes, teias e terreno para vencer.",
-            "PV: 78.",
-            "CA: 16.",
-            "Movimento: 8 m, escalada 8 m.",
-            "Atributos importantes:",
-            "FOR 16/MOD +3.",
-            "REF 16/MOD +3.",
-            "CON 18/MOD +4.",
-            "MEN 16/MOD +3.",
-            "PRE 14/MOD +2.",
-            "Ataques:",
-            "Presas da Matriarca: 1d10 perfurante.",
-            "Pata Cortante: 1d8 cortante.",
-            "Habilidade — Domínio do Ninho:",
-            "Enquanto estiver no próprio ninho, a Matriarca recebe +1 CA e pode mover-se por teias sem penalidade.",
-            "Habilidade — Teia Abissal:",
-            "Uma vez por rodada, escolhe uma área próxima com teia. Alvos na área fazem JPR com REF ou ficam Imobilizados.",
-            "Habilidade — Ninhada:",
-            "No fim de cada rodada, se houver ovos ou casulos intactos, 1 criatura menor pode surgir ou se mover.",
-            "Habilidade — Sombra Viva:",
-            "Uma vez por cena, apaga todas as luzes pequenas na área do ninho por 1 rodada, salvo luz cósmica forte ou fogo intenso.",
-            "Resistências:",
-            "Resistência leve contra perfurante.",
-            "Resistência contra escuridão e terreno difícil de teia.",
-            "Fraquezas:",
-            "Fogo intenso.",
-            "Destruição dos ovos pode enfraquecer sua Ninhada, mas também pode fazê-la entrar em fúria.",
-            "Sentidos:",
-            "Vibração perfeita em teias.",
-            "Visão no escuro.",
-            "Percepção de calor.",
-            "Moral:",
-            "Luta até proteger ovos ou rota de fuga. Pode abandonar ninho se a sobrevivência da espécie exigir.",
-            "Recursos coletáveis:",
-            "Teia superior.",
-            "Veneno concentrado.",
-            "Olhos da Matriarca.",
-            "Quitina escura.",
-            "Ovos.",
-            "Uso em campanha:",
-            "A Matriarca é chefe de arco subterrâneo. Pode controlar uma região inteira de túneis."
+            "REGISTRO VISUAL // B // aracnídeo superior de sombra",
+            "Tier: B",
+            "Tipo: aracnídeo superior de sombra",
+            "Papel: chefe, controlador e senhora de ninho",
+            "Tamanho: enorme",
+            "Habitat: ninho profundo, ruína tomada por teias, cavernas antigas e túneis verticais",
+            "PV: 78",
+            "CA: 16",
+            "Movimento: 8 m; escalada 8 m",
+            "Atributos importantes: FOR 16/MOD +3; REF 16/MOD +3; CON 18/MOD +4; INT 6/MOD -2; MEN 16/MOD +3; PRE 14/MOD +2",
+            "◆ Ataques: Presas da Matriarca, 1d10 perfurante; Pata Cortante, 1d8 cortante.",
+            "◆ Habilidade — Domínio do Ninho: enquanto estiver no próprio ninho, recebe +1 CA e ignora penalidade de teias.",
+            "◆ Habilidade — Teia Abissal Menor: uma vez por rodada, escolhe área com teia. Alvos fazem JPR com REF ou ficam Imobilizados.",
+            "◆ Habilidade — Ninhada: no fim de cada rodada, se houver ovos ou casulos intactos, uma criatura menor pode surgir, mover-se ou atrapalhar o grupo.",
+            "◆ Habilidade — Sombra Viva: uma vez por cena, apaga fontes pequenas de luz por 1 rodada, salvo fogo intenso ou luz cósmica forte.",
+            "◆ Resistências: resistência leve contra perfurante e contra terreno de teia.",
+            "◆ Fraquezas: fogo, luz intensa e destruição dos pontos principais do ninho.",
+            "◆ Sentidos: vibração perfeita em teias, visão no escuro e percepção de calor fraca.",
+            "◆ Moral: protege ovos e rota de fuga. Pode abandonar o ninho se a espécie estiver ameaçada.",
+            "◆ Recursos coletáveis: teia superior, veneno concentrado, olhos da Matriarca, quitina escura e ovos.",
+            "◆ Uso em campanha: chefe de arco subterrâneo. A Matriarca Abissal do Capítulo 3 é a versão lendária Tier A.",
+            "FONTE OFICIAL // Livro 3, ficha consolidada de 2.29 e 4.16"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.29",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Nyxaracne Matriarca",
+          "url": "./assets/bestiary/nyxaracne-matriarca.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.17",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/nyxaracne-matriarca.jpg"
     },
     {
-      "id": "livro3-2-31-massa-de-teia-sombra",
+      "id": "livro3-2-18-filhote-rasktorian",
+      "category": "monster",
+      "name": "Filhote Rasktorian",
+      "tier": "F",
+      "type": "predador biológico imaturo",
+      "role": "ameaça inicial, enxame menor e presságio de ninho",
+      "size": "pequeno",
+      "pv": 8,
+      "ca": 9,
+      "movement": "7 m",
+      "habitat": "ninhos, túneis baixos, ruínas rasas e bordas de território Rasktorian",
+      "behavior": "",
+      "attributes": "FOR 8/MOD -1; REF 12/MOD +1; CON 10/MOD +0; INT 2/MOD -4; MEN 8/MOD -1; PRE 4/MOD -3",
+      "attacks": "Ataques: Mordida Curta, 1d4 perfurante; Garra Fraca, 1d3 cortante.",
+      "abilities": "◆ Habilidade — Fome de Ninhada: se houver outro Filhote Rasktorian adjacente ao mesmo alvo, recebe +1 no ataque.\n◆ Habilidade — Pânico de Isolamento: se estiver sozinho e sofrer dano, faz teste de moral. Em falha, foge, chia ou chama adultos próximos.\n◆ Habilidade — Cheiro de Sangue Fraco: recebe +1 em Busca para localizar alvo Sangrando em curta distância.",
+      "resistances": "Resistências: nenhuma especial.",
+      "weaknesses": "◆ Fraquezas: fogo, som alto e luz súbita podem fazê-lo fugir por 1 rodada.",
+      "senses": "Sentidos: olfato sensível e audição aguçada.",
+      "moral": "◆ Moral: foge se metade da ninhada cair ou se um adulto não estiver por perto.",
+      "resources": "◆ Recursos coletáveis: dentes pequenos, couro imaturo e glândula odorífera fraca.",
+      "campaign": "◆ Uso em campanha: ideal para indicar que há ninho próximo. Não deve substituir o Rasktorian Jovem oficial.\nFONTE OFICIAL // Livro 3, 4.4",
+      "summary": "◆ Uso em campanha: ideal para indicar que há ninho próximo. Não deve substituir o Rasktorian Jovem oficial.\nFONTE OFICIAL // Livro 3, 4.4",
+      "tags": [
+        "F",
+        "predador biológico imaturo",
+        "ameaça inicial, enxame menor e presságio de ninho",
+        "pequeno"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // F // predador biológico imaturo",
+            "Tier: F",
+            "Tipo: predador biológico imaturo",
+            "Papel: ameaça inicial, enxame menor e presságio de ninho",
+            "Tamanho: pequeno",
+            "Habitat: ninhos, túneis baixos, ruínas rasas e bordas de território Rasktorian",
+            "PV: 8",
+            "CA: 9",
+            "Movimento: 7 m",
+            "Atributos importantes: FOR 8/MOD -1; REF 12/MOD +1; CON 10/MOD +0; INT 2/MOD -4; MEN 8/MOD -1; PRE 4/MOD -3",
+            "Ataques: Mordida Curta, 1d4 perfurante; Garra Fraca, 1d3 cortante.",
+            "◆ Habilidade — Fome de Ninhada: se houver outro Filhote Rasktorian adjacente ao mesmo alvo, recebe +1 no ataque.",
+            "◆ Habilidade — Pânico de Isolamento: se estiver sozinho e sofrer dano, faz teste de moral. Em falha, foge, chia ou chama adultos próximos.",
+            "◆ Habilidade — Cheiro de Sangue Fraco: recebe +1 em Busca para localizar alvo Sangrando em curta distância.",
+            "Resistências: nenhuma especial.",
+            "◆ Fraquezas: fogo, som alto e luz súbita podem fazê-lo fugir por 1 rodada.",
+            "Sentidos: olfato sensível e audição aguçada.",
+            "◆ Moral: foge se metade da ninhada cair ou se um adulto não estiver por perto.",
+            "◆ Recursos coletáveis: dentes pequenos, couro imaturo e glândula odorífera fraca.",
+            "◆ Uso em campanha: ideal para indicar que há ninho próximo. Não deve substituir o Rasktorian Jovem oficial.",
+            "FONTE OFICIAL // Livro 3, 4.4"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Filhote Rasktorian",
+          "url": "./assets/bestiary/filhote-rasktorian.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.18",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/filhote-rasktorian.jpg"
+    },
+    {
+      "id": "livro3-2-19-rasktorian-beta-dominante",
+      "category": "monster",
+      "name": "Rasktorian Beta Dominante",
+      "tier": "C",
+      "type": "predador dominante de bando",
+      "role": "elite, líder intermediário e chefe menor",
+      "size": "médio grande",
+      "pv": 46,
+      "ca": 15,
+      "movement": "11 m",
+      "habitat": "território de caça, ruínas abertas, cavernas largas e rotas bloqueadas por bando",
+      "behavior": "",
+      "attributes": "FOR 16/MOD +3; REF 16/MOD +3; CON 16/MOD +3; INT 6/MOD -2; MEN 12/MOD +1; PRE 12/MOD +1",
+      "attacks": "◆ Ataques: Garra Dominante, 1d8 cortante; Mordida de Pressão, 1d8 perfurante; Pancada de Ombro, 1d6 concussão.",
+      "abilities": "◆ Habilidade — Desafio de Bando: uma vez por cena, escolhe um alvo que tenha causado dano nele. Até o fim da próxima rodada, o Beta recebe +1 em ataques contra esse alvo, mas sofre -1 contra os demais.\n◆ Habilidade — Ordem Instintiva: no início de uma rodada, um Rasktorian Filhote, Jovem ou Adulto próximo pode se mover 3 m ou reposicionar sem atacar.\n◆ Habilidade — Derrubar Presa: se mover pelo menos 6 m e acertar com Garra Dominante, o alvo faz JPR com REF ou fica Derrubado.",
+      "resistances": "Resistências: resistência leve contra cortante comum.",
+      "weaknesses": "◆ Fraquezas: disputa de domínio. Pode ser atraído por desafio, cheiro de sangue Alfa ou invasão de território.",
+      "senses": "◆ Sentidos: olfato excelente, audição aguçada e percepção de vibração curta.",
+      "moral": "◆ Moral: não foge facilmente, mas recua se perceber presença de Alfa ou se o bando for destruído.",
+      "resources": "◆ Recursos coletáveis: garra dominante, couro reforçado, glândula de feromônio e sangue adrenal.",
+      "campaign": "◆ Uso em campanha: serve como chefe de missão inicial avançada ou como guardião do território antes do verdadeiro Alfa.\nFONTE OFICIAL // Livro 3, 4.5",
+      "summary": "◆ Uso em campanha: serve como chefe de missão inicial avançada ou como guardião do território antes do verdadeiro Alfa.\nFONTE OFICIAL // Livro 3, 4.5",
+      "tags": [
+        "C",
+        "predador dominante de bando",
+        "elite, líder intermediário e chefe menor",
+        "médio grande"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // C // predador dominante de bando",
+            "Tier: C",
+            "Tipo: predador dominante de bando",
+            "Papel: elite, líder intermediário e chefe menor",
+            "Tamanho: médio grande",
+            "Habitat: território de caça, ruínas abertas, cavernas largas e rotas bloqueadas por bando",
+            "PV: 46",
+            "CA: 15",
+            "Movimento: 11 m",
+            "Atributos importantes: FOR 16/MOD +3; REF 16/MOD +3; CON 16/MOD +3; INT 6/MOD -2; MEN 12/MOD +1; PRE 12/MOD +1",
+            "◆ Ataques: Garra Dominante, 1d8 cortante; Mordida de Pressão, 1d8 perfurante; Pancada de Ombro, 1d6 concussão.",
+            "◆ Habilidade — Desafio de Bando: uma vez por cena, escolhe um alvo que tenha causado dano nele. Até o fim da próxima rodada, o Beta recebe +1 em ataques contra esse alvo, mas sofre -1 contra os demais.",
+            "◆ Habilidade — Ordem Instintiva: no início de uma rodada, um Rasktorian Filhote, Jovem ou Adulto próximo pode se mover 3 m ou reposicionar sem atacar.",
+            "◆ Habilidade — Derrubar Presa: se mover pelo menos 6 m e acertar com Garra Dominante, o alvo faz JPR com REF ou fica Derrubado.",
+            "Resistências: resistência leve contra cortante comum.",
+            "◆ Fraquezas: disputa de domínio. Pode ser atraído por desafio, cheiro de sangue Alfa ou invasão de território.",
+            "◆ Sentidos: olfato excelente, audição aguçada e percepção de vibração curta.",
+            "◆ Moral: não foge facilmente, mas recua se perceber presença de Alfa ou se o bando for destruído.",
+            "◆ Recursos coletáveis: garra dominante, couro reforçado, glândula de feromônio e sangue adrenal.",
+            "◆ Uso em campanha: serve como chefe de missão inicial avançada ou como guardião do território antes do verdadeiro Alfa.",
+            "FONTE OFICIAL // Livro 3, 4.5"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Rasktorian Beta Dominante",
+          "url": "./assets/bestiary/rasktorian-beta-dominante.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.19",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/rasktorian-beta-dominante.jpg"
+    },
+    {
+      "id": "livro3-2-20-viscerme-de-lodo-menor",
+      "category": "monster",
+      "name": "Viscerme de Lodo Menor",
+      "tier": "F",
+      "type": "lodo biológico reativo",
+      "role": "controle de terreno e armadilha viva",
+      "size": "pequeno ou massa baixa",
+      "pv": 7,
+      "ca": 8,
+      "movement": "4 m em terra; 6 m em lama ou água rasa",
+      "habitat": "pântanos, ruínas alagadas, poços contaminados e lama com resíduo cósmico",
+      "behavior": "",
+      "attributes": "FOR 8/MOD -1; REF 8/MOD -1; CON 12/MOD +1; INT 2/MOD -4; MEN 6/MOD -2; PRE 2/MOD -4",
+      "attacks": "Ataque: Tentáculo de Lodo, 1d4 concussão.",
+      "abilities": "◆ Habilidade — Puxar para a Lama: em sucesso completo, o alvo faz JPF com FOR ou fica Imobilizado até gastar ação para se soltar.\n◆ Habilidade — Corpo Amorfo: passa por frestas, grades largas e rachaduras lamacentas.",
+      "resistances": "Resistências: resistência leve contra concussão comum.",
+      "weaknesses": "Fraquezas: fogo e ambiente seco reduzem seu movimento pela metade.",
+      "senses": "Sentidos: vibração em água e lama.",
+      "moral": "◆ Moral: não possui moral complexa; recua para lama profunda se sofrer fogo.",
+      "resources": "◆ Recursos coletáveis: núcleo viscoso, lodo concentrado e resíduo ácido fraco.",
+      "campaign": "◆ Uso em campanha: funciona como perigo de travessia, não como substituto do Viscerme Comum.\nFONTE OFICIAL // Livro 3, 4.7",
+      "summary": "◆ Uso em campanha: funciona como perigo de travessia, não como substituto do Viscerme Comum.\nFONTE OFICIAL // Livro 3, 4.7",
+      "tags": [
+        "F",
+        "lodo biológico reativo",
+        "controle de terreno e armadilha viva",
+        "pequeno ou massa baixa"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // F // lodo biológico reativo",
+            "Tier: F",
+            "Tipo: lodo biológico reativo",
+            "Papel: controle de terreno e armadilha viva",
+            "Tamanho: pequeno ou massa baixa",
+            "Habitat: pântanos, ruínas alagadas, poços contaminados e lama com resíduo cósmico",
+            "PV: 7",
+            "CA: 8",
+            "Movimento: 4 m em terra; 6 m em lama ou água rasa",
+            "Atributos importantes: FOR 8/MOD -1; REF 8/MOD -1; CON 12/MOD +1; INT 2/MOD -4; MEN 6/MOD -2; PRE 2/MOD -4",
+            "Ataque: Tentáculo de Lodo, 1d4 concussão.",
+            "◆ Habilidade — Puxar para a Lama: em sucesso completo, o alvo faz JPF com FOR ou fica Imobilizado até gastar ação para se soltar.",
+            "◆ Habilidade — Corpo Amorfo: passa por frestas, grades largas e rachaduras lamacentas.",
+            "Resistências: resistência leve contra concussão comum.",
+            "Fraquezas: fogo e ambiente seco reduzem seu movimento pela metade.",
+            "Sentidos: vibração em água e lama.",
+            "◆ Moral: não possui moral complexa; recua para lama profunda se sofrer fogo.",
+            "◆ Recursos coletáveis: núcleo viscoso, lodo concentrado e resíduo ácido fraco.",
+            "◆ Uso em campanha: funciona como perigo de travessia, não como substituto do Viscerme Comum.",
+            "FONTE OFICIAL // Livro 3, 4.7"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Viscerme de Lodo Menor",
+          "url": "./assets/bestiary/viscerme-de-lodo-menor.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.20",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/viscerme-de-lodo-menor.jpg"
+    },
+    {
+      "id": "livro3-2-21-viscerme-de-lodo-instavel",
+      "category": "monster",
+      "name": "Viscerme de Lodo Instável",
+      "tier": "E",
+      "type": "lodo biológico-cósmico instável",
+      "role": "controlador e ameaça ambiental",
+      "size": "médio",
+      "pv": 16,
+      "ca": 9,
+      "movement": "5 m; 7 m em lama ou água rasa",
+      "habitat": "zonas pantanosas contaminadas por Falaris, poços antigos e ruínas alagadas",
+      "behavior": "",
+      "attributes": "FOR 12/MOD +1; REF 8/MOD -1; CON 14/MOD +2; INT 2/MOD -4; MEN 8/MOD -1; PRE 4/MOD -3",
+      "attacks": "◆ Ataques: Tentáculo Ácido, 1d6 concussão/ácido; Abraço Viscoso, 1d4 ácido por rodada contra alvo Imobilizado.",
+      "abilities": "◆ Habilidade — Instabilidade Cósmica: se for destruído por dano cósmico, role 1d6. Em 1, explode em ácido; em 2-3, divide-se em dois Viscermes de Lodo Menores; em 4-6, dissolve normalmente.\n◆ Habilidade — Contaminar Cubo: se um Cubo de Suprimentos aberto estiver adjacente, uma falha ou erro crítico na cena pode contaminá-lo.",
+      "resistances": "Resistências: tóxico comum e concussão leve.",
+      "weaknesses": "Fraquezas: fogo causa +1 dano; frio intenso reduz seu movimento.",
+      "senses": "Sentidos: vibração e percepção rudimentar de calor.",
+      "moral": "Moral: tenta se fundir ao terreno quando cai abaixo da metade dos PV.",
+      "resources": "◆ Recursos coletáveis: núcleo instável, resíduo ácido, lodo cósmico fraco e amostra contaminada.",
+      "campaign": "◆ Uso em campanha: bom para cenas de pântano onde a maior ameaça é perder movimento, recurso ou cubo.\nFONTE OFICIAL // Livro 3, 4.8",
+      "summary": "◆ Uso em campanha: bom para cenas de pântano onde a maior ameaça é perder movimento, recurso ou cubo.\nFONTE OFICIAL // Livro 3, 4.8",
+      "tags": [
+        "E",
+        "lodo biológico-cósmico instável",
+        "controlador e ameaça ambiental",
+        "médio"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // E // lodo biológico-cósmico instável",
+            "Tier: E",
+            "Tipo: lodo biológico-cósmico instável",
+            "Papel: controlador e ameaça ambiental",
+            "Tamanho: médio",
+            "Habitat: zonas pantanosas contaminadas por Falaris, poços antigos e ruínas alagadas",
+            "PV: 16",
+            "CA: 9",
+            "Movimento: 5 m; 7 m em lama ou água rasa",
+            "Atributos importantes: FOR 12/MOD +1; REF 8/MOD -1; CON 14/MOD +2; INT 2/MOD -4; MEN 8/MOD -1; PRE 4/MOD -3",
+            "◆ Ataques: Tentáculo Ácido, 1d6 concussão/ácido; Abraço Viscoso, 1d4 ácido por rodada contra alvo Imobilizado.",
+            "◆ Habilidade — Instabilidade Cósmica: se for destruído por dano cósmico, role 1d6. Em 1, explode em ácido; em 2-3, divide-se em dois Viscermes de Lodo Menores; em 4-6, dissolve normalmente.",
+            "◆ Habilidade — Contaminar Cubo: se um Cubo de Suprimentos aberto estiver adjacente, uma falha ou erro crítico na cena pode contaminá-lo.",
+            "Resistências: tóxico comum e concussão leve.",
+            "Fraquezas: fogo causa +1 dano; frio intenso reduz seu movimento.",
+            "Sentidos: vibração e percepção rudimentar de calor.",
+            "Moral: tenta se fundir ao terreno quando cai abaixo da metade dos PV.",
+            "◆ Recursos coletáveis: núcleo instável, resíduo ácido, lodo cósmico fraco e amostra contaminada.",
+            "◆ Uso em campanha: bom para cenas de pântano onde a maior ameaça é perder movimento, recurso ou cubo.",
+            "FONTE OFICIAL // Livro 3, 4.8"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Viscerme de Lodo Instável",
+          "url": "./assets/bestiary/viscerme-de-lodo-instavel.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.21",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/viscerme-de-lodo-instavel.jpg"
+    },
+    {
+      "id": "livro3-2-22-voraxio-alado-comum",
+      "category": "monster",
+      "name": "Voráxio Alado Comum",
+      "tier": "F",
+      "type": "predador alado de bando",
+      "role": "enxame leve, perseguidor e caçador de feridos",
+      "size": "pequeno",
+      "pv": 8,
+      "ca": 10,
+      "movement": "8 m terrestre; voo 12 m",
+      "habitat": "céu baixo, pântanos, florestas enevoadas, torres abandonadas e rotas abertas",
+      "behavior": "",
+      "attributes": "FOR 10/MOD +0; REF 14/MOD +2; CON 8/MOD -1; INT 4/MOD -3; MEN 8/MOD -1; PRE 6/MOD -2",
+      "attacks": "Ataque: Mordida Aérea, 1d4+1 perfurante.",
+      "abilities": "◆ Habilidade — Investida de Voo: uma vez por cena, se mergulhar de pelo menos 6 m, o alvo faz JPR com REF ou fica Derrubado.\n◆ Habilidade — Caçadores de Sangue: recebe +1 em Busca para rastrear alvo Sangrando.\n◆ Habilidade — Mergulho em Bando: se dois ou mais Voráxios atacarem o mesmo alvo na rodada, o segundo recebe +1 no ataque.",
+      "resistances": "Resistências: nenhuma especial.",
+      "weaknesses": "Fraquezas: fumaça, som agudo e luz súbita.",
+      "senses": "Sentidos: olfato de sangue e visão em baixa luz.",
+      "moral": "Moral: foge se metade do bando cair.",
+      "resources": "Recursos coletáveis: presa afiada, asa membranosa e sangue residual.",
+      "campaign": "◆ Uso em campanha: ameaça inicial de céu baixo e perseguição de viajantes feridos.\nFONTE OFICIAL // Livro 3, 4.13",
+      "summary": "◆ Uso em campanha: ameaça inicial de céu baixo e perseguição de viajantes feridos.\nFONTE OFICIAL // Livro 3, 4.13",
+      "tags": [
+        "F",
+        "predador alado de bando",
+        "enxame leve, perseguidor e caçador de feridos",
+        "pequeno"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // F // predador alado de bando",
+            "Tier: F",
+            "Tipo: predador alado de bando",
+            "Papel: enxame leve, perseguidor e caçador de feridos",
+            "Tamanho: pequeno",
+            "Habitat: céu baixo, pântanos, florestas enevoadas, torres abandonadas e rotas abertas",
+            "PV: 8",
+            "CA: 10",
+            "Movimento: 8 m terrestre; voo 12 m",
+            "Atributos importantes: FOR 10/MOD +0; REF 14/MOD +2; CON 8/MOD -1; INT 4/MOD -3; MEN 8/MOD -1; PRE 6/MOD -2",
+            "Ataque: Mordida Aérea, 1d4+1 perfurante.",
+            "◆ Habilidade — Investida de Voo: uma vez por cena, se mergulhar de pelo menos 6 m, o alvo faz JPR com REF ou fica Derrubado.",
+            "◆ Habilidade — Caçadores de Sangue: recebe +1 em Busca para rastrear alvo Sangrando.",
+            "◆ Habilidade — Mergulho em Bando: se dois ou mais Voráxios atacarem o mesmo alvo na rodada, o segundo recebe +1 no ataque.",
+            "Resistências: nenhuma especial.",
+            "Fraquezas: fumaça, som agudo e luz súbita.",
+            "Sentidos: olfato de sangue e visão em baixa luz.",
+            "Moral: foge se metade do bando cair.",
+            "Recursos coletáveis: presa afiada, asa membranosa e sangue residual.",
+            "◆ Uso em campanha: ameaça inicial de céu baixo e perseguição de viajantes feridos.",
+            "FONTE OFICIAL // Livro 3, 4.13"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Voráxio Alado Comum",
+          "url": "./assets/bestiary/voraxio-alado-comum.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.22",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/voraxio-alado-comum.jpg"
+    },
+    {
+      "id": "livro3-2-23-voraxio-matriarca",
+      "category": "monster",
+      "name": "Voráxio Matriarca",
+      "tier": "D",
+      "type": "predador alado dominante",
+      "role": "chefe de ninho e comandante de bando",
+      "size": "médio grande",
+      "pv": 34,
+      "ca": 13,
+      "movement": "8 m terrestre; voo 15 m",
+      "habitat": "ninhos em torres, penhascos, árvores altas e ruínas abertas",
+      "behavior": "",
+      "attributes": "FOR 14/MOD +2; REF 16/MOD +3; CON 14/MOD +2; INT 6/MOD -2; MEN 10/MOD +0; PRE 12/MOD +1",
+      "attacks": "◆ Ataques: Mordida Dilacerante, 2d6 perfurante; Garras de Mergulho, 1d8 cortante.",
+      "abilities": "◆ Habilidade — Grito de Bando: uma vez por cena, todos os Voráxios aliados podem se mover 3 m sem gastar ação.\n◆ Habilidade — Mergulho Esmagador: se mergulhar de altura, o alvo faz JPR com REF. Em falha, sofre dano e fica Derrubado.",
+      "resistances": "Resistências: resistência leve contra frio ambiental.",
+      "weaknesses": "Fraquezas: dano ao ninho, fumaça densa e espaço sem altura.",
+      "senses": "Sentidos: visão noturna, olfato de sangue e audição aguçada.",
+      "moral": "◆ Moral: defende ovos e filhotes, mas pode abandonar caça se o ninho estiver ameaçado.",
+      "resources": "◆ Recursos coletáveis: presa maior, asa membranosa resistente, glândula de chamado e sangue residual.",
+      "campaign": "◆ Uso em campanha: chefe de ataque noturno a colônia ou de ninho em área elevada.\nFONTE OFICIAL // Livro 3, 4.14",
+      "summary": "◆ Uso em campanha: chefe de ataque noturno a colônia ou de ninho em área elevada.\nFONTE OFICIAL // Livro 3, 4.14",
+      "tags": [
+        "D",
+        "predador alado dominante",
+        "chefe de ninho e comandante de bando",
+        "médio grande"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // D // predador alado dominante",
+            "Tier: D",
+            "Tipo: predador alado dominante",
+            "Papel: chefe de ninho e comandante de bando",
+            "Tamanho: médio grande",
+            "Habitat: ninhos em torres, penhascos, árvores altas e ruínas abertas",
+            "PV: 34",
+            "CA: 13",
+            "Movimento: 8 m terrestre; voo 15 m",
+            "Atributos importantes: FOR 14/MOD +2; REF 16/MOD +3; CON 14/MOD +2; INT 6/MOD -2; MEN 10/MOD +0; PRE 12/MOD +1",
+            "◆ Ataques: Mordida Dilacerante, 2d6 perfurante; Garras de Mergulho, 1d8 cortante.",
+            "◆ Habilidade — Grito de Bando: uma vez por cena, todos os Voráxios aliados podem se mover 3 m sem gastar ação.",
+            "◆ Habilidade — Mergulho Esmagador: se mergulhar de altura, o alvo faz JPR com REF. Em falha, sofre dano e fica Derrubado.",
+            "Resistências: resistência leve contra frio ambiental.",
+            "Fraquezas: dano ao ninho, fumaça densa e espaço sem altura.",
+            "Sentidos: visão noturna, olfato de sangue e audição aguçada.",
+            "◆ Moral: defende ovos e filhotes, mas pode abandonar caça se o ninho estiver ameaçado.",
+            "◆ Recursos coletáveis: presa maior, asa membranosa resistente, glândula de chamado e sangue residual.",
+            "◆ Uso em campanha: chefe de ataque noturno a colônia ou de ninho em área elevada.",
+            "FONTE OFICIAL // Livro 3, 4.14"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Voráxio Matriarca",
+          "url": "./assets/bestiary/voraxio-matriarca.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.23",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/voraxio-matriarca.jpg"
+    },
+    {
+      "id": "livro3-2-24-tyrakth-cristalino",
+      "category": "monster",
+      "name": "Tyrakth Cristalino",
+      "tier": "B",
+      "type": "megafauna cósmica/cristalina",
+      "role": "chefe físico, tanque e evento de terreno",
+      "size": "grande ou enorme",
+      "pv": 80,
+      "ca": 16,
+      "movement": "7 m. Cosmos: 3",
+      "habitat": "crateras, cavernas cristalinas, regiões de ressonância e antigas zonas de impacto",
+      "behavior": "",
+      "attributes": "FOR 20/MOD +5; REF 8/MOD -1; CON 20/MOD +5; INT 4/MOD -3; MEN 12/MOD +1; PRE 16/MOD +3",
+      "attacks": "◆ Ataques: Pisada Sísmica, 2d6 concussão; Chifre Cristalino, 2d8 perfurante/cósmico.",
+      "abilities": "◆ Habilidade — Rugido do Sol Morto: uma vez por cena, todos em alcance médio fazem JPC com PRE. Em falha, sofrem Medo por 1 rodada ou +1 Estresse.\nHabilidade — Carapaça Cristalina: reduz 2 de dano físico comum.\n◆ Habilidade — Ressonância Cósmica: perto de cristais ativos, recupera 1 Cosmos por rodada até o limite definido pelo Mestre.",
+      "resistances": "",
+      "weaknesses": "◆ Fraqueza — Juntas Cristalinas: após ataques pesados, expõe juntas. Descobrir exige Biologia, Busca ou Percepção Cósmica, conforme a abordagem.",
+      "senses": "Sentidos: percepção de vibração, olfato e sensibilidade a cristais.",
+      "moral": "◆ Moral: não caça sem motivo. Defende território e pode ignorar alvos pequenos até ser provocado.",
+      "resources": "◆ Recursos coletáveis: escama cristalina, fragmento de carapaça, cristal de ressonância e material de Tier alto.",
+      "campaign": "◆ Uso em campanha: não é encontro aleatório. É obstáculo, chefe de região ou ameaça que o grupo talvez precise desviar, não matar.\nFONTE OFICIAL // Livro 3, 4.18",
+      "summary": "◆ Uso em campanha: não é encontro aleatório. É obstáculo, chefe de região ou ameaça que o grupo talvez precise desviar, não matar.\nFONTE OFICIAL // Livro 3, 4.18",
+      "tags": [
+        "B",
+        "megafauna cósmica/cristalina",
+        "chefe físico, tanque e evento de terreno",
+        "grande ou enorme"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // B // megafauna cósmica/cristalina",
+            "Tier: B",
+            "Tipo: megafauna cósmica/cristalina",
+            "Papel: chefe físico, tanque e evento de terreno",
+            "Tamanho: grande ou enorme",
+            "Habitat: crateras, cavernas cristalinas, regiões de ressonância e antigas zonas de impacto",
+            "PV: 80",
+            "CA: 16",
+            "Movimento: 7 m. Cosmos: 3",
+            "Atributos importantes: FOR 20/MOD +5; REF 8/MOD -1; CON 20/MOD +5; INT 4/MOD -3; MEN 12/MOD +1; PRE 16/MOD +3",
+            "◆ Ataques: Pisada Sísmica, 2d6 concussão; Chifre Cristalino, 2d8 perfurante/cósmico.",
+            "◆ Habilidade — Rugido do Sol Morto: uma vez por cena, todos em alcance médio fazem JPC com PRE. Em falha, sofrem Medo por 1 rodada ou +1 Estresse.",
+            "Habilidade — Carapaça Cristalina: reduz 2 de dano físico comum.",
+            "◆ Habilidade — Ressonância Cósmica: perto de cristais ativos, recupera 1 Cosmos por rodada até o limite definido pelo Mestre.",
+            "◆ Fraqueza — Juntas Cristalinas: após ataques pesados, expõe juntas. Descobrir exige Biologia, Busca ou Percepção Cósmica, conforme a abordagem.",
+            "Sentidos: percepção de vibração, olfato e sensibilidade a cristais.",
+            "◆ Moral: não caça sem motivo. Defende território e pode ignorar alvos pequenos até ser provocado.",
+            "◆ Recursos coletáveis: escama cristalina, fragmento de carapaça, cristal de ressonância e material de Tier alto.",
+            "◆ Uso em campanha: não é encontro aleatório. É obstáculo, chefe de região ou ameaça que o grupo talvez precise desviar, não matar.",
+            "FONTE OFICIAL // Livro 3, 4.18"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Tyrakth Cristalino",
+          "url": "./assets/bestiary/tyrakth-cristalino.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.24",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/tyrakth-cristalino.jpg"
+    },
+    {
+      "id": "livro3-2-25-tyrakth-desperto",
+      "category": "monster",
+      "name": "Tyrakth Desperto",
+      "tier": "A",
+      "type": "megafauna ancestral tocada pelo Cosmos",
+      "role": "ameaça lendária, chefe de região e força da natureza",
+      "size": "enorme",
+      "pv": 125,
+      "ca": 18,
+      "movement": "8 m. Cosmos: 5",
+      "habitat": "vales cristalinos, montanhas antigas, ruínas abertas e zonas onde Tarantus parece responder ao Cosmos",
+      "behavior": "",
+      "attributes": "FOR 22/MOD +6; REF 8/MOD -1; CON 22/MOD +6; INT 6/MOD -2; MEN 16/MOD +3; PRE 18/MOD +4",
+      "attacks": "◆ Ataques: Investida Telúrica, 2d6 concussão em linha; Chifre Ancestral, 2d8 perfurante/cósmico; Pisoteio, 2d6 concussão em área próxima.",
+      "abilities": "◆ Habilidade — Passos de Terremoto: sempre que se move mais de 6 m, criaturas próximas fazem JPR com REF ou ficam Derrubadas.\n◆ Habilidade — Couraça Viva: reduz 2 de dano físico comum e possui resistência leve contra dano cósmico fraco.\n◆ Habilidade — Chamado Mineral: cristais próximos vibram; sensores e focos podem sofrer interferência se o Mestre quiser aumentar a tensão.\n◆ Habilidade — Evento, não Encontro: o Mestre deve oferecer sinais, rotas de fuga, objetivos alternativos e consequências ambientais.",
+      "resistances": "",
+      "weaknesses": "◆ Fraquezas: juntas cristalinas, olhos, parte inferior da mandíbula e símbolos de contenção antigos.",
+      "senses": "Sentidos: vibração profunda, olfato e percepção de energia mineral.",
+      "moral": "◆ Moral: não foge de ameaça pequena. Pode abandonar combate se a invasão terminar ou se o território for respeitado.",
+      "resources": "◆ Recursos coletáveis: placa ancestral, cristal vivo, chifre desperto e fragmento de couraça cósmica.",
+      "campaign": "◆ Uso em campanha: ameaça de arco avançado. Sobreviver ou redirecionar o Tyrakth pode ser vitória suficiente.\nFONTE OFICIAL // Livro 3, 4.19",
+      "summary": "◆ Uso em campanha: ameaça de arco avançado. Sobreviver ou redirecionar o Tyrakth pode ser vitória suficiente.\nFONTE OFICIAL // Livro 3, 4.19",
+      "tags": [
+        "A",
+        "megafauna ancestral tocada pelo Cosmos",
+        "ameaça lendária, chefe de região e força da natureza",
+        "enorme"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // A // megafauna ancestral tocada pelo Cosmos",
+            "Tier: A",
+            "Tipo: megafauna ancestral tocada pelo Cosmos",
+            "Papel: ameaça lendária, chefe de região e força da natureza",
+            "Tamanho: enorme",
+            "Habitat: vales cristalinos, montanhas antigas, ruínas abertas e zonas onde Tarantus parece responder ao Cosmos",
+            "PV: 125",
+            "CA: 18",
+            "Movimento: 8 m. Cosmos: 5",
+            "Atributos importantes: FOR 22/MOD +6; REF 8/MOD -1; CON 22/MOD +6; INT 6/MOD -2; MEN 16/MOD +3; PRE 18/MOD +4",
+            "◆ Ataques: Investida Telúrica, 2d6 concussão em linha; Chifre Ancestral, 2d8 perfurante/cósmico; Pisoteio, 2d6 concussão em área próxima.",
+            "◆ Habilidade — Passos de Terremoto: sempre que se move mais de 6 m, criaturas próximas fazem JPR com REF ou ficam Derrubadas.",
+            "◆ Habilidade — Couraça Viva: reduz 2 de dano físico comum e possui resistência leve contra dano cósmico fraco.",
+            "◆ Habilidade — Chamado Mineral: cristais próximos vibram; sensores e focos podem sofrer interferência se o Mestre quiser aumentar a tensão.",
+            "◆ Habilidade — Evento, não Encontro: o Mestre deve oferecer sinais, rotas de fuga, objetivos alternativos e consequências ambientais.",
+            "◆ Fraquezas: juntas cristalinas, olhos, parte inferior da mandíbula e símbolos de contenção antigos.",
+            "Sentidos: vibração profunda, olfato e percepção de energia mineral.",
+            "◆ Moral: não foge de ameaça pequena. Pode abandonar combate se a invasão terminar ou se o território for respeitado.",
+            "◆ Recursos coletáveis: placa ancestral, cristal vivo, chifre desperto e fragmento de couraça cósmica.",
+            "◆ Uso em campanha: ameaça de arco avançado. Sobreviver ou redirecionar o Tyrakth pode ser vitória suficiente.",
+            "FONTE OFICIAL // Livro 3, 4.19"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Tyrakth Desperto",
+          "url": "./assets/bestiary/tyrakth-desperto.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.25",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/tyrakth-desperto.jpg"
+    },
+    {
+      "id": "livro3-2-26-silvari-das-folhas",
+      "category": "monster",
+      "name": "Silvari das Folhas",
+      "tier": "D",
+      "type": "predador natural",
+      "role": "emboscador/predador rápido",
+      "size": "médio",
+      "pv": 22,
+      "ca": 14,
+      "movement": "10 m, escalada 6 m",
+      "habitat": "florestas, pântanos densos, jardins antigos, ruínas tomadas por vegetação",
+      "behavior": "",
+      "attributes": "REF 16/MOD +3",
+      "attacks": "◆ Garras Finas: 1d6 cortante.\n◆ Mordida: 1d6 perfurante.\n◆ Se atacar alvo que ainda não o percebeu, causa +1d4 dano.",
+      "abilities": "◆ Recebe +1 em Furtividade em vegetação, sombra natural ou ruínas cobertas por plantas.\n◆ Se atacar alvo que ainda não o percebeu, causa +1d4 dano.\n◆ Após atacar, pode se mover 2 m sem provocar reação, se houver cobertura natural próxima.",
+      "resistances": "",
+      "weaknesses": "◆ Fogo e destruição de vegetação o deixam agressivo ou assustado.",
+      "senses": "◆ Visão em baixa luz.\n◆ Olfato.\n◆ Audição fina.",
+      "moral": "◆ Recua se o território deixar de ser ameaçado. Luta ferozmente por filhotes.",
+      "resources": "◆ Garras finas.\n◆ Couro flexível.\n◆ Folículos camuflados.",
+      "campaign": "◆ Silvari das Folhas funciona bem em aventuras onde a natureza de Tarantus entra em conflito com exploração, coleta ou expansão.\nFONTE OFICIAL // Livro 3, 2.15",
+      "summary": "◆ Silvari das Folhas funciona bem em aventuras onde a natureza de Tarantus entra em conflito com exploração, coleta ou expansão.\nFONTE OFICIAL // Livro 3, 2.15",
+      "tags": [
+        "D",
+        "predador natural",
+        "emboscador/predador rápido",
+        "médio"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // D // predador natural",
+            "Tier: D",
+            "Tipo: predador natural",
+            "Papel: emboscador/predador rápido",
+            "Tamanho: médio",
+            "Habitat: florestas, pântanos densos, jardins antigos, ruínas tomadas por vegetação",
+            "PV: 22",
+            "CA: 14",
+            "Movimento: 10 m, escalada 6 m",
+            "Atributos importantes: REF 16/MOD +3",
+            "◆ REF 16/MOD +3.",
+            "◆ MEN 12/MOD +1.",
+            "◆ FOR 12/MOD +1."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Garras Finas: 1d6 cortante.",
+            "◆ Mordida: 1d6 perfurante."
+          ]
+        },
+        {
+          "label": "Habilidade — Camuflagem Natural",
+          "items": [
+            "◆ Recebe +1 em Furtividade em vegetação, sombra natural ou ruínas cobertas por plantas."
+          ]
+        },
+        {
+          "label": "Habilidade — Ataque Silencioso",
+          "items": [
+            "◆ Se atacar alvo que ainda não o percebeu, causa +1d4 dano."
+          ]
+        },
+        {
+          "label": "Habilidade — Recuo Ágil",
+          "items": [
+            "◆ Após atacar, pode se mover 2 m sem provocar reação, se houver cobertura natural próxima."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Fogo e destruição de vegetação o deixam agressivo ou assustado."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Visão em baixa luz.",
+            "◆ Olfato.",
+            "◆ Audição fina."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Recua se o território deixar de ser ameaçado. Luta ferozmente por filhotes."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Garras finas.",
+            "◆ Couro flexível.",
+            "◆ Folículos camuflados."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Silvari das Folhas funciona bem em aventuras onde a natureza de Tarantus entra em conflito com exploração, coleta ou expansão.",
+            "FONTE OFICIAL // Livro 3, 2.15"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Silvari das Folhas",
+          "url": "./assets/bestiary/silvari-das-folhas.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.26",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/silvari-das-folhas.jpg"
+    },
+    {
+      "id": "livro3-2-27-silvari-luminar",
+      "category": "monster",
+      "name": "Silvari Luminar",
+      "tier": "C",
+      "type": "criatura natural/cósmica leve",
+      "role": "emboscador/controlador",
+      "size": "médio",
+      "pv": 34,
+      "ca": 15,
+      "movement": "10 m, escalada 8 m",
+      "habitat": "bosques de cristais, ruínas verdes, áreas de ressonância Kairi",
+      "behavior": "",
+      "attributes": "REF 16/MOD +3",
+      "attacks": "◆ Garra Luminar: 1d8 cortante.\n◆ Pulso de Luz: 1d6 cósmico ou luminoso em curto alcance.",
+      "abilities": "◆ Uma vez por cena, emite luz pulsante. Alvos próximos fazem JPC com MEN. Em falha, ficam Tontos até o fim do próximo turno.\n◆ Enquanto estiver em vegetação densa ou luz fragmentada, pode se reposicionar 4 m como reação ao ser atacado, uma vez por rodada.\n◆ Recebe +1 em testes enquanto defender um local de ressonância.",
+      "resistances": "",
+      "weaknesses": "◆ Metal queimado, fogo industrial e ruído tecnológico intenso podem perturbá-lo.",
+      "senses": "◆ Percepção Cósmica instintiva.\n◆ Visão em baixa luz.",
+      "moral": "◆ Evita matar sem necessidade. Pode deixar invasores vivos se recuarem.",
+      "resources": "◆ Pelo luminar.\n◆ Cristal orgânico pequeno.\n◆ Garra translúcida.",
+      "campaign": "◆ Silvari Luminar é ideal para conflitos morais: matar a criatura pode ser possível, mas talvez profane um lugar importante.\nFONTE OFICIAL // Livro 3, 2.16",
+      "summary": "◆ Silvari Luminar é ideal para conflitos morais: matar a criatura pode ser possível, mas talvez profane um lugar importante.\nFONTE OFICIAL // Livro 3, 2.16",
+      "tags": [
+        "C",
+        "criatura natural/cósmica leve",
+        "emboscador/controlador",
+        "médio"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // C // criatura natural/cósmica leve",
+            "Tier: C",
+            "Tipo: criatura natural/cósmica leve",
+            "Papel: emboscador/controlador",
+            "Tamanho: médio",
+            "Habitat: bosques de cristais, ruínas verdes, áreas de ressonância Kairi",
+            "PV: 34",
+            "CA: 15",
+            "Movimento: 10 m, escalada 8 m",
+            "Atributos importantes: REF 16/MOD +3",
+            "◆ REF 16/MOD +3.",
+            "◆ MEN 14/MOD +2.",
+            "◆ PRE 12/MOD +1."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Garra Luminar: 1d8 cortante.",
+            "◆ Pulso de Luz: 1d6 cósmico ou luminoso em curto alcance."
+          ]
+        },
+        {
+          "label": "Habilidade — Brilho Hipnótico",
+          "items": [
+            "◆ Uma vez por cena, emite luz pulsante. Alvos próximos fazem JPC com MEN. Em falha, ficam Tontos até o fim do próximo turno."
+          ]
+        },
+        {
+          "label": "Habilidade — Passo Entre Folhas",
+          "items": [
+            "◆ Enquanto estiver em vegetação densa ou luz fragmentada, pode se reposicionar 4 m como reação ao ser atacado, uma vez por rodada."
+          ]
+        },
+        {
+          "label": "Habilidade — Guardião Natural",
+          "items": [
+            "◆ Recebe +1 em testes enquanto defender um local de ressonância."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Metal queimado, fogo industrial e ruído tecnológico intenso podem perturbá-lo."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Percepção Cósmica instintiva.",
+            "◆ Visão em baixa luz."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Evita matar sem necessidade. Pode deixar invasores vivos se recuarem."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Pelo luminar.",
+            "◆ Cristal orgânico pequeno.",
+            "◆ Garra translúcida."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Silvari Luminar é ideal para conflitos morais: matar a criatura pode ser possível, mas talvez profane um lugar importante.",
+            "FONTE OFICIAL // Livro 3, 2.16"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Silvari Luminar",
+          "url": "./assets/bestiary/silvari-luminar.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.27",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/silvari-luminar.jpg"
+    },
+    {
+      "id": "livro3-2-28-massa-de-teia-sombra",
       "category": "monster",
       "name": "Massa de Teia-Sombra",
       "tier": "D",
@@ -8033,17 +9345,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 8,
       "movement": "nenhum, mas pode se contrair em área próxima",
       "habitat": "ruínas escuras, ninhos antigos, zonas de baixa luz e ressonância",
-      "behavior": "prende, abafa luz e reage a movimento brusco",
+      "behavior": "",
       "attributes": "CON 14/MOD +2",
-      "attacks": "Ataque:\nLaço de Teia: alvo na área faz JPR com REF ou fica Imobilizado.",
-      "abilities": "Habilidade — Abafar Luz:\nFontes de luz pequenas dentro da área têm alcance reduzido.\nHabilidade — Puxão Repentino:\nQuando uma criatura falha ao se mover dentro da área, pode ser puxada 2 m.\nHabilidade — Memória de Movimento:\nDepois que uma criatura se debate, a Teia-Sombra recebe +1 para prendê-la novamente até o fim da cena.",
-      "resistances": "Resistências:\nResistência contra perfurante.",
-      "weaknesses": "Fraquezas:\nFogo.\nLuz intensa.\nCorte preciso no núcleo.",
-      "senses": "Sentidos:\nVibração.\nPercepção de calor fraca.",
-      "moral": "Moral:\nNão possui moral. Reage a movimento e energia.",
-      "resources": "Recursos coletáveis:\nFibra de sombra.\nResíduo pegajoso.\nAmostra de teia alterada.",
-      "campaign": "Uso em campanha:\nIdeal como terreno perigoso em ninhos, cavernas e ruínas cósmicas.",
-      "summary": "prende, abafa luz e reage a movimento brusco",
+      "attacks": "◆ Laço de Teia: alvo na área faz JPR com REF ou fica Imobilizado.",
+      "abilities": "◆ Fontes de luz pequenas dentro da área têm alcance reduzido.\n◆ Quando uma criatura falha ao se mover dentro da área, pode ser puxada 2 m.\n◆ Depois que uma criatura se debate, a Teia-Sombra recebe +1 para prendê-la novamente até o fim da cena.",
+      "resistances": "",
+      "weaknesses": "◆ Fogo.\n◆ Luz intensa.\n◆ Corte preciso no núcleo.",
+      "senses": "◆ Vibração.\n◆ Percepção de calor fraca.",
+      "moral": "◆ Não possui moral. Reage a movimento e energia.",
+      "resources": "◆ Fibra de sombra.\n◆ Resíduo pegajoso.\n◆ Amostra de teia alterada.",
+      "campaign": "◆ Ideal como terreno perigoso em ninhos, cavernas e ruínas cósmicas.\nFONTE OFICIAL // Livro 3, 2.31",
+      "summary": "◆ Ideal como terreno perigoso em ninhos, cavernas e ruínas cósmicas.\nFONTE OFICIAL // Livro 3, 2.31",
       "tags": [
         "D",
         "ameaça ambiental/cósmica leve",
@@ -8054,54 +9366,96 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: D.",
-            "Tipo: ameaça ambiental/cósmica leve.",
-            "Papel: controlador/terreno perigoso.",
-            "Tamanho: área.",
-            "Habitat: ruínas escuras, ninhos antigos, zonas de baixa luz e ressonância.",
-            "Comportamento: prende, abafa luz e reage a movimento brusco.",
-            "PV: 18 para núcleo ou concentração principal.",
-            "CA: 8.",
-            "Movimento: nenhum, mas pode se contrair em área próxima.",
-            "Atributos importantes:",
-            "CON 14/MOD +2.",
-            "MEN 10/MOD +0 ou +1 se for cósmica.",
-            "Ataque:",
-            "Laço de Teia: alvo na área faz JPR com REF ou fica Imobilizado.",
-            "Habilidade — Abafar Luz:",
-            "Fontes de luz pequenas dentro da área têm alcance reduzido.",
-            "Habilidade — Puxão Repentino:",
-            "Quando uma criatura falha ao se mover dentro da área, pode ser puxada 2 m.",
-            "Habilidade — Memória de Movimento:",
-            "Depois que uma criatura se debate, a Teia-Sombra recebe +1 para prendê-la novamente até o fim da cena.",
-            "Resistências:",
-            "Resistência contra perfurante.",
-            "Fraquezas:",
-            "Fogo.",
-            "Luz intensa.",
-            "Corte preciso no núcleo.",
-            "Sentidos:",
-            "Vibração.",
-            "Percepção de calor fraca.",
-            "Moral:",
-            "Não possui moral. Reage a movimento e energia.",
-            "Recursos coletáveis:",
-            "Fibra de sombra.",
-            "Resíduo pegajoso.",
-            "Amostra de teia alterada.",
-            "Uso em campanha:",
-            "Ideal como terreno perigoso em ninhos, cavernas e ruínas cósmicas."
+            "REGISTRO VISUAL // D // ameaça ambiental/cósmica leve",
+            "Tier: D",
+            "Tipo: ameaça ambiental/cósmica leve",
+            "Papel: controlador/terreno perigoso",
+            "Tamanho: área",
+            "Habitat: ruínas escuras, ninhos antigos, zonas de baixa luz e ressonância",
+            "PV: 18",
+            "CA: 8",
+            "Movimento: nenhum, mas pode se contrair em área próxima",
+            "Atributos importantes: CON 14/MOD +2",
+            "◆ CON 14/MOD +2.",
+            "◆ MEN 10/MOD +0 ou +1 se for cósmica."
+          ]
+        },
+        {
+          "label": "Ataque",
+          "items": [
+            "◆ Laço de Teia: alvo na área faz JPR com REF ou fica Imobilizado."
+          ]
+        },
+        {
+          "label": "Habilidade — Abafar Luz",
+          "items": [
+            "◆ Fontes de luz pequenas dentro da área têm alcance reduzido."
+          ]
+        },
+        {
+          "label": "Habilidade — Puxão Repentino",
+          "items": [
+            "◆ Quando uma criatura falha ao se mover dentro da área, pode ser puxada 2 m."
+          ]
+        },
+        {
+          "label": "Habilidade — Memória de Movimento",
+          "items": [
+            "◆ Depois que uma criatura se debate, a Teia-Sombra recebe +1 para prendê-la novamente até o fim da cena."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Fogo.",
+            "◆ Luz intensa.",
+            "◆ Corte preciso no núcleo."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Vibração.",
+            "◆ Percepção de calor fraca."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Não possui moral. Reage a movimento e energia."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Fibra de sombra.",
+            "◆ Resíduo pegajoso.",
+            "◆ Amostra de teia alterada."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Ideal como terreno perigoso em ninhos, cavernas e ruínas cósmicas.",
+            "FONTE OFICIAL // Livro 3, 2.31"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.31",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Massa de Teia-Sombra",
+          "url": "./assets/bestiary/massa-de-teia-sombra.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.28",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/massa-de-teia-sombra.jpg"
     },
     {
-      "id": "livro3-2-33-fungo-irritante",
+      "id": "livro3-2-29-fungo-irritante",
       "category": "monster",
       "name": "Fungo Irritante",
       "tier": "D",
@@ -8112,17 +9466,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 9,
       "movement": "nenhum",
       "habitat": "cavernas, pântanos, ruínas úmidas, corpos antigos",
-      "behavior": "libera esporos quando tocado, cortado ou aquecido",
+      "behavior": "",
       "attributes": "",
-      "attacks": "Ataque:\nNuvem de Esporos: sem dano ou 1d4 tóxico em exposição severa.",
-      "abilities": "Habilidade — Esporos Irritantes:\nQuem entra na área sem proteção faz JPF com CON. Em falha, fica Envenenado ou Tonto.\nHabilidade — Explosão de Esporos:\nQuando o núcleo sofre dano cortante ou concussivo, libera uma nuvem maior.\nHabilidade — Contaminar Cubo:\nSe houver Cubo de Suprimentos aberto na área, ele pode ser contaminado em falha ou sucesso parcial.",
-      "resistances": "Resistências:\nResistência contra perfurante.",
-      "weaknesses": "Fraquezas:\nFogo controlado.\nFrio intenso.\nVentilação.\nSelagem.",
-      "senses": "Sentidos:\nNenhum.",
-      "moral": "Moral:\nNenhuma.",
-      "resources": "Recursos coletáveis:\nAmostra fúngica.\nToxina.\nBase para antídoto.",
-      "campaign": "Uso em campanha:\nAmeaça perfeita para missões de medicina, ruínas úmidas e pântanos.",
-      "summary": "libera esporos quando tocado, cortado ou aquecido",
+      "attacks": "◆ Nuvem de Esporos: sem dano ou 1d4 tóxico em exposição severa.",
+      "abilities": "◆ Quem entra na área sem proteção faz JPF com CON. Em falha, fica Envenenado ou Tonto.\n◆ Quando o núcleo sofre dano cortante ou concussivo, libera uma nuvem maior.\n◆ Se houver Cubo de Suprimentos aberto na área, ele pode ser contaminado em falha ou sucesso parcial.",
+      "resistances": "",
+      "weaknesses": "◆ Fogo controlado.\n◆ Frio intenso.\n◆ Ventilação.\n◆ Selagem.",
+      "senses": "◆ Nenhum.",
+      "moral": "◆ Nenhuma.",
+      "resources": "◆ Amostra fúngica.\n◆ Toxina.\n◆ Base para antídoto.",
+      "campaign": "◆ Ameaça perfeita para missões de medicina, ruínas úmidas e pântanos.\nFONTE OFICIAL // Livro 3, 2.33",
+      "summary": "◆ Ameaça perfeita para missões de medicina, ruínas úmidas e pântanos.\nFONTE OFICIAL // Livro 3, 2.33",
       "tags": [
         "D",
         "ameaça biológica ambiental",
@@ -8133,51 +9487,93 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: D.",
-            "Tipo: ameaça biológica ambiental.",
-            "Papel: controlador/ambiente.",
-            "Tamanho: área.",
-            "Habitat: cavernas, pântanos, ruínas úmidas, corpos antigos.",
-            "Comportamento: libera esporos quando tocado, cortado ou aquecido.",
-            "PV: 18 para núcleo visível.",
-            "CA: 9.",
-            "Movimento: nenhum.",
-            "Ataque:",
-            "Nuvem de Esporos: sem dano ou 1d4 tóxico em exposição severa.",
-            "Habilidade — Esporos Irritantes:",
-            "Quem entra na área sem proteção faz JPF com CON. Em falha, fica Envenenado ou Tonto.",
-            "Habilidade — Explosão de Esporos:",
-            "Quando o núcleo sofre dano cortante ou concussivo, libera uma nuvem maior.",
-            "Habilidade — Contaminar Cubo:",
-            "Se houver Cubo de Suprimentos aberto na área, ele pode ser contaminado em falha ou sucesso parcial.",
-            "Resistências:",
-            "Resistência contra perfurante.",
-            "Fraquezas:",
-            "Fogo controlado.",
-            "Frio intenso.",
-            "Ventilação.",
-            "Selagem.",
-            "Sentidos:",
-            "Nenhum.",
-            "Moral:",
-            "Nenhuma.",
-            "Recursos coletáveis:",
-            "Amostra fúngica.",
-            "Toxina.",
-            "Base para antídoto.",
-            "Uso em campanha:",
-            "Ameaça perfeita para missões de medicina, ruínas úmidas e pântanos."
+            "REGISTRO VISUAL // D // ameaça biológica ambiental",
+            "Tier: D",
+            "Tipo: ameaça biológica ambiental",
+            "Papel: controlador/ambiente",
+            "Tamanho: área",
+            "Habitat: cavernas, pântanos, ruínas úmidas, corpos antigos",
+            "PV: 18",
+            "CA: 9",
+            "Movimento: nenhum"
+          ]
+        },
+        {
+          "label": "Ataque",
+          "items": [
+            "◆ Nuvem de Esporos: sem dano ou 1d4 tóxico em exposição severa."
+          ]
+        },
+        {
+          "label": "Habilidade — Esporos Irritantes",
+          "items": [
+            "◆ Quem entra na área sem proteção faz JPF com CON. Em falha, fica Envenenado ou Tonto."
+          ]
+        },
+        {
+          "label": "Habilidade — Explosão de Esporos",
+          "items": [
+            "◆ Quando o núcleo sofre dano cortante ou concussivo, libera uma nuvem maior."
+          ]
+        },
+        {
+          "label": "Habilidade — Contaminar Cubo",
+          "items": [
+            "◆ Se houver Cubo de Suprimentos aberto na área, ele pode ser contaminado em falha ou sucesso parcial."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Fogo controlado.",
+            "◆ Frio intenso.",
+            "◆ Ventilação.",
+            "◆ Selagem."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Nenhum."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Nenhuma."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Amostra fúngica.",
+            "◆ Toxina.",
+            "◆ Base para antídoto."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Ameaça perfeita para missões de medicina, ruínas úmidas e pântanos.",
+            "FONTE OFICIAL // Livro 3, 2.33"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.33",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Fungo Irritante",
+          "url": "./assets/bestiary/fungo-irritante.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.29",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/fungo-irritante.jpg"
     },
     {
-      "id": "livro3-2-34-fungo-de-falaris",
+      "id": "livro3-2-30-fungo-de-falaris",
       "category": "monster",
       "name": "Fungo de Falaris",
       "tier": "C",
@@ -8188,17 +9584,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 10,
       "movement": "crescimento lento fora de combate",
       "habitat": "zonas contaminadas por fragmentos cósmicos, ruínas antigas, cavernas azuis",
-      "behavior": "cresce perto de energia cósmica e reage a chips de profissão",
+      "behavior": "",
       "attributes": "CON 18/MOD +4",
-      "attacks": "Ataque:\nEsporos Luminares: JPF com CON ou JPC com MEN, conforme exposição.",
-      "abilities": "Habilidade — Esporos de Memória:\nQuem falha no teste contra os esporos recebe visão fragmentada de um céu com três sóis e +1 Estresse.\nHabilidade — Crescimento em Equipamento:\nEm sucesso parcial ou falha crítica dentro da área, uma armadura, cubo ou arma pode ganhar resíduo fúngico. Se não for limpo, pode causar interferência depois.\nHabilidade — Reação ao Chip:\nPersonagens com chip de profissão ativo ou instável sofrem -1 no primeiro teste contra o fungo.",
-      "resistances": "Resistências:\nResistência contra tóxico comum.\nResistência leve contra dano cósmico fraco.",
-      "weaknesses": "Fraquezas:\nFogo branco.\nSelagem química.\nPurificação cósmica controlada.",
-      "senses": "Sentidos:\nPercepção de energia fraca.",
-      "moral": "Moral:\nNenhuma.",
-      "resources": "Recursos coletáveis:\nEsporo luminar.\nAmostra cósmica-biológica.\nFilamento azul.",
-      "campaign": "Uso em campanha:\nO Fungo de Falaris deve indicar contaminação maior. Ele não aparece sem motivo.",
-      "summary": "cresce perto de energia cósmica e reage a chips de profissão",
+      "attacks": "◆ Esporos Luminares: JPF com CON ou JPC com MEN, conforme exposição.",
+      "abilities": "◆ Quem falha no teste contra os esporos recebe visão fragmentada de um céu com três sóis e +1 Estresse.\n◆ Em sucesso parcial ou falha crítica dentro da área, uma armadura, cubo ou arma pode ganhar resíduo fúngico. Se não for limpo, pode causar interferência depois.\n◆ Personagens com chip de profissão ativo ou instável sofrem -1 no primeiro teste contra o fungo.",
+      "resistances": "",
+      "weaknesses": "◆ Fogo branco.\n◆ Selagem química.\n◆ Purificação cósmica controlada.",
+      "senses": "◆ Percepção de energia fraca.",
+      "moral": "◆ Nenhuma.",
+      "resources": "◆ Esporo luminar.\n◆ Amostra cósmica-biológica.\n◆ Filamento azul.",
+      "campaign": "◆ O Fungo de Falaris deve indicar contaminação maior. Ele não aparece sem motivo.\nFONTE OFICIAL // Livro 3, 2.34",
+      "summary": "◆ O Fungo de Falaris deve indicar contaminação maior. Ele não aparece sem motivo.\nFONTE OFICIAL // Livro 3, 2.34",
       "tags": [
         "C",
         "ameaça biológica/cósmica",
@@ -8209,54 +9605,95 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: C.",
-            "Tipo: ameaça biológica/cósmica.",
-            "Papel: controlador/ameaça ambiental.",
-            "Tamanho: área.",
-            "Habitat: zonas contaminadas por fragmentos cósmicos, ruínas antigas, cavernas azuis.",
-            "Comportamento: cresce perto de energia cósmica e reage a chips de profissão.",
-            "PV: 32 para núcleo principal.",
-            "CA: 10.",
-            "Movimento: crescimento lento fora de combate.",
-            "Atributos importantes:",
-            "CON 18/MOD +4.",
-            "MEN 14/MOD +2.",
-            "Ataque:",
-            "Esporos Luminares: JPF com CON ou JPC com MEN, conforme exposição.",
-            "Habilidade — Esporos de Memória:",
-            "Quem falha no teste contra os esporos recebe visão fragmentada de um céu com três sóis e +1 Estresse.",
-            "Habilidade — Crescimento em Equipamento:",
-            "Em sucesso parcial ou falha crítica dentro da área, uma armadura, cubo ou arma pode ganhar resíduo fúngico. Se não for limpo, pode causar interferência depois.",
-            "Habilidade — Reação ao Chip:",
-            "Personagens com chip de profissão ativo ou instável sofrem -1 no primeiro teste contra o fungo.",
-            "Resistências:",
-            "Resistência contra tóxico comum.",
-            "Resistência leve contra dano cósmico fraco.",
-            "Fraquezas:",
-            "Fogo branco.",
-            "Selagem química.",
-            "Purificação cósmica controlada.",
-            "Sentidos:",
-            "Percepção de energia fraca.",
-            "Moral:",
-            "Nenhuma.",
-            "Recursos coletáveis:",
-            "Esporo luminar.",
-            "Amostra cósmica-biológica.",
-            "Filamento azul.",
-            "Uso em campanha:",
-            "O Fungo de Falaris deve indicar contaminação maior. Ele não aparece sem motivo."
+            "REGISTRO VISUAL // C // ameaça biológica/cósmica",
+            "Tier: C",
+            "Tipo: ameaça biológica/cósmica",
+            "Papel: controlador/ameaça ambiental",
+            "Tamanho: área",
+            "Habitat: zonas contaminadas por fragmentos cósmicos, ruínas antigas, cavernas azuis",
+            "PV: 32",
+            "CA: 10",
+            "Movimento: crescimento lento fora de combate",
+            "Atributos importantes: CON 18/MOD +4",
+            "◆ CON 18/MOD +4.",
+            "◆ MEN 14/MOD +2."
+          ]
+        },
+        {
+          "label": "Ataque",
+          "items": [
+            "◆ Esporos Luminares: JPF com CON ou JPC com MEN, conforme exposição."
+          ]
+        },
+        {
+          "label": "Habilidade — Esporos de Memória",
+          "items": [
+            "◆ Quem falha no teste contra os esporos recebe visão fragmentada de um céu com três sóis e +1 Estresse."
+          ]
+        },
+        {
+          "label": "Habilidade — Crescimento em Equipamento",
+          "items": [
+            "◆ Em sucesso parcial ou falha crítica dentro da área, uma armadura, cubo ou arma pode ganhar resíduo fúngico. Se não for limpo, pode causar interferência depois."
+          ]
+        },
+        {
+          "label": "Habilidade — Reação ao Chip",
+          "items": [
+            "◆ Personagens com chip de profissão ativo ou instável sofrem -1 no primeiro teste contra o fungo."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Fogo branco.",
+            "◆ Selagem química.",
+            "◆ Purificação cósmica controlada."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Percepção de energia fraca."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Nenhuma."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Esporo luminar.",
+            "◆ Amostra cósmica-biológica.",
+            "◆ Filamento azul."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ O Fungo de Falaris deve indicar contaminação maior. Ele não aparece sem motivo.",
+            "FONTE OFICIAL // Livro 3, 2.34"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.34",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Fungo de Falaris",
+          "url": "./assets/bestiary/fungo-de-falaris.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.30",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/fungo-de-falaris.jpg"
     },
     {
-      "id": "livro3-2-36-drone-defeituoso",
+      "id": "livro3-2-31-drone-defeituoso",
       "category": "monster",
       "name": "Drone Defeituoso",
       "tier": "E",
@@ -8267,17 +9704,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 12,
       "movement": "6 m ou voo curto 6 m",
       "habitat": "oficinas, torres, ruínas, instalações antigas",
-      "behavior": "repete ordem antiga e ataca intrusos",
+      "behavior": "",
       "attributes": "REF 12/MOD +1",
-      "attacks": "Ataque:\nDisparo Elétrico: 1d6 elétrico.",
-      "abilities": "Habilidade — Pulso de Interferência:\nEm crítico ou sucesso completo especial, um equipamento tecnológico simples do alvo sofre Jammed temporário ou falha até o fim da próxima rodada.\nHabilidade — Ordem Corrompida:\nPode ser confundido por credencial, senha, uniforme ou transmissão correta.",
-      "resistances": "Resistências:\nImune a veneno e doença.\nResistência leve contra medo.",
-      "weaknesses": "Fraquezas:\nPulso eletromagnético.\nHack.\nPainel exposto.",
-      "senses": "Sentidos:\nSensor de movimento.\nVisão simples.",
-      "moral": "Moral:\nNão possui moral. Para se for desligado, hackeado ou se a ordem for satisfeita.",
-      "resources": "Recursos coletáveis:\nMicrocircuitos.\nBateria simples.\nLente.\nNúcleo danificado.",
-      "campaign": "Uso em campanha:\nAmeaça tecnológica inicial.",
-      "summary": "repete ordem antiga e ataca intrusos",
+      "attacks": "◆ Disparo Elétrico: 1d6 elétrico.",
+      "abilities": "◆ Em crítico ou sucesso completo especial, um equipamento tecnológico simples do alvo sofre Jammed temporário ou falha até o fim da próxima rodada.\n◆ Pode ser confundido por credencial, senha, uniforme ou transmissão correta.",
+      "resistances": "◆ Imune a veneno e doença.",
+      "weaknesses": "◆ Pulso eletromagnético.\n◆ Hack.\n◆ Painel exposto.",
+      "senses": "◆ Sensor de movimento.\n◆ Visão simples.",
+      "moral": "◆ Não possui moral. Para se for desligado, hackeado ou se a ordem for satisfeita.",
+      "resources": "◆ Microcircuitos.\n◆ Bateria simples.\n◆ Lente.\n◆ Núcleo danificado.",
+      "campaign": "◆ Ameaça tecnológica inicial.\nFONTE OFICIAL // Livro 3, 2.36",
+      "summary": "◆ Ameaça tecnológica inicial.\nFONTE OFICIAL // Livro 3, 2.36",
       "tags": [
         "E",
         "máquina",
@@ -8288,55 +9725,98 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: E.",
-            "Tipo: máquina.",
-            "Papel: atirador/guardião simples.",
-            "Tamanho: pequeno ou médio.",
-            "Habitat: oficinas, torres, ruínas, instalações antigas.",
-            "Comportamento: repete ordem antiga e ataca intrusos.",
-            "PV: 12.",
-            "CA: 12.",
-            "Movimento: 6 m ou voo curto 6 m.",
-            "Atributos importantes:",
-            "REF 12/MOD +1.",
-            "CON 12/MOD +1.",
-            "INT 10/MOD +0.",
-            "Ataque:",
-            "Disparo Elétrico: 1d6 elétrico.",
-            "Habilidade — Pulso de Interferência:",
-            "Em crítico ou sucesso completo especial, um equipamento tecnológico simples do alvo sofre Jammed temporário ou falha até o fim da próxima rodada.",
-            "Habilidade — Ordem Corrompida:",
-            "Pode ser confundido por credencial, senha, uniforme ou transmissão correta.",
-            "Resistências:",
-            "Imune a veneno e doença.",
-            "Resistência leve contra medo.",
-            "Fraquezas:",
-            "Pulso eletromagnético.",
-            "Hack.",
-            "Painel exposto.",
-            "Sentidos:",
-            "Sensor de movimento.",
-            "Visão simples.",
-            "Moral:",
-            "Não possui moral. Para se for desligado, hackeado ou se a ordem for satisfeita.",
-            "Recursos coletáveis:",
-            "Microcircuitos.",
-            "Bateria simples.",
-            "Lente.",
-            "Núcleo danificado.",
-            "Uso em campanha:",
-            "Ameaça tecnológica inicial."
+            "REGISTRO VISUAL // E // máquina",
+            "Tier: E",
+            "Tipo: máquina",
+            "Papel: atirador/guardião simples",
+            "Tamanho: pequeno ou médio",
+            "Habitat: oficinas, torres, ruínas, instalações antigas",
+            "PV: 12",
+            "CA: 12",
+            "Movimento: 6 m ou voo curto 6 m",
+            "Atributos importantes: REF 12/MOD +1",
+            "◆ REF 12/MOD +1.",
+            "◆ CON 12/MOD +1.",
+            "◆ INT 10/MOD +0."
+          ]
+        },
+        {
+          "label": "Ataque",
+          "items": [
+            "◆ Disparo Elétrico: 1d6 elétrico."
+          ]
+        },
+        {
+          "label": "Habilidade — Pulso de Interferência",
+          "items": [
+            "◆ Em crítico ou sucesso completo especial, um equipamento tecnológico simples do alvo sofre Jammed temporário ou falha até o fim da próxima rodada."
+          ]
+        },
+        {
+          "label": "Habilidade — Ordem Corrompida",
+          "items": [
+            "◆ Pode ser confundido por credencial, senha, uniforme ou transmissão correta."
+          ]
+        },
+        {
+          "label": "Resistências",
+          "items": [
+            "◆ Imune a veneno e doença."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Pulso eletromagnético.",
+            "◆ Hack.",
+            "◆ Painel exposto."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Sensor de movimento.",
+            "◆ Visão simples."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Não possui moral. Para se for desligado, hackeado ou se a ordem for satisfeita."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Microcircuitos.",
+            "◆ Bateria simples.",
+            "◆ Lente.",
+            "◆ Núcleo danificado."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Ameaça tecnológica inicial.",
+            "FONTE OFICIAL // Livro 3, 2.36"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.36",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Drone Defeituoso",
+          "url": "./assets/bestiary/drone-defeituoso.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.31",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/drone-defeituoso.jpg"
     },
     {
-      "id": "livro3-2-37-guardiao-antigo",
+      "id": "livro3-2-32-guardiao-antigo",
       "category": "monster",
       "name": "Guardião Antigo",
       "tier": "C",
@@ -8347,17 +9827,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 15,
       "movement": "6 m",
       "habitat": "portas antigas, ruínas, corredores selados, câmaras de contenção",
-      "behavior": "protege área ou item específico. Não persegue longe",
+      "behavior": "",
       "attributes": "FOR 16/MOD +3",
-      "attacks": "Ataque:\nGolpe Mecânico: 1d10 concussão.",
-      "abilities": "Habilidade — Protocolo de Defesa:\nEnquanto estiver protegendo uma área designada, recebe +1 CA.\nHabilidade — Reconhecer Sinal:\nPode parar por 1 rodada se apresentado a símbolo, frase, chip ou credencial compatível.\nHabilidade — Núcleo Exposto:\nApós sofrer crítico, revela ponto fraco. O próximo ataque contra ele recebe +1.\nHabilidade — Voz Antiga:\nAntes do combate, pode emitir mensagem em Nytharûl ou linguagem corrompida.",
-      "resistances": "Resistências:\nImune a veneno e doença.\nResistência contra medo.\nRedução 1 contra dano físico comum.",
-      "weaknesses": "Fraquezas:\nSenha antiga.\nHack.\nDano elétrico preciso.\nSímbolo correto.",
-      "senses": "Sentidos:\nSensor de movimento.\nDetecção de chip.",
-      "moral": "Moral:\nNão recua. Pode ser desligado por protocolo.",
-      "resources": "Recursos coletáveis:\nPlaca antiga.\nNúcleo energético.\nServomotor.\nInscrição.",
-      "campaign": "Uso em campanha:\nGuardião Antigo é ótimo para mostrar que ruínas possuem regras próprias.",
-      "summary": "protege área ou item específico. Não persegue longe",
+      "attacks": "◆ Golpe Mecânico: 1d10 concussão.",
+      "abilities": "◆ Enquanto estiver protegendo uma área designada, recebe +1 CA.\n◆ Pode parar por 1 rodada se apresentado a símbolo, frase, chip ou credencial compatível.\n◆ Após sofrer crítico, revela ponto fraco. O próximo ataque contra ele recebe +1.\n◆ Antes do combate, pode emitir mensagem em Nytharûl ou linguagem corrompida.",
+      "resistances": "◆ Imune a veneno e doença.\n◆ Redução 1 contra dano físico comum.",
+      "weaknesses": "◆ Senha antiga.\n◆ Hack.\n◆ Dano elétrico preciso.\n◆ Símbolo correto.",
+      "senses": "◆ Sensor de movimento.\n◆ Detecção de chip.",
+      "moral": "◆ Não recua. Pode ser desligado por protocolo.",
+      "resources": "◆ Placa antiga.\n◆ Núcleo energético.\n◆ Servomotor.\n◆ Inscrição.",
+      "campaign": "◆ Guardião Antigo é ótimo para mostrar que ruínas possuem regras próprias.\nFONTE OFICIAL // Livro 3, 2.37",
+      "summary": "◆ Guardião Antigo é ótimo para mostrar que ruínas possuem regras próprias.\nFONTE OFICIAL // Livro 3, 2.37",
       "tags": [
         "C",
         "máquina antiga",
@@ -8368,62 +9848,118 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: C.",
-            "Tipo: máquina antiga.",
-            "Papel: guardião/tanque.",
-            "Tamanho: médio.",
-            "Habitat: portas antigas, ruínas, corredores selados, câmaras de contenção.",
-            "Comportamento: protege área ou item específico. Não persegue longe.",
-            "PV: 42.",
-            "CA: 15.",
-            "Movimento: 6 m.",
-            "Atributos importantes:",
-            "FOR 16/MOD +3.",
-            "CON 18/MOD +4.",
-            "INT 12/MOD +1.",
-            "MEN 10/MOD +0.",
-            "Ataque:",
-            "Golpe Mecânico: 1d10 concussão.",
-            "Habilidade — Protocolo de Defesa:",
-            "Enquanto estiver protegendo uma área designada, recebe +1 CA.",
-            "Habilidade — Reconhecer Sinal:",
-            "Pode parar por 1 rodada se apresentado a símbolo, frase, chip ou credencial compatível.",
-            "Habilidade — Núcleo Exposto:",
-            "Após sofrer crítico, revela ponto fraco. O próximo ataque contra ele recebe +1.",
-            "Habilidade — Voz Antiga:",
-            "Antes do combate, pode emitir mensagem em Nytharûl ou linguagem corrompida.",
-            "Resistências:",
-            "Imune a veneno e doença.",
-            "Resistência contra medo.",
-            "Redução 1 contra dano físico comum.",
-            "Fraquezas:",
-            "Senha antiga.",
-            "Hack.",
-            "Dano elétrico preciso.",
-            "Símbolo correto.",
-            "Sentidos:",
-            "Sensor de movimento.",
-            "Detecção de chip.",
-            "Moral:",
-            "Não recua. Pode ser desligado por protocolo.",
-            "Recursos coletáveis:",
-            "Placa antiga.",
-            "Núcleo energético.",
-            "Servomotor.",
-            "Inscrição.",
-            "Uso em campanha:",
-            "Guardião Antigo é ótimo para mostrar que ruínas possuem regras próprias."
+            "REGISTRO VISUAL // C // máquina antiga",
+            "Tier: C",
+            "Tipo: máquina antiga",
+            "Papel: guardião/tanque",
+            "Tamanho: médio",
+            "Habitat: portas antigas, ruínas, corredores selados, câmaras de contenção",
+            "PV: 42",
+            "CA: 15",
+            "Movimento: 6 m",
+            "Atributos importantes: FOR 16/MOD +3",
+            "◆ FOR 16/MOD +3.",
+            "◆ CON 18/MOD +4.",
+            "◆ INT 12/MOD +1.",
+            "◆ MEN 10/MOD +0."
+          ]
+        },
+        {
+          "label": "Ataque",
+          "items": [
+            "◆ Golpe Mecânico: 1d10 concussão."
+          ]
+        },
+        {
+          "label": "Habilidade — Protocolo de Defesa",
+          "items": [
+            "◆ Enquanto estiver protegendo uma área designada, recebe +1 CA."
+          ]
+        },
+        {
+          "label": "Habilidade — Reconhecer Sinal",
+          "items": [
+            "◆ Pode parar por 1 rodada se apresentado a símbolo, frase, chip ou credencial compatível."
+          ]
+        },
+        {
+          "label": "Habilidade — Núcleo Exposto",
+          "items": [
+            "◆ Após sofrer crítico, revela ponto fraco. O próximo ataque contra ele recebe +1."
+          ]
+        },
+        {
+          "label": "Habilidade — Voz Antiga",
+          "items": [
+            "◆ Antes do combate, pode emitir mensagem em Nytharûl ou linguagem corrompida."
+          ]
+        },
+        {
+          "label": "Resistências",
+          "items": [
+            "◆ Imune a veneno e doença."
+          ]
+        },
+        {
+          "label": "Resistência contra medo",
+          "items": [
+            "◆ Redução 1 contra dano físico comum."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Senha antiga.",
+            "◆ Hack.",
+            "◆ Dano elétrico preciso.",
+            "◆ Símbolo correto."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Sensor de movimento.",
+            "◆ Detecção de chip."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Não recua. Pode ser desligado por protocolo."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Placa antiga.",
+            "◆ Núcleo energético.",
+            "◆ Servomotor.",
+            "◆ Inscrição."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Guardião Antigo é ótimo para mostrar que ruínas possuem regras próprias.",
+            "FONTE OFICIAL // Livro 3, 2.37"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.37",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Guardião Antigo",
+          "url": "./assets/bestiary/guardiao-antigo.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.32",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/guardiao-antigo.jpg"
     },
     {
-      "id": "livro3-2-38-sentinela-de-ruina",
+      "id": "livro3-2-33-sentinela-de-ruina",
       "category": "monster",
       "name": "Sentinela de Ruína",
       "tier": "B",
@@ -8434,17 +9970,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 17,
       "movement": "7 m",
       "habitat": "ruínas profundas, câmaras de portal, entradas seladas",
-      "behavior": "impede invasão e testa intrusos com protocolos antigos",
+      "behavior": "",
       "attributes": "FOR 18/MOD +4",
-      "attacks": "Ataques:\nLâmina Mecânica: 1d10 cortante.\nCanhão de Pulso: 1d10 energético.",
-      "abilities": "Habilidade — Campo de Bloqueio:\nUma vez por cena, cria campo que dificulta passagem. Área próxima vira terreno difícil até o fim da próxima rodada.\nHabilidade — Protocolo Antigo:\nSe alguém falar frase correta em Nytharûl, apresentar símbolo válido ou resolver um teste de Tecnologia/Memória Cósmica, a Sentinela perde uma ação ou muda de modo.\nHabilidade — Reação Defensiva:\nUma vez por rodada, quando sofre dano, pode girar placas e receber redução 2 contra esse ataque.\nHabilidade — Modo de Execução:\nAo cair abaixo da metade dos PV, aumenta dano em +1, mas expõe núcleo. Ataques contra o núcleo recebem +1 se os personagens identificarem a abertura.",
-      "resistances": "Resistências:\nImune a veneno, doença e medo comum.\nRedução 2 contra físico comum.",
-      "weaknesses": "Fraquezas:\nNúcleo exposto em Modo de Execução.\nComandos antigos.\nSobrecarga elétrica.",
-      "senses": "Sentidos:\nDetecção de movimento.\nDetecção de chip.\nLeitura térmica.",
-      "moral": "Moral:\nNão foge. Pode mudar prioridade se o objetivo protegido for removido.",
-      "resources": "Recursos coletáveis:\nNúcleo antigo.\nPlacas de Sentinela.\nLente de leitura.\nComponente de portal.",
-      "campaign": "Uso em campanha:\nChefe de ruína. Pode ser derrotada por combate, hack, tradução ou solução de ambiente.",
-      "summary": "impede invasão e testa intrusos com protocolos antigos",
+      "attacks": "◆ Lâmina Mecânica: 1d10 cortante.\n◆ Canhão de Pulso: 1d10 energético.",
+      "abilities": "◆ Uma vez por cena, cria campo que dificulta passagem. Área próxima vira terreno difícil até o fim da próxima rodada.\n◆ Se alguém falar frase correta em Nytharûl, apresentar símbolo válido ou resolver um teste de Tecnologia/Memória Cósmica, a Sentinela perde uma ação ou muda de modo.\n◆ Uma vez por rodada, quando sofre dano, pode girar placas e receber redução 2 contra esse ataque.\n◆ Ao cair abaixo da metade dos PV, aumenta dano em +1, mas expõe núcleo. Ataques contra o núcleo recebem +1 se os personagens identificarem a abertura.",
+      "resistances": "◆ Imune a veneno, doença e medo comum.\n◆ Redução 2 contra físico comum.",
+      "weaknesses": "◆ Núcleo exposto em Modo de Execução.\n◆ Comandos antigos.\n◆ Sobrecarga elétrica.",
+      "senses": "◆ Detecção de movimento.\n◆ Detecção de chip.\n◆ Leitura térmica.",
+      "moral": "◆ Não foge. Pode mudar prioridade se o objetivo protegido for removido.",
+      "resources": "◆ Núcleo antigo.\n◆ Placas de Sentinela.\n◆ Lente de leitura.\n◆ Componente de portal.",
+      "campaign": "◆ Chefe de ruína. Pode ser derrotada por combate, hack, tradução ou solução de ambiente.\nFONTE OFICIAL // Livro 3, 2.38",
+      "summary": "◆ Chefe de ruína. Pode ser derrotada por combate, hack, tradução ou solução de ambiente.\nFONTE OFICIAL // Livro 3, 2.38",
       "tags": [
         "B",
         "máquina antiga de defesa",
@@ -8455,62 +9991,187 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: B.",
-            "Tipo: máquina antiga de defesa.",
-            "Papel: chefe/guardião.",
-            "Tamanho: grande.",
-            "Habitat: ruínas profundas, câmaras de portal, entradas seladas.",
-            "Comportamento: impede invasão e testa intrusos com protocolos antigos.",
-            "PV: 72.",
-            "CA: 17.",
-            "Movimento: 7 m.",
-            "Atributos importantes:",
-            "FOR 18/MOD +4.",
-            "CON 20/MOD +5.",
-            "INT 14/MOD +2.",
-            "MEN 12/MOD +1.",
-            "Ataques:",
-            "Lâmina Mecânica: 1d10 cortante.",
-            "Canhão de Pulso: 1d10 energético.",
-            "Habilidade — Campo de Bloqueio:",
-            "Uma vez por cena, cria campo que dificulta passagem. Área próxima vira terreno difícil até o fim da próxima rodada.",
-            "Habilidade — Protocolo Antigo:",
-            "Se alguém falar frase correta em Nytharûl, apresentar símbolo válido ou resolver um teste de Tecnologia/Memória Cósmica, a Sentinela perde uma ação ou muda de modo.",
-            "Habilidade — Reação Defensiva:",
-            "Uma vez por rodada, quando sofre dano, pode girar placas e receber redução 2 contra esse ataque.",
-            "Habilidade — Modo de Execução:",
-            "Ao cair abaixo da metade dos PV, aumenta dano em +1, mas expõe núcleo. Ataques contra o núcleo recebem +1 se os personagens identificarem a abertura.",
-            "Resistências:",
-            "Imune a veneno, doença e medo comum.",
-            "Redução 2 contra físico comum.",
-            "Fraquezas:",
-            "Núcleo exposto em Modo de Execução.",
-            "Comandos antigos.",
-            "Sobrecarga elétrica.",
-            "Sentidos:",
-            "Detecção de movimento.",
-            "Detecção de chip.",
-            "Leitura térmica.",
-            "Moral:",
-            "Não foge. Pode mudar prioridade se o objetivo protegido for removido.",
-            "Recursos coletáveis:",
-            "Núcleo antigo.",
-            "Placas de Sentinela.",
-            "Lente de leitura.",
-            "Componente de portal.",
-            "Uso em campanha:",
-            "Chefe de ruína. Pode ser derrotada por combate, hack, tradução ou solução de ambiente."
+            "REGISTRO VISUAL // B // máquina antiga de defesa",
+            "Tier: B",
+            "Tipo: máquina antiga de defesa",
+            "Papel: chefe/guardião",
+            "Tamanho: grande",
+            "Habitat: ruínas profundas, câmaras de portal, entradas seladas",
+            "PV: 72",
+            "CA: 17",
+            "Movimento: 7 m",
+            "Atributos importantes: FOR 18/MOD +4",
+            "◆ FOR 18/MOD +4.",
+            "◆ CON 20/MOD +5.",
+            "◆ INT 14/MOD +2.",
+            "◆ MEN 12/MOD +1."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Lâmina Mecânica: 1d10 cortante.",
+            "◆ Canhão de Pulso: 1d10 energético."
+          ]
+        },
+        {
+          "label": "Habilidade — Campo de Bloqueio",
+          "items": [
+            "◆ Uma vez por cena, cria campo que dificulta passagem. Área próxima vira terreno difícil até o fim da próxima rodada."
+          ]
+        },
+        {
+          "label": "Habilidade — Protocolo Antigo",
+          "items": [
+            "◆ Se alguém falar frase correta em Nytharûl, apresentar símbolo válido ou resolver um teste de Tecnologia/Memória Cósmica, a Sentinela perde uma ação ou muda de modo."
+          ]
+        },
+        {
+          "label": "Habilidade — Reação Defensiva",
+          "items": [
+            "◆ Uma vez por rodada, quando sofre dano, pode girar placas e receber redução 2 contra esse ataque."
+          ]
+        },
+        {
+          "label": "Habilidade — Modo de Execução",
+          "items": [
+            "◆ Ao cair abaixo da metade dos PV, aumenta dano em +1, mas expõe núcleo. Ataques contra o núcleo recebem +1 se os personagens identificarem a abertura."
+          ]
+        },
+        {
+          "label": "Resistências",
+          "items": [
+            "◆ Imune a veneno, doença e medo comum.",
+            "◆ Redução 2 contra físico comum."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Núcleo exposto em Modo de Execução.",
+            "◆ Comandos antigos.",
+            "◆ Sobrecarga elétrica."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Detecção de movimento.",
+            "◆ Detecção de chip.",
+            "◆ Leitura térmica."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Não foge. Pode mudar prioridade se o objetivo protegido for removido."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Núcleo antigo.",
+            "◆ Placas de Sentinela.",
+            "◆ Lente de leitura.",
+            "◆ Componente de portal."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Chefe de ruína. Pode ser derrotada por combate, hack, tradução ou solução de ambiente.",
+            "FONTE OFICIAL // Livro 3, 2.38"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.38",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Sentinela de Ruína",
+          "url": "./assets/bestiary/sentinela-de-ruina.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.33",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/sentinela-de-ruina.jpg"
     },
     {
-      "id": "livro3-2-40-saqueador-de-rota",
+      "id": "livro3-2-34-juggernautt-sentinela-suprema",
+      "category": "monster",
+      "name": "Juggernautt — Sentinela Suprema",
+      "tier": "A",
+      "type": "máquina antiga de guerra/guardião de forja",
+      "role": "chefe tecnológico, tanque e sentinela de resistência extrema",
+      "size": "grande, com massa estimada acima de 200 kg",
+      "pv": 140,
+      "ca": 18,
+      "movement": "6 m",
+      "habitat": "forjas antigas, hangares, portões militares, câmaras de contenção e ruínas de defesa",
+      "behavior": "",
+      "attributes": "FOR 22/MOD +6; REF 10/MOD +0; CON 22/MOD +6; INT 12/MOD +1; MEN 10/MOD +0; PRE 14/MOD +2",
+      "attacks": "◆ Ataques: Fuzil de Tûngnásio, 1d10 perfurante, até 2 disparos por rodada se o módulo estiver ativo; Golpe Brutal, 2d6 concussão; Pisão Hidráulico, 1d10 concussão e JPF com FOR ou JPR com REF para evitar Derrubado.",
+      "abilities": "Habilidade — Blindagem Suprema: redução 2 contra dano físico comum.\n◆ Habilidade — Imunidade a Cosmos Comum: dano cósmico fraco não afeta o corpo principal, mas poderes de contenção, selamento ou sobrecarga ainda podem interagir com o núcleo.\n◆ Habilidade — Protocolo de Guarda: não abandona o local protegido, salvo comando antigo válido ou corrupção do objetivo.\n◆ Habilidade — Superaquecimento: após usar o Fuzil de Tûngnásio por 2 rodadas seguidas, expõe o núcleo até o início da próxima rodada. Ataques contra o núcleo recebem +1 se os personagens identificarem a abertura com Engenharia, Tecnologia ou Busca.\n◆ Habilidade — Modo Sentinela Suprema: abaixo de metade dos PV, ignora terreno difícil leve, causa +1 dano corpo a corpo e passa a mirar cubos, portas, cobertura e rotas de fuga.",
+      "resistances": "◆ Resistências: veneno, doença, medo comum, dano físico comum e fogo leve.",
+      "weaknesses": "◆ Fraquezas: explosivos pesados, hack difícil, núcleo exposto após superaquecimento, comandos antigos e sabotagem interna.",
+      "senses": "◆ Sentidos: sensor térmico, sensor de movimento, leitura de chip e detecção de metal.",
+      "moral": "◆ Moral: não possui moral. Para apenas se o protocolo for encerrado, se o núcleo for destruído ou se a ordem antiga for alterada.",
+      "resources": "◆ Recursos coletáveis: fragmentos de Tûngnásio, núcleo da Sentinela Suprema, módulo de arma Tier A, placas de blindagem e processador antigo.",
+      "campaign": "◆ Uso em campanha: chefe de ruína ou forja. A luta deve envolver cobertura, módulos, superaquecimento, hack, terreno e objetivo além de apenas zerar PV.\nFONTE OFICIAL // Livro 3, 4.20",
+      "summary": "◆ Uso em campanha: chefe de ruína ou forja. A luta deve envolver cobertura, módulos, superaquecimento, hack, terreno e objetivo além de apenas zerar PV.\nFONTE OFICIAL // Livro 3, 4.20",
+      "tags": [
+        "A",
+        "máquina antiga de guerra/guardião de forja",
+        "chefe tecnológico, tanque e sentinela de resistência extrema",
+        "grande, com massa estimada acima de 200 kg"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // A // máquina antiga de guerra/guardião de forja",
+            "Tier: A",
+            "Tipo: máquina antiga de guerra/guardião de forja",
+            "Papel: chefe tecnológico, tanque e sentinela de resistência extrema",
+            "Tamanho: grande, com massa estimada acima de 200 kg",
+            "Habitat: forjas antigas, hangares, portões militares, câmaras de contenção e ruínas de defesa",
+            "PV: 140",
+            "CA: 18",
+            "Movimento: 6 m",
+            "Atributos importantes: FOR 22/MOD +6; REF 10/MOD +0; CON 22/MOD +6; INT 12/MOD +1; MEN 10/MOD +0; PRE 14/MOD +2",
+            "◆ O Juggernautt não é Tier A. A versão oficial é Tier A. Ele deve ser usado como chefe tecnológico de alto impacto, guardião de forja antiga ou obstáculo de ruína militar.",
+            "◆ Ataques: Fuzil de Tûngnásio, 1d10 perfurante, até 2 disparos por rodada se o módulo estiver ativo; Golpe Brutal, 2d6 concussão; Pisão Hidráulico, 1d10 concussão e JPF com FOR ou JPR com REF para evitar Derrubado.",
+            "Habilidade — Blindagem Suprema: redução 2 contra dano físico comum.",
+            "◆ Habilidade — Imunidade a Cosmos Comum: dano cósmico fraco não afeta o corpo principal, mas poderes de contenção, selamento ou sobrecarga ainda podem interagir com o núcleo.",
+            "◆ Habilidade — Protocolo de Guarda: não abandona o local protegido, salvo comando antigo válido ou corrupção do objetivo.",
+            "◆ Habilidade — Superaquecimento: após usar o Fuzil de Tûngnásio por 2 rodadas seguidas, expõe o núcleo até o início da próxima rodada. Ataques contra o núcleo recebem +1 se os personagens identificarem a abertura com Engenharia, Tecnologia ou Busca.",
+            "◆ Habilidade — Modo Sentinela Suprema: abaixo de metade dos PV, ignora terreno difícil leve, causa +1 dano corpo a corpo e passa a mirar cubos, portas, cobertura e rotas de fuga.",
+            "◆ Resistências: veneno, doença, medo comum, dano físico comum e fogo leve.",
+            "◆ Fraquezas: explosivos pesados, hack difícil, núcleo exposto após superaquecimento, comandos antigos e sabotagem interna.",
+            "◆ Sentidos: sensor térmico, sensor de movimento, leitura de chip e detecção de metal.",
+            "◆ Moral: não possui moral. Para apenas se o protocolo for encerrado, se o núcleo for destruído ou se a ordem antiga for alterada.",
+            "◆ Recursos coletáveis: fragmentos de Tûngnásio, núcleo da Sentinela Suprema, módulo de arma Tier A, placas de blindagem e processador antigo.",
+            "◆ Uso em campanha: chefe de ruína ou forja. A luta deve envolver cobertura, módulos, superaquecimento, hack, terreno e objetivo além de apenas zerar PV.",
+            "FONTE OFICIAL // Livro 3, 4.20"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Juggernautt — Sentinela Suprema",
+          "url": "./assets/bestiary/juggernautt-sentinela-suprema.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.34",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/juggernautt-sentinela-suprema.jpg"
+    },
+    {
+      "id": "livro3-2-35-saqueador-de-rota",
       "category": "monster",
       "name": "Saqueador de Rota",
       "tier": "E",
@@ -8521,17 +10182,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 11,
       "movement": "8 m",
       "habitat": "estradas, ruínas ocupadas, acampamentos, rotas comerciais",
-      "behavior": "intimida, rouba e foge se a luta fica ruim",
+      "behavior": "",
       "attributes": "REF 12/MOD +1",
-      "attacks": "Ataques:\nFaca: 1d4 cortante.\nPistola Simples: 1d6 balístico.",
-      "abilities": "Habilidade — Conhece a Rota:\nRecebe +1 em Furtividade ou Busca no próprio território.\nHabilidade — Covardia Prática:\nSe metade do grupo de saqueadores cair, deve testar moral ou fugir.",
-      "resistances": "Resistências:\nNenhuma.",
-      "weaknesses": "Fraquezas:\nMedo de patrulheiros, ganância e baixa disciplina.",
-      "senses": "Sentidos:\nComuns.",
-      "moral": "Moral:\nFoge se parecer que vai morrer.",
-      "resources": "Recursos coletáveis:\nMunição.\nArma simples.\nSucata.\nInformação.",
-      "campaign": "Uso em campanha:\nBom inimigo inicial, especialmente para dilemas sociais.",
-      "summary": "intimida, rouba e foge se a luta fica ruim",
+      "attacks": "◆ Faca: 1d4 cortante.\n◆ Pistola Simples: 1d6 balístico.",
+      "abilities": "◆ Recebe +1 em Furtividade ou Busca no próprio território.\n◆ Se metade do grupo de saqueadores cair, deve testar moral ou fugir.",
+      "resistances": "◆ Nenhuma.",
+      "weaknesses": "◆ Medo de patrulheiros, ganância e baixa disciplina.",
+      "senses": "◆ Comuns.",
+      "moral": "◆ Foge se parecer que vai morrer.",
+      "resources": "◆ Munição.\n◆ Arma simples.\n◆ Sucata.\n◆ Informação.",
+      "campaign": "◆ Bom inimigo inicial, especialmente para dilemas sociais.\nFONTE OFICIAL // Livro 3, 2.40",
+      "summary": "◆ Bom inimigo inicial, especialmente para dilemas sociais.\nFONTE OFICIAL // Livro 3, 2.40",
       "tags": [
         "E",
         "humanoide hostil",
@@ -8542,52 +10203,96 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: E.",
-            "Tipo: humanoide hostil.",
-            "Papel: combatente leve/atirador.",
-            "Tamanho: médio.",
-            "Habitat: estradas, ruínas ocupadas, acampamentos, rotas comerciais.",
-            "Comportamento: intimida, rouba e foge se a luta fica ruim.",
-            "PV: 10.",
-            "CA: 11.",
-            "Movimento: 8 m.",
-            "Atributos importantes:",
-            "REF 12/MOD +1.",
-            "PRE 12/MOD +1.",
-            "MEN 10/MOD +0.",
-            "Ataques:",
-            "Faca: 1d4 cortante.",
-            "Pistola Simples: 1d6 balístico.",
-            "Habilidade — Conhece a Rota:",
-            "Recebe +1 em Furtividade ou Busca no próprio território.",
-            "Habilidade — Covardia Prática:",
-            "Se metade do grupo de saqueadores cair, deve testar moral ou fugir.",
-            "Resistências:",
-            "Nenhuma.",
-            "Fraquezas:",
-            "Medo de patrulheiros, ganância e baixa disciplina.",
-            "Sentidos:",
-            "Comuns.",
-            "Moral:",
-            "Foge se parecer que vai morrer.",
-            "Recursos coletáveis:",
-            "Munição.",
-            "Arma simples.",
-            "Sucata.",
-            "Informação.",
-            "Uso em campanha:",
-            "Bom inimigo inicial, especialmente para dilemas sociais."
+            "REGISTRO VISUAL // E // humanoide hostil",
+            "Tier: E",
+            "Tipo: humanoide hostil",
+            "Papel: combatente leve/atirador",
+            "Tamanho: médio",
+            "Habitat: estradas, ruínas ocupadas, acampamentos, rotas comerciais",
+            "PV: 10",
+            "CA: 11",
+            "Movimento: 8 m",
+            "Atributos importantes: REF 12/MOD +1",
+            "◆ REF 12/MOD +1.",
+            "◆ PRE 12/MOD +1.",
+            "◆ MEN 10/MOD +0."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Faca: 1d4 cortante.",
+            "◆ Pistola Simples: 1d6 balístico."
+          ]
+        },
+        {
+          "label": "Habilidade — Conhece a Rota",
+          "items": [
+            "◆ Recebe +1 em Furtividade ou Busca no próprio território."
+          ]
+        },
+        {
+          "label": "Habilidade — Covardia Prática",
+          "items": [
+            "◆ Se metade do grupo de saqueadores cair, deve testar moral ou fugir."
+          ]
+        },
+        {
+          "label": "Resistências",
+          "items": [
+            "◆ Nenhuma."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Medo de patrulheiros, ganância e baixa disciplina."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Comuns."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Foge se parecer que vai morrer."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Munição.",
+            "◆ Arma simples.",
+            "◆ Sucata.",
+            "◆ Informação."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Bom inimigo inicial, especialmente para dilemas sociais.",
+            "FONTE OFICIAL // Livro 3, 2.40"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.40",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Saqueador de Rota",
+          "url": "./assets/bestiary/saqueador-de-rota.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.35",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/saqueador-de-rota.jpg"
     },
     {
-      "id": "livro3-2-41-saqueador-veterano",
+      "id": "livro3-2-36-saqueador-veterano",
       "category": "monster",
       "name": "Saqueador Veterano",
       "tier": "D",
@@ -8598,17 +10303,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 13,
       "movement": "8 m",
       "habitat": "acampamentos de saqueadores, rotas perigosas, ruínas ocupadas",
-      "behavior": "usa cobertura, coordena aliados e prioriza alvos vulneráveis",
+      "behavior": "",
       "attributes": "REF 14/MOD +2",
-      "attacks": "Ataques:\nPistola Tática ou Fuzil Antigo: 1d8 balístico.\nLâmina Curta: 1d6 cortante.",
-      "abilities": "Habilidade — Ordem Rápida:\nUma vez por rodada, pode dar ordem a um saqueador aliado próximo, concedendo +1 no próximo ataque ou movimento curto.\nHabilidade — Usar Cobertura:\nRecebe +1 CA enquanto estiver atrás de cobertura adequada.\nHabilidade — Recuo Planejado:\nQuando cai abaixo da metade dos PV, pode tentar fugir usando fumaça, refém ou terreno.",
-      "resistances": "Resistências:\nNenhuma especial.",
-      "weaknesses": "Fraquezas:\nPode ser negociado se a sobrevivência ou lucro for mais interessante.",
-      "senses": "Sentidos:\nComuns.",
-      "moral": "Moral:\nNão morre por orgulho. Foge se perder vantagem.",
-      "resources": "Recursos coletáveis:\nArma melhor.\nMunição.\nMapa de rota.\nCredencial roubada.",
-      "campaign": "Uso em campanha:\nBom líder de encontro inicial ou rival recorrente.",
-      "summary": "usa cobertura, coordena aliados e prioriza alvos vulneráveis",
+      "attacks": "◆ Pistola Tática ou Fuzil Antigo: 1d8 balístico.\n◆ Lâmina Curta: 1d6 cortante.",
+      "abilities": "◆ Uma vez por rodada, pode dar ordem a um saqueador aliado próximo, concedendo +1 no próximo ataque ou movimento curto.\n◆ Recebe +1 CA enquanto estiver atrás de cobertura adequada.\n◆ Quando cai abaixo da metade dos PV, pode tentar fugir usando fumaça, refém ou terreno.",
+      "resistances": "◆ Nenhuma especial.",
+      "weaknesses": "◆ Pode ser negociado se a sobrevivência ou lucro for mais interessante.",
+      "senses": "◆ Comuns.",
+      "moral": "◆ Não morre por orgulho. Foge se perder vantagem.",
+      "resources": "◆ Arma melhor.\n◆ Munição.\n◆ Mapa de rota.\n◆ Credencial roubada.",
+      "campaign": "◆ Bom líder de encontro inicial ou rival recorrente.\nFONTE OFICIAL // Livro 3, 2.41",
+      "summary": "◆ Bom líder de encontro inicial ou rival recorrente.\nFONTE OFICIAL // Livro 3, 2.41",
       "tags": [
         "D",
         "humanoide hostil",
@@ -8619,54 +10324,102 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: D.",
-            "Tipo: humanoide hostil.",
-            "Papel: atirador/comandante menor.",
-            "Tamanho: médio.",
-            "Habitat: acampamentos de saqueadores, rotas perigosas, ruínas ocupadas.",
-            "Comportamento: usa cobertura, coordena aliados e prioriza alvos vulneráveis.",
-            "PV: 20.",
-            "CA: 13.",
-            "Movimento: 8 m.",
-            "Atributos importantes:",
-            "REF 14/MOD +2.",
-            "MEN 12/MOD +1.",
-            "PRE 12/MOD +1.",
-            "Ataques:",
-            "Pistola Tática ou Fuzil Antigo: 1d8 balístico.",
-            "Lâmina Curta: 1d6 cortante.",
-            "Habilidade — Ordem Rápida:",
-            "Uma vez por rodada, pode dar ordem a um saqueador aliado próximo, concedendo +1 no próximo ataque ou movimento curto.",
-            "Habilidade — Usar Cobertura:",
-            "Recebe +1 CA enquanto estiver atrás de cobertura adequada.",
-            "Habilidade — Recuo Planejado:",
-            "Quando cai abaixo da metade dos PV, pode tentar fugir usando fumaça, refém ou terreno.",
-            "Resistências:",
-            "Nenhuma especial.",
-            "Fraquezas:",
-            "Pode ser negociado se a sobrevivência ou lucro for mais interessante.",
-            "Sentidos:",
-            "Comuns.",
-            "Moral:",
-            "Não morre por orgulho. Foge se perder vantagem.",
-            "Recursos coletáveis:",
-            "Arma melhor.",
-            "Munição.",
-            "Mapa de rota.",
-            "Credencial roubada.",
-            "Uso em campanha:",
-            "Bom líder de encontro inicial ou rival recorrente."
+            "REGISTRO VISUAL // D // humanoide hostil",
+            "Tier: D",
+            "Tipo: humanoide hostil",
+            "Papel: atirador/comandante menor",
+            "Tamanho: médio",
+            "Habitat: acampamentos de saqueadores, rotas perigosas, ruínas ocupadas",
+            "PV: 20",
+            "CA: 13",
+            "Movimento: 8 m",
+            "Atributos importantes: REF 14/MOD +2",
+            "◆ REF 14/MOD +2.",
+            "◆ MEN 12/MOD +1.",
+            "◆ PRE 12/MOD +1."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Pistola Tática ou Fuzil Antigo: 1d8 balístico.",
+            "◆ Lâmina Curta: 1d6 cortante."
+          ]
+        },
+        {
+          "label": "Habilidade — Ordem Rápida",
+          "items": [
+            "◆ Uma vez por rodada, pode dar ordem a um saqueador aliado próximo, concedendo +1 no próximo ataque ou movimento curto."
+          ]
+        },
+        {
+          "label": "Habilidade — Usar Cobertura",
+          "items": [
+            "◆ Recebe +1 CA enquanto estiver atrás de cobertura adequada."
+          ]
+        },
+        {
+          "label": "Habilidade — Recuo Planejado",
+          "items": [
+            "◆ Quando cai abaixo da metade dos PV, pode tentar fugir usando fumaça, refém ou terreno."
+          ]
+        },
+        {
+          "label": "Resistências",
+          "items": [
+            "◆ Nenhuma especial."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Pode ser negociado se a sobrevivência ou lucro for mais interessante."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Comuns."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Não morre por orgulho. Foge se perder vantagem."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Arma melhor.",
+            "◆ Munição.",
+            "◆ Mapa de rota.",
+            "◆ Credencial roubada."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Bom líder de encontro inicial ou rival recorrente.",
+            "FONTE OFICIAL // Livro 3, 2.41"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.41",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Saqueador Veterano",
+          "url": "./assets/bestiary/saqueador-veterano.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.36",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/saqueador-veterano.jpg"
     },
     {
-      "id": "livro3-2-42-cultista-do-sinal",
+      "id": "livro3-2-37-cultista-do-sinal",
       "category": "monster",
       "name": "Cultista do Sinal",
       "tier": "D",
@@ -8677,17 +10430,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 12,
       "movement": "8 m",
       "habitat": "ruínas, rituais secretos, grupos cósmicos, cultos",
-      "behavior": "tenta completar ritual, proteger relíquia ou converter marcados",
+      "behavior": "",
       "attributes": "MEN 14/MOD +2",
-      "attacks": "Ataques:\nLâmina Ritual: 1d6 cortante.\nPulso Cósmico Fraco: 1d6 cósmico.",
-      "abilities": "Habilidade — Sussurro de Falaris:\nUma vez por cena, alvo que possa ouvir faz JPC com MEN. Em falha, recebe +1 Estresse ou -1 no próximo teste de MEN.\nHabilidade — Proteção Ritual:\nEnquanto estiver perto de símbolo preparado, recebe +1 CA ou +1 em JPC.\nHabilidade — Fanatismo Instável:\nPode ignorar Medo comum uma vez por cena, mas recebe +1 Estresse ao fazer isso.",
-      "resistances": "Resistências:\nResistência leve contra medo comum.",
-      "weaknesses": "Fraquezas:\nLonge de foco, símbolo ou grupo ritual, perde Proteção Ritual.",
-      "senses": "Sentidos:\nComuns.\nAlguns possuem Percepção Cósmica fraca.",
-      "moral": "Moral:\nPode lutar até a morte se acreditar que o ritual exige isso. Outros fogem para espalhar a mensagem.",
-      "resources": "Recursos coletáveis:\nTalismã.\nInscrição.\nMapa ritual.\nFragmento de cristal.",
-      "campaign": "Uso em campanha:\nAmeaça social, cósmica e investigativa.",
-      "summary": "tenta completar ritual, proteger relíquia ou converter marcados",
+      "attacks": "◆ Lâmina Ritual: 1d6 cortante.\n◆ Pulso Cósmico Fraco: 1d6 cósmico.",
+      "abilities": "◆ Uma vez por cena, alvo que possa ouvir faz JPC com MEN. Em falha, recebe +1 Estresse ou -1 no próximo teste de MEN.\n◆ Enquanto estiver perto de símbolo preparado, recebe +1 CA ou +1 em JPC.\n◆ Pode ignorar Medo comum uma vez por cena, mas recebe +1 Estresse ao fazer isso.",
+      "resistances": "",
+      "weaknesses": "◆ Longe de foco, símbolo ou grupo ritual, perde Proteção Ritual.",
+      "senses": "◆ Comuns.\n◆ Alguns possuem Percepção Cósmica fraca.",
+      "moral": "◆ Pode lutar até a morte se acreditar que o ritual exige isso. Outros fogem para espalhar a mensagem.",
+      "resources": "◆ Talismã.\n◆ Inscrição.\n◆ Mapa ritual.\n◆ Fragmento de cristal.",
+      "campaign": "◆ Ameaça social, cósmica e investigativa.\nFONTE OFICIAL // Livro 3, 2.42",
+      "summary": "◆ Ameaça social, cósmica e investigativa.\nFONTE OFICIAL // Livro 3, 2.42",
       "tags": [
         "D",
         "humanoide/cósmico",
@@ -8698,55 +10451,97 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: D.",
-            "Tipo: humanoide/cósmico.",
-            "Papel: suporte/controlador.",
-            "Tamanho: médio.",
-            "Habitat: ruínas, rituais secretos, grupos cósmicos, cultos.",
-            "Comportamento: tenta completar ritual, proteger relíquia ou converter marcados.",
-            "PV: 18.",
-            "CA: 12.",
-            "Movimento: 8 m.",
-            "Atributos importantes:",
-            "MEN 14/MOD +2.",
-            "PRE 14/MOD +2.",
-            "REF 10/MOD +0.",
-            "Ataques:",
-            "Lâmina Ritual: 1d6 cortante.",
-            "Pulso Cósmico Fraco: 1d6 cósmico.",
-            "Habilidade — Sussurro de Falaris:",
-            "Uma vez por cena, alvo que possa ouvir faz JPC com MEN. Em falha, recebe +1 Estresse ou -1 no próximo teste de MEN.",
-            "Habilidade — Proteção Ritual:",
-            "Enquanto estiver perto de símbolo preparado, recebe +1 CA ou +1 em JPC.",
-            "Habilidade — Fanatismo Instável:",
-            "Pode ignorar Medo comum uma vez por cena, mas recebe +1 Estresse ao fazer isso.",
-            "Resistências:",
-            "Resistência leve contra medo comum.",
-            "Fraquezas:",
-            "Longe de foco, símbolo ou grupo ritual, perde Proteção Ritual.",
-            "Sentidos:",
-            "Comuns.",
-            "Alguns possuem Percepção Cósmica fraca.",
-            "Moral:",
-            "Pode lutar até a morte se acreditar que o ritual exige isso. Outros fogem para espalhar a mensagem.",
-            "Recursos coletáveis:",
-            "Talismã.",
-            "Inscrição.",
-            "Mapa ritual.",
-            "Fragmento de cristal.",
-            "Uso em campanha:",
-            "Ameaça social, cósmica e investigativa."
+            "REGISTRO VISUAL // D // humanoide/cósmico",
+            "Tier: D",
+            "Tipo: humanoide/cósmico",
+            "Papel: suporte/controlador",
+            "Tamanho: médio",
+            "Habitat: ruínas, rituais secretos, grupos cósmicos, cultos",
+            "PV: 18",
+            "CA: 12",
+            "Movimento: 8 m",
+            "Atributos importantes: MEN 14/MOD +2",
+            "◆ MEN 14/MOD +2.",
+            "◆ PRE 14/MOD +2.",
+            "◆ REF 10/MOD +0."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Lâmina Ritual: 1d6 cortante.",
+            "◆ Pulso Cósmico Fraco: 1d6 cósmico."
+          ]
+        },
+        {
+          "label": "Habilidade — Sussurro de Falaris",
+          "items": [
+            "◆ Uma vez por cena, alvo que possa ouvir faz JPC com MEN. Em falha, recebe +1 Estresse ou -1 no próximo teste de MEN."
+          ]
+        },
+        {
+          "label": "Habilidade — Proteção Ritual",
+          "items": [
+            "◆ Enquanto estiver perto de símbolo preparado, recebe +1 CA ou +1 em JPC."
+          ]
+        },
+        {
+          "label": "Habilidade — Fanatismo Instável",
+          "items": [
+            "◆ Pode ignorar Medo comum uma vez por cena, mas recebe +1 Estresse ao fazer isso."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Longe de foco, símbolo ou grupo ritual, perde Proteção Ritual."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Comuns.",
+            "◆ Alguns possuem Percepção Cósmica fraca."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Pode lutar até a morte se acreditar que o ritual exige isso. Outros fogem para espalhar a mensagem."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Talismã.",
+            "◆ Inscrição.",
+            "◆ Mapa ritual.",
+            "◆ Fragmento de cristal."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Ameaça social, cósmica e investigativa.",
+            "FONTE OFICIAL // Livro 3, 2.42"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.42",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Cultista do Sinal",
+          "url": "./assets/bestiary/cultista-do-sinal.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.37",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/cultista-do-sinal.jpg"
     },
     {
-      "id": "livro3-2-44-espreitador-do-vazio-menor",
+      "id": "livro3-2-38-espreitador-do-vazio-menor",
       "category": "monster",
       "name": "Espreitador do Vazio Menor",
       "tier": "C",
@@ -8757,17 +10552,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 15,
       "movement": "9 m",
       "habitat": "ruínas cósmicas, túneis antigos, zonas de sombra, locais de falha de realidade",
-      "behavior": "observa antes de atacar, isola alvos e recua quando exposto à luz ou força cósmica contrária",
+      "behavior": "",
       "attributes": "REF 16/MOD +3",
-      "attacks": "Ataques:\nToque do Vazio: 1d8 cósmico.\nGarras Sombrias: 1d6 cortante.",
-      "abilities": "Habilidade — Presença Inquietante:\nQuando visto pela primeira vez na cena, todos fazem JPC com MEN. Em falha, recebem +1 Estresse.\nHabilidade — Passo no Escuro:\nEnquanto estiver em sombra intensa ou escuridão, pode se mover 4 m como reação após ser atacado.\nHabilidade — Roubar Som:\nUma vez por cena, cria uma área de silêncio breve. Comunicação falada dentro da área fica impossível até o fim da próxima rodada.\nHabilidade — Ferida de Memória:\nEm crítico com Toque do Vazio, o alvo esquece um detalhe recente por alguns minutos ou sofre -1 no próximo teste de MEN.",
-      "resistances": "Resistências:\nResistência contra dano físico comum se estiver em escuridão.\nResistência leve contra medo.",
-      "weaknesses": "Fraquezas:\nLuz intensa.\nSímbolos de contenção.\nFogo branco.\nteste de Cosmos estabilizador, foco estável ou contenção adequada.",
-      "senses": "Sentidos:\nPercepção Cósmica.\nPercepção de Estresse.\nVisão no escuro absoluto.",
-      "moral": "Moral:\nRecua se for exposto à luz intensa ou se não conseguir isolar presa.",
-      "resources": "Recursos coletáveis:\nResíduo de sombra.\nFragmento de vazio.\nMarca instável.",
-      "campaign": "Uso em campanha:\nO Espreitador do Vazio Menor é uma ameaça de ruína cósmica. Deve aparecer com sinais antes do combate: silêncio, luz falhando, sonhos e sensação de observação.",
-      "summary": "observa antes de atacar, isola alvos e recua quando exposto à luz ou força cósmica contrária",
+      "attacks": "◆ Toque do Vazio: 1d8 cósmico.\n◆ Garras Sombrias: 1d6 cortante.",
+      "abilities": "◆ Quando visto pela primeira vez na cena, todos fazem JPC com MEN. Em falha, recebem +1 Estresse.\n◆ Enquanto estiver em sombra intensa ou escuridão, pode se mover 4 m como reação após ser atacado.\n◆ Uma vez por cena, cria uma área de silêncio breve. Comunicação falada dentro da área fica impossível até o fim da próxima rodada.\n◆ Em crítico com Toque do Vazio, o alvo esquece um detalhe recente por alguns minutos ou sofre -1 no próximo teste de MEN.",
+      "resistances": "",
+      "weaknesses": "◆ Luz intensa.\n◆ Símbolos de contenção.\n◆ Fogo branco.\n◆ teste de Cosmos estabilizador, foco estável ou contenção adequada.",
+      "senses": "◆ Percepção Cósmica.\n◆ Percepção de Estresse.\n◆ Visão no escuro absoluto.",
+      "moral": "◆ Recua se for exposto à luz intensa ou se não conseguir isolar presa.",
+      "resources": "◆ Resíduo de sombra.\n◆ Fragmento de vazio.\n◆ Marca instável.",
+      "campaign": "◆ O Espreitador do Vazio Menor é uma ameaça de ruína cósmica. Deve aparecer com sinais antes do combate: silêncio, luz falhando, sonhos e sensação de observação.\nFONTE OFICIAL // Livro 3, 2.44",
+      "summary": "◆ O Espreitador do Vazio Menor é uma ameaça de ruína cósmica. Deve aparecer com sinais antes do combate: silêncio, luz falhando, sonhos e sensação de observação.\nFONTE OFICIAL // Livro 3, 2.44",
       "tags": [
         "C",
         "criatura cósmica",
@@ -8778,62 +10573,107 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: C.",
-            "Tipo: criatura cósmica.",
-            "Papel: emboscador/controlador.",
-            "Tamanho: médio.",
-            "Habitat: ruínas cósmicas, túneis antigos, zonas de sombra, locais de falha de realidade.",
-            "Comportamento: observa antes de atacar, isola alvos e recua quando exposto à luz ou força cósmica contrária.",
-            "PV: 40.",
-            "CA: 15.",
-            "Movimento: 9 m.",
-            "Atributos importantes:",
-            "REF 16/MOD +3.",
-            "MEN 18/MOD +4.",
-            "CON 14/MOD +2.",
-            "PRE 16/MOD +3.",
-            "Ataques:",
-            "Toque do Vazio: 1d8 cósmico.",
-            "Garras Sombrias: 1d6 cortante.",
-            "Habilidade — Presença Inquietante:",
-            "Quando visto pela primeira vez na cena, todos fazem JPC com MEN. Em falha, recebem +1 Estresse.",
-            "Habilidade — Passo no Escuro:",
-            "Enquanto estiver em sombra intensa ou escuridão, pode se mover 4 m como reação após ser atacado.",
-            "Habilidade — Roubar Som:",
-            "Uma vez por cena, cria uma área de silêncio breve. Comunicação falada dentro da área fica impossível até o fim da próxima rodada.",
-            "Habilidade — Ferida de Memória:",
-            "Em crítico com Toque do Vazio, o alvo esquece um detalhe recente por alguns minutos ou sofre -1 no próximo teste de MEN.",
-            "Resistências:",
-            "Resistência contra dano físico comum se estiver em escuridão.",
-            "Resistência leve contra medo.",
-            "Fraquezas:",
-            "Luz intensa.",
-            "Símbolos de contenção.",
-            "Fogo branco.",
-            "teste de Cosmos estabilizador, foco estável ou contenção adequada.",
-            "Sentidos:",
-            "Percepção Cósmica.",
-            "Percepção de Estresse.",
-            "Visão no escuro absoluto.",
-            "Moral:",
-            "Recua se for exposto à luz intensa ou se não conseguir isolar presa.",
-            "Recursos coletáveis:",
-            "Resíduo de sombra.",
-            "Fragmento de vazio.",
-            "Marca instável.",
-            "Uso em campanha:",
-            "O Espreitador do Vazio Menor é uma ameaça de ruína cósmica. Deve aparecer com sinais antes do combate: silêncio, luz falhando, sonhos e sensação de observação."
+            "REGISTRO VISUAL // C // criatura cósmica",
+            "Tier: C",
+            "Tipo: criatura cósmica",
+            "Papel: emboscador/controlador",
+            "Tamanho: médio",
+            "Habitat: ruínas cósmicas, túneis antigos, zonas de sombra, locais de falha de realidade",
+            "PV: 40",
+            "CA: 15",
+            "Movimento: 9 m",
+            "Atributos importantes: REF 16/MOD +3",
+            "◆ REF 16/MOD +3.",
+            "◆ MEN 18/MOD +4.",
+            "◆ CON 14/MOD +2.",
+            "◆ PRE 16/MOD +3."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Toque do Vazio: 1d8 cósmico.",
+            "◆ Garras Sombrias: 1d6 cortante."
+          ]
+        },
+        {
+          "label": "Habilidade — Presença Inquietante",
+          "items": [
+            "◆ Quando visto pela primeira vez na cena, todos fazem JPC com MEN. Em falha, recebem +1 Estresse."
+          ]
+        },
+        {
+          "label": "Habilidade — Passo no Escuro",
+          "items": [
+            "◆ Enquanto estiver em sombra intensa ou escuridão, pode se mover 4 m como reação após ser atacado."
+          ]
+        },
+        {
+          "label": "Habilidade — Roubar Som",
+          "items": [
+            "◆ Uma vez por cena, cria uma área de silêncio breve. Comunicação falada dentro da área fica impossível até o fim da próxima rodada."
+          ]
+        },
+        {
+          "label": "Habilidade — Ferida de Memória",
+          "items": [
+            "◆ Em crítico com Toque do Vazio, o alvo esquece um detalhe recente por alguns minutos ou sofre -1 no próximo teste de MEN."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Luz intensa.",
+            "◆ Símbolos de contenção.",
+            "◆ Fogo branco.",
+            "◆ teste de Cosmos estabilizador, foco estável ou contenção adequada."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Percepção Cósmica.",
+            "◆ Percepção de Estresse.",
+            "◆ Visão no escuro absoluto."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Recua se for exposto à luz intensa ou se não conseguir isolar presa."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Resíduo de sombra.",
+            "◆ Fragmento de vazio.",
+            "◆ Marca instável."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ O Espreitador do Vazio Menor é uma ameaça de ruína cósmica. Deve aparecer com sinais antes do combate: silêncio, luz falhando, sonhos e sensação de observação.",
+            "FONTE OFICIAL // Livro 3, 2.44"
           ]
         }
       ],
       "sheetType": "full",
       "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.44",
-      "schemaVersion": 1
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Espreitador do Vazio Menor",
+          "url": "./assets/bestiary/espreitador-do-vazio-menor.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.38",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/espreitador-do-vazio-menor.jpg"
     },
     {
-      "id": "livro3-2-45-espreitador-do-vazio-profundo",
+      "id": "livro3-2-39-espreitador-do-vazio-profundo",
       "category": "monster",
       "name": "Espreitador do Vazio Profundo",
       "tier": "A",
@@ -8844,17 +10684,17 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
       "ca": 18,
       "movement": "10 m, Passo no Escuro 6 m",
       "habitat": "portais Tharan corrompidos, câmaras antigas, zonas ligadas a Uryon",
-      "behavior": "manipula medo, separa o grupo e tenta marcar personagens",
+      "behavior": "",
       "attributes": "MEN 22/MOD +6",
-      "attacks": "Ataques:\nToque de Ausência: 2d6 cósmico.\nGarra Impossível: 1d10 cortante.",
-      "abilities": "Habilidade — Olhar do Abismo:\nUma vez por cena, um alvo que veja o Espreitador faz JPC com MEN. Em falha, recebe +2 Estresse ou fica com Medo até o fim da próxima rodada.\nHabilidade — Apagar Presença:\nUma vez por rodada, se estiver em escuridão, pode se tornar parcialmente intangível. O próximo ataque físico contra ele sofre -1 ou causa metade do dano, a critério do Mestre.\nHabilidade — Chamado de Uryon:\nQuando cai abaixo da metade dos PV, todos os personagens com Estresse 4 ou mais ou Marca pelo Cosmos fazem JPC com MEN. Em falha, ouvem uma ordem impossível e perdem a próxima interação simples.\nHabilidade — Fenda Curta:\nPode atravessar uma barreira fina, sombra profunda ou rachadura cósmica como movimento especial.\nHabilidade — Última Sombra:\nAo chegar a 0 PV, não morre necessariamente. Pode se desfazer, deixando marca, fragmento ou promessa de retorno.",
-      "resistances": "Resistências:\nResistência contra físico comum.\nResistência contra medo comum.\nResistência contra dano cósmico fraco.",
-      "weaknesses": "Fraquezas:\nLuz de contenção antiga.\nRitual correto.\nFoco estabilizado.\nDestruição da âncora cósmica local.",
-      "senses": "Sentidos:\nPercepção Cósmica profunda.\nPercepção de medo.\nPercepção de marcas.",
-      "moral": "Moral:\nNão pensa como animal. Recua se sua âncora for ameaçada ou se o objetivo cósmico for cumprido.",
-      "resources": "Recursos coletáveis:\nFragmento de vazio.\nMarca concentrada.\nEco de memória.\nResíduo de Uryon.",
-      "campaign": "Uso em campanha:\nNão use cedo sem preparo. O Espreitador Profundo deve ser anunciado por sonhos, desaparecimentos, símbolos e falhas de luz.",
-      "summary": "manipula medo, separa o grupo e tenta marcar personagens",
+      "attacks": "◆ Toque de Ausência: 2d6 cósmico.\n◆ Garra Impossível: 1d10 cortante.",
+      "abilities": "◆ Uma vez por cena, um alvo que veja o Espreitador faz JPC com MEN. Em falha, recebe +2 Estresse ou fica com Medo até o fim da próxima rodada.\n◆ Uma vez por rodada, se estiver em escuridão, pode se tornar parcialmente intangível. O próximo ataque físico contra ele sofre -1 ou causa metade do dano, a critério do Mestre.\n◆ Quando cai abaixo da metade dos PV, todos os personagens com Estresse 4 ou mais ou Marca pelo Cosmos fazem JPC com MEN. Em falha, ouvem uma ordem impossível e perdem a próxima interação simples.\n◆ Pode atravessar uma barreira fina, sombra profunda ou rachadura cósmica como movimento especial.\n◆ Ao chegar a 0 PV, não morre necessariamente. Pode se desfazer, deixando marca, fragmento ou promessa de retorno.",
+      "resistances": "",
+      "weaknesses": "◆ Luz de contenção antiga.\n◆ Ritual correto.\n◆ Foco estabilizado.\n◆ Destruição da âncora cósmica local.",
+      "senses": "◆ Percepção Cósmica profunda.\n◆ Percepção de medo.\n◆ Percepção de marcas.",
+      "moral": "◆ Não pensa como animal. Recua se sua âncora for ameaçada ou se o objetivo cósmico for cumprido.",
+      "resources": "◆ Fragmento de vazio.\n◆ Marca concentrada.\n◆ Eco de memória.\n◆ Resíduo de Uryon.",
+      "campaign": "◆ Não use cedo sem preparo. O Espreitador Profundo deve ser anunciado por sonhos, desaparecimentos, símbolos e falhas de luz.\nFONTE OFICIAL // Livro 3, 2.45",
+      "summary": "◆ Não use cedo sem preparo. O Espreitador Profundo deve ser anunciado por sonhos, desaparecimentos, símbolos e falhas de luz.\nFONTE OFICIAL // Livro 3, 2.45",
       "tags": [
         "A",
         "entidade cósmica menor",
@@ -8865,244 +10705,821 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resumo",
           "items": [
-            "Tier: A.",
-            "Tipo: entidade cósmica menor.",
-            "Papel: chefe/ameaça psicológica.",
-            "Tamanho: grande ou indefinido.",
-            "Habitat: portais Tharan corrompidos, câmaras antigas, zonas ligadas a Uryon.",
-            "Comportamento: manipula medo, separa o grupo e tenta marcar personagens.",
-            "PV: 100.",
-            "CA: 18.",
-            "Movimento: 10 m, Passo no Escuro 6 m.",
-            "Atributos importantes:",
-            "MEN 22/MOD +6.",
-            "PRE 20/MOD +5.",
-            "REF 16/MOD +3.",
-            "CON 18/MOD +4.",
-            "Ataques:",
-            "Toque de Ausência: 2d6 cósmico.",
-            "Garra Impossível: 1d10 cortante.",
-            "Habilidade — Olhar do Abismo:",
-            "Uma vez por cena, um alvo que veja o Espreitador faz JPC com MEN. Em falha, recebe +2 Estresse ou fica com Medo até o fim da próxima rodada.",
-            "Habilidade — Apagar Presença:",
-            "Uma vez por rodada, se estiver em escuridão, pode se tornar parcialmente intangível. O próximo ataque físico contra ele sofre -1 ou causa metade do dano, a critério do Mestre.",
-            "Habilidade — Chamado de Uryon:",
-            "Quando cai abaixo da metade dos PV, todos os personagens com Estresse 4 ou mais ou Marca pelo Cosmos fazem JPC com MEN. Em falha, ouvem uma ordem impossível e perdem a próxima interação simples.",
-            "Habilidade — Fenda Curta:",
-            "Pode atravessar uma barreira fina, sombra profunda ou rachadura cósmica como movimento especial.",
-            "Habilidade — Última Sombra:",
-            "Ao chegar a 0 PV, não morre necessariamente. Pode se desfazer, deixando marca, fragmento ou promessa de retorno.",
-            "Resistências:",
-            "Resistência contra físico comum.",
-            "Resistência contra medo comum.",
-            "Resistência contra dano cósmico fraco.",
-            "Fraquezas:",
-            "Luz de contenção antiga.",
-            "Ritual correto.",
-            "Foco estabilizado.",
-            "Destruição da âncora cósmica local.",
-            "Sentidos:",
-            "Percepção Cósmica profunda.",
-            "Percepção de medo.",
-            "Percepção de marcas.",
-            "Moral:",
-            "Não pensa como animal. Recua se sua âncora for ameaçada ou se o objetivo cósmico for cumprido.",
-            "Recursos coletáveis:",
-            "Fragmento de vazio.",
-            "Marca concentrada.",
-            "Eco de memória.",
-            "Resíduo de Uryon.",
-            "Uso em campanha:",
-            "Não use cedo sem preparo. O Espreitador Profundo deve ser anunciado por sonhos, desaparecimentos, símbolos e falhas de luz."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 2.45",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-3-1-rasktorian-ancestral",
-      "category": "monster",
-      "name": "Rasktorian Ancestral",
-      "tier": "Lendario",
-      "type": "Chefe lendario",
-      "role": "Chefe",
-      "size": "",
-      "pv": null,
-      "ca": null,
-      "movement": "",
-      "habitat": "",
-      "behavior": "",
-      "attributes": "",
-      "attacks": "Garra Ancestral: 2d6 cortante.\nMordida de Ruptura: 2d6 perfurante.\nImpacto de Cauda: 1d10 concussao em alvo adjacente.",
-      "abilities": "Rugido de Predador-Rei: uma vez por cena, inimigos proximos fazem JPC com MEN ou PRE. Em falha, recebem +1 Estresse e -1 no proximo ataque contra o Rasktorian Ancestral.\nSalto Impossivel: pode saltar grandes distancias dentro da arena, ignorando terreno dificil. Ao cair perto de personagens, alvos adjacentes fazem JPF com REF ou ficam Derrubados.\nSangue de Alfa: abaixo de metade dos PV, o sangue cosmico-adrenal altera Rasktorians menores, fazendo-os entrar em furia ou fugir.\nDestruir Cobertura: uma vez por rodada, ao errar ou acertar ataque contra alvo em cobertura, pode destruir cobertura leve ou danificar cobertura media.\nMover metade do deslocamento.\nAtacar com Cauda.\nRugir para chamar Rasktorians menores.\nSe for cercado por tres ou mais inimigos, pode empurrar todos adjacentes. Alvos fazem JPF com FOR ou REF.\nFase 1: caca e testa o grupo.\nFase 2: abaixo de metade dos PV, torna-se agressivo e causa +1 dano corpo a corpo.\nFase 3: abaixo de 20 PV, tenta matar quem mais o feriu ou recuar para territorio profundo.",
-      "resistances": "Resistencias: Reducao 2 contra dano fisico comum. Resistencia contra medo comum.\nFraquezas: Orgulho territorial, feromonios de desafio e ferida antiga em uma das laterais, descoberta com Percepcao ou Biologia.",
-      "weaknesses": "Resistencias: Reducao 2 contra dano fisico comum. Resistencia contra medo comum.\nFraquezas: Orgulho territorial, feromonios de desafio e ferida antiga em uma das laterais, descoberta com Percepcao ou Biologia.",
-      "senses": "",
-      "moral": "",
-      "resources": "Condicoes que aplica: Derrubado, Sangrando, Medo ou Estresse.\nRecursos ameacados: Armaduras, coberturas, cubos carregados durante fuga e rotas de retirada.\nRecursos coletaveis: Presa Ancestral, Carapaca de Alfa Antigo, sangue adrenal raro, couro superior e glandula de dominio.",
-      "campaign": "Como pode ser derrotado sem matar: Atrair para fora do territorio, vencer ritual de dominio, ferir gravemente e permitir retirada ou usar feromonio para redirecionar o bando.\nSe vencer, o grupo pode ser cacado pelo bando e rotas proximas se tornam perigosas.\nSe fugir, vira ameaca recorrente e pode atacar caravanas ligadas ao grupo.\nSe for derrotado, o territorio fica instavel e Rasktorians menores se dispersam. A carapaca pode conter marcas azuis antigas.",
-      "summary": "Como pode ser derrotado sem matar: Atrair para fora do territorio, vencer ritual de dominio, ferir gravemente e permitir retirada ou usar feromonio para redirecionar o bando.\nSe vencer, o grupo pode ser cacado pelo bando e rotas proximas se tornam perigosas.\nSe fugir, vira ameaca recorrente e pode atacar caravanas ligadas ao grupo.\nSe for derrotado, o territorio fica instavel e Rasktorians menores se dispersam. A carapaca pode conter marcas azuis antigas.",
-      "tags": [
-        "Lendario",
-        "Chefe lendario",
-        "Chefe",
-        "Chefe"
-      ],
-      "details": [
-        {
-          "label": "Sinais antes do encontro",
-          "items": [
-            "Ossos quebrados ao meio.",
-            "Rastros maiores que um corpo humano.",
-            "Rugido ouvido a quilometros.",
-            "Rasktorians menores fugindo.",
-            "Pedras marcadas por garras."
+            "REGISTRO VISUAL // A // entidade cósmica menor",
+            "Tier: A",
+            "Tipo: entidade cósmica menor",
+            "Papel: chefe/ameaça psicológica",
+            "Tamanho: grande ou indefinido",
+            "Habitat: portais Tharan corrompidos, câmaras antigas, zonas ligadas a Uryon",
+            "PV: 100",
+            "CA: 18",
+            "Movimento: 10 m, Passo no Escuro 6 m",
+            "Atributos importantes: MEN 22/MOD +6",
+            "◆ MEN 22/MOD +6.",
+            "◆ PRE 20/MOD +5.",
+            "◆ REF 16/MOD +3.",
+            "◆ CON 18/MOD +4."
           ]
         },
         {
           "label": "Ataques",
           "items": [
-            "Garra Ancestral: 2d6 cortante.",
-            "Mordida de Ruptura: 2d6 perfurante.",
-            "Impacto de Cauda: 1d10 concussao em alvo adjacente."
+            "◆ Toque de Ausência: 2d6 cósmico.",
+            "◆ Garra Impossível: 1d10 cortante."
+          ]
+        },
+        {
+          "label": "Habilidade — Olhar do Abismo",
+          "items": [
+            "◆ Uma vez por cena, um alvo que veja o Espreitador faz JPC com MEN. Em falha, recebe +2 Estresse ou fica com Medo até o fim da próxima rodada."
+          ]
+        },
+        {
+          "label": "Habilidade — Apagar Presença",
+          "items": [
+            "◆ Uma vez por rodada, se estiver em escuridão, pode se tornar parcialmente intangível. O próximo ataque físico contra ele sofre -1 ou causa metade do dano, a critério do Mestre."
+          ]
+        },
+        {
+          "label": "Habilidade — Chamado de Uryon",
+          "items": [
+            "◆ Quando cai abaixo da metade dos PV, todos os personagens com Estresse 4 ou mais ou Marca pelo Cosmos fazem JPC com MEN. Em falha, ouvem uma ordem impossível e perdem a próxima interação simples."
+          ]
+        },
+        {
+          "label": "Habilidade — Fenda Curta",
+          "items": [
+            "◆ Pode atravessar uma barreira fina, sombra profunda ou rachadura cósmica como movimento especial."
+          ]
+        },
+        {
+          "label": "Habilidade — Última Sombra",
+          "items": [
+            "◆ Ao chegar a 0 PV, não morre necessariamente. Pode se desfazer, deixando marca, fragmento ou promessa de retorno."
+          ]
+        },
+        {
+          "label": "Fraquezas",
+          "items": [
+            "◆ Luz de contenção antiga.",
+            "◆ Ritual correto.",
+            "◆ Foco estabilizado.",
+            "◆ Destruição da âncora cósmica local."
+          ]
+        },
+        {
+          "label": "Sentidos",
+          "items": [
+            "◆ Percepção Cósmica profunda.",
+            "◆ Percepção de medo.",
+            "◆ Percepção de marcas."
+          ]
+        },
+        {
+          "label": "Moral",
+          "items": [
+            "◆ Não pensa como animal. Recua se sua âncora for ameaçada ou se o objetivo cósmico for cumprido."
+          ]
+        },
+        {
+          "label": "Recursos coletáveis",
+          "items": [
+            "◆ Fragmento de vazio.",
+            "◆ Marca concentrada.",
+            "◆ Eco de memória.",
+            "◆ Resíduo de Uryon."
+          ]
+        },
+        {
+          "label": "Uso em campanha",
+          "items": [
+            "◆ Não use cedo sem preparo. O Espreitador Profundo deve ser anunciado por sonhos, desaparecimentos, símbolos e falhas de luz.",
+            "FONTE OFICIAL // Livro 3, 2.45"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Espreitador do Vazio Profundo",
+          "url": "./assets/bestiary/espreitador-do-vazio-profundo.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.39",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/espreitador-do-vazio-profundo.jpg"
+    },
+    {
+      "id": "livro3-2-40-arauto-da-noite-comum",
+      "category": "monster",
+      "name": "Arauto da Noite Comum",
+      "tier": "E",
+      "type": "predador alado noturno",
+      "role": "atirador orgânico, assediador e ameaça de bando",
+      "size": "pequeno ou médio",
+      "pv": 12,
+      "ca": 12,
+      "movement": "4 m terrestre; voo 15 m",
+      "habitat": "cavernas altas, ruínas abertas, torres, penhascos e regiões de Noite Eterna em lendas Kairi",
+      "behavior": "",
+      "attributes": "FOR 8/MOD -1; REF 14/MOD +2; CON 10/MOD +0; INT 4/MOD -3; MEN 10/MOD +0; PRE 8/MOD -1",
+      "attacks": "◆ Ataques: Mordida Drenante, 1d4 perfurante; Rasante, 1d6 cortante se vier de voo.",
+      "abilities": "◆ Habilidade — Onda Sônica: duas vezes por cena, criaturas em cone curto fazem JPC com MEN. Em falha, ficam Tontas até o fim da próxima rodada.\n◆ Habilidade — Caçador Noturno: recebe +1 no primeiro ataque contra alvo que não o percebeu em penumbra ou escuridão.",
+      "resistances": "Resistências: nenhuma especial.",
+      "weaknesses": "Fraquezas: luz intensa, som harmônico e espaços fechados baixos.",
+      "senses": "Sentidos: ecolocalização, audição excelente e visão em baixa luz.",
+      "moral": "Moral: foge se metade do bando cair ou se ficar preso sem altura.",
+      "resources": "◆ Recursos coletáveis: asa membranosa, glândula sônica e olhos luminescentes.",
+      "campaign": "◆ Uso em campanha: ameaça aérea de viagem noturna, torre, caverna vertical ou presságio Kairi.\nFONTE OFICIAL // Livro 3, 4.10",
+      "summary": "◆ Uso em campanha: ameaça aérea de viagem noturna, torre, caverna vertical ou presságio Kairi.\nFONTE OFICIAL // Livro 3, 4.10",
+      "tags": [
+        "E",
+        "predador alado noturno",
+        "atirador orgânico, assediador e ameaça de bando",
+        "pequeno ou médio"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // E // predador alado noturno",
+            "Tier: E",
+            "Tipo: predador alado noturno",
+            "Papel: atirador orgânico, assediador e ameaça de bando",
+            "Tamanho: pequeno ou médio",
+            "Habitat: cavernas altas, ruínas abertas, torres, penhascos e regiões de Noite Eterna em lendas Kairi",
+            "PV: 12",
+            "CA: 12",
+            "Movimento: 4 m terrestre; voo 15 m",
+            "Atributos importantes: FOR 8/MOD -1; REF 14/MOD +2; CON 10/MOD +0; INT 4/MOD -3; MEN 10/MOD +0; PRE 8/MOD -1",
+            "◆ Ataques: Mordida Drenante, 1d4 perfurante; Rasante, 1d6 cortante se vier de voo.",
+            "◆ Habilidade — Onda Sônica: duas vezes por cena, criaturas em cone curto fazem JPC com MEN. Em falha, ficam Tontas até o fim da próxima rodada.",
+            "◆ Habilidade — Caçador Noturno: recebe +1 no primeiro ataque contra alvo que não o percebeu em penumbra ou escuridão.",
+            "Resistências: nenhuma especial.",
+            "Fraquezas: luz intensa, som harmônico e espaços fechados baixos.",
+            "Sentidos: ecolocalização, audição excelente e visão em baixa luz.",
+            "Moral: foge se metade do bando cair ou se ficar preso sem altura.",
+            "◆ Recursos coletáveis: asa membranosa, glândula sônica e olhos luminescentes.",
+            "◆ Uso em campanha: ameaça aérea de viagem noturna, torre, caverna vertical ou presságio Kairi.",
+            "FONTE OFICIAL // Livro 3, 4.10"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Arauto da Noite Comum",
+          "url": "./assets/bestiary/arauto-da-noite-comum.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.40",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/arauto-da-noite-comum.jpg"
+    },
+    {
+      "id": "livro3-2-41-arauto-da-noite-maior",
+      "category": "monster",
+      "name": "Arauto da Noite Maior",
+      "tier": "D",
+      "type": "predador alado sônico",
+      "role": "chefe de bando, controlador e terror noturno",
+      "size": "médio grande",
+      "pv": 30,
+      "ca": 14,
+      "movement": "5 m terrestre; voo 16 m",
+      "habitat": "ninhos altos, torres antigas, árvores gigantes e cavernas de teto amplo",
+      "behavior": "",
+      "attributes": "FOR 12/MOD +1; REF 16/MOD +3; CON 12/MOD +1; INT 6/MOD -2; MEN 12/MOD +1; PRE 12/MOD +1",
+      "attacks": "◆ Ataques: Mordida Drenante Maior, 1d8 perfurante; Garras de Rasante, 1d8 cortante.",
+      "abilities": "◆ Habilidade — Grito da Noite: uma vez por cena, todos em cone médio fazem JPC com MEN. Em falha, ficam Tontos e recebem +1 Estresse.\n◆ Habilidade — Eco de Bando: Arautos da Noite aliados próximos recebem +1 em Busca baseada em som.",
+      "resistances": "Resistências: resistência leve contra Medo comum.",
+      "weaknesses": "◆ Fraquezas: luz intensa e destruição do ninho reduzem sua agressividade.",
+      "senses": "Sentidos: ecolocalização refinada e percepção de movimento no escuro.",
+      "moral": "◆ Moral: protege o ninho; fora do ninho, recua se perder vantagem aérea.",
+      "resources": "◆ Recursos coletáveis: glândula sônica maior, couro de asa, olhos luminescentes e osso oco ressonante.",
+      "campaign": "◆ Uso em campanha: chefe menor de bando e presságio de área dominada por predadores noturnos.\nFONTE OFICIAL // Livro 3, 4.11",
+      "summary": "◆ Uso em campanha: chefe menor de bando e presságio de área dominada por predadores noturnos.\nFONTE OFICIAL // Livro 3, 4.11",
+      "tags": [
+        "D",
+        "predador alado sônico",
+        "chefe de bando, controlador e terror noturno",
+        "médio grande"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // D // predador alado sônico",
+            "Tier: D",
+            "Tipo: predador alado sônico",
+            "Papel: chefe de bando, controlador e terror noturno",
+            "Tamanho: médio grande",
+            "Habitat: ninhos altos, torres antigas, árvores gigantes e cavernas de teto amplo",
+            "PV: 30",
+            "CA: 14",
+            "Movimento: 5 m terrestre; voo 16 m",
+            "Atributos importantes: FOR 12/MOD +1; REF 16/MOD +3; CON 12/MOD +1; INT 6/MOD -2; MEN 12/MOD +1; PRE 12/MOD +1",
+            "◆ Ataques: Mordida Drenante Maior, 1d8 perfurante; Garras de Rasante, 1d8 cortante.",
+            "◆ Habilidade — Grito da Noite: uma vez por cena, todos em cone médio fazem JPC com MEN. Em falha, ficam Tontos e recebem +1 Estresse.",
+            "◆ Habilidade — Eco de Bando: Arautos da Noite aliados próximos recebem +1 em Busca baseada em som.",
+            "Resistências: resistência leve contra Medo comum.",
+            "◆ Fraquezas: luz intensa e destruição do ninho reduzem sua agressividade.",
+            "Sentidos: ecolocalização refinada e percepção de movimento no escuro.",
+            "◆ Moral: protege o ninho; fora do ninho, recua se perder vantagem aérea.",
+            "◆ Recursos coletáveis: glândula sônica maior, couro de asa, olhos luminescentes e osso oco ressonante.",
+            "◆ Uso em campanha: chefe menor de bando e presságio de área dominada por predadores noturnos.",
+            "FONTE OFICIAL // Livro 3, 4.11"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Arauto da Noite Maior",
+          "url": "./assets/bestiary/arauto-da-noite-maior.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.41",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/arauto-da-noite-maior.jpg"
+    },
+    {
+      "id": "livro3-2-42-humanis-corrompido-comum",
+      "category": "monster",
+      "name": "Humanis Corrompido Comum",
+      "tier": "F",
+      "type": "humanoide corrompido",
+      "role": "ameaça trágica, corpo a corpo simples e horror de colônia perdida",
+      "size": "médio",
+      "pv": 10,
+      "ca": 9,
+      "movement": "8 m",
+      "habitat": "colônias abandonadas, estações, ruínas habitadas e zonas contaminadas",
+      "behavior": "",
+      "attributes": "FOR 10/MOD +0; REF 8/MOD -1; CON 12/MOD +1; INT 4/MOD -3; MEN 8/MOD -1; PRE 4/MOD -3",
+      "attacks": "Ataque: Garras Bioferríticas, 1d6 perfurante/concussão.",
+      "abilities": "◆ Habilidade — Instinto de Caça Cósmica: se alguém usar Cosmos perto dele, recebe +1 no próximo ataque contra esse alvo.\n◆ Habilidade — Resquício de Memória: ao ser derrotado, pode carregar objeto pessoal, chip danificado, documento ou ferramenta antiga.",
+      "resistances": "Resistências: dor comum e medo comum reduzidos, a critério do Mestre.",
+      "weaknesses": "◆ Fraquezas: contenção cósmica, luz intensa e lembranças pessoais podem fazê-lo hesitar por 1 rodada.",
+      "senses": "◆ Sentidos: visão comum deteriorada, audição instintiva e atração por ressonância.",
+      "moral": "◆ Moral: não recua por medo comum, mas pode repetir ações da vida antiga.",
+      "resources": "◆ Recursos coletáveis: chip danificado, circuitos, sucata técnica, fragmentos bioferríticos e objeto pessoal.",
+      "campaign": "◆ Uso em campanha: ameaça de horror e culpa. Deve lembrar que havia uma pessoa ali.\nFONTE OFICIAL // Livro 3, 4.22",
+      "summary": "◆ Uso em campanha: ameaça de horror e culpa. Deve lembrar que havia uma pessoa ali.\nFONTE OFICIAL // Livro 3, 4.22",
+      "tags": [
+        "F",
+        "humanoide corrompido",
+        "ameaça trágica, corpo a corpo simples e horror de colônia perdida",
+        "médio"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // F // humanoide corrompido",
+            "Tier: F",
+            "Tipo: humanoide corrompido",
+            "Papel: ameaça trágica, corpo a corpo simples e horror de colônia perdida",
+            "Tamanho: médio",
+            "Habitat: colônias abandonadas, estações, ruínas habitadas e zonas contaminadas",
+            "PV: 10",
+            "CA: 9",
+            "Movimento: 8 m",
+            "Atributos importantes: FOR 10/MOD +0; REF 8/MOD -1; CON 12/MOD +1; INT 4/MOD -3; MEN 8/MOD -1; PRE 4/MOD -3",
+            "Ataque: Garras Bioferríticas, 1d6 perfurante/concussão.",
+            "◆ Habilidade — Instinto de Caça Cósmica: se alguém usar Cosmos perto dele, recebe +1 no próximo ataque contra esse alvo.",
+            "◆ Habilidade — Resquício de Memória: ao ser derrotado, pode carregar objeto pessoal, chip danificado, documento ou ferramenta antiga.",
+            "Resistências: dor comum e medo comum reduzidos, a critério do Mestre.",
+            "◆ Fraquezas: contenção cósmica, luz intensa e lembranças pessoais podem fazê-lo hesitar por 1 rodada.",
+            "◆ Sentidos: visão comum deteriorada, audição instintiva e atração por ressonância.",
+            "◆ Moral: não recua por medo comum, mas pode repetir ações da vida antiga.",
+            "◆ Recursos coletáveis: chip danificado, circuitos, sucata técnica, fragmentos bioferríticos e objeto pessoal.",
+            "◆ Uso em campanha: ameaça de horror e culpa. Deve lembrar que havia uma pessoa ali.",
+            "FONTE OFICIAL // Livro 3, 4.22"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Humanis Corrompido Comum",
+          "url": "./assets/bestiary/humanis-corrompido-comum.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.42",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/humanis-corrompido-comum.jpg"
+    },
+    {
+      "id": "livro3-2-43-humanis-corrompido-tecnico",
+      "category": "monster",
+      "name": "Humanis Corrompido Técnico",
+      "tier": "E",
+      "type": "humanoide corrompido por chip e tecnologia",
+      "role": "ameaça tecnológica leve e interação com ambiente",
+      "size": "médio",
+      "pv": 16,
+      "ca": 10,
+      "movement": "8 m",
+      "habitat": "oficinas, laboratórios, estações, torres e salas de manutenção",
+      "behavior": "",
+      "attributes": "FOR 10/MOD +0; REF 10/MOD +0; CON 12/MOD +1; INT 10/MOD +0; MEN 8/MOD -1; PRE 4/MOD -3",
+      "attacks": "◆ Ataques: Ferramenta Quebrada, 1d6+1 concussão ou cortante; Descarga de Implante, 1d4 elétrico em alvo próximo.",
+      "abilities": "◆ Habilidade — Memória Profissional: interage instintivamente com consoles, portas e máquinas simples, podendo ativar perigos sem entender.\n◆ Habilidade — Falha de Chip: ao cair a 0 PV, libera pulso elétrico fraco. Alvos adjacentes fazem JPR com REF ou sofrem 1d4 elétrico.",
+      "resistances": "Resistências: doença comum e medo comum parcial.",
+      "weaknesses": "◆ Fraquezas: pulso EMP, hack, comando de segurança antigo ou desligamento do implante.",
+      "senses": "Sentidos: visão comum, ruído de chip e atração por energia.",
+      "moral": "Moral: protege painel, porta ou equipamento ligado à memória antiga.",
+      "resources": "◆ Recursos coletáveis: chip quebrado, implante queimado, ferramenta, microcircuitos e registro corrompido.",
+      "campaign": "◆ Uso em campanha: ideal para oficinas abandonadas e cenas em que o ambiente tecnológico é parte do combate.\nFONTE OFICIAL // Livro 3, 4.23",
+      "summary": "◆ Uso em campanha: ideal para oficinas abandonadas e cenas em que o ambiente tecnológico é parte do combate.\nFONTE OFICIAL // Livro 3, 4.23",
+      "tags": [
+        "E",
+        "humanoide corrompido por chip e tecnologia",
+        "ameaça tecnológica leve e interação com ambiente",
+        "médio"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // E // humanoide corrompido por chip e tecnologia",
+            "Tier: E",
+            "Tipo: humanoide corrompido por chip e tecnologia",
+            "Papel: ameaça tecnológica leve e interação com ambiente",
+            "Tamanho: médio",
+            "Habitat: oficinas, laboratórios, estações, torres e salas de manutenção",
+            "PV: 16",
+            "CA: 10",
+            "Movimento: 8 m",
+            "Atributos importantes: FOR 10/MOD +0; REF 10/MOD +0; CON 12/MOD +1; INT 10/MOD +0; MEN 8/MOD -1; PRE 4/MOD -3",
+            "◆ Ataques: Ferramenta Quebrada, 1d6+1 concussão ou cortante; Descarga de Implante, 1d4 elétrico em alvo próximo.",
+            "◆ Habilidade — Memória Profissional: interage instintivamente com consoles, portas e máquinas simples, podendo ativar perigos sem entender.",
+            "◆ Habilidade — Falha de Chip: ao cair a 0 PV, libera pulso elétrico fraco. Alvos adjacentes fazem JPR com REF ou sofrem 1d4 elétrico.",
+            "Resistências: doença comum e medo comum parcial.",
+            "◆ Fraquezas: pulso EMP, hack, comando de segurança antigo ou desligamento do implante.",
+            "Sentidos: visão comum, ruído de chip e atração por energia.",
+            "Moral: protege painel, porta ou equipamento ligado à memória antiga.",
+            "◆ Recursos coletáveis: chip quebrado, implante queimado, ferramenta, microcircuitos e registro corrompido.",
+            "◆ Uso em campanha: ideal para oficinas abandonadas e cenas em que o ambiente tecnológico é parte do combate.",
+            "FONTE OFICIAL // Livro 3, 4.23"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Humanis Corrompido Técnico",
+          "url": "./assets/bestiary/humanis-corrompido-tecnico.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.43",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/humanis-corrompido-tecnico.jpg"
+    },
+    {
+      "id": "livro3-2-44-zerak-corrompido",
+      "category": "monster",
+      "name": "Zerak Corrompido",
+      "tier": "D",
+      "type": "humanoide corrompido/brutamontes",
+      "role": "tanque, agressor físico e tragédia guerreira",
+      "size": "médio grande",
+      "pv": 30,
+      "ca": 13,
+      "movement": "7 m",
+      "habitat": "campos de batalha, minas, fortalezas arruinadas e zonas de combate antigo",
+      "behavior": "",
+      "attributes": "FOR 16/MOD +3; REF 8/MOD -1; CON 16/MOD +3; INT 6/MOD -2; MEN 8/MOD -1; PRE 10/MOD +0",
+      "attacks": "◆ Ataques: Punho Ferruginoso, 1d8 concussão; Lâmina Improvisada, 1d8 cortante.",
+      "abilities": "◆ Habilidade — Corpo de Guerra: reduz 1 dano físico comum uma vez por rodada.\n◆ Habilidade — Fúria Residual: abaixo da metade dos PV, causa +1 dano corpo a corpo e perde capacidade de recuar.\n◆ Habilidade — Investida Bruta: se mover 4 m antes de atacar, alvo faz JPF com FOR ou JPR com REF. Em falha, fica Derrubado.",
+      "resistances": "Resistências: concussão leve e medo comum.",
+      "weaknesses": "◆ Fraquezas: ataques em juntas, contenção por terreno estreito e memórias de clã ou honra, se aplicável à campanha.",
+      "senses": "Sentidos: comuns, com atração por vibração e barulho de combate.",
+      "moral": "◆ Moral: luta até cair, a menos que algo da antiga identidade interrompa o instinto.",
+      "resources": "◆ Recursos coletáveis: placas bioferríticas, osso denso, fragmento de chip e insígnia antiga.",
+      "campaign": "◆ Uso em campanha: inimigo pesado para mostrar a corrupção de antigos defensores ou trabalhadores de força.\nFONTE OFICIAL // Livro 3, 4.24",
+      "summary": "◆ Uso em campanha: inimigo pesado para mostrar a corrupção de antigos defensores ou trabalhadores de força.\nFONTE OFICIAL // Livro 3, 4.24",
+      "tags": [
+        "D",
+        "humanoide corrompido/brutamontes",
+        "tanque, agressor físico e tragédia guerreira",
+        "médio grande"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // D // humanoide corrompido/brutamontes",
+            "Tier: D",
+            "Tipo: humanoide corrompido/brutamontes",
+            "Papel: tanque, agressor físico e tragédia guerreira",
+            "Tamanho: médio grande",
+            "Habitat: campos de batalha, minas, fortalezas arruinadas e zonas de combate antigo",
+            "PV: 30",
+            "CA: 13",
+            "Movimento: 7 m",
+            "Atributos importantes: FOR 16/MOD +3; REF 8/MOD -1; CON 16/MOD +3; INT 6/MOD -2; MEN 8/MOD -1; PRE 10/MOD +0",
+            "◆ Ataques: Punho Ferruginoso, 1d8 concussão; Lâmina Improvisada, 1d8 cortante.",
+            "◆ Habilidade — Corpo de Guerra: reduz 1 dano físico comum uma vez por rodada.",
+            "◆ Habilidade — Fúria Residual: abaixo da metade dos PV, causa +1 dano corpo a corpo e perde capacidade de recuar.",
+            "◆ Habilidade — Investida Bruta: se mover 4 m antes de atacar, alvo faz JPF com FOR ou JPR com REF. Em falha, fica Derrubado.",
+            "Resistências: concussão leve e medo comum.",
+            "◆ Fraquezas: ataques em juntas, contenção por terreno estreito e memórias de clã ou honra, se aplicável à campanha.",
+            "Sentidos: comuns, com atração por vibração e barulho de combate.",
+            "◆ Moral: luta até cair, a menos que algo da antiga identidade interrompa o instinto.",
+            "◆ Recursos coletáveis: placas bioferríticas, osso denso, fragmento de chip e insígnia antiga.",
+            "◆ Uso em campanha: inimigo pesado para mostrar a corrupção de antigos defensores ou trabalhadores de força.",
+            "FONTE OFICIAL // Livro 3, 4.24"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Zerak Corrompido",
+          "url": "./assets/bestiary/zerak-corrompido.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.44",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/zerak-corrompido.jpg"
+    },
+    {
+      "id": "livro3-2-45-veyrkan-corrompido",
+      "category": "monster",
+      "name": "Veyrkan Corrompido",
+      "tier": "D",
+      "type": "humanoide corrompido/predador furtivo",
+      "role": "emboscador, venenoso e perseguidor",
+      "size": "médio",
+      "pv": 24,
+      "ca": 14,
+      "movement": "10 m; escalada 6 m, se houver superfície adequada",
+      "habitat": "corredores, dutos, instalações úmidas, naves caídas e ruínas com passagens estreitas",
+      "behavior": "",
+      "attributes": "FOR 10/MOD +0; REF 16/MOD +3; CON 12/MOD +1; INT 8/MOD -1; MEN 10/MOD +0; PRE 8/MOD -1",
+      "attacks": "◆ Ataques: Garras Rápidas, 1d6 cortante; Mordida Tóxica, 1d6 perfurante.",
+      "abilities": "◆ Habilidade — Toxina Instável: em sucesso completo com Mordida Tóxica, o alvo faz JPF com CON ou fica Envenenado leve.\n◆ Habilidade — Deslocamento Serpentino: recebe +1 em Furtividade ou Acrobacia em corredores, dutos e espaços estreitos.\n◆ Habilidade — Recuo Predatório: após atacar alvo isolado, pode se mover 2 m sem provocar reação se houver cobertura próxima.",
+      "resistances": "Resistências: veneno comum leve.",
+      "weaknesses": "Fraquezas: frio intenso, luz súbita e bloqueio de rota de fuga.",
+      "senses": "Sentidos: visão em baixa luz, olfato e percepção de calor fraca.",
+      "moral": "◆ Moral: recua se perder vantagem de emboscada, mas volta a perseguir se sentir cheiro de sangue.",
+      "resources": "◆ Recursos coletáveis: glândula tóxica, escamas, dente fino e implante corrompido.",
+      "campaign": "◆ Uso em campanha: excelente para horror de corredor e perseguição dentro de instalações.\nFONTE OFICIAL // Livro 3, 4.25",
+      "summary": "◆ Uso em campanha: excelente para horror de corredor e perseguição dentro de instalações.\nFONTE OFICIAL // Livro 3, 4.25",
+      "tags": [
+        "D",
+        "humanoide corrompido/predador furtivo",
+        "emboscador, venenoso e perseguidor",
+        "médio"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // D // humanoide corrompido/predador furtivo",
+            "Tier: D",
+            "Tipo: humanoide corrompido/predador furtivo",
+            "Papel: emboscador, venenoso e perseguidor",
+            "Tamanho: médio",
+            "Habitat: corredores, dutos, instalações úmidas, naves caídas e ruínas com passagens estreitas",
+            "PV: 24",
+            "CA: 14",
+            "Movimento: 10 m; escalada 6 m, se houver superfície adequada",
+            "Atributos importantes: FOR 10/MOD +0; REF 16/MOD +3; CON 12/MOD +1; INT 8/MOD -1; MEN 10/MOD +0; PRE 8/MOD -1",
+            "◆ Ataques: Garras Rápidas, 1d6 cortante; Mordida Tóxica, 1d6 perfurante.",
+            "◆ Habilidade — Toxina Instável: em sucesso completo com Mordida Tóxica, o alvo faz JPF com CON ou fica Envenenado leve.",
+            "◆ Habilidade — Deslocamento Serpentino: recebe +1 em Furtividade ou Acrobacia em corredores, dutos e espaços estreitos.",
+            "◆ Habilidade — Recuo Predatório: após atacar alvo isolado, pode se mover 2 m sem provocar reação se houver cobertura próxima.",
+            "Resistências: veneno comum leve.",
+            "Fraquezas: frio intenso, luz súbita e bloqueio de rota de fuga.",
+            "Sentidos: visão em baixa luz, olfato e percepção de calor fraca.",
+            "◆ Moral: recua se perder vantagem de emboscada, mas volta a perseguir se sentir cheiro de sangue.",
+            "◆ Recursos coletáveis: glândula tóxica, escamas, dente fino e implante corrompido.",
+            "◆ Uso em campanha: excelente para horror de corredor e perseguição dentro de instalações.",
+            "FONTE OFICIAL // Livro 3, 4.25"
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Veyrkan Corrompido",
+          "url": "./assets/bestiary/veyrkan-corrompido.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.45",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/veyrkan-corrompido.jpg"
+    },
+    {
+      "id": "livro3-2-46-kairi-corrompido",
+      "category": "monster",
+      "name": "Kairi Corrompido",
+      "tier": "C",
+      "type": "humanoide corrompido/cósmico",
+      "role": "controlador, ameaça emocional e foco de anomalia",
+      "size": "médio",
+      "pv": 36,
+      "ca": 14,
+      "movement": "8 m. Cosmos: 4",
+      "habitat": "ruínas de ressonância, lagos cósmicos, templos antigos, locais Kairi profanados e zonas de sonho",
+      "behavior": "",
+      "attributes": "FOR 8/MOD -1; REF 12/MOD +1; CON 12/MOD +1; INT 12/MOD +1; MEN 16/MOD +3; PRE 16/MOD +3",
+      "attacks": "◆ Ataques: Toque Ressonante, 1d8 cósmico; Grito Afogado, sem dano físico, mas força JPC.",
+      "abilities": "◆ Habilidade — Canto Quebrado: uma vez por cena, alvos próximos fazem JPC com PRE. Em falha, recebem +1 Estresse ou ficam Tontos até o fim da próxima rodada.\n◆ Habilidade — Memória Afogada: em crítico com Toque Ressonante, o alvo vê uma memória que não é sua e sofre -1 no próximo teste de MEN.\n◆ Habilidade — Ressonância Instável: se usar Cosmos perto dele, o personagem faz JPC com MEN para evitar eco, interferência ou +1 Estresse.",
+      "resistances": "Resistências: dano cósmico fraco e medo comum.",
+      "weaknesses": "◆ Fraquezas: música Kairi verdadeira, símbolo ritual correto, contenção cósmica e apelo emocional ligado à memória perdida.",
+      "senses": "◆ Sentidos: Percepção Cósmica instintiva e sensibilidade a emoção forte.",
+      "moral": "◆ Moral: não age por fome. Pode proteger local, repetir canto antigo ou tentar arrastar outros para a própria visão.",
+      "resources": "◆ Recursos coletáveis: cristal lacrimal, fio de voz, marca cósmica e fragmento de foco quebrado.",
+      "campaign": "◆ Uso em campanha: ameaça trágica e rara. Deve ser usada com peso narrativo, não como inimigo comum.\nFONTE OFICIAL // Livro 3, 4.26\nCHEFES E AMEAÇAS LENDÁRIAS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEntidades, máquinas e predadores concebidos como encontros centrais de campanha.",
+      "summary": "◆ Uso em campanha: ameaça trágica e rara. Deve ser usada com peso narrativo, não como inimigo comum.\nFONTE OFICIAL // Livro 3, 4.26\nCHEFES E AMEAÇAS LENDÁRIAS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEntidades, máquinas e predadores concebidos como encontros centrais de campanha.",
+      "tags": [
+        "C",
+        "humanoide corrompido/cósmico",
+        "controlador, ameaça emocional e foco de anomalia",
+        "médio"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // C // humanoide corrompido/cósmico",
+            "Tier: C",
+            "Tipo: humanoide corrompido/cósmico",
+            "Papel: controlador, ameaça emocional e foco de anomalia",
+            "Tamanho: médio",
+            "Habitat: ruínas de ressonância, lagos cósmicos, templos antigos, locais Kairi profanados e zonas de sonho",
+            "PV: 36",
+            "CA: 14",
+            "Movimento: 8 m. Cosmos: 4",
+            "Atributos importantes: FOR 8/MOD -1; REF 12/MOD +1; CON 12/MOD +1; INT 12/MOD +1; MEN 16/MOD +3; PRE 16/MOD +3",
+            "◆ Ataques: Toque Ressonante, 1d8 cósmico; Grito Afogado, sem dano físico, mas força JPC.",
+            "◆ Habilidade — Canto Quebrado: uma vez por cena, alvos próximos fazem JPC com PRE. Em falha, recebem +1 Estresse ou ficam Tontos até o fim da próxima rodada.",
+            "◆ Habilidade — Memória Afogada: em crítico com Toque Ressonante, o alvo vê uma memória que não é sua e sofre -1 no próximo teste de MEN.",
+            "◆ Habilidade — Ressonância Instável: se usar Cosmos perto dele, o personagem faz JPC com MEN para evitar eco, interferência ou +1 Estresse.",
+            "Resistências: dano cósmico fraco e medo comum.",
+            "◆ Fraquezas: música Kairi verdadeira, símbolo ritual correto, contenção cósmica e apelo emocional ligado à memória perdida.",
+            "◆ Sentidos: Percepção Cósmica instintiva e sensibilidade a emoção forte.",
+            "◆ Moral: não age por fome. Pode proteger local, repetir canto antigo ou tentar arrastar outros para a própria visão.",
+            "◆ Recursos coletáveis: cristal lacrimal, fio de voz, marca cósmica e fragmento de foco quebrado.",
+            "◆ Uso em campanha: ameaça trágica e rara. Deve ser usada com peso narrativo, não como inimigo comum.",
+            "FONTE OFICIAL // Livro 3, 4.26",
+            "CHEFES E AMEAÇAS LENDÁRIAS",
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+            "Entidades, máquinas e predadores concebidos como encontros centrais de campanha."
+          ]
+        }
+      ],
+      "sheetType": "full",
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Kairi Corrompido",
+          "url": "./assets/bestiary/kairi-corrompido.jpg"
+        }
+      ],
+      "source": "Livro 3, 2.46",
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/kairi-corrompido.jpg"
+    },
+    {
+      "id": "livro3-3-1-rasktorian-ancestral",
+      "category": "monster",
+      "name": "Rasktorian Ancestral",
+      "tier": "A",
+      "type": "Predador Alfa lendario",
+      "role": "Chefe, brutamontes e predador rapido",
+      "size": "Enorme",
+      "pv": 115,
+      "ca": 18,
+      "movement": "12 m",
+      "habitat": "Campos rochosos, ruinas abertas e territorio antigo de caca",
+      "behavior": "",
+      "attributes": "FOR 22/MOD +6, REF 18/MOD +4, CON 22/MOD +6, MEN 16/MOD +3, PRE 18/MOD +4",
+      "attacks": "◆ Garra Ancestral: 2d6 cortante.\n◆ Mordida de Ruptura: 2d6 perfurante.\n◆ Impacto de Cauda: 1d10 concussao em alvo adjacente.",
+      "abilities": "◆ Rugido de Predador-Rei: uma vez por cena, inimigos proximos fazem JPC com MEN ou PRE. Em falha, recebem +1 Estresse e -1 no proximo ataque contra o Rasktorian Ancestral.\n◆ Salto Impossivel: pode saltar grandes distancias dentro da arena, ignorando terreno dificil. Ao cair perto de personagens, alvos adjacentes fazem JPF com REF ou ficam Derrubados.\n◆ Sangue de Alfa: abaixo de metade dos PV, o sangue cosmico-adrenal altera Rasktorians menores, fazendo-os entrar em furia ou fugir.\n◆ Destruir Cobertura: uma vez por rodada, ao errar ou acertar ataque contra alvo em cobertura, pode destruir cobertura leve ou danificar cobertura media.\n◆ Mover metade do deslocamento.\n◆ Atacar com Cauda.\n◆ Rugir para chamar Rasktorians menores.\n◆ Se for cercado por tres ou mais inimigos, pode empurrar todos adjacentes. Alvos fazem JPF com FOR ou REF.\nFase 1: caca e testa o grupo.\n◆ Fase 2: abaixo de metade dos PV, torna-se agressivo e causa +1 dano corpo a corpo.\n◆ Fase 3: abaixo de 20 PV, tenta matar quem mais o feriu ou recuar para territorio profundo.",
+      "resistances": "◆ Resistencias: Reducao 2 contra dano fisico comum. Resistencia contra medo comum.\n◆ Fraquezas: Orgulho territorial, feromonios de desafio e ferida antiga em uma das laterais, descoberta com Percepcao ou Biologia.",
+      "weaknesses": "◆ Resistencias: Reducao 2 contra dano fisico comum. Resistencia contra medo comum.\n◆ Fraquezas: Orgulho territorial, feromonios de desafio e ferida antiga em uma das laterais, descoberta com Percepcao ou Biologia.",
+      "senses": "",
+      "moral": "",
+      "resources": "◆ Condicoes que aplica: Derrubado, Sangrando, Medo ou Estresse.\n◆ Recursos ameacados: Armaduras, coberturas, cubos carregados durante fuga e rotas de retirada.\n◆ Recursos coletaveis: Presa Ancestral, Carapaca de Alfa Antigo, sangue adrenal raro, couro superior e glandula de dominio.",
+      "campaign": "◆ Como pode ser derrotado sem matar: Atrair para fora do territorio, vencer ritual de dominio, ferir gravemente e permitir retirada ou usar feromonio para redirecionar o bando.\n◆ Se vencer, o grupo pode ser cacado pelo bando e rotas proximas se tornam perigosas.\n◆ Se fugir, vira ameaca recorrente e pode atacar caravanas ligadas ao grupo.\n◆ Se for derrotado, o territorio fica instavel e Rasktorians menores se dispersam. A carapaca pode conter marcas azuis antigas.\nFONTE OFICIAL // Livro 3, 3.1",
+      "summary": "◆ Como pode ser derrotado sem matar: Atrair para fora do territorio, vencer ritual de dominio, ferir gravemente e permitir retirada ou usar feromonio para redirecionar o bando.\n◆ Se vencer, o grupo pode ser cacado pelo bando e rotas proximas se tornam perigosas.\n◆ Se fugir, vira ameaca recorrente e pode atacar caravanas ligadas ao grupo.\n◆ Se for derrotado, o territorio fica instavel e Rasktorians menores se dispersam. A carapaca pode conter marcas azuis antigas.\nFONTE OFICIAL // Livro 3, 3.1",
+      "tags": [
+        "A",
+        "Predador Alfa lendario",
+        "Chefe, brutamontes e predador rapido",
+        "Enorme",
+        "Chefe"
+      ],
+      "details": [
+        {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // A // Predador Alfa lendario",
+            "Tier: A",
+            "Tipo: Predador Alfa lendario",
+            "Papel: Chefe, brutamontes e predador rapido",
+            "Tamanho: Enorme",
+            "Habitat: Campos rochosos, ruinas abertas e territorio antigo de caca",
+            "PV: 115",
+            "CA: 18",
+            "Movimento: 12 m",
+            "Atributos importantes: FOR 22/MOD +6, REF 18/MOD +4, CON 22/MOD +6, MEN 16/MOD +3, PRE 18/MOD +4"
+          ]
+        },
+        {
+          "label": "Sinais antes do encontro",
+          "items": [
+            "◆ Ossos quebrados ao meio.",
+            "◆ Rastros maiores que um corpo humano.",
+            "◆ Rugido ouvido a quilometros.",
+            "◆ Rasktorians menores fugindo.",
+            "◆ Pedras marcadas por garras."
+          ]
+        },
+        {
+          "label": "Ataques",
+          "items": [
+            "◆ Garra Ancestral: 2d6 cortante.",
+            "◆ Mordida de Ruptura: 2d6 perfurante.",
+            "◆ Impacto de Cauda: 1d10 concussao em alvo adjacente."
           ]
         },
         {
           "label": "Habilidades principais",
           "items": [
-            "Rugido de Predador-Rei: uma vez por cena, inimigos proximos fazem JPC com MEN ou PRE. Em falha, recebem +1 Estresse e -1 no proximo ataque contra o Rasktorian Ancestral.",
-            "Salto Impossivel: pode saltar grandes distancias dentro da arena, ignorando terreno dificil. Ao cair perto de personagens, alvos adjacentes fazem JPF com REF ou ficam Derrubados.",
-            "Sangue de Alfa: abaixo de metade dos PV, o sangue cosmico-adrenal altera Rasktorians menores, fazendo-os entrar em furia ou fugir.",
-            "Destruir Cobertura: uma vez por rodada, ao errar ou acertar ataque contra alvo em cobertura, pode destruir cobertura leve ou danificar cobertura media."
+            "◆ Rugido de Predador-Rei: uma vez por cena, inimigos proximos fazem JPC com MEN ou PRE. Em falha, recebem +1 Estresse e -1 no proximo ataque contra o Rasktorian Ancestral.",
+            "◆ Salto Impossivel: pode saltar grandes distancias dentro da arena, ignorando terreno dificil. Ao cair perto de personagens, alvos adjacentes fazem JPF com REF ou ficam Derrubados.",
+            "◆ Sangue de Alfa: abaixo de metade dos PV, o sangue cosmico-adrenal altera Rasktorians menores, fazendo-os entrar em furia ou fugir.",
+            "◆ Destruir Cobertura: uma vez por rodada, ao errar ou acertar ataque contra alvo em cobertura, pode destruir cobertura leve ou danificar cobertura media."
           ]
         },
         {
           "label": "Acoes de chefe",
           "items": [
-            "Mover metade do deslocamento.",
-            "Atacar com Cauda.",
-            "Rugir para chamar Rasktorians menores."
+            "◆ Mover metade do deslocamento.",
+            "◆ Atacar com Cauda.",
+            "◆ Rugir para chamar Rasktorians menores."
           ]
         },
         {
           "label": "Reacoes",
           "items": [
-            "Se for cercado por tres ou mais inimigos, pode empurrar todos adjacentes. Alvos fazem JPF com FOR ou REF."
+            "◆ Se for cercado por tres ou mais inimigos, pode empurrar todos adjacentes. Alvos fazem JPF com FOR ou REF."
           ]
         },
         {
           "label": "Fases",
           "items": [
             "Fase 1: caca e testa o grupo.",
-            "Fase 2: abaixo de metade dos PV, torna-se agressivo e causa +1 dano corpo a corpo.",
-            "Fase 3: abaixo de 20 PV, tenta matar quem mais o feriu ou recuar para territorio profundo."
+            "◆ Fase 2: abaixo de metade dos PV, torna-se agressivo e causa +1 dano corpo a corpo.",
+            "◆ Fase 3: abaixo de 20 PV, tenta matar quem mais o feriu ou recuar para territorio profundo."
           ]
         },
         {
           "label": "Resistencias e fraquezas",
           "items": [
-            "Resistencias: Reducao 2 contra dano fisico comum. Resistencia contra medo comum.",
-            "Fraquezas: Orgulho territorial, feromonios de desafio e ferida antiga em uma das laterais, descoberta com Percepcao ou Biologia."
+            "◆ Resistencias: Reducao 2 contra dano fisico comum. Resistencia contra medo comum.",
+            "◆ Fraquezas: Orgulho territorial, feromonios de desafio e ferida antiga em uma das laterais, descoberta com Percepcao ou Biologia."
           ]
         },
         {
           "label": "Condicoes, recursos e coleta",
           "items": [
-            "Condicoes que aplica: Derrubado, Sangrando, Medo ou Estresse.",
-            "Recursos ameacados: Armaduras, coberturas, cubos carregados durante fuga e rotas de retirada.",
-            "Recursos coletaveis: Presa Ancestral, Carapaca de Alfa Antigo, sangue adrenal raro, couro superior e glandula de dominio."
+            "◆ Condicoes que aplica: Derrubado, Sangrando, Medo ou Estresse.",
+            "◆ Recursos ameacados: Armaduras, coberturas, cubos carregados durante fuga e rotas de retirada.",
+            "◆ Recursos coletaveis: Presa Ancestral, Carapaca de Alfa Antigo, sangue adrenal raro, couro superior e glandula de dominio."
           ]
         },
         {
           "label": "Solucoes e consequencias",
           "items": [
-            "Como pode ser derrotado sem matar: Atrair para fora do territorio, vencer ritual de dominio, ferir gravemente e permitir retirada ou usar feromonio para redirecionar o bando.",
-            "Se vencer, o grupo pode ser cacado pelo bando e rotas proximas se tornam perigosas.",
-            "Se fugir, vira ameaca recorrente e pode atacar caravanas ligadas ao grupo.",
-            "Se for derrotado, o territorio fica instavel e Rasktorians menores se dispersam. A carapaca pode conter marcas azuis antigas."
+            "◆ Como pode ser derrotado sem matar: Atrair para fora do territorio, vencer ritual de dominio, ferir gravemente e permitir retirada ou usar feromonio para redirecionar o bando.",
+            "◆ Se vencer, o grupo pode ser cacado pelo bando e rotas proximas se tornam perigosas.",
+            "◆ Se fugir, vira ameaca recorrente e pode atacar caravanas ligadas ao grupo.",
+            "◆ Se for derrotado, o territorio fica instavel e Rasktorians menores se dispersam. A carapaca pode conter marcas azuis antigas.",
+            "FONTE OFICIAL // Livro 3, 3.1"
           ]
         }
       ],
       "sheetType": "boss",
-      "needsCoreStats": true,
-      "assets": [],
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Rasktorian Ancestral",
+          "url": "./assets/bestiary/rasktorian-ancestral.jpg"
+        }
+      ],
       "source": "Livro 3, 3.1",
-      "schemaVersion": 1
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/rasktorian-ancestral.jpg"
     },
     {
       "id": "livro3-3-2-matriarca-abissal",
       "category": "monster",
       "name": "Matriarca Abissal",
-      "tier": "Lendario",
-      "type": "Chefe lendario",
-      "role": "Chefe",
-      "size": "",
-      "pv": null,
-      "ca": null,
-      "movement": "",
-      "habitat": "",
+      "tier": "A",
+      "type": "Nyxaracne superior/cosmica",
+      "role": "Chefe, controlador e suporte",
+      "size": "Enorme",
+      "pv": 95,
+      "ca": 17,
+      "movement": "8 m, escalada 10 m",
+      "habitat": "Ninho profundo, caverna vertical ou ruina tomada por teias negras",
       "behavior": "",
-      "attributes": "",
-      "attacks": "Presas Abissais: 2d6 perfurante.\nPata Serrada: 1d10 cortante.\nJato de Teia: forca JPF com REF para evitar Imobilizado.",
-      "abilities": "Dominio de Teia: na arena com teias, ignora penalidades e move-se por paredes e teto sem custo adicional.\nApagar Todas as Luzes: uma vez por cena, reduz ou apaga fontes pequenas e medias de luz. Luz cosmica forte ou fogo intenso resiste melhor.\nNinhada Infinita: no fim de cada rodada, se houver ovos intactos, 1 criatura menor surge ou se move.\nCasulo Vivo: personagens presos em casulos fazem JPF com CON a cada rodada ou ficam Tontos.\nCriar area de teia.\nMover filhotes.\nPuxar alvo Imobilizado 2 m.\nApagar uma fonte de luz menor.\nQuando sofre dano de fogo, pode recuar 4 m pelas teias, uma vez por rodada.\nFase 1: controla area e separa o grupo.\nFase 2: abaixo de metade dos PV, chama ninhada e ataca diretamente.\nFase 3: se ovos forem destruidos, entra em Furia Materna, ganhando +1 dano e perdendo cautela.",
-      "resistances": "Resistencias: Resistencia leve contra perfurante e resistencia contra escuridao.\nFraquezas: Fogo, luz intensa e destruicao dos pontos principais da teia.",
-      "weaknesses": "Resistencias: Resistencia leve contra perfurante e resistencia contra escuridao.\nFraquezas: Fogo, luz intensa e destruicao dos pontos principais da teia.",
+      "attributes": "FOR 18/MOD +4, REF 18/MOD +4, CON 20/MOD +5, MEN 18/MOD +4, PRE 16/MOD +3",
+      "attacks": "◆ Presas Abissais: 2d6 perfurante.\n◆ Pata Serrada: 1d10 cortante.\n◆ Jato de Teia: forca JPF com REF para evitar Imobilizado.",
+      "abilities": "◆ Dominio de Teia: na arena com teias, ignora penalidades e move-se por paredes e teto sem custo adicional.\n◆ Apagar Todas as Luzes: uma vez por cena, reduz ou apaga fontes pequenas e medias de luz. Luz cosmica forte ou fogo intenso resiste melhor.\n◆ Ninhada Infinita: no fim de cada rodada, se houver ovos intactos, 1 criatura menor surge ou se move.\n◆ Casulo Vivo: personagens presos em casulos fazem JPF com CON a cada rodada ou ficam Tontos.\n◆ Criar area de teia.\n◆ Mover filhotes.\n◆ Puxar alvo Imobilizado 2 m.\n◆ Apagar uma fonte de luz menor.\n◆ Quando sofre dano de fogo, pode recuar 4 m pelas teias, uma vez por rodada.\nFase 1: controla area e separa o grupo.\nFase 2: abaixo de metade dos PV, chama ninhada e ataca diretamente.\n◆ Fase 3: se ovos forem destruidos, entra em Furia Materna, ganhando +1 dano e perdendo cautela.",
+      "resistances": "◆ Resistencias: Resistencia leve contra perfurante e resistencia contra escuridao.\n◆ Fraquezas: Fogo, luz intensa e destruicao dos pontos principais da teia.",
+      "weaknesses": "◆ Resistencias: Resistencia leve contra perfurante e resistencia contra escuridao.\n◆ Fraquezas: Fogo, luz intensa e destruicao dos pontos principais da teia.",
       "senses": "",
       "moral": "",
-      "resources": "Condicoes que aplica: Imobilizado, Tonto e Medo.\nRecursos ameacados: Luz, oxigenio em casulos, cubos presos em teia e armas corpo a corpo.\nRecursos coletaveis: Teia abissal, veneno concentrado, olho da Matriarca, ovos e quitina negra.",
-      "campaign": "Como pode ser derrotado sem matar: Remover ou proteger ovos e abandonar territorio, oferecer presa maior, selar entrada do ninho ou usar luz e fogo para forcar retirada.\nSe vencer, tuneis ficam inacessiveis e NPCs capturados viram casulos.\nSe fugir, reconstrói o ninho em local mais perigoso.\nSe derrotada, a ninhada se dispersa e uma passagem antiga sob o ninho pode ser revelada.",
-      "summary": "Como pode ser derrotado sem matar: Remover ou proteger ovos e abandonar territorio, oferecer presa maior, selar entrada do ninho ou usar luz e fogo para forcar retirada.\nSe vencer, tuneis ficam inacessiveis e NPCs capturados viram casulos.\nSe fugir, reconstrói o ninho em local mais perigoso.\nSe derrotada, a ninhada se dispersa e uma passagem antiga sob o ninho pode ser revelada.",
+      "resources": "◆ Condicoes que aplica: Imobilizado, Tonto e Medo.\n◆ Recursos ameacados: Luz, oxigenio em casulos, cubos presos em teia e armas corpo a corpo.\n◆ Recursos coletaveis: Teia abissal, veneno concentrado, olho da Matriarca, ovos e quitina negra.",
+      "campaign": "◆ Como pode ser derrotado sem matar: Remover ou proteger ovos e abandonar territorio, oferecer presa maior, selar entrada do ninho ou usar luz e fogo para forcar retirada.\n◆ Se vencer, tuneis ficam inacessiveis e NPCs capturados viram casulos.\n◆ Se fugir, reconstrói o ninho em local mais perigoso.\n◆ Se derrotada, a ninhada se dispersa e uma passagem antiga sob o ninho pode ser revelada.\nFONTE OFICIAL // Livro 3, 3.2",
+      "summary": "◆ Como pode ser derrotado sem matar: Remover ou proteger ovos e abandonar territorio, oferecer presa maior, selar entrada do ninho ou usar luz e fogo para forcar retirada.\n◆ Se vencer, tuneis ficam inacessiveis e NPCs capturados viram casulos.\n◆ Se fugir, reconstrói o ninho em local mais perigoso.\n◆ Se derrotada, a ninhada se dispersa e uma passagem antiga sob o ninho pode ser revelada.\nFONTE OFICIAL // Livro 3, 3.2",
       "tags": [
-        "Lendario",
-        "Chefe lendario",
-        "Chefe",
+        "A",
+        "Nyxaracne superior/cosmica",
+        "Chefe, controlador e suporte",
+        "Enorme",
         "Chefe"
       ],
       "details": [
         {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // A // Nyxaracne superior/cosmica",
+            "Tier: A",
+            "Tipo: Nyxaracne superior/cosmica",
+            "Papel: Chefe, controlador e suporte",
+            "Tamanho: Enorme",
+            "Habitat: Ninho profundo, caverna vertical ou ruina tomada por teias negras",
+            "PV: 95",
+            "CA: 17",
+            "Movimento: 8 m, escalada 10 m",
+            "Atributos importantes: FOR 18/MOD +4, REF 18/MOD +4, CON 20/MOD +5, MEN 18/MOD +4, PRE 16/MOD +3"
+          ]
+        },
+        {
           "label": "Sinais antes do encontro",
           "items": [
-            "Luzes apagadas por teias.",
-            "Casulos vazios.",
-            "Sussurros abafados.",
-            "Teias vibrando sem vento.",
-            "Corpos pendurados, ainda vivos."
+            "◆ Luzes apagadas por teias.",
+            "◆ Casulos vazios.",
+            "◆ Sussurros abafados.",
+            "◆ Teias vibrando sem vento.",
+            "◆ Corpos pendurados, ainda vivos."
           ]
         },
         {
           "label": "Ataques",
           "items": [
-            "Presas Abissais: 2d6 perfurante.",
-            "Pata Serrada: 1d10 cortante.",
-            "Jato de Teia: forca JPF com REF para evitar Imobilizado."
+            "◆ Presas Abissais: 2d6 perfurante.",
+            "◆ Pata Serrada: 1d10 cortante.",
+            "◆ Jato de Teia: forca JPF com REF para evitar Imobilizado."
           ]
         },
         {
           "label": "Habilidades principais",
           "items": [
-            "Dominio de Teia: na arena com teias, ignora penalidades e move-se por paredes e teto sem custo adicional.",
-            "Apagar Todas as Luzes: uma vez por cena, reduz ou apaga fontes pequenas e medias de luz. Luz cosmica forte ou fogo intenso resiste melhor.",
-            "Ninhada Infinita: no fim de cada rodada, se houver ovos intactos, 1 criatura menor surge ou se move.",
-            "Casulo Vivo: personagens presos em casulos fazem JPF com CON a cada rodada ou ficam Tontos."
+            "◆ Dominio de Teia: na arena com teias, ignora penalidades e move-se por paredes e teto sem custo adicional.",
+            "◆ Apagar Todas as Luzes: uma vez por cena, reduz ou apaga fontes pequenas e medias de luz. Luz cosmica forte ou fogo intenso resiste melhor.",
+            "◆ Ninhada Infinita: no fim de cada rodada, se houver ovos intactos, 1 criatura menor surge ou se move.",
+            "◆ Casulo Vivo: personagens presos em casulos fazem JPF com CON a cada rodada ou ficam Tontos."
           ]
         },
         {
           "label": "Acoes de chefe",
           "items": [
-            "Criar area de teia.",
-            "Mover filhotes.",
-            "Puxar alvo Imobilizado 2 m.",
-            "Apagar uma fonte de luz menor."
+            "◆ Criar area de teia.",
+            "◆ Mover filhotes.",
+            "◆ Puxar alvo Imobilizado 2 m.",
+            "◆ Apagar uma fonte de luz menor."
           ]
         },
         {
           "label": "Reacoes",
           "items": [
-            "Quando sofre dano de fogo, pode recuar 4 m pelas teias, uma vez por rodada."
+            "◆ Quando sofre dano de fogo, pode recuar 4 m pelas teias, uma vez por rodada."
           ]
         },
         {
@@ -9110,110 +11527,134 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
           "items": [
             "Fase 1: controla area e separa o grupo.",
             "Fase 2: abaixo de metade dos PV, chama ninhada e ataca diretamente.",
-            "Fase 3: se ovos forem destruidos, entra em Furia Materna, ganhando +1 dano e perdendo cautela."
+            "◆ Fase 3: se ovos forem destruidos, entra em Furia Materna, ganhando +1 dano e perdendo cautela."
           ]
         },
         {
           "label": "Resistencias e fraquezas",
           "items": [
-            "Resistencias: Resistencia leve contra perfurante e resistencia contra escuridao.",
-            "Fraquezas: Fogo, luz intensa e destruicao dos pontos principais da teia."
+            "◆ Resistencias: Resistencia leve contra perfurante e resistencia contra escuridao.",
+            "◆ Fraquezas: Fogo, luz intensa e destruicao dos pontos principais da teia."
           ]
         },
         {
           "label": "Condicoes, recursos e coleta",
           "items": [
-            "Condicoes que aplica: Imobilizado, Tonto e Medo.",
-            "Recursos ameacados: Luz, oxigenio em casulos, cubos presos em teia e armas corpo a corpo.",
-            "Recursos coletaveis: Teia abissal, veneno concentrado, olho da Matriarca, ovos e quitina negra."
+            "◆ Condicoes que aplica: Imobilizado, Tonto e Medo.",
+            "◆ Recursos ameacados: Luz, oxigenio em casulos, cubos presos em teia e armas corpo a corpo.",
+            "◆ Recursos coletaveis: Teia abissal, veneno concentrado, olho da Matriarca, ovos e quitina negra."
           ]
         },
         {
           "label": "Solucoes e consequencias",
           "items": [
-            "Como pode ser derrotado sem matar: Remover ou proteger ovos e abandonar territorio, oferecer presa maior, selar entrada do ninho ou usar luz e fogo para forcar retirada.",
-            "Se vencer, tuneis ficam inacessiveis e NPCs capturados viram casulos.",
-            "Se fugir, reconstrói o ninho em local mais perigoso.",
-            "Se derrotada, a ninhada se dispersa e uma passagem antiga sob o ninho pode ser revelada."
+            "◆ Como pode ser derrotado sem matar: Remover ou proteger ovos e abandonar territorio, oferecer presa maior, selar entrada do ninho ou usar luz e fogo para forcar retirada.",
+            "◆ Se vencer, tuneis ficam inacessiveis e NPCs capturados viram casulos.",
+            "◆ Se fugir, reconstrói o ninho em local mais perigoso.",
+            "◆ Se derrotada, a ninhada se dispersa e uma passagem antiga sob o ninho pode ser revelada.",
+            "FONTE OFICIAL // Livro 3, 3.2"
           ]
         }
       ],
       "sheetType": "boss",
-      "needsCoreStats": true,
-      "assets": [],
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Matriarca Abissal",
+          "url": "./assets/bestiary/matriarca-abissal.jpg"
+        }
+      ],
       "source": "Livro 3, 3.2",
-      "schemaVersion": 1
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/matriarca-abissal.jpg"
     },
     {
       "id": "livro3-3-3-sentinela-tharan",
       "category": "monster",
       "name": "Sentinela Tharan",
-      "tier": "Lendario",
-      "type": "Chefe lendario",
-      "role": "Chefe",
-      "size": "",
-      "pv": null,
-      "ca": null,
-      "movement": "",
-      "habitat": "",
+      "tier": "A",
+      "type": "Maquina antiga/guardiao de portal",
+      "role": "Chefe, guardiao e tanque",
+      "size": "Grande",
+      "pv": 110,
+      "ca": 19,
+      "movement": "7 m",
+      "habitat": "Camara de portal, ruina antiga ou entrada Tharan selada",
       "behavior": "",
-      "attributes": "",
-      "attacks": "Lamina de Contencao: 2d6 cortante.\nCanhao de Pulso: 2d6 energetico.\nGolpe de Escudo: 1d10 concussao e JPF com FOR ou Derrubado.",
-      "abilities": "Protocolo Tharan: nao inicia combate imediatamente se os personagens apresentarem simbolo, frase ou autorizacao antiga.\nCampo de Contencao: cria zona onde movimento e reduzido pela metade ate o fim da proxima rodada.\nEscudo Rotativo: uma vez por rodada, reduz em 3 o dano de um ataque.\nLeitura de Chip: identifica chip de profissao ativo e escolhe alvo considerado risco de abertura.\nAtivar campo de contencao.\nDisparar pulso menor.\nFechar porta ou bloquear passagem.\nMover drone auxiliar.\nAo receber dano eletrico ou tecnologico, pode redirecionar parte da energia. O atacante faz teste de Tecnologia ou o equipamento usado sofre Jammed.\nFase 1: modo advertencia.\nFase 2: abaixo de 70 PV, modo defesa ativa.\nFase 3: abaixo de 30 PV, modo selamento total; o portal comeca a fechar ou sobrecarregar.",
-      "resistances": "Resistencias: Imune a veneno, doenca e medo comum. Reducao 2 contra fisico comum. Resistencia contra fogo e frio.\nFraquezas: Comando antigo correto, nucleo exposto apos Canhao de Pulso e sobrecarga coordenada em tres pilares da arena.",
-      "weaknesses": "Resistencias: Imune a veneno, doenca e medo comum. Reducao 2 contra fisico comum. Resistencia contra fogo e frio.\nFraquezas: Comando antigo correto, nucleo exposto apos Canhao de Pulso e sobrecarga coordenada em tres pilares da arena.",
+      "attributes": "FOR 20/MOD +5, CON 22/MOD +6, INT 16/MOD +3, MEN 14/MOD +2, PRE 10/MOD +0",
+      "attacks": "◆ Lamina de Contencao: 2d6 cortante.\n◆ Canhao de Pulso: 2d6 energetico.\n◆ Golpe de Escudo: 1d10 concussao e JPF com FOR ou Derrubado.",
+      "abilities": "◆ Protocolo Tharan: nao inicia combate imediatamente se os personagens apresentarem simbolo, frase ou autorizacao antiga.\n◆ Campo de Contencao: cria zona onde movimento e reduzido pela metade ate o fim da proxima rodada.\n◆ Escudo Rotativo: uma vez por rodada, reduz em 3 o dano de um ataque.\n◆ Leitura de Chip: identifica chip de profissao ativo e escolhe alvo considerado risco de abertura.\n◆ Ativar campo de contencao.\n◆ Disparar pulso menor.\n◆ Fechar porta ou bloquear passagem.\n◆ Mover drone auxiliar.\n◆ Ao receber dano eletrico ou tecnologico, pode redirecionar parte da energia. O atacante faz teste de Tecnologia ou o equipamento usado sofre Jammed.\nFase 1: modo advertencia.\nFase 2: abaixo de 70 PV, modo defesa ativa.\n◆ Fase 3: abaixo de 30 PV, modo selamento total; o portal comeca a fechar ou sobrecarregar.",
+      "resistances": "◆ Resistencias: Imune a veneno, doenca e medo comum. Reducao 2 contra fisico comum. Resistencia contra fogo e frio.\n◆ Fraquezas: Comando antigo correto, nucleo exposto apos Canhao de Pulso e sobrecarga coordenada em tres pilares da arena.",
+      "weaknesses": "◆ Resistencias: Imune a veneno, doenca e medo comum. Reducao 2 contra fisico comum. Resistencia contra fogo e frio.\n◆ Fraquezas: Comando antigo correto, nucleo exposto apos Canhao de Pulso e sobrecarga coordenada em tres pilares da arena.",
       "senses": "",
       "moral": "",
-      "resources": "Condicoes que aplica: Derrubado, Jammed e Imobilizado por campo.\nRecursos ameacados: Chips, armas tecnologicas, cubos proximos ao portal e energia da sala.\nRecursos coletaveis: Placa Tharan, nucleo de contencao, lente de leitura antiga e fragmento de comando.",
-      "campaign": "Como pode ser derrotado sem matar: Desativar protocolo, apresentar autorizacao correta, desligar pilares ou convencer a Sentinela de que o portal foi corrompido.\nSe vencer, o portal permanece selado e o grupo pode ser marcado como intruso por sistemas antigos.\nSe fugir, a Sentinela registra a assinatura dos personagens.\nSe derrotada, o portal pode ficar instavel e faccoes tentarao controlar a camara.",
-      "summary": "Como pode ser derrotado sem matar: Desativar protocolo, apresentar autorizacao correta, desligar pilares ou convencer a Sentinela de que o portal foi corrompido.\nSe vencer, o portal permanece selado e o grupo pode ser marcado como intruso por sistemas antigos.\nSe fugir, a Sentinela registra a assinatura dos personagens.\nSe derrotada, o portal pode ficar instavel e faccoes tentarao controlar a camara.",
+      "resources": "◆ Condicoes que aplica: Derrubado, Jammed e Imobilizado por campo.\n◆ Recursos ameacados: Chips, armas tecnologicas, cubos proximos ao portal e energia da sala.\n◆ Recursos coletaveis: Placa Tharan, nucleo de contencao, lente de leitura antiga e fragmento de comando.",
+      "campaign": "◆ Como pode ser derrotado sem matar: Desativar protocolo, apresentar autorizacao correta, desligar pilares ou convencer a Sentinela de que o portal foi corrompido.\n◆ Se vencer, o portal permanece selado e o grupo pode ser marcado como intruso por sistemas antigos.\n◆ Se fugir, a Sentinela registra a assinatura dos personagens.\n◆ Se derrotada, o portal pode ficar instavel e faccoes tentarao controlar a camara.\nFONTE OFICIAL // Livro 3, 3.3",
+      "summary": "◆ Como pode ser derrotado sem matar: Desativar protocolo, apresentar autorizacao correta, desligar pilares ou convencer a Sentinela de que o portal foi corrompido.\n◆ Se vencer, o portal permanece selado e o grupo pode ser marcado como intruso por sistemas antigos.\n◆ Se fugir, a Sentinela registra a assinatura dos personagens.\n◆ Se derrotada, o portal pode ficar instavel e faccoes tentarao controlar a camara.\nFONTE OFICIAL // Livro 3, 3.3",
       "tags": [
-        "Lendario",
-        "Chefe lendario",
-        "Chefe",
+        "A",
+        "Maquina antiga/guardiao de portal",
+        "Chefe, guardiao e tanque",
+        "Grande",
         "Chefe"
       ],
       "details": [
         {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // A // Maquina antiga/guardiao de portal",
+            "Tier: A",
+            "Tipo: Maquina antiga/guardiao de portal",
+            "Papel: Chefe, guardiao e tanque",
+            "Tamanho: Grande",
+            "Habitat: Camara de portal, ruina antiga ou entrada Tharan selada",
+            "PV: 110",
+            "CA: 19",
+            "Movimento: 7 m",
+            "Atributos importantes: FOR 20/MOD +5, CON 22/MOD +6, INT 16/MOD +3, MEN 14/MOD +2, PRE 10/MOD +0"
+          ]
+        },
+        {
           "label": "Sinais antes do encontro",
           "items": [
-            "Simbolos antigos acendendo.",
-            "Voz metalica em lingua antiga.",
-            "Piso com circulos concentricos.",
-            "Drones menores destruidos.",
-            "Chips de profissao oscilando."
+            "◆ Simbolos antigos acendendo.",
+            "◆ Voz metalica em lingua antiga.",
+            "◆ Piso com circulos concentricos.",
+            "◆ Drones menores destruidos.",
+            "◆ Chips de profissao oscilando."
           ]
         },
         {
           "label": "Ataques",
           "items": [
-            "Lamina de Contencao: 2d6 cortante.",
-            "Canhao de Pulso: 2d6 energetico.",
-            "Golpe de Escudo: 1d10 concussao e JPF com FOR ou Derrubado."
+            "◆ Lamina de Contencao: 2d6 cortante.",
+            "◆ Canhao de Pulso: 2d6 energetico.",
+            "◆ Golpe de Escudo: 1d10 concussao e JPF com FOR ou Derrubado."
           ]
         },
         {
           "label": "Habilidades principais",
           "items": [
-            "Protocolo Tharan: nao inicia combate imediatamente se os personagens apresentarem simbolo, frase ou autorizacao antiga.",
-            "Campo de Contencao: cria zona onde movimento e reduzido pela metade ate o fim da proxima rodada.",
-            "Escudo Rotativo: uma vez por rodada, reduz em 3 o dano de um ataque.",
-            "Leitura de Chip: identifica chip de profissao ativo e escolhe alvo considerado risco de abertura."
+            "◆ Protocolo Tharan: nao inicia combate imediatamente se os personagens apresentarem simbolo, frase ou autorizacao antiga.",
+            "◆ Campo de Contencao: cria zona onde movimento e reduzido pela metade ate o fim da proxima rodada.",
+            "◆ Escudo Rotativo: uma vez por rodada, reduz em 3 o dano de um ataque.",
+            "◆ Leitura de Chip: identifica chip de profissao ativo e escolhe alvo considerado risco de abertura."
           ]
         },
         {
           "label": "Acoes de chefe",
           "items": [
-            "Ativar campo de contencao.",
-            "Disparar pulso menor.",
-            "Fechar porta ou bloquear passagem.",
-            "Mover drone auxiliar."
+            "◆ Ativar campo de contencao.",
+            "◆ Disparar pulso menor.",
+            "◆ Fechar porta ou bloquear passagem.",
+            "◆ Mover drone auxiliar."
           ]
         },
         {
           "label": "Reacoes",
           "items": [
-            "Ao receber dano eletrico ou tecnologico, pode redirecionar parte da energia. O atacante faz teste de Tecnologia ou o equipamento usado sofre Jammed."
+            "◆ Ao receber dano eletrico ou tecnologico, pode redirecionar parte da energia. O atacante faz teste de Tecnologia ou o equipamento usado sofre Jammed."
           ]
         },
         {
@@ -9221,111 +11662,135 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
           "items": [
             "Fase 1: modo advertencia.",
             "Fase 2: abaixo de 70 PV, modo defesa ativa.",
-            "Fase 3: abaixo de 30 PV, modo selamento total; o portal comeca a fechar ou sobrecarregar."
+            "◆ Fase 3: abaixo de 30 PV, modo selamento total; o portal comeca a fechar ou sobrecarregar."
           ]
         },
         {
           "label": "Resistencias e fraquezas",
           "items": [
-            "Resistencias: Imune a veneno, doenca e medo comum. Reducao 2 contra fisico comum. Resistencia contra fogo e frio.",
-            "Fraquezas: Comando antigo correto, nucleo exposto apos Canhao de Pulso e sobrecarga coordenada em tres pilares da arena."
+            "◆ Resistencias: Imune a veneno, doenca e medo comum. Reducao 2 contra fisico comum. Resistencia contra fogo e frio.",
+            "◆ Fraquezas: Comando antigo correto, nucleo exposto apos Canhao de Pulso e sobrecarga coordenada em tres pilares da arena."
           ]
         },
         {
           "label": "Condicoes, recursos e coleta",
           "items": [
-            "Condicoes que aplica: Derrubado, Jammed e Imobilizado por campo.",
-            "Recursos ameacados: Chips, armas tecnologicas, cubos proximos ao portal e energia da sala.",
-            "Recursos coletaveis: Placa Tharan, nucleo de contencao, lente de leitura antiga e fragmento de comando."
+            "◆ Condicoes que aplica: Derrubado, Jammed e Imobilizado por campo.",
+            "◆ Recursos ameacados: Chips, armas tecnologicas, cubos proximos ao portal e energia da sala.",
+            "◆ Recursos coletaveis: Placa Tharan, nucleo de contencao, lente de leitura antiga e fragmento de comando."
           ]
         },
         {
           "label": "Solucoes e consequencias",
           "items": [
-            "Como pode ser derrotado sem matar: Desativar protocolo, apresentar autorizacao correta, desligar pilares ou convencer a Sentinela de que o portal foi corrompido.",
-            "Se vencer, o portal permanece selado e o grupo pode ser marcado como intruso por sistemas antigos.",
-            "Se fugir, a Sentinela registra a assinatura dos personagens.",
-            "Se derrotada, o portal pode ficar instavel e faccoes tentarao controlar a camara."
+            "◆ Como pode ser derrotado sem matar: Desativar protocolo, apresentar autorizacao correta, desligar pilares ou convencer a Sentinela de que o portal foi corrompido.",
+            "◆ Se vencer, o portal permanece selado e o grupo pode ser marcado como intruso por sistemas antigos.",
+            "◆ Se fugir, a Sentinela registra a assinatura dos personagens.",
+            "◆ Se derrotada, o portal pode ficar instavel e faccoes tentarao controlar a camara.",
+            "FONTE OFICIAL // Livro 3, 3.3"
           ]
         }
       ],
       "sheetType": "boss",
-      "needsCoreStats": true,
-      "assets": [],
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Sentinela Tharan",
+          "url": "./assets/bestiary/sentinela-tharan.jpg"
+        }
+      ],
       "source": "Livro 3, 3.3",
-      "schemaVersion": 1
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/sentinela-tharan.jpg"
     },
     {
       "id": "livro3-3-4-eco-de-falaris",
       "category": "monster",
       "name": "Eco de Falaris",
-      "tier": "Lendario",
-      "type": "Chefe lendario",
-      "role": "Chefe",
-      "size": "",
-      "pv": null,
-      "ca": null,
-      "movement": "",
-      "habitat": "",
+      "tier": "S",
+      "type": "Entidade cosmica/fragmento de Sol morto",
+      "role": "Ameaca lendaria e entidade ambiental",
+      "size": "Indefinido",
+      "pv": 160,
+      "ca": 18,
+      "movement": "Manifesta-se por luz, rachaduras e avatares",
+      "habitat": "Cristal colossal, camara de ruina, fragmento de Falaris ou zona cosmica",
       "behavior": "",
-      "attributes": "",
-      "attacks": "Pulso Solar Morto: 3d6 cosmico.\nLanca de Luz Quebrada: 2d6 fogo/cosmico.\nOnda de Memoria: sem dano fisico, mas exige JPC com MEN.",
-      "abilities": "Memoria da Explosao: uma vez por cena, todos na area fazem JPC com MEN. Em falha, recebem +2 Estresse e visao de Falaris morto.\nCalor de Estrela Morta: a cada rodada proxima da manifestacao, personagens sem protecao fazem JPF com CON ou sofrem Tonto, Exausto ou dano leve.\nFragmentar Realidade: o terreno muda, paredes parecem distantes, o chao vibra e portas aparecem onde nao existiam.\nChamar Fragmentos: cristais menores proximos pulsam; se nao forem estabilizados, aumentam o poder do Eco.\nAtivar cristal menor.\nCriar rachadura de luz.\nForcar visao em alvo marcado.\nDesligar equipamento tecnologico por interferencia.\nQuando sofre dano cosmico instavel, pode absorver parte da energia ou causar Falha Cosmica no usuario, a criterio do Mestre.\nFase 1: sussurro e pulsos.\nFase 2: manifestacao parcial.\nFase 3: memoria da explosao se repete e a camara comeca a colapsar.\nFase 4: contencao, fuga ou desastre.",
-      "resistances": "Resistencias: Resistencia contra dano fisico comum, fogo e dano cosmico fraco.\nFraquezas: Silencio Cosmico, ritual de contencao Nytharul, separacao dos fragmentos, estabilizacao por foco poderoso ou purificacao da ancora.",
-      "weaknesses": "Resistencias: Resistencia contra dano fisico comum, fogo e dano cosmico fraco.\nFraquezas: Silencio Cosmico, ritual de contencao Nytharul, separacao dos fragmentos, estabilizacao por foco poderoso ou purificacao da ancora.",
+      "attributes": "MEN 24/MOD +7, PRE 22/MOD +6, CON 20/MOD +5, INT 18/MOD +4",
+      "attacks": "◆ Pulso Solar Morto: 3d6 cosmico.\n◆ Lanca de Luz Quebrada: 2d6 fogo/cosmico.\n◆ Onda de Memoria: sem dano fisico, mas exige JPC com MEN.",
+      "abilities": "◆ Memoria da Explosao: uma vez por cena, todos na area fazem JPC com MEN. Em falha, recebem +2 Estresse e visao de Falaris morto.\n◆ Calor de Estrela Morta: a cada rodada proxima da manifestacao, personagens sem protecao fazem JPF com CON ou sofrem Tonto, Exausto ou dano leve.\n◆ Fragmentar Realidade: o terreno muda, paredes parecem distantes, o chao vibra e portas aparecem onde nao existiam.\n◆ Chamar Fragmentos: cristais menores proximos pulsam; se nao forem estabilizados, aumentam o poder do Eco.\n◆ Ativar cristal menor.\n◆ Criar rachadura de luz.\n◆ Forcar visao em alvo marcado.\n◆ Desligar equipamento tecnologico por interferencia.\n◆ Quando sofre dano cosmico instavel, pode absorver parte da energia ou causar Falha Cosmica no usuario, a criterio do Mestre.\nFase 1: sussurro e pulsos.\nFase 2: manifestacao parcial.\nFase 3: memoria da explosao se repete e a camara comeca a colapsar.\nFase 4: contencao, fuga ou desastre.",
+      "resistances": "◆ Resistencias: Resistencia contra dano fisico comum, fogo e dano cosmico fraco.\n◆ Fraquezas: Silencio Cosmico, ritual de contencao Nytharul, separacao dos fragmentos, estabilizacao por foco poderoso ou purificacao da ancora.",
+      "weaknesses": "◆ Resistencias: Resistencia contra dano fisico comum, fogo e dano cosmico fraco.\n◆ Fraquezas: Silencio Cosmico, ritual de contencao Nytharul, separacao dos fragmentos, estabilizacao por foco poderoso ou purificacao da ancora.",
       "senses": "",
       "moral": "",
-      "resources": "Condicoes que aplica: Estresse, Tonto, Exausto, Marcado pelo Cosmos e Falha Cosmica.\nRecursos ameacados: Chips, focos, cristais, armaduras canalizadas e estabilidade emocional do grupo.\nRecursos coletaveis: Fragmento de Falaris, po solar morto, cristal de memoria e luz solidificada.",
-      "campaign": "Como pode ser derrotado sem matar: Conter a ancora, dividir fragmentos, completar ritual antigo, convencer a memoria de que a explosao terminou ou usar tecnologia de selamento.\nSe vencer, a regiao pode ser consumida por anomalia e personagens podem sair marcados.\nSe fugir, o Eco continua crescendo e sonhos se espalham.\nSe contido, a area estabiliza parcialmente e o grupo ganha acesso a memoria antiga.",
-      "summary": "Como pode ser derrotado sem matar: Conter a ancora, dividir fragmentos, completar ritual antigo, convencer a memoria de que a explosao terminou ou usar tecnologia de selamento.\nSe vencer, a regiao pode ser consumida por anomalia e personagens podem sair marcados.\nSe fugir, o Eco continua crescendo e sonhos se espalham.\nSe contido, a area estabiliza parcialmente e o grupo ganha acesso a memoria antiga.",
+      "resources": "◆ Condicoes que aplica: Estresse, Tonto, Exausto, Marcado pelo Cosmos e Falha Cosmica.\n◆ Recursos ameacados: Chips, focos, cristais, armaduras canalizadas e estabilidade emocional do grupo.\n◆ Recursos coletaveis: Fragmento de Falaris, po solar morto, cristal de memoria e luz solidificada.",
+      "campaign": "◆ Como pode ser derrotado sem matar: Conter a ancora, dividir fragmentos, completar ritual antigo, convencer a memoria de que a explosao terminou ou usar tecnologia de selamento.\n◆ Se vencer, a regiao pode ser consumida por anomalia e personagens podem sair marcados.\n◆ Se fugir, o Eco continua crescendo e sonhos se espalham.\n◆ Se contido, a area estabiliza parcialmente e o grupo ganha acesso a memoria antiga.\nFONTE OFICIAL // Livro 3, 3.4",
+      "summary": "◆ Como pode ser derrotado sem matar: Conter a ancora, dividir fragmentos, completar ritual antigo, convencer a memoria de que a explosao terminou ou usar tecnologia de selamento.\n◆ Se vencer, a regiao pode ser consumida por anomalia e personagens podem sair marcados.\n◆ Se fugir, o Eco continua crescendo e sonhos se espalham.\n◆ Se contido, a area estabiliza parcialmente e o grupo ganha acesso a memoria antiga.\nFONTE OFICIAL // Livro 3, 3.4",
       "tags": [
-        "Lendario",
-        "Chefe lendario",
-        "Chefe",
+        "S",
+        "Entidade cosmica/fragmento de Sol morto",
+        "Ameaca lendaria e entidade ambiental",
+        "Indefinido",
         "Chefe"
       ],
       "details": [
         {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // S // Entidade cosmica/fragmento de Sol morto",
+            "Tier: S",
+            "Tipo: Entidade cosmica/fragmento de Sol morto",
+            "Papel: Ameaca lendaria e entidade ambiental",
+            "Tamanho: Indefinido",
+            "Habitat: Cristal colossal, camara de ruina, fragmento de Falaris ou zona cosmica",
+            "PV: 160",
+            "CA: 18",
+            "Movimento: Manifesta-se por luz, rachaduras e avatares",
+            "Atributos importantes: MEN 24/MOD +7, PRE 22/MOD +6, CON 20/MOD +5, INT 18/MOD +4"
+          ]
+        },
+        {
           "label": "Sinais antes do encontro",
           "items": [
-            "Calor sem fogo.",
-            "Luz azul-dourada pulsando.",
-            "Som de explosao muito distante.",
-            "Sombras apontando para o lugar errado.",
-            "Sonhos com um sol quebrando.",
-            "Maquinas antigas ligando em silencio."
+            "◆ Calor sem fogo.",
+            "◆ Luz azul-dourada pulsando.",
+            "◆ Som de explosao muito distante.",
+            "◆ Sombras apontando para o lugar errado.",
+            "◆ Sonhos com um sol quebrando.",
+            "◆ Maquinas antigas ligando em silencio."
           ]
         },
         {
           "label": "Ataques",
           "items": [
-            "Pulso Solar Morto: 3d6 cosmico.",
-            "Lanca de Luz Quebrada: 2d6 fogo/cosmico.",
-            "Onda de Memoria: sem dano fisico, mas exige JPC com MEN."
+            "◆ Pulso Solar Morto: 3d6 cosmico.",
+            "◆ Lanca de Luz Quebrada: 2d6 fogo/cosmico.",
+            "◆ Onda de Memoria: sem dano fisico, mas exige JPC com MEN."
           ]
         },
         {
           "label": "Habilidades principais",
           "items": [
-            "Memoria da Explosao: uma vez por cena, todos na area fazem JPC com MEN. Em falha, recebem +2 Estresse e visao de Falaris morto.",
-            "Calor de Estrela Morta: a cada rodada proxima da manifestacao, personagens sem protecao fazem JPF com CON ou sofrem Tonto, Exausto ou dano leve.",
-            "Fragmentar Realidade: o terreno muda, paredes parecem distantes, o chao vibra e portas aparecem onde nao existiam.",
-            "Chamar Fragmentos: cristais menores proximos pulsam; se nao forem estabilizados, aumentam o poder do Eco."
+            "◆ Memoria da Explosao: uma vez por cena, todos na area fazem JPC com MEN. Em falha, recebem +2 Estresse e visao de Falaris morto.",
+            "◆ Calor de Estrela Morta: a cada rodada proxima da manifestacao, personagens sem protecao fazem JPF com CON ou sofrem Tonto, Exausto ou dano leve.",
+            "◆ Fragmentar Realidade: o terreno muda, paredes parecem distantes, o chao vibra e portas aparecem onde nao existiam.",
+            "◆ Chamar Fragmentos: cristais menores proximos pulsam; se nao forem estabilizados, aumentam o poder do Eco."
           ]
         },
         {
           "label": "Acoes de chefe",
           "items": [
-            "Ativar cristal menor.",
-            "Criar rachadura de luz.",
-            "Forcar visao em alvo marcado.",
-            "Desligar equipamento tecnologico por interferencia."
+            "◆ Ativar cristal menor.",
+            "◆ Criar rachadura de luz.",
+            "◆ Forcar visao em alvo marcado.",
+            "◆ Desligar equipamento tecnologico por interferencia."
           ]
         },
         {
           "label": "Reacoes",
           "items": [
-            "Quando sofre dano cosmico instavel, pode absorver parte da energia ou causar Falha Cosmica no usuario, a criterio do Mestre."
+            "◆ Quando sofre dano cosmico instavel, pode absorver parte da energia ou causar Falha Cosmica no usuario, a criterio do Mestre."
           ]
         },
         {
@@ -9340,107 +11805,131 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resistencias e fraquezas",
           "items": [
-            "Resistencias: Resistencia contra dano fisico comum, fogo e dano cosmico fraco.",
-            "Fraquezas: Silencio Cosmico, ritual de contencao Nytharul, separacao dos fragmentos, estabilizacao por foco poderoso ou purificacao da ancora."
+            "◆ Resistencias: Resistencia contra dano fisico comum, fogo e dano cosmico fraco.",
+            "◆ Fraquezas: Silencio Cosmico, ritual de contencao Nytharul, separacao dos fragmentos, estabilizacao por foco poderoso ou purificacao da ancora."
           ]
         },
         {
           "label": "Condicoes, recursos e coleta",
           "items": [
-            "Condicoes que aplica: Estresse, Tonto, Exausto, Marcado pelo Cosmos e Falha Cosmica.",
-            "Recursos ameacados: Chips, focos, cristais, armaduras canalizadas e estabilidade emocional do grupo.",
-            "Recursos coletaveis: Fragmento de Falaris, po solar morto, cristal de memoria e luz solidificada."
+            "◆ Condicoes que aplica: Estresse, Tonto, Exausto, Marcado pelo Cosmos e Falha Cosmica.",
+            "◆ Recursos ameacados: Chips, focos, cristais, armaduras canalizadas e estabilidade emocional do grupo.",
+            "◆ Recursos coletaveis: Fragmento de Falaris, po solar morto, cristal de memoria e luz solidificada."
           ]
         },
         {
           "label": "Solucoes e consequencias",
           "items": [
-            "Como pode ser derrotado sem matar: Conter a ancora, dividir fragmentos, completar ritual antigo, convencer a memoria de que a explosao terminou ou usar tecnologia de selamento.",
-            "Se vencer, a regiao pode ser consumida por anomalia e personagens podem sair marcados.",
-            "Se fugir, o Eco continua crescendo e sonhos se espalham.",
-            "Se contido, a area estabiliza parcialmente e o grupo ganha acesso a memoria antiga."
+            "◆ Como pode ser derrotado sem matar: Conter a ancora, dividir fragmentos, completar ritual antigo, convencer a memoria de que a explosao terminou ou usar tecnologia de selamento.",
+            "◆ Se vencer, a regiao pode ser consumida por anomalia e personagens podem sair marcados.",
+            "◆ Se fugir, o Eco continua crescendo e sonhos se espalham.",
+            "◆ Se contido, a area estabiliza parcialmente e o grupo ganha acesso a memoria antiga.",
+            "FONTE OFICIAL // Livro 3, 3.4"
           ]
         }
       ],
       "sheetType": "boss",
-      "needsCoreStats": true,
-      "assets": [],
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Eco de Falaris",
+          "url": "./assets/bestiary/eco-de-falaris.jpg"
+        }
+      ],
       "source": "Livro 3, 3.4",
-      "schemaVersion": 1
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/eco-de-falaris.jpg"
     },
     {
       "id": "livro3-3-5-arauto-de-uryon",
       "category": "monster",
       "name": "Arauto de Uryon",
-      "tier": "Lendario",
-      "type": "Chefe lendario",
-      "role": "Chefe",
-      "size": "",
-      "pv": null,
-      "ca": null,
-      "movement": "",
-      "habitat": "",
+      "tier": "S",
+      "type": "Entidade cosmica/servo ou reflexo de Uryon",
+      "role": "Ameaca final e controlador psicologico",
+      "size": "Variavel",
+      "pv": 180,
+      "ca": 19,
+      "movement": "10 m, Fenda Curta entre sombras",
+      "habitat": "Zonas de vazio, portais corrompidos, sonhos compartilhados e ruinas ligadas a Uryon",
       "behavior": "",
-      "attributes": "",
-      "attacks": "Toque da Ausencia: 3d6 cosmico.\nGarra Impossivel: 2d6 cortante.\nComando do Vazio: JPC com MEN ou PRE, conforme o efeito.",
-      "abilities": "Nome Verdadeiro Distorcido: escolhe um alvo e fala algo que nao deveria saber. O alvo faz JPC. Em falha, recebe +2 Estresse ou fica com Medo.\nApagar Memoria Curta: uma vez por cena, apos uma falha de personagem, pode fazer o personagem esquecer a ultima informacao obtida, salvo registro de outro personagem.\nVazio Entre Passos: atravessa sombras, rachaduras ou reflexos escuros como movimento especial.\nChamado de Uryon: personagens com Marca Cosmica ou Estresse alto sofrem -1 no primeiro teste contra o Arauto.\nPresenca Impossivel: enquanto a ancora estiver ativa, ataques fisicos comuns causam metade do dano.\nMover por sombra.\nForcar teste de medo em alvo isolado.\nApagar fonte de luz.\nAtivar simbolo de Uryon.\nPuxar personagem marcado 2 m.\nQuando um personagem usa poder cosmico, o Arauto pode responder com sussurro. O personagem faz JPC ou sofre +1 Estresse.\nFase 1: presenca e manipulacao.\nFase 2: manifestacao fisica.\nFase 3: tentativa de marcar ou levar personagem.\nFase 4: se a ancora for destruida, colapsa em sombra e deixa aviso.",
-      "resistances": "Resistencias: Resistencia contra fisico comum, medo, cosmico fraco, veneno e doenca.\nFraquezas: Luz de contencao antiga, nome correto de selamento, destruicao da ancora, memorias verdadeiras usadas contra ele e uniao do grupo para resistir ao medo.",
-      "weaknesses": "Resistencias: Resistencia contra fisico comum, medo, cosmico fraco, veneno e doenca.\nFraquezas: Luz de contencao antiga, nome correto de selamento, destruicao da ancora, memorias verdadeiras usadas contra ele e uniao do grupo para resistir ao medo.",
+      "attributes": "MEN 26/MOD +8, PRE 24/MOD +7, CON 20/MOD +5, INT 20/MOD +5, REF 16/MOD +3",
+      "attacks": "◆ Toque da Ausencia: 3d6 cosmico.\n◆ Garra Impossivel: 2d6 cortante.\n◆ Comando do Vazio: JPC com MEN ou PRE, conforme o efeito.",
+      "abilities": "◆ Nome Verdadeiro Distorcido: escolhe um alvo e fala algo que nao deveria saber. O alvo faz JPC. Em falha, recebe +2 Estresse ou fica com Medo.\n◆ Apagar Memoria Curta: uma vez por cena, apos uma falha de personagem, pode fazer o personagem esquecer a ultima informacao obtida, salvo registro de outro personagem.\n◆ Vazio Entre Passos: atravessa sombras, rachaduras ou reflexos escuros como movimento especial.\n◆ Chamado de Uryon: personagens com Marca Cosmica ou Estresse alto sofrem -1 no primeiro teste contra o Arauto.\n◆ Presenca Impossivel: enquanto a ancora estiver ativa, ataques fisicos comuns causam metade do dano.\n◆ Mover por sombra.\n◆ Forcar teste de medo em alvo isolado.\n◆ Apagar fonte de luz.\n◆ Ativar simbolo de Uryon.\n◆ Puxar personagem marcado 2 m.\n◆ Quando um personagem usa poder cosmico, o Arauto pode responder com sussurro. O personagem faz JPC ou sofre +1 Estresse.\nFase 1: presenca e manipulacao.\nFase 2: manifestacao fisica.\nFase 3: tentativa de marcar ou levar personagem.\nFase 4: se a ancora for destruida, colapsa em sombra e deixa aviso.",
+      "resistances": "◆ Resistencias: Resistencia contra fisico comum, medo, cosmico fraco, veneno e doenca.\n◆ Fraquezas: Luz de contencao antiga, nome correto de selamento, destruicao da ancora, memorias verdadeiras usadas contra ele e uniao do grupo para resistir ao medo.",
+      "weaknesses": "◆ Resistencias: Resistencia contra fisico comum, medo, cosmico fraco, veneno e doenca.\n◆ Fraquezas: Luz de contencao antiga, nome correto de selamento, destruicao da ancora, memorias verdadeiras usadas contra ele e uniao do grupo para resistir ao medo.",
       "senses": "",
       "moral": "",
-      "resources": "Condicoes que aplica: Medo, Estresse, Marcado pelo Cosmos, Silencio Cosmico e perda de memoria curta.\nRecursos ameacados: Identidade, memorias, focos, chips e confianca entre personagens.\nRecursos coletaveis: Fragmento de Vazio, Eco de Uryon, marca impossivel e residuo de sombra consciente.",
-      "campaign": "Como pode ser derrotado sem matar: Romper a ancora, fechar portal, recusar o chamado coletivamente, realizar ritual de nomeacao ou usar memoria verdadeira para estabilizar a realidade.\nSe vencer, um personagem pode ser marcado e uma regiao pode se tornar zona de vazio.\nSe fugir, passa a aparecer em sonhos e conhece o grupo.\nSe contido, o portal enfraquece e uma verdade sobre Uryon e revelada.",
-      "summary": "Como pode ser derrotado sem matar: Romper a ancora, fechar portal, recusar o chamado coletivamente, realizar ritual de nomeacao ou usar memoria verdadeira para estabilizar a realidade.\nSe vencer, um personagem pode ser marcado e uma regiao pode se tornar zona de vazio.\nSe fugir, passa a aparecer em sonhos e conhece o grupo.\nSe contido, o portal enfraquece e uma verdade sobre Uryon e revelada.",
+      "resources": "◆ Condicoes que aplica: Medo, Estresse, Marcado pelo Cosmos, Silencio Cosmico e perda de memoria curta.\n◆ Recursos ameacados: Identidade, memorias, focos, chips e confianca entre personagens.\n◆ Recursos coletaveis: Fragmento de Vazio, Eco de Uryon, marca impossivel e residuo de sombra consciente.",
+      "campaign": "◆ Como pode ser derrotado sem matar: Romper a ancora, fechar portal, recusar o chamado coletivamente, realizar ritual de nomeacao ou usar memoria verdadeira para estabilizar a realidade.\n◆ Se vencer, um personagem pode ser marcado e uma regiao pode se tornar zona de vazio.\n◆ Se fugir, passa a aparecer em sonhos e conhece o grupo.\n◆ Se contido, o portal enfraquece e uma verdade sobre Uryon e revelada.\nFONTE OFICIAL // Livro 3, 3.5",
+      "summary": "◆ Como pode ser derrotado sem matar: Romper a ancora, fechar portal, recusar o chamado coletivamente, realizar ritual de nomeacao ou usar memoria verdadeira para estabilizar a realidade.\n◆ Se vencer, um personagem pode ser marcado e uma regiao pode se tornar zona de vazio.\n◆ Se fugir, passa a aparecer em sonhos e conhece o grupo.\n◆ Se contido, o portal enfraquece e uma verdade sobre Uryon e revelada.\nFONTE OFICIAL // Livro 3, 3.5",
       "tags": [
-        "Lendario",
-        "Chefe lendario",
-        "Chefe",
+        "S",
+        "Entidade cosmica/servo ou reflexo de Uryon",
+        "Ameaca final e controlador psicologico",
+        "Variavel",
         "Chefe"
       ],
       "details": [
         {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // S // Entidade cosmica/servo ou reflexo de Uryon",
+            "Tier: S",
+            "Tipo: Entidade cosmica/servo ou reflexo de Uryon",
+            "Papel: Ameaca final e controlador psicologico",
+            "Tamanho: Variavel",
+            "Habitat: Zonas de vazio, portais corrompidos, sonhos compartilhados e ruinas ligadas a Uryon",
+            "PV: 180",
+            "CA: 19",
+            "Movimento: 10 m, Fenda Curta entre sombras",
+            "Atributos importantes: MEN 26/MOD +8, PRE 24/MOD +7, CON 20/MOD +5, INT 20/MOD +5, REF 16/MOD +3"
+          ]
+        },
+        {
           "label": "Sinais antes do encontro",
           "items": [
-            "Ninguem lembra exatamente quando chegou ao local.",
-            "Sombras se movem sem corpo.",
-            "Simbolos mudam quando nao observados.",
-            "Personagens escutam nomes em vozes de mortos.",
-            "Agua fica negra e imovel.",
-            "Estrelas parecem desaparecer."
+            "◆ Ninguem lembra exatamente quando chegou ao local.",
+            "◆ Sombras se movem sem corpo.",
+            "◆ Simbolos mudam quando nao observados.",
+            "◆ Personagens escutam nomes em vozes de mortos.",
+            "◆ Agua fica negra e imovel.",
+            "◆ Estrelas parecem desaparecer."
           ]
         },
         {
           "label": "Ataques",
           "items": [
-            "Toque da Ausencia: 3d6 cosmico.",
-            "Garra Impossivel: 2d6 cortante.",
-            "Comando do Vazio: JPC com MEN ou PRE, conforme o efeito."
+            "◆ Toque da Ausencia: 3d6 cosmico.",
+            "◆ Garra Impossivel: 2d6 cortante.",
+            "◆ Comando do Vazio: JPC com MEN ou PRE, conforme o efeito."
           ]
         },
         {
           "label": "Habilidades principais",
           "items": [
-            "Nome Verdadeiro Distorcido: escolhe um alvo e fala algo que nao deveria saber. O alvo faz JPC. Em falha, recebe +2 Estresse ou fica com Medo.",
-            "Apagar Memoria Curta: uma vez por cena, apos uma falha de personagem, pode fazer o personagem esquecer a ultima informacao obtida, salvo registro de outro personagem.",
-            "Vazio Entre Passos: atravessa sombras, rachaduras ou reflexos escuros como movimento especial.",
-            "Chamado de Uryon: personagens com Marca Cosmica ou Estresse alto sofrem -1 no primeiro teste contra o Arauto.",
-            "Presenca Impossivel: enquanto a ancora estiver ativa, ataques fisicos comuns causam metade do dano."
+            "◆ Nome Verdadeiro Distorcido: escolhe um alvo e fala algo que nao deveria saber. O alvo faz JPC. Em falha, recebe +2 Estresse ou fica com Medo.",
+            "◆ Apagar Memoria Curta: uma vez por cena, apos uma falha de personagem, pode fazer o personagem esquecer a ultima informacao obtida, salvo registro de outro personagem.",
+            "◆ Vazio Entre Passos: atravessa sombras, rachaduras ou reflexos escuros como movimento especial.",
+            "◆ Chamado de Uryon: personagens com Marca Cosmica ou Estresse alto sofrem -1 no primeiro teste contra o Arauto.",
+            "◆ Presenca Impossivel: enquanto a ancora estiver ativa, ataques fisicos comuns causam metade do dano."
           ]
         },
         {
           "label": "Acoes de chefe",
           "items": [
-            "Mover por sombra.",
-            "Forcar teste de medo em alvo isolado.",
-            "Apagar fonte de luz.",
-            "Ativar simbolo de Uryon.",
-            "Puxar personagem marcado 2 m."
+            "◆ Mover por sombra.",
+            "◆ Forcar teste de medo em alvo isolado.",
+            "◆ Apagar fonte de luz.",
+            "◆ Ativar simbolo de Uryon.",
+            "◆ Puxar personagem marcado 2 m."
           ]
         },
         {
           "label": "Reacoes",
           "items": [
-            "Quando um personagem usa poder cosmico, o Arauto pode responder com sussurro. O personagem faz JPC ou sofre +1 Estresse."
+            "◆ Quando um personagem usa poder cosmico, o Arauto pode responder com sussurro. O personagem faz JPC ou sofre +1 Estresse."
           ]
         },
         {
@@ -9455,102 +11944,126 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resistencias e fraquezas",
           "items": [
-            "Resistencias: Resistencia contra fisico comum, medo, cosmico fraco, veneno e doenca.",
-            "Fraquezas: Luz de contencao antiga, nome correto de selamento, destruicao da ancora, memorias verdadeiras usadas contra ele e uniao do grupo para resistir ao medo."
+            "◆ Resistencias: Resistencia contra fisico comum, medo, cosmico fraco, veneno e doenca.",
+            "◆ Fraquezas: Luz de contencao antiga, nome correto de selamento, destruicao da ancora, memorias verdadeiras usadas contra ele e uniao do grupo para resistir ao medo."
           ]
         },
         {
           "label": "Condicoes, recursos e coleta",
           "items": [
-            "Condicoes que aplica: Medo, Estresse, Marcado pelo Cosmos, Silencio Cosmico e perda de memoria curta.",
-            "Recursos ameacados: Identidade, memorias, focos, chips e confianca entre personagens.",
-            "Recursos coletaveis: Fragmento de Vazio, Eco de Uryon, marca impossivel e residuo de sombra consciente."
+            "◆ Condicoes que aplica: Medo, Estresse, Marcado pelo Cosmos, Silencio Cosmico e perda de memoria curta.",
+            "◆ Recursos ameacados: Identidade, memorias, focos, chips e confianca entre personagens.",
+            "◆ Recursos coletaveis: Fragmento de Vazio, Eco de Uryon, marca impossivel e residuo de sombra consciente."
           ]
         },
         {
           "label": "Solucoes e consequencias",
           "items": [
-            "Como pode ser derrotado sem matar: Romper a ancora, fechar portal, recusar o chamado coletivamente, realizar ritual de nomeacao ou usar memoria verdadeira para estabilizar a realidade.",
-            "Se vencer, um personagem pode ser marcado e uma regiao pode se tornar zona de vazio.",
-            "Se fugir, passa a aparecer em sonhos e conhece o grupo.",
-            "Se contido, o portal enfraquece e uma verdade sobre Uryon e revelada."
+            "◆ Como pode ser derrotado sem matar: Romper a ancora, fechar portal, recusar o chamado coletivamente, realizar ritual de nomeacao ou usar memoria verdadeira para estabilizar a realidade.",
+            "◆ Se vencer, um personagem pode ser marcado e uma regiao pode se tornar zona de vazio.",
+            "◆ Se fugir, passa a aparecer em sonhos e conhece o grupo.",
+            "◆ Se contido, o portal enfraquece e uma verdade sobre Uryon e revelada.",
+            "FONTE OFICIAL // Livro 3, 3.5"
           ]
         }
       ],
       "sheetType": "boss",
-      "needsCoreStats": true,
-      "assets": [],
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Arauto de Uryon",
+          "url": "./assets/bestiary/arauto-de-uryon.jpg"
+        }
+      ],
       "source": "Livro 3, 3.5",
-      "schemaVersion": 1
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/arauto-de-uryon.jpg"
     },
     {
       "id": "livro3-3-6-comandante-saqueador-com-exotraje",
       "category": "monster",
       "name": "Comandante Saqueador com Exotraje",
-      "tier": "Lendario",
-      "type": "Chefe lendario",
-      "role": "Chefe",
-      "size": "",
-      "pv": null,
-      "ca": null,
-      "movement": "",
-      "habitat": "",
+      "tier": "B",
+      "type": "Humanoide hostil/tecnologico",
+      "role": "Chefe tatico e brutamontes",
+      "size": "Medio em exotraje pesado",
+      "pv": 70,
+      "ca": 16,
+      "movement": "8 m",
+      "habitat": "Acampamento saqueador, oficina roubada ou rota fortificada",
       "behavior": "",
-      "attributes": "",
-      "attacks": "Punho Hidraulico: 1d10 concussao.\nMetralhadora Leve: 1d8 balistico.\nArremesso de Carga: 1d8 concussao.",
-      "abilities": "Escudo Improvisado: usa cobertura ou veiculo destruido para receber +1 CA.\nOrdem Brutal: uma vez por rodada, comanda saqueador aliado a atacar ou se mover.\nExotraje Instavel: ao sofrer critico, o exotraje ganha 1 falha. Com 3 falhas, perde movimento ou uma arma.\nPisar e Quebrar: contra alvo Derrubado, causa +1d4 dano ou tenta danificar item em gancho.\nComandar aliado.\nDisparar rajada curta.\nMover e empurrar alvo.\nQuando sofre dano corpo a corpo, pode empurrar atacante 2 m com o exotraje.\nFase 1: usa saqueadores e cobertura.\nFase 2: quando aliados caem, entra no combate direto.\nFase 3: se o exotraje falhar, tenta fugir ou explodir munição.",
-      "resistances": "Resistencias: Reducao 1 contra dano fisico comum por blindagem.\nFraquezas: Juntas do exotraje, pulso eletrico, hack e superaquecimento.",
-      "weaknesses": "Resistencias: Reducao 1 contra dano fisico comum por blindagem.\nFraquezas: Juntas do exotraje, pulso eletrico, hack e superaquecimento.",
+      "attributes": "FOR 18/MOD +4 com exotraje, REF 12/MOD +1, CON 16/MOD +3, INT 12/MOD +1, PRE 16/MOD +3",
+      "attacks": "◆ Punho Hidraulico: 1d10 concussao.\n◆ Metralhadora Leve: 1d8 balistico.\n◆ Arremesso de Carga: 1d8 concussao.",
+      "abilities": "◆ Escudo Improvisado: usa cobertura ou veiculo destruido para receber +1 CA.\n◆ Ordem Brutal: uma vez por rodada, comanda saqueador aliado a atacar ou se mover.\n◆ Exotraje Instavel: ao sofrer critico, o exotraje ganha 1 falha. Com 3 falhas, perde movimento ou uma arma.\n◆ Pisar e Quebrar: contra alvo Derrubado, causa +1d4 dano ou tenta danificar item em gancho.\n◆ Comandar aliado.\n◆ Disparar rajada curta.\n◆ Mover e empurrar alvo.\n◆ Quando sofre dano corpo a corpo, pode empurrar atacante 2 m com o exotraje.\nFase 1: usa saqueadores e cobertura.\nFase 2: quando aliados caem, entra no combate direto.\nFase 3: se o exotraje falhar, tenta fugir ou explodir munição.",
+      "resistances": "Resistencias: Reducao 1 contra dano fisico comum por blindagem.\n◆ Fraquezas: Juntas do exotraje, pulso eletrico, hack e superaquecimento.",
+      "weaknesses": "Resistencias: Reducao 1 contra dano fisico comum por blindagem.\n◆ Fraquezas: Juntas do exotraje, pulso eletrico, hack e superaquecimento.",
       "senses": "",
       "moral": "",
-      "resources": "Condicoes que aplica: Derrubado e Jammed em supressao.\nRecursos ameacados: Cubos, municao, cobertura e armadura.\nRecursos coletaveis: Exotraje danificado, bateria militar, arma pesada e mapas de rotas saqueadas.",
-      "campaign": "Como pode ser derrotado sem matar: Sabotar exotraje, convencer saqueadores a abandona-lo, cortar bateria ou forcar rendicao publica.\nSe vencer, rotas ficam sob dominio saqueador e comerciantes aumentam precos.\nSe fugir, vira rival recorrente.\nSe derrotado, saqueadores se dispersam ou elegem novo lider.",
-      "summary": "Como pode ser derrotado sem matar: Sabotar exotraje, convencer saqueadores a abandona-lo, cortar bateria ou forcar rendicao publica.\nSe vencer, rotas ficam sob dominio saqueador e comerciantes aumentam precos.\nSe fugir, vira rival recorrente.\nSe derrotado, saqueadores se dispersam ou elegem novo lider.",
+      "resources": "◆ Condicoes que aplica: Derrubado e Jammed em supressao.\nRecursos ameacados: Cubos, municao, cobertura e armadura.\n◆ Recursos coletaveis: Exotraje danificado, bateria militar, arma pesada e mapas de rotas saqueadas.",
+      "campaign": "◆ Como pode ser derrotado sem matar: Sabotar exotraje, convencer saqueadores a abandona-lo, cortar bateria ou forcar rendicao publica.\n◆ Se vencer, rotas ficam sob dominio saqueador e comerciantes aumentam precos.\n◆ Se fugir, vira rival recorrente.\n◆ Se derrotado, saqueadores se dispersam ou elegem novo lider.\nFONTE OFICIAL // Livro 3, 3.6",
+      "summary": "◆ Como pode ser derrotado sem matar: Sabotar exotraje, convencer saqueadores a abandona-lo, cortar bateria ou forcar rendicao publica.\n◆ Se vencer, rotas ficam sob dominio saqueador e comerciantes aumentam precos.\n◆ Se fugir, vira rival recorrente.\n◆ Se derrotado, saqueadores se dispersam ou elegem novo lider.\nFONTE OFICIAL // Livro 3, 3.6",
       "tags": [
-        "Lendario",
-        "Chefe lendario",
-        "Chefe",
+        "B",
+        "Humanoide hostil/tecnologico",
+        "Chefe tatico e brutamontes",
+        "Medio em exotraje pesado",
         "Chefe"
       ],
       "details": [
         {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // B // Humanoide hostil/tecnologico",
+            "Tier: B",
+            "Tipo: Humanoide hostil/tecnologico",
+            "Papel: Chefe tatico e brutamontes",
+            "Tamanho: Medio em exotraje pesado",
+            "Habitat: Acampamento saqueador, oficina roubada ou rota fortificada",
+            "PV: 70",
+            "CA: 16",
+            "Movimento: 8 m",
+            "Atributos importantes: FOR 18/MOD +4 com exotraje, REF 12/MOD +1, CON 16/MOD +3, INT 12/MOD +1, PRE 16/MOD +3"
+          ]
+        },
+        {
           "label": "Sinais antes do encontro",
           "items": [
-            "Caravanas destruidas.",
-            "Balas pesadas em corpos.",
-            "Marcas de exotraje no chao.",
-            "Saqueadores usando disciplina incomum."
+            "◆ Caravanas destruidas.",
+            "◆ Balas pesadas em corpos.",
+            "◆ Marcas de exotraje no chao.",
+            "◆ Saqueadores usando disciplina incomum."
           ]
         },
         {
           "label": "Ataques",
           "items": [
-            "Punho Hidraulico: 1d10 concussao.",
-            "Metralhadora Leve: 1d8 balistico.",
-            "Arremesso de Carga: 1d8 concussao."
+            "◆ Punho Hidraulico: 1d10 concussao.",
+            "◆ Metralhadora Leve: 1d8 balistico.",
+            "◆ Arremesso de Carga: 1d8 concussao."
           ]
         },
         {
           "label": "Habilidades principais",
           "items": [
-            "Escudo Improvisado: usa cobertura ou veiculo destruido para receber +1 CA.",
-            "Ordem Brutal: uma vez por rodada, comanda saqueador aliado a atacar ou se mover.",
-            "Exotraje Instavel: ao sofrer critico, o exotraje ganha 1 falha. Com 3 falhas, perde movimento ou uma arma.",
-            "Pisar e Quebrar: contra alvo Derrubado, causa +1d4 dano ou tenta danificar item em gancho."
+            "◆ Escudo Improvisado: usa cobertura ou veiculo destruido para receber +1 CA.",
+            "◆ Ordem Brutal: uma vez por rodada, comanda saqueador aliado a atacar ou se mover.",
+            "◆ Exotraje Instavel: ao sofrer critico, o exotraje ganha 1 falha. Com 3 falhas, perde movimento ou uma arma.",
+            "◆ Pisar e Quebrar: contra alvo Derrubado, causa +1d4 dano ou tenta danificar item em gancho."
           ]
         },
         {
           "label": "Acoes de chefe",
           "items": [
-            "Comandar aliado.",
-            "Disparar rajada curta.",
-            "Mover e empurrar alvo."
+            "◆ Comandar aliado.",
+            "◆ Disparar rajada curta.",
+            "◆ Mover e empurrar alvo."
           ]
         },
         {
           "label": "Reacoes",
           "items": [
-            "Quando sofre dano corpo a corpo, pode empurrar atacante 2 m com o exotraje."
+            "◆ Quando sofre dano corpo a corpo, pode empurrar atacante 2 m com o exotraje."
           ]
         },
         {
@@ -9565,102 +12078,126 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
           "label": "Resistencias e fraquezas",
           "items": [
             "Resistencias: Reducao 1 contra dano fisico comum por blindagem.",
-            "Fraquezas: Juntas do exotraje, pulso eletrico, hack e superaquecimento."
+            "◆ Fraquezas: Juntas do exotraje, pulso eletrico, hack e superaquecimento."
           ]
         },
         {
           "label": "Condicoes, recursos e coleta",
           "items": [
-            "Condicoes que aplica: Derrubado e Jammed em supressao.",
+            "◆ Condicoes que aplica: Derrubado e Jammed em supressao.",
             "Recursos ameacados: Cubos, municao, cobertura e armadura.",
-            "Recursos coletaveis: Exotraje danificado, bateria militar, arma pesada e mapas de rotas saqueadas."
+            "◆ Recursos coletaveis: Exotraje danificado, bateria militar, arma pesada e mapas de rotas saqueadas."
           ]
         },
         {
           "label": "Solucoes e consequencias",
           "items": [
-            "Como pode ser derrotado sem matar: Sabotar exotraje, convencer saqueadores a abandona-lo, cortar bateria ou forcar rendicao publica.",
-            "Se vencer, rotas ficam sob dominio saqueador e comerciantes aumentam precos.",
-            "Se fugir, vira rival recorrente.",
-            "Se derrotado, saqueadores se dispersam ou elegem novo lider."
+            "◆ Como pode ser derrotado sem matar: Sabotar exotraje, convencer saqueadores a abandona-lo, cortar bateria ou forcar rendicao publica.",
+            "◆ Se vencer, rotas ficam sob dominio saqueador e comerciantes aumentam precos.",
+            "◆ Se fugir, vira rival recorrente.",
+            "◆ Se derrotado, saqueadores se dispersam ou elegem novo lider.",
+            "FONTE OFICIAL // Livro 3, 3.6"
           ]
         }
       ],
       "sheetType": "boss",
-      "needsCoreStats": true,
-      "assets": [],
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Comandante Saqueador com Exotraje",
+          "url": "./assets/bestiary/comandante-saqueador-com-exotraje.jpg"
+        }
+      ],
       "source": "Livro 3, 3.6",
-      "schemaVersion": 1
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/comandante-saqueador-com-exotraje.jpg"
     },
     {
       "id": "livro3-3-7-cultista-ascendido",
       "category": "monster",
       "name": "Cultista Ascendido",
-      "tier": "Lendario",
-      "type": "Chefe lendario",
-      "role": "Chefe",
-      "size": "",
-      "pv": null,
-      "ca": null,
-      "movement": "",
-      "habitat": "",
+      "tier": "B ou A",
+      "type": "Humanoide cosmico",
+      "role": "Chefe e controlador",
+      "size": "Medio",
+      "pv": 60,
+      "ca": 15,
+      "movement": "8 m",
+      "habitat": "Templo improvisado, ruina antiga, circulo ritual ou camara com fragmento",
       "behavior": "",
-      "attributes": "",
-      "attacks": "Lamina Ritual: 1d8 cortante.\nPulso Cosmico: 2d6 cosmico.",
-      "abilities": "Circulo de Protecao: dentro do circulo ritual, recebe +1 CA e resistencia leve contra dano cosmico.\nPalavra de Ruptura: alvo faz JPC. Em falha, recebe +1 Estresse e perde a proxima interacao simples.\nSacrificio de Foco: consome energia de cristal ou seguidor para recuperar 1d8 PV ou acelerar ritual.\nOlhar de Falaris: uma vez por cena, mostra visao do Sol morto. Alvos que falham ficam Tontos.\nMover cristal.\nDar ordem a cultista.\nAtivar simbolo.\nCausar pulso menor.\nQuando atacado dentro do circulo, pode transferir parte do dano para um cristal ritual.\nFase 1: fala e tenta convencer.\nFase 2: usa seguidores e simbolos.\nFase 3: se o ritual for interrompido, libera energia instavel.",
-      "resistances": "Resistencias: Resistencia contra medo comum e resistencia leve contra cosmico dentro do circulo.\nFraquezas: Fora do circulo perde protecao. Destruir simbolos reduz habilidades. Prova real contra sua fe pode causar hesitacao narrativa.",
-      "weaknesses": "Resistencias: Resistencia contra medo comum e resistencia leve contra cosmico dentro do circulo.\nFraquezas: Fora do circulo perde protecao. Destruir simbolos reduz habilidades. Prova real contra sua fe pode causar hesitacao narrativa.",
+      "attributes": "MEN 20/MOD +5, PRE 20/MOD +5, INT 16/MOD +3, CON 14/MOD +2",
+      "attacks": "◆ Lamina Ritual: 1d8 cortante.\n◆ Pulso Cosmico: 2d6 cosmico.",
+      "abilities": "◆ Circulo de Protecao: dentro do circulo ritual, recebe +1 CA e resistencia leve contra dano cosmico.\n◆ Palavra de Ruptura: alvo faz JPC. Em falha, recebe +1 Estresse e perde a proxima interacao simples.\n◆ Sacrificio de Foco: consome energia de cristal ou seguidor para recuperar 1d8 PV ou acelerar ritual.\n◆ Olhar de Falaris: uma vez por cena, mostra visao do Sol morto. Alvos que falham ficam Tontos.\n◆ Mover cristal.\n◆ Dar ordem a cultista.\n◆ Ativar simbolo.\n◆ Causar pulso menor.\n◆ Quando atacado dentro do circulo, pode transferir parte do dano para um cristal ritual.\nFase 1: fala e tenta convencer.\nFase 2: usa seguidores e simbolos.\nFase 3: se o ritual for interrompido, libera energia instavel.",
+      "resistances": "◆ Resistencias: Resistencia contra medo comum e resistencia leve contra cosmico dentro do circulo.\n◆ Fraquezas: Fora do circulo perde protecao. Destruir simbolos reduz habilidades. Prova real contra sua fe pode causar hesitacao narrativa.",
+      "weaknesses": "◆ Resistencias: Resistencia contra medo comum e resistencia leve contra cosmico dentro do circulo.\n◆ Fraquezas: Fora do circulo perde protecao. Destruir simbolos reduz habilidades. Prova real contra sua fe pode causar hesitacao narrativa.",
       "senses": "",
       "moral": "",
-      "resources": "Condicoes que aplica: Estresse, Tonto, Medo e Marcado pelo Cosmos.\nRecursos ameacados: Focos, cristais, mente dos personagens e NPCs inocentes usados em ritual.\nRecursos coletaveis: Talisma ascendido, fragmento ritual, livro de sinais e po de Falaris.",
-      "campaign": "Como pode ser derrotado sem matar: Quebrar ritual, convencer seguidores, remover fragmento, expor mentira central ou selar circulo.\nSe vencer, ritual se completa e uma porta pode abrir.\nSe fugir, forma novo culto e passa a conhecer o grupo.\nSe derrotado, seguidores se dispersam e faccoes disputam o local.",
-      "summary": "Como pode ser derrotado sem matar: Quebrar ritual, convencer seguidores, remover fragmento, expor mentira central ou selar circulo.\nSe vencer, ritual se completa e uma porta pode abrir.\nSe fugir, forma novo culto e passa a conhecer o grupo.\nSe derrotado, seguidores se dispersam e faccoes disputam o local.",
+      "resources": "◆ Condicoes que aplica: Estresse, Tonto, Medo e Marcado pelo Cosmos.\n◆ Recursos ameacados: Focos, cristais, mente dos personagens e NPCs inocentes usados em ritual.\n◆ Recursos coletaveis: Talisma ascendido, fragmento ritual, livro de sinais e po de Falaris.",
+      "campaign": "◆ Como pode ser derrotado sem matar: Quebrar ritual, convencer seguidores, remover fragmento, expor mentira central ou selar circulo.\n◆ Se vencer, ritual se completa e uma porta pode abrir.\n◆ Se fugir, forma novo culto e passa a conhecer o grupo.\n◆ Se derrotado, seguidores se dispersam e faccoes disputam o local.\nFONTE OFICIAL // Livro 3, 3.7",
+      "summary": "◆ Como pode ser derrotado sem matar: Quebrar ritual, convencer seguidores, remover fragmento, expor mentira central ou selar circulo.\n◆ Se vencer, ritual se completa e uma porta pode abrir.\n◆ Se fugir, forma novo culto e passa a conhecer o grupo.\n◆ Se derrotado, seguidores se dispersam e faccoes disputam o local.\nFONTE OFICIAL // Livro 3, 3.7",
       "tags": [
-        "Lendario",
-        "Chefe lendario",
-        "Chefe",
+        "B ou A",
+        "Humanoide cosmico",
+        "Chefe e controlador",
+        "Medio",
         "Chefe"
       ],
       "details": [
         {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // B ou A // Humanoide cosmico",
+            "Tier: B ou A",
+            "Tipo: Humanoide cosmico",
+            "Papel: Chefe e controlador",
+            "Tamanho: Medio",
+            "Habitat: Templo improvisado, ruina antiga, circulo ritual ou camara com fragmento",
+            "PV: 60",
+            "CA: 15",
+            "Movimento: 8 m",
+            "Atributos importantes: MEN 20/MOD +5, PRE 20/MOD +5, INT 16/MOD +3, CON 14/MOD +2"
+          ]
+        },
+        {
           "label": "Sinais antes do encontro",
           "items": [
-            "Seguidores em transe.",
-            "Simbolos desenhados com po azul.",
-            "Vozes repetindo uma frase.",
-            "Cristais flutuando levemente.",
-            "Chips oscilando."
+            "◆ Seguidores em transe.",
+            "◆ Simbolos desenhados com po azul.",
+            "◆ Vozes repetindo uma frase.",
+            "◆ Cristais flutuando levemente.",
+            "◆ Chips oscilando."
           ]
         },
         {
           "label": "Ataques",
           "items": [
-            "Lamina Ritual: 1d8 cortante.",
-            "Pulso Cosmico: 2d6 cosmico."
+            "◆ Lamina Ritual: 1d8 cortante.",
+            "◆ Pulso Cosmico: 2d6 cosmico."
           ]
         },
         {
           "label": "Habilidades principais",
           "items": [
-            "Circulo de Protecao: dentro do circulo ritual, recebe +1 CA e resistencia leve contra dano cosmico.",
-            "Palavra de Ruptura: alvo faz JPC. Em falha, recebe +1 Estresse e perde a proxima interacao simples.",
-            "Sacrificio de Foco: consome energia de cristal ou seguidor para recuperar 1d8 PV ou acelerar ritual.",
-            "Olhar de Falaris: uma vez por cena, mostra visao do Sol morto. Alvos que falham ficam Tontos."
+            "◆ Circulo de Protecao: dentro do circulo ritual, recebe +1 CA e resistencia leve contra dano cosmico.",
+            "◆ Palavra de Ruptura: alvo faz JPC. Em falha, recebe +1 Estresse e perde a proxima interacao simples.",
+            "◆ Sacrificio de Foco: consome energia de cristal ou seguidor para recuperar 1d8 PV ou acelerar ritual.",
+            "◆ Olhar de Falaris: uma vez por cena, mostra visao do Sol morto. Alvos que falham ficam Tontos."
           ]
         },
         {
           "label": "Acoes de chefe",
           "items": [
-            "Mover cristal.",
-            "Dar ordem a cultista.",
-            "Ativar simbolo.",
-            "Causar pulso menor."
+            "◆ Mover cristal.",
+            "◆ Dar ordem a cultista.",
+            "◆ Ativar simbolo.",
+            "◆ Causar pulso menor."
           ]
         },
         {
           "label": "Reacoes",
           "items": [
-            "Quando atacado dentro do circulo, pode transferir parte do dano para um cristal ritual."
+            "◆ Quando atacado dentro do circulo, pode transferir parte do dano para um cristal ritual."
           ]
         },
         {
@@ -9674,106 +12211,130 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resistencias e fraquezas",
           "items": [
-            "Resistencias: Resistencia contra medo comum e resistencia leve contra cosmico dentro do circulo.",
-            "Fraquezas: Fora do circulo perde protecao. Destruir simbolos reduz habilidades. Prova real contra sua fe pode causar hesitacao narrativa."
+            "◆ Resistencias: Resistencia contra medo comum e resistencia leve contra cosmico dentro do circulo.",
+            "◆ Fraquezas: Fora do circulo perde protecao. Destruir simbolos reduz habilidades. Prova real contra sua fe pode causar hesitacao narrativa."
           ]
         },
         {
           "label": "Condicoes, recursos e coleta",
           "items": [
-            "Condicoes que aplica: Estresse, Tonto, Medo e Marcado pelo Cosmos.",
-            "Recursos ameacados: Focos, cristais, mente dos personagens e NPCs inocentes usados em ritual.",
-            "Recursos coletaveis: Talisma ascendido, fragmento ritual, livro de sinais e po de Falaris."
+            "◆ Condicoes que aplica: Estresse, Tonto, Medo e Marcado pelo Cosmos.",
+            "◆ Recursos ameacados: Focos, cristais, mente dos personagens e NPCs inocentes usados em ritual.",
+            "◆ Recursos coletaveis: Talisma ascendido, fragmento ritual, livro de sinais e po de Falaris."
           ]
         },
         {
           "label": "Solucoes e consequencias",
           "items": [
-            "Como pode ser derrotado sem matar: Quebrar ritual, convencer seguidores, remover fragmento, expor mentira central ou selar circulo.",
-            "Se vencer, ritual se completa e uma porta pode abrir.",
-            "Se fugir, forma novo culto e passa a conhecer o grupo.",
-            "Se derrotado, seguidores se dispersam e faccoes disputam o local."
+            "◆ Como pode ser derrotado sem matar: Quebrar ritual, convencer seguidores, remover fragmento, expor mentira central ou selar circulo.",
+            "◆ Se vencer, ritual se completa e uma porta pode abrir.",
+            "◆ Se fugir, forma novo culto e passa a conhecer o grupo.",
+            "◆ Se derrotado, seguidores se dispersam e faccoes disputam o local.",
+            "FONTE OFICIAL // Livro 3, 3.7"
           ]
         }
       ],
       "sheetType": "boss",
-      "needsCoreStats": true,
-      "assets": [],
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Cultista Ascendido",
+          "url": "./assets/bestiary/cultista-ascendido.jpg"
+        }
+      ],
       "source": "Livro 3, 3.7",
-      "schemaVersion": 1
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/cultista-ascendido.jpg"
     },
     {
       "id": "livro3-3-8-maquina-de-guerra-do-mundo-partido",
       "category": "monster",
       "name": "Maquina de Guerra do Mundo Partido",
-      "tier": "Lendario",
-      "type": "Chefe lendario",
-      "role": "Chefe",
-      "size": "",
-      "pv": null,
-      "ca": null,
-      "movement": "",
-      "habitat": "",
+      "tier": "S",
+      "type": "Maquina antiga/militar",
+      "role": "Ameaca lendaria de campanha",
+      "size": "Colossal ou enorme",
+      "pv": 200,
+      "ca": 20,
+      "movement": "Lento, mas avanca destruindo terreno",
+      "habitat": "Campo de batalha antigo, hangar soterrado, ruina militar ou defesa de portal",
       "behavior": "",
-      "attributes": "",
-      "attacks": "Canhao de Ruptura: 4d6 energetico em area.\nPisoteio Mecanico: 3d6 concussao.\nRajada de Defesa: 2d6 balistico.",
-      "abilities": "Modulos Separados: armas, escudo, locomocao, nucleo e sensores podem ser atacados ou sabotados separadamente.\nProtocolo de Guerra: a cada rodada escolhe prioridade: eliminar, proteger, avancar ou selar area.\nCampo Blindado: enquanto modulo de escudo estiver ativo, reduz 3 de todo dano recebido.\nFabrica de Drones: libera drones menores enquanto modulo interno estiver ativo.\nOrdem Antiga: pode parar ou mudar comportamento se receber comando correto em Nytharul ou codigo de guerra antigo.\nAtivar arma secundaria.\nMover modulo.\nLiberar drone.\nFechar compartimento.\nCarregar canhao principal.\nQuando um modulo e destruido, libera descarga. Personagens proximos fazem JPF com REF.\nFase 1: despertar parcial.\nFase 2: modo defesa.\nFase 3: modo guerra total.\nFase 4: sobrecarga, fuga ou selamento.",
-      "resistances": "Resistencias: Reducao alta contra fisico comum. Imune a veneno, doenca e medo. Resistencia contra fogo, frio e eletrico comum.\nFraquezas: Modulos expostos, codigos antigos, sabotagem interna, ataques coordenados e falta de energia estavel.",
-      "weaknesses": "Resistencias: Reducao alta contra fisico comum. Imune a veneno, doenca e medo. Resistencia contra fogo, frio e eletrico comum.\nFraquezas: Modulos expostos, codigos antigos, sabotagem interna, ataques coordenados e falta de energia estavel.",
+      "attributes": "FOR 26/MOD +8, CON 26/MOD +8, INT 18/MOD +4, MEN 16/MOD +3, PRE 20/MOD +5",
+      "attacks": "◆ Canhao de Ruptura: 4d6 energetico em area.\n◆ Pisoteio Mecanico: 3d6 concussao.\n◆ Rajada de Defesa: 2d6 balistico.",
+      "abilities": "◆ Modulos Separados: armas, escudo, locomocao, nucleo e sensores podem ser atacados ou sabotados separadamente.\n◆ Protocolo de Guerra: a cada rodada escolhe prioridade: eliminar, proteger, avancar ou selar area.\n◆ Campo Blindado: enquanto modulo de escudo estiver ativo, reduz 3 de todo dano recebido.\n◆ Fabrica de Drones: libera drones menores enquanto modulo interno estiver ativo.\n◆ Ordem Antiga: pode parar ou mudar comportamento se receber comando correto em Nytharul ou codigo de guerra antigo.\n◆ Ativar arma secundaria.\n◆ Mover modulo.\n◆ Liberar drone.\n◆ Fechar compartimento.\n◆ Carregar canhao principal.\n◆ Quando um modulo e destruido, libera descarga. Personagens proximos fazem JPF com REF.\nFase 1: despertar parcial.\nFase 2: modo defesa.\nFase 3: modo guerra total.\nFase 4: sobrecarga, fuga ou selamento.",
+      "resistances": "◆ Resistencias: Reducao alta contra fisico comum. Imune a veneno, doenca e medo. Resistencia contra fogo, frio e eletrico comum.\n◆ Fraquezas: Modulos expostos, codigos antigos, sabotagem interna, ataques coordenados e falta de energia estavel.",
+      "weaknesses": "◆ Resistencias: Reducao alta contra fisico comum. Imune a veneno, doenca e medo. Resistencia contra fogo, frio e eletrico comum.\n◆ Fraquezas: Modulos expostos, codigos antigos, sabotagem interna, ataques coordenados e falta de energia estavel.",
       "senses": "",
       "moral": "",
-      "resources": "Condicoes que aplica: Derrubado, Jammed, Queimando, Tonto e rachaduras em equipamento.\nRecursos ameacados: Tudo: cubos, veiculos, armaduras, rotas, muralhas e colonias.\nRecursos coletaveis: Placa de guerra, nucleo militar, arma modular, codigo antigo e componente Tier A/S.",
-      "campaign": "Como pode ser derrotado sem matar: Desligar nucleo, mudar ordem, sabotar modulos, atrair para zona instavel, selar hangar ou convencer que a guerra terminou.\nSe vencer, causa devastacao regional e faccoes entram em guerra por controle ou fuga.\nSe fugir, continua ativa como ameaca de campanha.\nSe derrotada, tecnologia e loot atraem todas as faccoes.",
-      "summary": "Como pode ser derrotado sem matar: Desligar nucleo, mudar ordem, sabotar modulos, atrair para zona instavel, selar hangar ou convencer que a guerra terminou.\nSe vencer, causa devastacao regional e faccoes entram em guerra por controle ou fuga.\nSe fugir, continua ativa como ameaca de campanha.\nSe derrotada, tecnologia e loot atraem todas as faccoes.",
+      "resources": "◆ Condicoes que aplica: Derrubado, Jammed, Queimando, Tonto e rachaduras em equipamento.\n◆ Recursos ameacados: Tudo: cubos, veiculos, armaduras, rotas, muralhas e colonias.\n◆ Recursos coletaveis: Placa de guerra, nucleo militar, arma modular, codigo antigo e componente Tier A/S.",
+      "campaign": "◆ Como pode ser derrotado sem matar: Desligar nucleo, mudar ordem, sabotar modulos, atrair para zona instavel, selar hangar ou convencer que a guerra terminou.\n◆ Se vencer, causa devastacao regional e faccoes entram em guerra por controle ou fuga.\n◆ Se fugir, continua ativa como ameaca de campanha.\n◆ Se derrotada, tecnologia e loot atraem todas as faccoes.\nFONTE OFICIAL // Livro 3, 3.8\nVARIANTES E TEMPLATES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCamadas de modificação para criar versões únicas sem perder a leitura da ficha original.",
+      "summary": "◆ Como pode ser derrotado sem matar: Desligar nucleo, mudar ordem, sabotar modulos, atrair para zona instavel, selar hangar ou convencer que a guerra terminou.\n◆ Se vencer, causa devastacao regional e faccoes entram em guerra por controle ou fuga.\n◆ Se fugir, continua ativa como ameaca de campanha.\n◆ Se derrotada, tecnologia e loot atraem todas as faccoes.\nFONTE OFICIAL // Livro 3, 3.8\nVARIANTES E TEMPLATES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCamadas de modificação para criar versões únicas sem perder a leitura da ficha original.",
       "tags": [
-        "Lendario",
-        "Chefe lendario",
-        "Chefe",
+        "S",
+        "Maquina antiga/militar",
+        "Ameaca lendaria de campanha",
+        "Colossal ou enorme",
         "Chefe"
       ],
       "details": [
         {
+          "label": "Resumo",
+          "items": [
+            "REGISTRO VISUAL // S // Maquina antiga/militar",
+            "Tier: S",
+            "Tipo: Maquina antiga/militar",
+            "Papel: Ameaca lendaria de campanha",
+            "Tamanho: Colossal ou enorme",
+            "Habitat: Campo de batalha antigo, hangar soterrado, ruina militar ou defesa de portal",
+            "PV: 200",
+            "CA: 20",
+            "Movimento: Lento, mas avanca destruindo terreno",
+            "Atributos importantes: FOR 26/MOD +8, CON 26/MOD +8, INT 18/MOD +4, MEN 16/MOD +3, PRE 20/MOD +5"
+          ]
+        },
+        {
           "label": "Sinais antes do encontro",
           "items": [
-            "Solo metalico vibrando.",
-            "Sirenes antigas.",
-            "Drones menores despertando.",
-            "Mapas mudando para modo militar.",
-            "Inscricao: Tar-Sher nao caira duas vezes."
+            "◆ Solo metalico vibrando.",
+            "◆ Sirenes antigas.",
+            "◆ Drones menores despertando.",
+            "◆ Mapas mudando para modo militar.",
+            "◆ Inscricao: Tar-Sher nao caira duas vezes."
           ]
         },
         {
           "label": "Ataques",
           "items": [
-            "Canhao de Ruptura: 4d6 energetico em area.",
-            "Pisoteio Mecanico: 3d6 concussao.",
-            "Rajada de Defesa: 2d6 balistico."
+            "◆ Canhao de Ruptura: 4d6 energetico em area.",
+            "◆ Pisoteio Mecanico: 3d6 concussao.",
+            "◆ Rajada de Defesa: 2d6 balistico."
           ]
         },
         {
           "label": "Habilidades principais",
           "items": [
-            "Modulos Separados: armas, escudo, locomocao, nucleo e sensores podem ser atacados ou sabotados separadamente.",
-            "Protocolo de Guerra: a cada rodada escolhe prioridade: eliminar, proteger, avancar ou selar area.",
-            "Campo Blindado: enquanto modulo de escudo estiver ativo, reduz 3 de todo dano recebido.",
-            "Fabrica de Drones: libera drones menores enquanto modulo interno estiver ativo.",
-            "Ordem Antiga: pode parar ou mudar comportamento se receber comando correto em Nytharul ou codigo de guerra antigo."
+            "◆ Modulos Separados: armas, escudo, locomocao, nucleo e sensores podem ser atacados ou sabotados separadamente.",
+            "◆ Protocolo de Guerra: a cada rodada escolhe prioridade: eliminar, proteger, avancar ou selar area.",
+            "◆ Campo Blindado: enquanto modulo de escudo estiver ativo, reduz 3 de todo dano recebido.",
+            "◆ Fabrica de Drones: libera drones menores enquanto modulo interno estiver ativo.",
+            "◆ Ordem Antiga: pode parar ou mudar comportamento se receber comando correto em Nytharul ou codigo de guerra antigo."
           ]
         },
         {
           "label": "Acoes de chefe",
           "items": [
-            "Ativar arma secundaria.",
-            "Mover modulo.",
-            "Liberar drone.",
-            "Fechar compartimento.",
-            "Carregar canhao principal."
+            "◆ Ativar arma secundaria.",
+            "◆ Mover modulo.",
+            "◆ Liberar drone.",
+            "◆ Fechar compartimento.",
+            "◆ Carregar canhao principal."
           ]
         },
         {
           "label": "Reacoes",
           "items": [
-            "Quando um modulo e destruido, libera descarga. Personagens proximos fazem JPF com REF."
+            "◆ Quando um modulo e destruido, libera descarga. Personagens proximos fazem JPF com REF."
           ]
         },
         {
@@ -9788,1032 +12349,44 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
         {
           "label": "Resistencias e fraquezas",
           "items": [
-            "Resistencias: Reducao alta contra fisico comum. Imune a veneno, doenca e medo. Resistencia contra fogo, frio e eletrico comum.",
-            "Fraquezas: Modulos expostos, codigos antigos, sabotagem interna, ataques coordenados e falta de energia estavel."
+            "◆ Resistencias: Reducao alta contra fisico comum. Imune a veneno, doenca e medo. Resistencia contra fogo, frio e eletrico comum.",
+            "◆ Fraquezas: Modulos expostos, codigos antigos, sabotagem interna, ataques coordenados e falta de energia estavel."
           ]
         },
         {
           "label": "Condicoes, recursos e coleta",
           "items": [
-            "Condicoes que aplica: Derrubado, Jammed, Queimando, Tonto e rachaduras em equipamento.",
-            "Recursos ameacados: Tudo: cubos, veiculos, armaduras, rotas, muralhas e colonias.",
-            "Recursos coletaveis: Placa de guerra, nucleo militar, arma modular, codigo antigo e componente Tier A/S."
+            "◆ Condicoes que aplica: Derrubado, Jammed, Queimando, Tonto e rachaduras em equipamento.",
+            "◆ Recursos ameacados: Tudo: cubos, veiculos, armaduras, rotas, muralhas e colonias.",
+            "◆ Recursos coletaveis: Placa de guerra, nucleo militar, arma modular, codigo antigo e componente Tier A/S."
           ]
         },
         {
           "label": "Solucoes e consequencias",
           "items": [
-            "Como pode ser derrotado sem matar: Desligar nucleo, mudar ordem, sabotar modulos, atrair para zona instavel, selar hangar ou convencer que a guerra terminou.",
-            "Se vencer, causa devastacao regional e faccoes entram em guerra por controle ou fuga.",
-            "Se fugir, continua ativa como ameaca de campanha.",
-            "Se derrotada, tecnologia e loot atraem todas as faccoes."
+            "◆ Como pode ser derrotado sem matar: Desligar nucleo, mudar ordem, sabotar modulos, atrair para zona instavel, selar hangar ou convencer que a guerra terminou.",
+            "◆ Se vencer, causa devastacao regional e faccoes entram em guerra por controle ou fuga.",
+            "◆ Se fugir, continua ativa como ameaca de campanha.",
+            "◆ Se derrotada, tecnologia e loot atraem todas as faccoes.",
+            "FONTE OFICIAL // Livro 3, 3.8",
+            "VARIANTES E TEMPLATES",
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+            "Camadas de modificação para criar versões únicas sem perder a leitura da ficha original."
           ]
         }
       ],
       "sheetType": "boss",
-      "needsCoreStats": true,
-      "assets": [],
+      "needsCoreStats": false,
+      "assets": [
+        {
+          "type": "image",
+          "label": "Registro visual de Maquina de Guerra do Mundo Partido",
+          "url": "./assets/bestiary/maquina-de-guerra-do-mundo-partido.jpg"
+        }
+      ],
       "source": "Livro 3, 3.8",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-4-filhote-rasktorian",
-      "category": "monster",
-      "name": "Filhote Rasktorian",
-      "tier": "F",
-      "type": "predador biológico imaturo",
-      "role": "ameaça inicial, enxame menor e presságio de ninho",
-      "size": "pequeno",
-      "pv": 8,
-      "ca": 9,
-      "movement": "7 m",
-      "habitat": "ninhos, túneis baixos, ruínas rasas e bordas de território Rasktorian",
-      "behavior": "",
-      "attributes": "FOR 8/MOD -1; REF 12/MOD +1; CON 10/MOD +0; INT 2/MOD -4; MEN 8/MOD -1; PRE 4/MOD -3",
-      "attacks": "Ataques: Mordida Curta, 1d4 perfurante; Garra Fraca, 1d3 cortante.",
-      "abilities": "Habilidade — Fome de Ninhada: se houver outro Filhote Rasktorian adjacente ao mesmo alvo, recebe +1 no ataque.\nHabilidade — Pânico de Isolamento: se estiver sozinho e sofrer dano, faz teste de moral. Em falha, foge, chia ou chama adultos próximos.\nHabilidade — Cheiro de Sangue Fraco: recebe +1 em Busca para localizar alvo Sangrando em curta distância.",
-      "resistances": "Resistências: nenhuma especial.",
-      "weaknesses": "Fraquezas: fogo, som alto e luz súbita podem fazê-lo fugir por 1 rodada.",
-      "senses": "Sentidos: olfato sensível e audição aguçada.",
-      "moral": "Moral: foge se metade da ninhada cair ou se um adulto não estiver por perto.",
-      "resources": "Recursos coletáveis: dentes pequenos, couro imaturo e glândula odorífera fraca.",
-      "campaign": "Uso em campanha: ideal para indicar que há ninho próximo. Não deve substituir o Rasktorian Jovem oficial.",
-      "summary": "Uso em campanha: ideal para indicar que há ninho próximo. Não deve substituir o Rasktorian Jovem oficial.",
-      "tags": [
-        "F",
-        "predador biológico imaturo",
-        "ameaça inicial, enxame menor e presságio de ninho",
-        "pequeno"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: F.",
-            "Tipo: predador biológico imaturo.",
-            "Papel: ameaça inicial, enxame menor e presságio de ninho.",
-            "Tamanho: pequeno.",
-            "Habitat: ninhos, túneis baixos, ruínas rasas e bordas de território Rasktorian.",
-            "Atributos: FOR 8/MOD -1; REF 12/MOD +1; CON 10/MOD +0; INT 2/MOD -4; MEN 8/MOD -1; PRE 4/MOD -3.",
-            "PV: 8. CA: 9. Movimento: 7 m.",
-            "Ataques: Mordida Curta, 1d4 perfurante; Garra Fraca, 1d3 cortante.",
-            "Habilidade — Fome de Ninhada: se houver outro Filhote Rasktorian adjacente ao mesmo alvo, recebe +1 no ataque.",
-            "Habilidade — Pânico de Isolamento: se estiver sozinho e sofrer dano, faz teste de moral. Em falha, foge, chia ou chama adultos próximos.",
-            "Habilidade — Cheiro de Sangue Fraco: recebe +1 em Busca para localizar alvo Sangrando em curta distância.",
-            "Resistências: nenhuma especial.",
-            "Fraquezas: fogo, som alto e luz súbita podem fazê-lo fugir por 1 rodada.",
-            "Sentidos: olfato sensível e audição aguçada.",
-            "Moral: foge se metade da ninhada cair ou se um adulto não estiver por perto.",
-            "Recursos coletáveis: dentes pequenos, couro imaturo e glândula odorífera fraca.",
-            "Uso em campanha: ideal para indicar que há ninho próximo. Não deve substituir o Rasktorian Jovem oficial."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.4",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-5-rasktorian-beta-dominante",
-      "category": "monster",
-      "name": "Rasktorian Beta Dominante",
-      "tier": "C",
-      "type": "predador dominante de bando",
-      "role": "elite, líder intermediário e chefe menor",
-      "size": "médio grande",
-      "pv": 46,
-      "ca": 15,
-      "movement": "11 m",
-      "habitat": "território de caça, ruínas abertas, cavernas largas e rotas bloqueadas por bando",
-      "behavior": "",
-      "attributes": "FOR 16/MOD +3; REF 16/MOD +3; CON 16/MOD +3; INT 6/MOD -2; MEN 12/MOD +1; PRE 12/MOD +1",
-      "attacks": "Ataques: Garra Dominante, 1d8 cortante; Mordida de Pressão, 1d8 perfurante; Pancada de Ombro, 1d6 concussão.",
-      "abilities": "Habilidade — Desafio de Bando: uma vez por cena, escolhe um alvo que tenha causado dano nele. Até o fim da próxima rodada, o Beta recebe +1 em ataques contra esse alvo, mas sofre -1 contra os demais.\nHabilidade — Ordem Instintiva: no início de uma rodada, um Rasktorian Filhote, Jovem ou Adulto próximo pode se mover 3 m ou reposicionar sem atacar.\nHabilidade — Derrubar Presa: se mover pelo menos 6 m e acertar com Garra Dominante, o alvo faz JPR com REF ou fica Derrubado.",
-      "resistances": "Resistências: resistência leve contra cortante comum.",
-      "weaknesses": "Fraquezas: disputa de domínio. Pode ser atraído por desafio, cheiro de sangue Alfa ou invasão de território.",
-      "senses": "Sentidos: olfato excelente, audição aguçada e percepção de vibração curta.",
-      "moral": "Moral: não foge facilmente, mas recua se perceber presença de Alfa ou se o bando for destruído.",
-      "resources": "Recursos coletáveis: garra dominante, couro reforçado, glândula de feromônio e sangue adrenal.",
-      "campaign": "Uso em campanha: serve como chefe de missão inicial avançada ou como guardião do território antes do verdadeiro Alfa.",
-      "summary": "Uso em campanha: serve como chefe de missão inicial avançada ou como guardião do território antes do verdadeiro Alfa.",
-      "tags": [
-        "C",
-        "predador dominante de bando",
-        "elite, líder intermediário e chefe menor",
-        "médio grande"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: C.",
-            "Tipo: predador dominante de bando.",
-            "Papel: elite, líder intermediário e chefe menor.",
-            "Tamanho: médio grande.",
-            "Habitat: território de caça, ruínas abertas, cavernas largas e rotas bloqueadas por bando.",
-            "Atributos: FOR 16/MOD +3; REF 16/MOD +3; CON 16/MOD +3; INT 6/MOD -2; MEN 12/MOD +1; PRE 12/MOD +1.",
-            "PV: 46. CA: 15. Movimento: 11 m.",
-            "Ataques: Garra Dominante, 1d8 cortante; Mordida de Pressão, 1d8 perfurante; Pancada de Ombro, 1d6 concussão.",
-            "Habilidade — Desafio de Bando: uma vez por cena, escolhe um alvo que tenha causado dano nele. Até o fim da próxima rodada, o Beta recebe +1 em ataques contra esse alvo, mas sofre -1 contra os demais.",
-            "Habilidade — Ordem Instintiva: no início de uma rodada, um Rasktorian Filhote, Jovem ou Adulto próximo pode se mover 3 m ou reposicionar sem atacar.",
-            "Habilidade — Derrubar Presa: se mover pelo menos 6 m e acertar com Garra Dominante, o alvo faz JPR com REF ou fica Derrubado.",
-            "Resistências: resistência leve contra cortante comum.",
-            "Fraquezas: disputa de domínio. Pode ser atraído por desafio, cheiro de sangue Alfa ou invasão de território.",
-            "Sentidos: olfato excelente, audição aguçada e percepção de vibração curta.",
-            "Moral: não foge facilmente, mas recua se perceber presença de Alfa ou se o bando for destruído.",
-            "Recursos coletáveis: garra dominante, couro reforçado, glândula de feromônio e sangue adrenal.",
-            "Uso em campanha: serve como chefe de missão inicial avançada ou como guardião do território antes do verdadeiro Alfa."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.5",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-7-viscerme-de-lodo-menor",
-      "category": "monster",
-      "name": "Viscerme de Lodo Menor",
-      "tier": "F",
-      "type": "lodo biológico reativo",
-      "role": "controle de terreno e armadilha viva",
-      "size": "pequeno ou massa baixa",
-      "pv": 7,
-      "ca": 8,
-      "movement": "4 m em terra; 6 m em lama ou água rasa",
-      "habitat": "pântanos, ruínas alagadas, poços contaminados e lama com resíduo cósmico",
-      "behavior": "",
-      "attributes": "FOR 8/MOD -1; REF 8/MOD -1; CON 12/MOD +1; INT 2/MOD -4; MEN 6/MOD -2; PRE 2/MOD -4",
-      "attacks": "Ataque: Tentáculo de Lodo, 1d4 concussão.",
-      "abilities": "Habilidade — Puxar para a Lama: em sucesso completo, o alvo faz JPF com FOR ou fica Imobilizado até gastar ação para se soltar.\nHabilidade — Corpo Amorfo: passa por frestas, grades largas e rachaduras lamacentas.",
-      "resistances": "Resistências: resistência leve contra concussão comum.",
-      "weaknesses": "Fraquezas: fogo e ambiente seco reduzem seu movimento pela metade.",
-      "senses": "Sentidos: vibração em água e lama.",
-      "moral": "Moral: não possui moral complexa; recua para lama profunda se sofrer fogo.",
-      "resources": "Recursos coletáveis: núcleo viscoso, lodo concentrado e resíduo ácido fraco.",
-      "campaign": "Uso em campanha: funciona como perigo de travessia, não como substituto do Viscerme Comum.",
-      "summary": "Uso em campanha: funciona como perigo de travessia, não como substituto do Viscerme Comum.",
-      "tags": [
-        "F",
-        "lodo biológico reativo",
-        "controle de terreno e armadilha viva",
-        "pequeno ou massa baixa"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: F.",
-            "Tipo: lodo biológico reativo.",
-            "Papel: controle de terreno e armadilha viva.",
-            "Tamanho: pequeno ou massa baixa.",
-            "Habitat: pântanos, ruínas alagadas, poços contaminados e lama com resíduo cósmico.",
-            "Atributos: FOR 8/MOD -1; REF 8/MOD -1; CON 12/MOD +1; INT 2/MOD -4; MEN 6/MOD -2; PRE 2/MOD -4.",
-            "PV: 7. CA: 8. Movimento: 4 m em terra; 6 m em lama ou água rasa.",
-            "Ataque: Tentáculo de Lodo, 1d4 concussão.",
-            "Habilidade — Puxar para a Lama: em sucesso completo, o alvo faz JPF com FOR ou fica Imobilizado até gastar ação para se soltar.",
-            "Habilidade — Corpo Amorfo: passa por frestas, grades largas e rachaduras lamacentas.",
-            "Resistências: resistência leve contra concussão comum.",
-            "Fraquezas: fogo e ambiente seco reduzem seu movimento pela metade.",
-            "Sentidos: vibração em água e lama.",
-            "Moral: não possui moral complexa; recua para lama profunda se sofrer fogo.",
-            "Recursos coletáveis: núcleo viscoso, lodo concentrado e resíduo ácido fraco.",
-            "Uso em campanha: funciona como perigo de travessia, não como substituto do Viscerme Comum."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.7",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-8-viscerme-de-lodo-instavel",
-      "category": "monster",
-      "name": "Viscerme de Lodo Instável",
-      "tier": "E",
-      "type": "lodo biológico-cósmico instável",
-      "role": "controlador e ameaça ambiental",
-      "size": "médio",
-      "pv": 16,
-      "ca": 9,
-      "movement": "5 m; 7 m em lama ou água rasa",
-      "habitat": "zonas pantanosas contaminadas por Falaris, poços antigos e ruínas alagadas",
-      "behavior": "",
-      "attributes": "FOR 12/MOD +1; REF 8/MOD -1; CON 14/MOD +2; INT 2/MOD -4; MEN 8/MOD -1; PRE 4/MOD -3",
-      "attacks": "Ataques: Tentáculo Ácido, 1d6 concussão/ácido; Abraço Viscoso, 1d4 ácido por rodada contra alvo Imobilizado.",
-      "abilities": "Habilidade — Instabilidade Cósmica: se for destruído por dano cósmico, role 1d6. Em 1, explode em ácido; em 2-3, divide-se em dois Viscermes de Lodo Menores; em 4-6, dissolve normalmente.\nHabilidade — Contaminar Cubo: se um Cubo de Suprimentos aberto estiver adjacente, uma falha ou erro crítico na cena pode contaminá-lo.",
-      "resistances": "Resistências: tóxico comum e concussão leve.",
-      "weaknesses": "Fraquezas: fogo causa +1 dano; frio intenso reduz seu movimento.",
-      "senses": "Sentidos: vibração e percepção rudimentar de calor.",
-      "moral": "Moral: tenta se fundir ao terreno quando cai abaixo da metade dos PV.",
-      "resources": "Recursos coletáveis: núcleo instável, resíduo ácido, lodo cósmico fraco e amostra contaminada.",
-      "campaign": "Uso em campanha: bom para cenas de pântano onde a maior ameaça é perder movimento, recurso ou cubo.",
-      "summary": "Uso em campanha: bom para cenas de pântano onde a maior ameaça é perder movimento, recurso ou cubo.",
-      "tags": [
-        "E",
-        "lodo biológico-cósmico instável",
-        "controlador e ameaça ambiental",
-        "médio"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: E.",
-            "Tipo: lodo biológico-cósmico instável.",
-            "Papel: controlador e ameaça ambiental.",
-            "Tamanho: médio.",
-            "Habitat: zonas pantanosas contaminadas por Falaris, poços antigos e ruínas alagadas.",
-            "Atributos: FOR 12/MOD +1; REF 8/MOD -1; CON 14/MOD +2; INT 2/MOD -4; MEN 8/MOD -1; PRE 4/MOD -3.",
-            "PV: 16. CA: 9. Movimento: 5 m; 7 m em lama ou água rasa.",
-            "Ataques: Tentáculo Ácido, 1d6 concussão/ácido; Abraço Viscoso, 1d4 ácido por rodada contra alvo Imobilizado.",
-            "Habilidade — Instabilidade Cósmica: se for destruído por dano cósmico, role 1d6. Em 1, explode em ácido; em 2-3, divide-se em dois Viscermes de Lodo Menores; em 4-6, dissolve normalmente.",
-            "Habilidade — Contaminar Cubo: se um Cubo de Suprimentos aberto estiver adjacente, uma falha ou erro crítico na cena pode contaminá-lo.",
-            "Resistências: tóxico comum e concussão leve.",
-            "Fraquezas: fogo causa +1 dano; frio intenso reduz seu movimento.",
-            "Sentidos: vibração e percepção rudimentar de calor.",
-            "Moral: tenta se fundir ao terreno quando cai abaixo da metade dos PV.",
-            "Recursos coletáveis: núcleo instável, resíduo ácido, lodo cósmico fraco e amostra contaminada.",
-            "Uso em campanha: bom para cenas de pântano onde a maior ameaça é perder movimento, recurso ou cubo."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.8",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-10-arauto-da-noite-comum",
-      "category": "monster",
-      "name": "Arauto da Noite Comum",
-      "tier": "E",
-      "type": "predador alado noturno",
-      "role": "atirador orgânico, assediador e ameaça de bando",
-      "size": "pequeno ou médio",
-      "pv": 12,
-      "ca": 12,
-      "movement": "4 m terrestre; voo 15 m",
-      "habitat": "cavernas altas, ruínas abertas, torres, penhascos e regiões de Noite Eterna em lendas Kairi",
-      "behavior": "",
-      "attributes": "FOR 8/MOD -1; REF 14/MOD +2; CON 10/MOD +0; INT 4/MOD -3; MEN 10/MOD +0; PRE 8/MOD -1",
-      "attacks": "Ataques: Mordida Drenante, 1d4 perfurante; Rasante, 1d6 cortante se vier de voo.",
-      "abilities": "Habilidade — Onda Sônica: duas vezes por cena, criaturas em cone curto fazem JPC com MEN. Em falha, ficam Tontas até o fim da próxima rodada.\nHabilidade — Caçador Noturno: recebe +1 no primeiro ataque contra alvo que não o percebeu em penumbra ou escuridão.",
-      "resistances": "Resistências: nenhuma especial.",
-      "weaknesses": "Fraquezas: luz intensa, som harmônico e espaços fechados baixos.",
-      "senses": "Sentidos: ecolocalização, audição excelente e visão em baixa luz.",
-      "moral": "Moral: foge se metade do bando cair ou se ficar preso sem altura.",
-      "resources": "Recursos coletáveis: asa membranosa, glândula sônica e olhos luminescentes.",
-      "campaign": "Uso em campanha: ameaça aérea de viagem noturna, torre, caverna vertical ou presságio Kairi.",
-      "summary": "Uso em campanha: ameaça aérea de viagem noturna, torre, caverna vertical ou presságio Kairi.",
-      "tags": [
-        "E",
-        "predador alado noturno",
-        "atirador orgânico, assediador e ameaça de bando",
-        "pequeno ou médio"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: E.",
-            "Tipo: predador alado noturno.",
-            "Papel: atirador orgânico, assediador e ameaça de bando.",
-            "Tamanho: pequeno ou médio.",
-            "Habitat: cavernas altas, ruínas abertas, torres, penhascos e regiões de Noite Eterna em lendas Kairi.",
-            "Atributos: FOR 8/MOD -1; REF 14/MOD +2; CON 10/MOD +0; INT 4/MOD -3; MEN 10/MOD +0; PRE 8/MOD -1.",
-            "PV: 12. CA: 12. Movimento: 4 m terrestre; voo 15 m.",
-            "Ataques: Mordida Drenante, 1d4 perfurante; Rasante, 1d6 cortante se vier de voo.",
-            "Habilidade — Onda Sônica: duas vezes por cena, criaturas em cone curto fazem JPC com MEN. Em falha, ficam Tontas até o fim da próxima rodada.",
-            "Habilidade — Caçador Noturno: recebe +1 no primeiro ataque contra alvo que não o percebeu em penumbra ou escuridão.",
-            "Resistências: nenhuma especial.",
-            "Fraquezas: luz intensa, som harmônico e espaços fechados baixos.",
-            "Sentidos: ecolocalização, audição excelente e visão em baixa luz.",
-            "Moral: foge se metade do bando cair ou se ficar preso sem altura.",
-            "Recursos coletáveis: asa membranosa, glândula sônica e olhos luminescentes.",
-            "Uso em campanha: ameaça aérea de viagem noturna, torre, caverna vertical ou presságio Kairi."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.10",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-11-arauto-da-noite-maior",
-      "category": "monster",
-      "name": "Arauto da Noite Maior",
-      "tier": "D",
-      "type": "predador alado sônico",
-      "role": "chefe de bando, controlador e terror noturno",
-      "size": "médio grande",
-      "pv": 30,
-      "ca": 14,
-      "movement": "5 m terrestre; voo 16 m",
-      "habitat": "ninhos altos, torres antigas, árvores gigantes e cavernas de teto amplo",
-      "behavior": "",
-      "attributes": "FOR 12/MOD +1; REF 16/MOD +3; CON 12/MOD +1; INT 6/MOD -2; MEN 12/MOD +1; PRE 12/MOD +1",
-      "attacks": "Ataques: Mordida Drenante Maior, 1d8 perfurante; Garras de Rasante, 1d8 cortante.",
-      "abilities": "Habilidade — Grito da Noite: uma vez por cena, todos em cone médio fazem JPC com MEN. Em falha, ficam Tontos e recebem +1 Estresse.\nHabilidade — Eco de Bando: Arautos da Noite aliados próximos recebem +1 em Busca baseada em som.",
-      "resistances": "Resistências: resistência leve contra Medo comum.",
-      "weaknesses": "Fraquezas: luz intensa e destruição do ninho reduzem sua agressividade.",
-      "senses": "Sentidos: ecolocalização refinada e percepção de movimento no escuro.",
-      "moral": "Moral: protege o ninho; fora do ninho, recua se perder vantagem aérea.",
-      "resources": "Recursos coletáveis: glândula sônica maior, couro de asa, olhos luminescentes e osso oco ressonante.",
-      "campaign": "Uso em campanha: chefe menor de bando e presságio de área dominada por predadores noturnos.",
-      "summary": "Uso em campanha: chefe menor de bando e presságio de área dominada por predadores noturnos.",
-      "tags": [
-        "D",
-        "predador alado sônico",
-        "chefe de bando, controlador e terror noturno",
-        "médio grande"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: D.",
-            "Tipo: predador alado sônico.",
-            "Papel: chefe de bando, controlador e terror noturno.",
-            "Tamanho: médio grande.",
-            "Habitat: ninhos altos, torres antigas, árvores gigantes e cavernas de teto amplo.",
-            "Atributos: FOR 12/MOD +1; REF 16/MOD +3; CON 12/MOD +1; INT 6/MOD -2; MEN 12/MOD +1; PRE 12/MOD +1.",
-            "PV: 30. CA: 14. Movimento: 5 m terrestre; voo 16 m.",
-            "Ataques: Mordida Drenante Maior, 1d8 perfurante; Garras de Rasante, 1d8 cortante.",
-            "Habilidade — Grito da Noite: uma vez por cena, todos em cone médio fazem JPC com MEN. Em falha, ficam Tontos e recebem +1 Estresse.",
-            "Habilidade — Eco de Bando: Arautos da Noite aliados próximos recebem +1 em Busca baseada em som.",
-            "Resistências: resistência leve contra Medo comum.",
-            "Fraquezas: luz intensa e destruição do ninho reduzem sua agressividade.",
-            "Sentidos: ecolocalização refinada e percepção de movimento no escuro.",
-            "Moral: protege o ninho; fora do ninho, recua se perder vantagem aérea.",
-            "Recursos coletáveis: glândula sônica maior, couro de asa, olhos luminescentes e osso oco ressonante.",
-            "Uso em campanha: chefe menor de bando e presságio de área dominada por predadores noturnos."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.11",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-13-voraxio-alado-comum",
-      "category": "monster",
-      "name": "Voráxio Alado Comum",
-      "tier": "F",
-      "type": "predador alado de bando",
-      "role": "enxame leve, perseguidor e caçador de feridos",
-      "size": "pequeno",
-      "pv": 8,
-      "ca": 10,
-      "movement": "8 m terrestre; voo 12 m",
-      "habitat": "céu baixo, pântanos, florestas enevoadas, torres abandonadas e rotas abertas",
-      "behavior": "",
-      "attributes": "FOR 10/MOD +0; REF 14/MOD +2; CON 8/MOD -1; INT 4/MOD -3; MEN 8/MOD -1; PRE 6/MOD -2",
-      "attacks": "Ataque: Mordida Aérea, 1d4+1 perfurante.",
-      "abilities": "Habilidade — Investida de Voo: uma vez por cena, se mergulhar de pelo menos 6 m, o alvo faz JPR com REF ou fica Derrubado.\nHabilidade — Caçadores de Sangue: recebe +1 em Busca para rastrear alvo Sangrando.\nHabilidade — Mergulho em Bando: se dois ou mais Voráxios atacarem o mesmo alvo na rodada, o segundo recebe +1 no ataque.",
-      "resistances": "Resistências: nenhuma especial.",
-      "weaknesses": "Fraquezas: fumaça, som agudo e luz súbita.",
-      "senses": "Sentidos: olfato de sangue e visão em baixa luz.",
-      "moral": "Moral: foge se metade do bando cair.",
-      "resources": "Recursos coletáveis: presa afiada, asa membranosa e sangue residual.",
-      "campaign": "Uso em campanha: ameaça inicial de céu baixo e perseguição de viajantes feridos.",
-      "summary": "Uso em campanha: ameaça inicial de céu baixo e perseguição de viajantes feridos.",
-      "tags": [
-        "F",
-        "predador alado de bando",
-        "enxame leve, perseguidor e caçador de feridos",
-        "pequeno"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: F.",
-            "Tipo: predador alado de bando.",
-            "Papel: enxame leve, perseguidor e caçador de feridos.",
-            "Tamanho: pequeno.",
-            "Habitat: céu baixo, pântanos, florestas enevoadas, torres abandonadas e rotas abertas.",
-            "Atributos: FOR 10/MOD +0; REF 14/MOD +2; CON 8/MOD -1; INT 4/MOD -3; MEN 8/MOD -1; PRE 6/MOD -2.",
-            "PV: 8. CA: 10. Movimento: 8 m terrestre; voo 12 m.",
-            "Ataque: Mordida Aérea, 1d4+1 perfurante.",
-            "Habilidade — Investida de Voo: uma vez por cena, se mergulhar de pelo menos 6 m, o alvo faz JPR com REF ou fica Derrubado.",
-            "Habilidade — Caçadores de Sangue: recebe +1 em Busca para rastrear alvo Sangrando.",
-            "Habilidade — Mergulho em Bando: se dois ou mais Voráxios atacarem o mesmo alvo na rodada, o segundo recebe +1 no ataque.",
-            "Resistências: nenhuma especial.",
-            "Fraquezas: fumaça, som agudo e luz súbita.",
-            "Sentidos: olfato de sangue e visão em baixa luz.",
-            "Moral: foge se metade do bando cair.",
-            "Recursos coletáveis: presa afiada, asa membranosa e sangue residual.",
-            "Uso em campanha: ameaça inicial de céu baixo e perseguição de viajantes feridos."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.13",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-14-voraxio-matriarca",
-      "category": "monster",
-      "name": "Voráxio Matriarca",
-      "tier": "D",
-      "type": "predador alado dominante",
-      "role": "chefe de ninho e comandante de bando",
-      "size": "médio grande",
-      "pv": 34,
-      "ca": 13,
-      "movement": "8 m terrestre; voo 15 m",
-      "habitat": "ninhos em torres, penhascos, árvores altas e ruínas abertas",
-      "behavior": "",
-      "attributes": "FOR 14/MOD +2; REF 16/MOD +3; CON 14/MOD +2; INT 6/MOD -2; MEN 10/MOD +0; PRE 12/MOD +1",
-      "attacks": "Ataques: Mordida Dilacerante, 2d6 perfurante; Garras de Mergulho, 1d8 cortante.",
-      "abilities": "Habilidade — Grito de Bando: uma vez por cena, todos os Voráxios aliados podem se mover 3 m sem gastar ação.\nHabilidade — Mergulho Esmagador: se mergulhar de altura, o alvo faz JPR com REF. Em falha, sofre dano e fica Derrubado.",
-      "resistances": "Resistências: resistência leve contra frio ambiental.",
-      "weaknesses": "Fraquezas: dano ao ninho, fumaça densa e espaço sem altura.",
-      "senses": "Sentidos: visão noturna, olfato de sangue e audição aguçada.",
-      "moral": "Moral: defende ovos e filhotes, mas pode abandonar caça se o ninho estiver ameaçado.",
-      "resources": "Recursos coletáveis: presa maior, asa membranosa resistente, glândula de chamado e sangue residual.",
-      "campaign": "Uso em campanha: chefe de ataque noturno a colônia ou de ninho em área elevada.",
-      "summary": "Uso em campanha: chefe de ataque noturno a colônia ou de ninho em área elevada.",
-      "tags": [
-        "D",
-        "predador alado dominante",
-        "chefe de ninho e comandante de bando",
-        "médio grande"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: D.",
-            "Tipo: predador alado dominante.",
-            "Papel: chefe de ninho e comandante de bando.",
-            "Tamanho: médio grande.",
-            "Habitat: ninhos em torres, penhascos, árvores altas e ruínas abertas.",
-            "Atributos: FOR 14/MOD +2; REF 16/MOD +3; CON 14/MOD +2; INT 6/MOD -2; MEN 10/MOD +0; PRE 12/MOD +1.",
-            "PV: 34. CA: 13. Movimento: 8 m terrestre; voo 15 m.",
-            "Ataques: Mordida Dilacerante, 2d6 perfurante; Garras de Mergulho, 1d8 cortante.",
-            "Habilidade — Grito de Bando: uma vez por cena, todos os Voráxios aliados podem se mover 3 m sem gastar ação.",
-            "Habilidade — Mergulho Esmagador: se mergulhar de altura, o alvo faz JPR com REF. Em falha, sofre dano e fica Derrubado.",
-            "Resistências: resistência leve contra frio ambiental.",
-            "Fraquezas: dano ao ninho, fumaça densa e espaço sem altura.",
-            "Sentidos: visão noturna, olfato de sangue e audição aguçada.",
-            "Moral: defende ovos e filhotes, mas pode abandonar caça se o ninho estiver ameaçado.",
-            "Recursos coletáveis: presa maior, asa membranosa resistente, glândula de chamado e sangue residual.",
-            "Uso em campanha: chefe de ataque noturno a colônia ou de ninho em área elevada."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.14",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-16-nyxaracne-matriarca-ficha-revisada",
-      "category": "monster",
-      "name": "Nyxaracne Matriarca — ficha revisada",
-      "tier": "B",
-      "type": "aracnídeo superior de sombra",
-      "role": "chefe, controlador e senhora de ninho",
-      "size": "enorme",
-      "pv": 78,
-      "ca": 16,
-      "movement": "8 m; escalada 8 m",
-      "habitat": "ninho profundo, ruína tomada por teias, cavernas antigas e túneis verticais",
-      "behavior": "",
-      "attributes": "FOR 16/MOD +3; REF 16/MOD +3; CON 18/MOD +4; INT 6/MOD -2; MEN 16/MOD +3; PRE 14/MOD +2",
-      "attacks": "Ataques: Presas da Matriarca, 1d10 perfurante; Pata Cortante, 1d8 cortante.",
-      "abilities": "Habilidade — Domínio do Ninho: enquanto estiver no próprio ninho, recebe +1 CA e ignora penalidade de teias.\nHabilidade — Teia Abissal Menor: uma vez por rodada, escolhe área com teia. Alvos fazem JPR com REF ou ficam Imobilizados.\nHabilidade — Ninhada: no fim de cada rodada, se houver ovos ou casulos intactos, uma criatura menor pode surgir, mover-se ou atrapalhar o grupo.\nHabilidade — Sombra Viva: uma vez por cena, apaga fontes pequenas de luz por 1 rodada, salvo fogo intenso ou luz cósmica forte.",
-      "resistances": "Resistências: resistência leve contra perfurante e contra terreno de teia.",
-      "weaknesses": "Fraquezas: fogo, luz intensa e destruição dos pontos principais do ninho.",
-      "senses": "Sentidos: vibração perfeita em teias, visão no escuro e percepção de calor fraca.",
-      "moral": "Moral: protege ovos e rota de fuga. Pode abandonar o ninho se a espécie estiver ameaçada.",
-      "resources": "Recursos coletáveis: teia superior, veneno concentrado, olhos da Matriarca, quitina escura e ovos.",
-      "campaign": "Uso em campanha: chefe de arco subterrâneo. A Matriarca Abissal do Capítulo 3 é a versão lendária Tier A.",
-      "summary": "Uso em campanha: chefe de arco subterrâneo. A Matriarca Abissal do Capítulo 3 é a versão lendária Tier A.",
-      "tags": [
-        "B",
-        "aracnídeo superior de sombra",
-        "chefe, controlador e senhora de ninho",
-        "enorme"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: B.",
-            "Tipo: aracnídeo superior de sombra.",
-            "Papel: chefe, controlador e senhora de ninho.",
-            "Tamanho: enorme.",
-            "Habitat: ninho profundo, ruína tomada por teias, cavernas antigas e túneis verticais.",
-            "Atributos: FOR 16/MOD +3; REF 16/MOD +3; CON 18/MOD +4; INT 6/MOD -2; MEN 16/MOD +3; PRE 14/MOD +2.",
-            "PV: 78. CA: 16. Movimento: 8 m; escalada 8 m.",
-            "Ataques: Presas da Matriarca, 1d10 perfurante; Pata Cortante, 1d8 cortante.",
-            "Habilidade — Domínio do Ninho: enquanto estiver no próprio ninho, recebe +1 CA e ignora penalidade de teias.",
-            "Habilidade — Teia Abissal Menor: uma vez por rodada, escolhe área com teia. Alvos fazem JPR com REF ou ficam Imobilizados.",
-            "Habilidade — Ninhada: no fim de cada rodada, se houver ovos ou casulos intactos, uma criatura menor pode surgir, mover-se ou atrapalhar o grupo.",
-            "Habilidade — Sombra Viva: uma vez por cena, apaga fontes pequenas de luz por 1 rodada, salvo fogo intenso ou luz cósmica forte.",
-            "Resistências: resistência leve contra perfurante e contra terreno de teia.",
-            "Fraquezas: fogo, luz intensa e destruição dos pontos principais do ninho.",
-            "Sentidos: vibração perfeita em teias, visão no escuro e percepção de calor fraca.",
-            "Moral: protege ovos e rota de fuga. Pode abandonar o ninho se a espécie estiver ameaçada.",
-            "Recursos coletáveis: teia superior, veneno concentrado, olhos da Matriarca, quitina escura e ovos.",
-            "Uso em campanha: chefe de arco subterrâneo. A Matriarca Abissal do Capítulo 3 é a versão lendária Tier A."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.16",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-18-tyrakth-cristalino",
-      "category": "monster",
-      "name": "Tyrakth Cristalino",
-      "tier": "B",
-      "type": "megafauna cósmica/cristalina",
-      "role": "chefe físico, tanque e evento de terreno",
-      "size": "grande ou enorme",
-      "pv": 80,
-      "ca": 16,
-      "movement": "7 m. Cosmos: 3",
-      "habitat": "crateras, cavernas cristalinas, regiões de ressonância e antigas zonas de impacto",
-      "behavior": "",
-      "attributes": "FOR 20/MOD +5; REF 8/MOD -1; CON 20/MOD +5; INT 4/MOD -3; MEN 12/MOD +1; PRE 16/MOD +3",
-      "attacks": "Ataques: Pisada Sísmica, 2d6 concussão; Chifre Cristalino, 2d8 perfurante/cósmico.",
-      "abilities": "Habilidade — Rugido do Sol Morto: uma vez por cena, todos em alcance médio fazem JPC com PRE. Em falha, sofrem Medo por 1 rodada ou +1 Estresse.\nHabilidade — Carapaça Cristalina: reduz 2 de dano físico comum.\nHabilidade — Ressonância Cósmica: perto de cristais ativos, recupera 1 Cosmos por rodada até o limite definido pelo Mestre.",
-      "resistances": "",
-      "weaknesses": "Fraqueza — Juntas Cristalinas: após ataques pesados, expõe juntas. Descobrir exige Biologia, Busca ou Percepção Cósmica, conforme a abordagem.",
-      "senses": "Sentidos: percepção de vibração, olfato e sensibilidade a cristais.",
-      "moral": "Moral: não caça sem motivo. Defende território e pode ignorar alvos pequenos até ser provocado.",
-      "resources": "Recursos coletáveis: escama cristalina, fragmento de carapaça, cristal de ressonância e material de Tier alto.",
-      "campaign": "Uso em campanha: não é encontro aleatório. É obstáculo, chefe de região ou ameaça que o grupo talvez precise desviar, não matar.",
-      "summary": "Uso em campanha: não é encontro aleatório. É obstáculo, chefe de região ou ameaça que o grupo talvez precise desviar, não matar.",
-      "tags": [
-        "B",
-        "megafauna cósmica/cristalina",
-        "chefe físico, tanque e evento de terreno",
-        "grande ou enorme"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: B.",
-            "Tipo: megafauna cósmica/cristalina.",
-            "Papel: chefe físico, tanque e evento de terreno.",
-            "Tamanho: grande ou enorme.",
-            "Habitat: crateras, cavernas cristalinas, regiões de ressonância e antigas zonas de impacto.",
-            "Atributos: FOR 20/MOD +5; REF 8/MOD -1; CON 20/MOD +5; INT 4/MOD -3; MEN 12/MOD +1; PRE 16/MOD +3.",
-            "PV: 80. CA: 16. Movimento: 7 m. Cosmos: 3.",
-            "Ataques: Pisada Sísmica, 2d6 concussão; Chifre Cristalino, 2d8 perfurante/cósmico.",
-            "Habilidade — Rugido do Sol Morto: uma vez por cena, todos em alcance médio fazem JPC com PRE. Em falha, sofrem Medo por 1 rodada ou +1 Estresse.",
-            "Habilidade — Carapaça Cristalina: reduz 2 de dano físico comum.",
-            "Habilidade — Ressonância Cósmica: perto de cristais ativos, recupera 1 Cosmos por rodada até o limite definido pelo Mestre.",
-            "Fraqueza — Juntas Cristalinas: após ataques pesados, expõe juntas. Descobrir exige Biologia, Busca ou Percepção Cósmica, conforme a abordagem.",
-            "Sentidos: percepção de vibração, olfato e sensibilidade a cristais.",
-            "Moral: não caça sem motivo. Defende território e pode ignorar alvos pequenos até ser provocado.",
-            "Recursos coletáveis: escama cristalina, fragmento de carapaça, cristal de ressonância e material de Tier alto.",
-            "Uso em campanha: não é encontro aleatório. É obstáculo, chefe de região ou ameaça que o grupo talvez precise desviar, não matar."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.18",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-19-tyrakth-desperto",
-      "category": "monster",
-      "name": "Tyrakth Desperto",
-      "tier": "A",
-      "type": "megafauna ancestral tocada pelo Cosmos",
-      "role": "ameaça lendária, chefe de região e força da natureza",
-      "size": "enorme",
-      "pv": 125,
-      "ca": 18,
-      "movement": "8 m. Cosmos: 5",
-      "habitat": "vales cristalinos, montanhas antigas, ruínas abertas e zonas onde Tarantus parece responder ao Cosmos",
-      "behavior": "",
-      "attributes": "FOR 22/MOD +6; REF 8/MOD -1; CON 22/MOD +6; INT 6/MOD -2; MEN 16/MOD +3; PRE 18/MOD +4",
-      "attacks": "Ataques: Investida Telúrica, 2d6 concussão em linha; Chifre Ancestral, 2d8 perfurante/cósmico; Pisoteio, 2d6 concussão em área próxima.",
-      "abilities": "Habilidade — Passos de Terremoto: sempre que se move mais de 6 m, criaturas próximas fazem JPR com REF ou ficam Derrubadas.\nHabilidade — Couraça Viva: reduz 2 de dano físico comum e possui resistência leve contra dano cósmico fraco.\nHabilidade — Chamado Mineral: cristais próximos vibram; sensores e focos podem sofrer interferência se o Mestre quiser aumentar a tensão.\nHabilidade — Evento, não Encontro: o Mestre deve oferecer sinais, rotas de fuga, objetivos alternativos e consequências ambientais.",
-      "resistances": "",
-      "weaknesses": "Fraquezas: juntas cristalinas, olhos, parte inferior da mandíbula e símbolos de contenção antigos.",
-      "senses": "Sentidos: vibração profunda, olfato e percepção de energia mineral.",
-      "moral": "Moral: não foge de ameaça pequena. Pode abandonar combate se a invasão terminar ou se o território for respeitado.",
-      "resources": "Recursos coletáveis: placa ancestral, cristal vivo, chifre desperto e fragmento de couraça cósmica.",
-      "campaign": "Uso em campanha: ameaça de arco avançado. Sobreviver ou redirecionar o Tyrakth pode ser vitória suficiente.",
-      "summary": "Uso em campanha: ameaça de arco avançado. Sobreviver ou redirecionar o Tyrakth pode ser vitória suficiente.",
-      "tags": [
-        "A",
-        "megafauna ancestral tocada pelo Cosmos",
-        "ameaça lendária, chefe de região e força da natureza",
-        "enorme"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: A.",
-            "Tipo: megafauna ancestral tocada pelo Cosmos.",
-            "Papel: ameaça lendária, chefe de região e força da natureza.",
-            "Tamanho: enorme.",
-            "Habitat: vales cristalinos, montanhas antigas, ruínas abertas e zonas onde Tarantus parece responder ao Cosmos.",
-            "Atributos: FOR 22/MOD +6; REF 8/MOD -1; CON 22/MOD +6; INT 6/MOD -2; MEN 16/MOD +3; PRE 18/MOD +4.",
-            "PV: 125. CA: 18. Movimento: 8 m. Cosmos: 5.",
-            "Ataques: Investida Telúrica, 2d6 concussão em linha; Chifre Ancestral, 2d8 perfurante/cósmico; Pisoteio, 2d6 concussão em área próxima.",
-            "Habilidade — Passos de Terremoto: sempre que se move mais de 6 m, criaturas próximas fazem JPR com REF ou ficam Derrubadas.",
-            "Habilidade — Couraça Viva: reduz 2 de dano físico comum e possui resistência leve contra dano cósmico fraco.",
-            "Habilidade — Chamado Mineral: cristais próximos vibram; sensores e focos podem sofrer interferência se o Mestre quiser aumentar a tensão.",
-            "Habilidade — Evento, não Encontro: o Mestre deve oferecer sinais, rotas de fuga, objetivos alternativos e consequências ambientais.",
-            "Fraquezas: juntas cristalinas, olhos, parte inferior da mandíbula e símbolos de contenção antigos.",
-            "Sentidos: vibração profunda, olfato e percepção de energia mineral.",
-            "Moral: não foge de ameaça pequena. Pode abandonar combate se a invasão terminar ou se o território for respeitado.",
-            "Recursos coletáveis: placa ancestral, cristal vivo, chifre desperto e fragmento de couraça cósmica.",
-            "Uso em campanha: ameaça de arco avançado. Sobreviver ou redirecionar o Tyrakth pode ser vitória suficiente."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.19",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-20-juggernautt-sentinela-suprema",
-      "category": "monster",
-      "name": "Juggernautt — Sentinela Suprema",
-      "tier": "A",
-      "type": "máquina antiga de guerra/guardião de forja",
-      "role": "chefe tecnológico, tanque e sentinela de resistência extrema",
-      "size": "grande, com massa estimada acima de 200 kg",
-      "pv": 140,
-      "ca": 18,
-      "movement": "6 m",
-      "habitat": "forjas antigas, hangares, portões militares, câmaras de contenção e ruínas de defesa",
-      "behavior": "",
-      "attributes": "FOR 22/MOD +6; REF 10/MOD +0; CON 22/MOD +6; INT 12/MOD +1; MEN 10/MOD +0; PRE 14/MOD +2",
-      "attacks": "Ataques: Fuzil de Tûngnásio, 1d10 perfurante, até 2 disparos por rodada se o módulo estiver ativo; Golpe Brutal, 2d6 concussão; Pisão Hidráulico, 1d10 concussão e JPF com FOR ou JPR com REF para evitar Derrubado.",
-      "abilities": "Habilidade — Blindagem Suprema: redução 2 contra dano físico comum.\nHabilidade — Imunidade a Cosmos Comum: dano cósmico fraco não afeta o corpo principal, mas poderes de contenção, selamento ou sobrecarga ainda podem interagir com o núcleo.\nHabilidade — Protocolo de Guarda: não abandona o local protegido, salvo comando antigo válido ou corrupção do objetivo.\nHabilidade — Superaquecimento: após usar o Fuzil de Tûngnásio por 2 rodadas seguidas, expõe o núcleo até o início da próxima rodada. Ataques contra o núcleo recebem +1 se os personagens identificarem a abertura com Engenharia, Tecnologia ou Busca.\nHabilidade — Modo Sentinela Suprema: abaixo de metade dos PV, ignora terreno difícil leve, causa +1 dano corpo a corpo e passa a mirar cubos, portas, cobertura e rotas de fuga.",
-      "resistances": "Resistências: veneno, doença, medo comum, dano físico comum e fogo leve.",
-      "weaknesses": "Fraquezas: explosivos pesados, hack difícil, núcleo exposto após superaquecimento, comandos antigos e sabotagem interna.",
-      "senses": "Sentidos: sensor térmico, sensor de movimento, leitura de chip e detecção de metal.",
-      "moral": "Moral: não possui moral. Para apenas se o protocolo for encerrado, se o núcleo for destruído ou se a ordem antiga for alterada.",
-      "resources": "Recursos coletáveis: fragmentos de Tûngnásio, núcleo da Sentinela Suprema, módulo de arma Tier A, placas de blindagem e processador antigo.",
-      "campaign": "Uso em campanha: chefe de ruína ou forja. A luta deve envolver cobertura, módulos, superaquecimento, hack, terreno e objetivo além de apenas zerar PV.",
-      "summary": "Uso em campanha: chefe de ruína ou forja. A luta deve envolver cobertura, módulos, superaquecimento, hack, terreno e objetivo além de apenas zerar PV.",
-      "tags": [
-        "A",
-        "máquina antiga de guerra/guardião de forja",
-        "chefe tecnológico, tanque e sentinela de resistência extrema",
-        "grande, com massa estimada acima de 200 kg"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "O Juggernautt não é Tier A. A versão oficial é Tier A. Ele deve ser usado como chefe tecnológico de alto impacto, guardião de forja antiga ou obstáculo de ruína militar.",
-            "Tier: A.",
-            "Tipo: máquina antiga de guerra/guardião de forja.",
-            "Papel: chefe tecnológico, tanque e sentinela de resistência extrema.",
-            "Tamanho: grande, com massa estimada acima de 200 kg.",
-            "Habitat: forjas antigas, hangares, portões militares, câmaras de contenção e ruínas de defesa.",
-            "Atributos: FOR 22/MOD +6; REF 10/MOD +0; CON 22/MOD +6; INT 12/MOD +1; MEN 10/MOD +0; PRE 14/MOD +2.",
-            "PV: 140. CA: 18. Movimento: 6 m.",
-            "Ataques: Fuzil de Tûngnásio, 1d10 perfurante, até 2 disparos por rodada se o módulo estiver ativo; Golpe Brutal, 2d6 concussão; Pisão Hidráulico, 1d10 concussão e JPF com FOR ou JPR com REF para evitar Derrubado.",
-            "Habilidade — Blindagem Suprema: redução 2 contra dano físico comum.",
-            "Habilidade — Imunidade a Cosmos Comum: dano cósmico fraco não afeta o corpo principal, mas poderes de contenção, selamento ou sobrecarga ainda podem interagir com o núcleo.",
-            "Habilidade — Protocolo de Guarda: não abandona o local protegido, salvo comando antigo válido ou corrupção do objetivo.",
-            "Habilidade — Superaquecimento: após usar o Fuzil de Tûngnásio por 2 rodadas seguidas, expõe o núcleo até o início da próxima rodada. Ataques contra o núcleo recebem +1 se os personagens identificarem a abertura com Engenharia, Tecnologia ou Busca.",
-            "Habilidade — Modo Sentinela Suprema: abaixo de metade dos PV, ignora terreno difícil leve, causa +1 dano corpo a corpo e passa a mirar cubos, portas, cobertura e rotas de fuga.",
-            "Resistências: veneno, doença, medo comum, dano físico comum e fogo leve.",
-            "Fraquezas: explosivos pesados, hack difícil, núcleo exposto após superaquecimento, comandos antigos e sabotagem interna.",
-            "Sentidos: sensor térmico, sensor de movimento, leitura de chip e detecção de metal.",
-            "Moral: não possui moral. Para apenas se o protocolo for encerrado, se o núcleo for destruído ou se a ordem antiga for alterada.",
-            "Recursos coletáveis: fragmentos de Tûngnásio, núcleo da Sentinela Suprema, módulo de arma Tier A, placas de blindagem e processador antigo.",
-            "Uso em campanha: chefe de ruína ou forja. A luta deve envolver cobertura, módulos, superaquecimento, hack, terreno e objetivo além de apenas zerar PV."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.20",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-22-humanis-corrompido-comum",
-      "category": "monster",
-      "name": "Humanis Corrompido Comum",
-      "tier": "F",
-      "type": "humanoide corrompido",
-      "role": "ameaça trágica, corpo a corpo simples e horror de colônia perdida",
-      "size": "médio",
-      "pv": 10,
-      "ca": 9,
-      "movement": "8 m",
-      "habitat": "colônias abandonadas, estações, ruínas habitadas e zonas contaminadas",
-      "behavior": "",
-      "attributes": "FOR 10/MOD +0; REF 8/MOD -1; CON 12/MOD +1; INT 4/MOD -3; MEN 8/MOD -1; PRE 4/MOD -3",
-      "attacks": "Ataque: Garras Bioferríticas, 1d6 perfurante/concussão.",
-      "abilities": "Habilidade — Instinto de Caça Cósmica: se alguém usar Cosmos perto dele, recebe +1 no próximo ataque contra esse alvo.\nHabilidade — Resquício de Memória: ao ser derrotado, pode carregar objeto pessoal, chip danificado, documento ou ferramenta antiga.",
-      "resistances": "Resistências: dor comum e medo comum reduzidos, a critério do Mestre.",
-      "weaknesses": "Fraquezas: contenção cósmica, luz intensa e lembranças pessoais podem fazê-lo hesitar por 1 rodada.",
-      "senses": "Sentidos: visão comum deteriorada, audição instintiva e atração por ressonância.",
-      "moral": "Moral: não recua por medo comum, mas pode repetir ações da vida antiga.",
-      "resources": "Recursos coletáveis: chip danificado, circuitos, sucata técnica, fragmentos bioferríticos e objeto pessoal.",
-      "campaign": "Uso em campanha: ameaça de horror e culpa. Deve lembrar que havia uma pessoa ali.",
-      "summary": "Uso em campanha: ameaça de horror e culpa. Deve lembrar que havia uma pessoa ali.",
-      "tags": [
-        "F",
-        "humanoide corrompido",
-        "ameaça trágica, corpo a corpo simples e horror de colônia perdida",
-        "médio"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: F.",
-            "Tipo: humanoide corrompido.",
-            "Papel: ameaça trágica, corpo a corpo simples e horror de colônia perdida.",
-            "Tamanho: médio.",
-            "Habitat: colônias abandonadas, estações, ruínas habitadas e zonas contaminadas.",
-            "Atributos: FOR 10/MOD +0; REF 8/MOD -1; CON 12/MOD +1; INT 4/MOD -3; MEN 8/MOD -1; PRE 4/MOD -3.",
-            "PV: 10. CA: 9. Movimento: 8 m.",
-            "Ataque: Garras Bioferríticas, 1d6 perfurante/concussão.",
-            "Habilidade — Instinto de Caça Cósmica: se alguém usar Cosmos perto dele, recebe +1 no próximo ataque contra esse alvo.",
-            "Habilidade — Resquício de Memória: ao ser derrotado, pode carregar objeto pessoal, chip danificado, documento ou ferramenta antiga.",
-            "Resistências: dor comum e medo comum reduzidos, a critério do Mestre.",
-            "Fraquezas: contenção cósmica, luz intensa e lembranças pessoais podem fazê-lo hesitar por 1 rodada.",
-            "Sentidos: visão comum deteriorada, audição instintiva e atração por ressonância.",
-            "Moral: não recua por medo comum, mas pode repetir ações da vida antiga.",
-            "Recursos coletáveis: chip danificado, circuitos, sucata técnica, fragmentos bioferríticos e objeto pessoal.",
-            "Uso em campanha: ameaça de horror e culpa. Deve lembrar que havia uma pessoa ali."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.22",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-23-humanis-corrompido-tecnico",
-      "category": "monster",
-      "name": "Humanis Corrompido Técnico",
-      "tier": "E",
-      "type": "humanoide corrompido por chip e tecnologia",
-      "role": "ameaça tecnológica leve e interação com ambiente",
-      "size": "médio",
-      "pv": 16,
-      "ca": 10,
-      "movement": "8 m",
-      "habitat": "oficinas, laboratórios, estações, torres e salas de manutenção",
-      "behavior": "",
-      "attributes": "FOR 10/MOD +0; REF 10/MOD +0; CON 12/MOD +1; INT 10/MOD +0; MEN 8/MOD -1; PRE 4/MOD -3",
-      "attacks": "Ataques: Ferramenta Quebrada, 1d6+1 concussão ou cortante; Descarga de Implante, 1d4 elétrico em alvo próximo.",
-      "abilities": "Habilidade — Memória Profissional: interage instintivamente com consoles, portas e máquinas simples, podendo ativar perigos sem entender.\nHabilidade — Falha de Chip: ao cair a 0 PV, libera pulso elétrico fraco. Alvos adjacentes fazem JPR com REF ou sofrem 1d4 elétrico.",
-      "resistances": "Resistências: doença comum e medo comum parcial.",
-      "weaknesses": "Fraquezas: pulso EMP, hack, comando de segurança antigo ou desligamento do implante.",
-      "senses": "Sentidos: visão comum, ruído de chip e atração por energia.",
-      "moral": "Moral: protege painel, porta ou equipamento ligado à memória antiga.",
-      "resources": "Recursos coletáveis: chip quebrado, implante queimado, ferramenta, microcircuitos e registro corrompido.",
-      "campaign": "Uso em campanha: ideal para oficinas abandonadas e cenas em que o ambiente tecnológico é parte do combate.",
-      "summary": "Uso em campanha: ideal para oficinas abandonadas e cenas em que o ambiente tecnológico é parte do combate.",
-      "tags": [
-        "E",
-        "humanoide corrompido por chip e tecnologia",
-        "ameaça tecnológica leve e interação com ambiente",
-        "médio"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: E.",
-            "Tipo: humanoide corrompido por chip e tecnologia.",
-            "Papel: ameaça tecnológica leve e interação com ambiente.",
-            "Tamanho: médio.",
-            "Habitat: oficinas, laboratórios, estações, torres e salas de manutenção.",
-            "Atributos: FOR 10/MOD +0; REF 10/MOD +0; CON 12/MOD +1; INT 10/MOD +0; MEN 8/MOD -1; PRE 4/MOD -3.",
-            "PV: 16. CA: 10. Movimento: 8 m.",
-            "Ataques: Ferramenta Quebrada, 1d6+1 concussão ou cortante; Descarga de Implante, 1d4 elétrico em alvo próximo.",
-            "Habilidade — Memória Profissional: interage instintivamente com consoles, portas e máquinas simples, podendo ativar perigos sem entender.",
-            "Habilidade — Falha de Chip: ao cair a 0 PV, libera pulso elétrico fraco. Alvos adjacentes fazem JPR com REF ou sofrem 1d4 elétrico.",
-            "Resistências: doença comum e medo comum parcial.",
-            "Fraquezas: pulso EMP, hack, comando de segurança antigo ou desligamento do implante.",
-            "Sentidos: visão comum, ruído de chip e atração por energia.",
-            "Moral: protege painel, porta ou equipamento ligado à memória antiga.",
-            "Recursos coletáveis: chip quebrado, implante queimado, ferramenta, microcircuitos e registro corrompido.",
-            "Uso em campanha: ideal para oficinas abandonadas e cenas em que o ambiente tecnológico é parte do combate."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.23",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-24-zerak-corrompido",
-      "category": "monster",
-      "name": "Zerak Corrompido",
-      "tier": "D",
-      "type": "humanoide corrompido/brutamontes",
-      "role": "tanque, agressor físico e tragédia guerreira",
-      "size": "médio grande",
-      "pv": 30,
-      "ca": 13,
-      "movement": "7 m",
-      "habitat": "campos de batalha, minas, fortalezas arruinadas e zonas de combate antigo",
-      "behavior": "",
-      "attributes": "FOR 16/MOD +3; REF 8/MOD -1; CON 16/MOD +3; INT 6/MOD -2; MEN 8/MOD -1; PRE 10/MOD +0",
-      "attacks": "Ataques: Punho Ferruginoso, 1d8 concussão; Lâmina Improvisada, 1d8 cortante.",
-      "abilities": "Habilidade — Corpo de Guerra: reduz 1 dano físico comum uma vez por rodada.\nHabilidade — Fúria Residual: abaixo da metade dos PV, causa +1 dano corpo a corpo e perde capacidade de recuar.\nHabilidade — Investida Bruta: se mover 4 m antes de atacar, alvo faz JPF com FOR ou JPR com REF. Em falha, fica Derrubado.",
-      "resistances": "Resistências: concussão leve e medo comum.",
-      "weaknesses": "Fraquezas: ataques em juntas, contenção por terreno estreito e memórias de clã ou honra, se aplicável à campanha.",
-      "senses": "Sentidos: comuns, com atração por vibração e barulho de combate.",
-      "moral": "Moral: luta até cair, a menos que algo da antiga identidade interrompa o instinto.",
-      "resources": "Recursos coletáveis: placas bioferríticas, osso denso, fragmento de chip e insígnia antiga.",
-      "campaign": "Uso em campanha: inimigo pesado para mostrar a corrupção de antigos defensores ou trabalhadores de força.",
-      "summary": "Uso em campanha: inimigo pesado para mostrar a corrupção de antigos defensores ou trabalhadores de força.",
-      "tags": [
-        "D",
-        "humanoide corrompido/brutamontes",
-        "tanque, agressor físico e tragédia guerreira",
-        "médio grande"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: D.",
-            "Tipo: humanoide corrompido/brutamontes.",
-            "Papel: tanque, agressor físico e tragédia guerreira.",
-            "Tamanho: médio grande.",
-            "Habitat: campos de batalha, minas, fortalezas arruinadas e zonas de combate antigo.",
-            "Atributos: FOR 16/MOD +3; REF 8/MOD -1; CON 16/MOD +3; INT 6/MOD -2; MEN 8/MOD -1; PRE 10/MOD +0.",
-            "PV: 30. CA: 13. Movimento: 7 m.",
-            "Ataques: Punho Ferruginoso, 1d8 concussão; Lâmina Improvisada, 1d8 cortante.",
-            "Habilidade — Corpo de Guerra: reduz 1 dano físico comum uma vez por rodada.",
-            "Habilidade — Fúria Residual: abaixo da metade dos PV, causa +1 dano corpo a corpo e perde capacidade de recuar.",
-            "Habilidade — Investida Bruta: se mover 4 m antes de atacar, alvo faz JPF com FOR ou JPR com REF. Em falha, fica Derrubado.",
-            "Resistências: concussão leve e medo comum.",
-            "Fraquezas: ataques em juntas, contenção por terreno estreito e memórias de clã ou honra, se aplicável à campanha.",
-            "Sentidos: comuns, com atração por vibração e barulho de combate.",
-            "Moral: luta até cair, a menos que algo da antiga identidade interrompa o instinto.",
-            "Recursos coletáveis: placas bioferríticas, osso denso, fragmento de chip e insígnia antiga.",
-            "Uso em campanha: inimigo pesado para mostrar a corrupção de antigos defensores ou trabalhadores de força."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.24",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-25-veyrkan-corrompido",
-      "category": "monster",
-      "name": "Veyrkan Corrompido",
-      "tier": "D",
-      "type": "humanoide corrompido/predador furtivo",
-      "role": "emboscador, venenoso e perseguidor",
-      "size": "médio",
-      "pv": 24,
-      "ca": 14,
-      "movement": "10 m; escalada 6 m, se houver superfície adequada",
-      "habitat": "corredores, dutos, instalações úmidas, naves caídas e ruínas com passagens estreitas",
-      "behavior": "",
-      "attributes": "FOR 10/MOD +0; REF 16/MOD +3; CON 12/MOD +1; INT 8/MOD -1; MEN 10/MOD +0; PRE 8/MOD -1",
-      "attacks": "Ataques: Garras Rápidas, 1d6 cortante; Mordida Tóxica, 1d6 perfurante.",
-      "abilities": "Habilidade — Toxina Instável: em sucesso completo com Mordida Tóxica, o alvo faz JPF com CON ou fica Envenenado leve.\nHabilidade — Deslocamento Serpentino: recebe +1 em Furtividade ou Acrobacia em corredores, dutos e espaços estreitos.\nHabilidade — Recuo Predatório: após atacar alvo isolado, pode se mover 2 m sem provocar reação se houver cobertura próxima.",
-      "resistances": "Resistências: veneno comum leve.",
-      "weaknesses": "Fraquezas: frio intenso, luz súbita e bloqueio de rota de fuga.",
-      "senses": "Sentidos: visão em baixa luz, olfato e percepção de calor fraca.",
-      "moral": "Moral: recua se perder vantagem de emboscada, mas volta a perseguir se sentir cheiro de sangue.",
-      "resources": "Recursos coletáveis: glândula tóxica, escamas, dente fino e implante corrompido.",
-      "campaign": "Uso em campanha: excelente para horror de corredor e perseguição dentro de instalações.",
-      "summary": "Uso em campanha: excelente para horror de corredor e perseguição dentro de instalações.",
-      "tags": [
-        "D",
-        "humanoide corrompido/predador furtivo",
-        "emboscador, venenoso e perseguidor",
-        "médio"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: D.",
-            "Tipo: humanoide corrompido/predador furtivo.",
-            "Papel: emboscador, venenoso e perseguidor.",
-            "Tamanho: médio.",
-            "Habitat: corredores, dutos, instalações úmidas, naves caídas e ruínas com passagens estreitas.",
-            "Atributos: FOR 10/MOD +0; REF 16/MOD +3; CON 12/MOD +1; INT 8/MOD -1; MEN 10/MOD +0; PRE 8/MOD -1.",
-            "PV: 24. CA: 14. Movimento: 10 m; escalada 6 m, se houver superfície adequada.",
-            "Ataques: Garras Rápidas, 1d6 cortante; Mordida Tóxica, 1d6 perfurante.",
-            "Habilidade — Toxina Instável: em sucesso completo com Mordida Tóxica, o alvo faz JPF com CON ou fica Envenenado leve.",
-            "Habilidade — Deslocamento Serpentino: recebe +1 em Furtividade ou Acrobacia em corredores, dutos e espaços estreitos.",
-            "Habilidade — Recuo Predatório: após atacar alvo isolado, pode se mover 2 m sem provocar reação se houver cobertura próxima.",
-            "Resistências: veneno comum leve.",
-            "Fraquezas: frio intenso, luz súbita e bloqueio de rota de fuga.",
-            "Sentidos: visão em baixa luz, olfato e percepção de calor fraca.",
-            "Moral: recua se perder vantagem de emboscada, mas volta a perseguir se sentir cheiro de sangue.",
-            "Recursos coletáveis: glândula tóxica, escamas, dente fino e implante corrompido.",
-            "Uso em campanha: excelente para horror de corredor e perseguição dentro de instalações."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.25",
-      "schemaVersion": 1
-    },
-    {
-      "id": "livro3-4-26-kairi-corrompido",
-      "category": "monster",
-      "name": "Kairi Corrompido",
-      "tier": "C",
-      "type": "humanoide corrompido/cósmico",
-      "role": "controlador, ameaça emocional e foco de anomalia",
-      "size": "médio",
-      "pv": 36,
-      "ca": 14,
-      "movement": "8 m. Cosmos: 4",
-      "habitat": "ruínas de ressonância, lagos cósmicos, templos antigos, locais Kairi profanados e zonas de sonho",
-      "behavior": "",
-      "attributes": "FOR 8/MOD -1; REF 12/MOD +1; CON 12/MOD +1; INT 12/MOD +1; MEN 16/MOD +3; PRE 16/MOD +3",
-      "attacks": "Ataques: Toque Ressonante, 1d8 cósmico; Grito Afogado, sem dano físico, mas força JPC.",
-      "abilities": "Habilidade — Canto Quebrado: uma vez por cena, alvos próximos fazem JPC com PRE. Em falha, recebem +1 Estresse ou ficam Tontos até o fim da próxima rodada.\nHabilidade — Memória Afogada: em crítico com Toque Ressonante, o alvo vê uma memória que não é sua e sofre -1 no próximo teste de MEN.\nHabilidade — Ressonância Instável: se usar Cosmos perto dele, o personagem faz JPC com MEN para evitar eco, interferência ou +1 Estresse.",
-      "resistances": "Resistências: dano cósmico fraco e medo comum.",
-      "weaknesses": "Fraquezas: música Kairi verdadeira, símbolo ritual correto, contenção cósmica e apelo emocional ligado à memória perdida.",
-      "senses": "Sentidos: Percepção Cósmica instintiva e sensibilidade a emoção forte.",
-      "moral": "Moral: não age por fome. Pode proteger local, repetir canto antigo ou tentar arrastar outros para a própria visão.",
-      "resources": "Recursos coletáveis: cristal lacrimal, fio de voz, marca cósmica e fragmento de foco quebrado.",
-      "campaign": "Uso em campanha: ameaça trágica e rara. Deve ser usada com peso narrativo, não como inimigo comum.",
-      "summary": "Uso em campanha: ameaça trágica e rara. Deve ser usada com peso narrativo, não como inimigo comum.",
-      "tags": [
-        "C",
-        "humanoide corrompido/cósmico",
-        "controlador, ameaça emocional e foco de anomalia",
-        "médio"
-      ],
-      "details": [
-        {
-          "label": "Resumo",
-          "items": [
-            "Tier: C.",
-            "Tipo: humanoide corrompido/cósmico.",
-            "Papel: controlador, ameaça emocional e foco de anomalia.",
-            "Tamanho: médio.",
-            "Habitat: ruínas de ressonância, lagos cósmicos, templos antigos, locais Kairi profanados e zonas de sonho.",
-            "Atributos: FOR 8/MOD -1; REF 12/MOD +1; CON 12/MOD +1; INT 12/MOD +1; MEN 16/MOD +3; PRE 16/MOD +3.",
-            "PV: 36. CA: 14. Movimento: 8 m. Cosmos: 4.",
-            "Ataques: Toque Ressonante, 1d8 cósmico; Grito Afogado, sem dano físico, mas força JPC.",
-            "Habilidade — Canto Quebrado: uma vez por cena, alvos próximos fazem JPC com PRE. Em falha, recebem +1 Estresse ou ficam Tontos até o fim da próxima rodada.",
-            "Habilidade — Memória Afogada: em crítico com Toque Ressonante, o alvo vê uma memória que não é sua e sofre -1 no próximo teste de MEN.",
-            "Habilidade — Ressonância Instável: se usar Cosmos perto dele, o personagem faz JPC com MEN para evitar eco, interferência ou +1 Estresse.",
-            "Resistências: dano cósmico fraco e medo comum.",
-            "Fraquezas: música Kairi verdadeira, símbolo ritual correto, contenção cósmica e apelo emocional ligado à memória perdida.",
-            "Sentidos: Percepção Cósmica instintiva e sensibilidade a emoção forte.",
-            "Moral: não age por fome. Pode proteger local, repetir canto antigo ou tentar arrastar outros para a própria visão.",
-            "Recursos coletáveis: cristal lacrimal, fio de voz, marca cósmica e fragmento de foco quebrado.",
-            "Uso em campanha: ameaça trágica e rara. Deve ser usada com peso narrativo, não como inimigo comum."
-          ]
-        }
-      ],
-      "sheetType": "full",
-      "needsCoreStats": false,
-      "assets": [],
-      "source": "Livro 3, 4.26",
-      "schemaVersion": 1
+      "schemaVersion": 1,
+      "image": "./assets/bestiary/maquina-de-guerra-do-mundo-partido.jpg"
     }
   ],
   "rules": [

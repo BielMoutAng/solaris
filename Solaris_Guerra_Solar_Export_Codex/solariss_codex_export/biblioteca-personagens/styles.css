@@ -1828,6 +1828,17 @@ textarea:focus {
   box-shadow: inset 0 0 24px rgba(42, 230, 215, 0.12), 0 0 24px rgba(42, 230, 215, 0.2);
 }
 
+.equipment-layout.support-dragging .inventory-card[data-storage-drop-uid] {
+  border-color: rgba(211, 159, 64, 0.5);
+  box-shadow: inset 0 0 18px rgba(211, 159, 64, 0.08);
+}
+
+.inventory-card[data-storage-drop-uid].support-drop-active {
+  transform: translateY(-2px);
+  border-color: rgba(42, 230, 215, 0.78);
+  box-shadow: inset 0 0 24px rgba(42, 230, 215, 0.12), 0 0 24px rgba(42, 230, 215, 0.2);
+}
+
 .inventory-card[draggable="true"] {
   cursor: grab;
 }
@@ -4207,8 +4218,8 @@ textarea:focus {
 }
 
 .monster-library-card {
-  height: 284px;
-  --card-action-space: 86px;
+  height: 322px;
+  --card-action-space: 124px;
 }
 
 .monster-card-actions {
@@ -4217,6 +4228,43 @@ textarea:focus {
 
 .monster-card-actions .mini-button {
   min-width: 0;
+}
+
+.monster-image-window {
+  width: min(560px, calc(100vw - 28px));
+}
+
+.monster-image-editor {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+}
+
+.monster-image-dropzone {
+  min-height: 320px;
+}
+
+.monster-image-dropzone img {
+  max-height: 440px;
+  object-fit: contain;
+  background: rgba(3, 9, 12, 0.92);
+}
+
+.dice-lock-notice {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  color: #ffb5a8;
+  font-size: 0.78rem;
+  font-weight: 760;
+  line-height: 1.4;
+  background: rgba(233, 104, 79, 0.1);
+  border: 1px solid rgba(233, 104, 79, 0.38);
+  border-radius: var(--radius-sm);
+  box-shadow: inset 3px 0 0 rgba(233, 104, 79, 0.7);
+}
+
+.dice-lock-notice[hidden] {
+  display: none;
 }
 
 .pagination-controls {
@@ -4442,6 +4490,12 @@ textarea:focus {
 .monster-last-roll {
   color: var(--accent);
   font-size: 0.82rem;
+}
+
+@media (max-width: 720px) {
+  .monster-image-dropzone {
+    min-height: 230px;
+  }
 }
 
 .library-header-tools {
@@ -6179,6 +6233,92 @@ body .vital-hud-modal #hud-humanis .hvh-segment {
   font-size: 0.7rem;
 }
 
+.launcher-book-feature {
+  display: grid;
+  grid-template-columns: 154px minmax(0, 1fr);
+  gap: 20px;
+  align-items: center;
+  max-width: 980px;
+  margin-top: 18px;
+  padding: 16px;
+  background:
+    linear-gradient(100deg, rgba(8, 25, 29, 0.96), rgba(13, 23, 27, 0.92)),
+    radial-gradient(circle at 18% 50%, rgba(100, 217, 201, 0.12), transparent 40%);
+  border: 1px solid rgba(100, 217, 201, 0.3);
+  border-radius: 6px;
+  box-shadow: inset 0 0 28px rgba(100, 217, 201, 0.04);
+}
+
+.launcher-book-feature img {
+  display: block;
+  width: 154px;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border: 1px solid rgba(214, 163, 58, 0.46);
+}
+
+.launcher-book-feature p {
+  color: var(--gold);
+  font-size: 0.66rem;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+
+.launcher-book-feature h3 {
+  margin-top: 4px;
+  font-size: 1.15rem;
+}
+
+.launcher-book-feature > div > span {
+  display: block;
+  max-width: 660px;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+.launcher-book-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.book-file-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 8px 13px;
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 720;
+  text-decoration: none;
+  background: rgba(8, 19, 22, 0.88);
+  border: 1px solid rgba(100, 217, 201, 0.32);
+  border-radius: 5px;
+}
+
+.book-file-link:hover,
+.book-file-link:focus-visible {
+  color: #fff;
+  border-color: rgba(100, 217, 201, 0.75);
+  box-shadow: 0 0 16px rgba(100, 217, 201, 0.13);
+}
+
+.book-file-link-primary {
+  color: #091315;
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.book-file-link [data-icon] {
+  width: 16px;
+  height: 16px;
+}
+
 .character-manager-shell {
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
@@ -6307,6 +6447,24 @@ body .vital-hud-modal #hud-humanis .hvh-segment {
 }
 
 @media (max-width: 520px) {
+  .launcher-book-feature {
+    grid-template-columns: 86px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .launcher-book-feature img {
+    width: 86px;
+  }
+
+  .launcher-book-actions {
+    grid-column: 1 / -1;
+  }
+
+  .book-file-link {
+    flex: 1 1 132px;
+  }
+
   .tablet-brand small,
   .tablet-app-button small,
   .tablet-utility-button small {

@@ -1,21 +1,22 @@
-const STATIC_CACHE = "solaris-biblioteca-static-20260614c";
-const RUNTIME_CACHE = "solaris-biblioteca-runtime-20260614c";
+const STATIC_CACHE = "solaris-biblioteca-static-20260614h";
+const RUNTIME_CACHE = "solaris-biblioteca-runtime-20260614h";
 
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css?v=20260613e",
-  "./official-books-data.js?v=20260612a",
-  "./official-book5-catalog.js?v=20260614c",
-  "./official-rulebook-compendium.js?v=20260614c",
+  "./styles.css?v=20260614h",
+  "./official-books-data.js?v=20260614h",
+  "./official-book5-catalog.js?v=20260614h",
+  "./official-rulebook-compendium.js?v=20260614h",
   "./HumanisVitalHUD.js?v=20260606e",
-  "./app.js?v=20260614c",
-  "./src/domain/solaris-domain-architecture.js?v=20260614c",
+  "./app.js?v=20260614h",
+  "./src/domain/solaris-domain-architecture.js?v=20260614h",
   "./manifest.webmanifest",
   "./assets/icons/solaris-icon.svg",
   "./assets/icons/apple-touch-icon.png",
   "./assets/icons/solaris-icon-192.png",
   "./assets/icons/solaris-icon-512.png",
+  "./assets/bestiary/book3-cover.jpg",
   "./assets/vendor/three/build/three.module.js",
   "./assets/vendor/three/examples/jsm/loaders/GLTFLoader.js",
   "./assets/vendor/three/examples/jsm/utils/BufferGeometryUtils.js",

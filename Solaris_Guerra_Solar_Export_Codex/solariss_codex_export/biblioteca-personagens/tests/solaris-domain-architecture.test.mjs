@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   ArmorDefinition,
+  BandolierDefinition,
   Character,
   Condition,
   CubeDefinition,
@@ -119,7 +120,8 @@ test("mochilas legadas viram armazenadores e preservam a regra de carga", () => 
     id: "item-na-mochila",
     name: "Item na mochila",
     price: 0,
-    weight: 3,
+    weight: 0.5,
+    metadata: { inventorySize: "small" },
   }));
   const baseItem = character.buyEntity(new ItemDefinition({
     id: "item-na-base",
@@ -129,7 +131,8 @@ test("mochilas legadas viram armazenadores e preservam a regra de carga", () => 
   }));
 
   assert.ok(backpackDefinition instanceof StorageDefinition);
-  assert.equal(backpackDefinition.maxSlots, 5);
+  assert.equal(backpackDefinition.maxSlots, 0);
+  assert.equal(backpackDefinition.maxWeight, 10);
 
   character.equipEntity(equippedWeapon.id, "mainWeapon");
   character.moveEntityTo(cubeContent.id, { kind: LOCATION_KINDS.CUBE, containerId: cube.id });
@@ -137,8 +140,99 @@ test("mochilas legadas viram armazenadores e preservam a regra de carga", () => 
   character.moveEntityTo(backpackItem.id, { kind: LOCATION_KINDS.CONTAINER, containerId: backpack.id });
   character.moveEntityTo(baseItem.id, { kind: LOCATION_KINDS.BASE });
 
-  assert.equal(character.inventory.getTotalWeight(), 8);
-  assert.equal(character.inventory.getTotalWeight({ carriedOnly: false }), 70);
+  assert.equal(character.inventory.getTotalWeight(), 5.5);
+  assert.equal(character.inventory.getTotalWeight({ carriedOnly: false }), 67.5);
+});
+
+test("mochilas, coldres e bandoleiras respeitam porte e peso", () => {
+  const character = new Character({ luzentis: 10000 });
+  const backpack = character.buyEntity(definitionFromLegacyItem({
+    id: "mochila-campo",
+    name: "Mochila de campo",
+    category: "item",
+    type: "Armazenamento",
+    weight: "2 Kg",
+    price: 0,
+  }));
+  const holster = character.buyEntity(definitionFromLegacyItem({
+    id: "coldre-campo",
+    name: "Coldre simples",
+    category: "item",
+    weight: "0,8 Kg",
+    price: 0,
+  }));
+  const bandolier = character.buyEntity(new BandolierDefinition({
+    id: "bandoleira-campo",
+    name: "Bandoleira tatica",
+    price: 0,
+    weight: 1,
+    maxSlots: 2,
+  }));
+  const smallMeleeWeapon = character.buyEntity(definitionFromLegacyItem({
+    id: "adaga",
+    name: "Adaga",
+    category: "weapon",
+    weight: "1 Kg",
+    price: 0,
+  }));
+  const smallRangedWeapon = definitionFromLegacyItem({
+    id: "pistola",
+    name: "Pistola leve",
+    category: "weapon",
+    weight: "1,5 Kg",
+    price: 0,
+  }).createInstance();
+  const rifle = character.buyEntity(definitionFromLegacyItem({
+    id: "rifle",
+    name: "Rifle de precisao",
+    category: "weapon",
+    weight: "6 Kg",
+    price: 0,
+  }));
+  const smallSupplies = character.buyEntity(definitionFromLegacyItem({
+    id: "suprimentos",
+    name: "Suprimentos compactos",
+    category: "item",
+    inventorySize: "small",
+    weight: "9 Kg",
+    price: 0,
+  }));
+  const extraSupplies = character.buyEntity(definitionFromLegacyItem({
+    id: "suprimentos-extra",
+    name: "Suprimentos extras",
+    category: "item",
+    inventorySize: "small",
+    weight: "2 Kg",
+    price: 0,
+  }));
+  const mediumEquipment = character.buyEntity(definitionFromLegacyItem({
+    id: "equipamento-medio",
+    name: "Equipamento medio",
+    category: "item",
+    inventorySize: "medium",
+    weight: "4 Kg",
+    price: 0,
+  }));
+
+  character.moveEntityTo(extraSupplies.id, { kind: LOCATION_KINDS.BASE });
+  assert.equal(holster.canStore(smallMeleeWeapon, character.inventory), true);
+  assert.equal(holster.canStore(smallRangedWeapon, character.inventory), true);
+  assert.equal(backpack.canStore(mediumEquipment, character.inventory), false);
+  character.moveEntityTo(smallMeleeWeapon.id, { kind: LOCATION_KINDS.HOLSTER, containerId: holster.id });
+  character.moveEntityTo(rifle.id, { kind: LOCATION_KINDS.BANDOLIER, containerId: bandolier.id });
+  character.moveEntityTo(smallSupplies.id, { kind: LOCATION_KINDS.CONTAINER, containerId: backpack.id });
+  character.moveEntityTo(mediumEquipment.id, { kind: LOCATION_KINDS.BANDOLIER, containerId: bandolier.id });
+
+  assert.equal(backpack.getAvailableWeight(character.inventory), 1);
+  assert.throws(
+    () => character.moveEntityTo(extraSupplies.id, { kind: LOCATION_KINDS.CONTAINER, containerId: backpack.id }),
+    /não pode armazenar/
+  );
+  assert.throws(
+    () => character.moveEntityTo(rifle.id, { kind: LOCATION_KINDS.HOLSTER, containerId: holster.id }),
+    /não pode armazenar/
+  );
+  assert.equal(character.inventory.getTotalWeight(), 23.8);
 });
 
 test("venda usa metade do custo por padrão e limpa o loadout", () => {

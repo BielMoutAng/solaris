@@ -38,6 +38,12 @@ export const STORAGE_TYPES = Object.freeze({
   VEHICLE: "vehicle",
 });
 
+export const INVENTORY_SIZES = Object.freeze({
+  SMALL: "small",
+  MEDIUM: "medium",
+  LARGE: "large",
+});
+
 export const EFFECT_OPERATIONS = Object.freeze({
   ADD: "add",
   SUBTRACT: "subtract",
@@ -71,6 +77,32 @@ function arrayOf(value) {
 
 function uniqueStrings(value) {
   return [...new Set(arrayOf(value).map((entry) => String(entry || "").trim()).filter(Boolean))];
+}
+
+function normalizeInventorySize(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  const aliases = {
+    small: INVENTORY_SIZES.SMALL,
+    pequeno: INVENTORY_SIZES.SMALL,
+    pequena: INVENTORY_SIZES.SMALL,
+    leve: INVENTORY_SIZES.SMALL,
+    medium: INVENTORY_SIZES.MEDIUM,
+    medio: INVENTORY_SIZES.MEDIUM,
+    media: INVENTORY_SIZES.MEDIUM,
+    large: INVENTORY_SIZES.LARGE,
+    grande: INVENTORY_SIZES.LARGE,
+    pesado: INVENTORY_SIZES.LARGE,
+    pesada: INVENTORY_SIZES.LARGE,
+  };
+  return aliases[normalized.normalize("NFD").replace(/[\u0300-\u036f]/g, "")] || "";
+}
+
+function entityInventorySize(entity = {}) {
+  return normalizeInventorySize(
+    entity.customData?.inventorySize
+      || entity.metadata?.inventorySize
+      || entity.definitionSnapshot?.metadata?.inventorySize
+  ) || INVENTORY_SIZES.SMALL;
 }
 
 function clone(value) {
@@ -529,10 +561,12 @@ export class StorageDefinition extends EquipmentDefinition {
     super(data);
     this.storageType = String(data.storageType || STORAGE_TYPES.CONTAINER);
     this.maxSlots = Math.max(0, numeric(data.maxSlots, 0));
+    this.maxWeight = Math.max(0, numeric(data.maxWeight, 0));
     this.allowedTypes = uniqueStrings(data.allowedTypes);
     this.forbiddenTypes = uniqueStrings(data.forbiddenTypes);
     this.allowedCategories = uniqueStrings(data.allowedCategories);
     this.forbiddenCategories = uniqueStrings(data.forbiddenCategories);
+    this.allowedSizes = uniqueStrings(data.allowedSizes).map(normalizeInventorySize).filter(Boolean);
     this.quickAccess = Boolean(data.quickAccess);
   }
 
@@ -542,12 +576,14 @@ export class StorageDefinition extends EquipmentDefinition {
       storage: {
         storageType: this.storageType,
         maxSlots: this.maxSlots,
+        maxWeight: this.maxWeight,
         usedSlots: 0,
         storedEntityIds: [],
         allowedTypes: [...this.allowedTypes],
         forbiddenTypes: [...this.forbiddenTypes],
         allowedCategories: [...this.allowedCategories],
         forbiddenCategories: [...this.forbiddenCategories],
+        allowedSizes: [...this.allowedSizes],
         quickAccess: this.quickAccess,
         ...clone(options.storage || {}),
       },
@@ -559,10 +595,12 @@ export class StorageDefinition extends EquipmentDefinition {
       ...super.toJSON(),
       storageType: this.storageType,
       maxSlots: this.maxSlots,
+      maxWeight: this.maxWeight,
       allowedTypes: [...this.allowedTypes],
       forbiddenTypes: [...this.forbiddenTypes],
       allowedCategories: [...this.allowedCategories],
       forbiddenCategories: [...this.forbiddenCategories],
+      allowedSizes: [...this.allowedSizes],
       quickAccess: this.quickAccess,
     };
   }
@@ -586,6 +624,7 @@ export class HolsterDefinition extends StorageDefinition {
       entityType: ENTITY_TYPES.HOLSTER,
       storageType: STORAGE_TYPES.HOLSTER,
       allowedTypes: data.allowedTypes || [ENTITY_TYPES.WEAPON],
+      allowedSizes: data.allowedSizes || [INVENTORY_SIZES.SMALL],
       quickAccess: data.quickAccess ?? true,
     });
   }
@@ -598,6 +637,7 @@ export class BandolierDefinition extends StorageDefinition {
       entityType: ENTITY_TYPES.BANDOLIER,
       storageType: STORAGE_TYPES.BANDOLIER,
       allowedTypes: data.allowedTypes || [ENTITY_TYPES.WEAPON, ENTITY_TYPES.ITEM],
+      allowedSizes: data.allowedSizes || [INVENTORY_SIZES.MEDIUM, INVENTORY_SIZES.LARGE],
       quickAccess: data.quickAccess ?? true,
     });
   }
@@ -690,12 +730,14 @@ export class EntityInstance {
     return {
       storageType: String(storage.storageType || STORAGE_TYPES.CONTAINER),
       maxSlots,
+      maxWeight: Math.max(0, numeric(storage.maxWeight, 0)),
       usedSlots: Math.min(maxSlots || Number.POSITIVE_INFINITY, Math.max(0, numeric(storage.usedSlots, storedEntityIds.length))),
       storedEntityIds,
       allowedTypes: uniqueStrings(storage.allowedTypes),
       forbiddenTypes: uniqueStrings(storage.forbiddenTypes),
       allowedCategories: uniqueStrings(storage.allowedCategories),
       forbiddenCategories: uniqueStrings(storage.forbiddenCategories),
+      allowedSizes: uniqueStrings(storage.allowedSizes).map(normalizeInventorySize).filter(Boolean),
       quickAccess: Boolean(storage.quickAccess),
     };
   }
@@ -717,7 +759,22 @@ export class EntityInstance {
       }, 0)
       : numeric(this.storage.usedSlots, 0);
     this.storage.usedSlots = used;
+    if (this.storage.maxSlots <= 0) return Number.POSITIVE_INFINITY;
     return Math.max(0, this.storage.maxSlots - used);
+  }
+
+  getStoredWeight(inventory = null) {
+    if (!this.storage || !inventory) return 0;
+    return this.storage.storedEntityIds.reduce((total, id) => {
+      const entity = inventory.findById(id);
+      if (!entity?.physical) return total;
+      return total + entity.weight * entity.quantity;
+    }, 0);
+  }
+
+  getAvailableWeight(inventory = null) {
+    if (!this.storage?.maxWeight) return Number.POSITIVE_INFINITY;
+    return Math.max(0, this.storage.maxWeight - this.getStoredWeight(inventory));
   }
 
   canStore(entity, inventory = null) {
@@ -726,8 +783,12 @@ export class EntityInstance {
     if (this.storage.forbiddenCategories.includes(entity.category)) return false;
     if (this.storage.allowedTypes.length && !this.storage.allowedTypes.includes(entity.entityType)) return false;
     if (this.storage.allowedCategories.length && !this.storage.allowedCategories.includes(entity.category)) return false;
+    if (this.storage.allowedSizes.length && !this.storage.allowedSizes.includes(entityInventorySize(entity))) return false;
     if (this.storage.storedEntityIds.includes(entity.id)) return true;
-    return this.getAvailableSlots(inventory) >= this.getSlotCostFor(entity);
+    if (this.storage.maxSlots > 0 && this.getAvailableSlots(inventory) < this.getSlotCostFor(entity)) return false;
+    const entityWeight = entity.physical ? entity.weight * entity.quantity : 0;
+    if (this.storage.maxWeight > 0 && this.getAvailableWeight(inventory) < entityWeight) return false;
+    return true;
   }
 
   store(entity, locationKind = storageLocationKind(this.storage?.storageType), inventory = null) {
@@ -869,7 +930,7 @@ export class Inventory {
         errors.push({ code: "missing-storage", entityId: entity.id, message: `Armazenador de ${entity.name} não foi encontrado.` });
         return;
       }
-      if (!storage.canStore(entity, this) && !storage.storage.storedEntityIds.includes(entity.id)) {
+      if (!storage.canStore(entity, this)) {
         errors.push({ code: "incompatible-storage", entityId: entity.id, storageId: storage.id, message: `${entity.name} não é compatível com ${storage.name}.` });
       }
     });
@@ -882,8 +943,16 @@ export class Inventory {
         return sum + (entity ? storage.getSlotCostFor(entity) : 0);
       }, 0);
       storage.storage.usedSlots = used;
-      if (used > storage.storage.maxSlots) {
+      if (storage.storage.maxSlots > 0 && used > storage.storage.maxSlots) {
         errors.push({ code: "storage-overflow", storageId: storage.id, message: `${storage.name} excedeu ${storage.storage.maxSlots} espaços.` });
+      }
+      const storedWeight = storage.getStoredWeight(this);
+      if (storage.storage.maxWeight > 0 && storedWeight > storage.storage.maxWeight) {
+        errors.push({
+          code: "storage-overweight",
+          storageId: storage.id,
+          message: `${storage.name} excedeu ${storage.storage.maxWeight} kg.`,
+        });
       }
     });
     return { valid: errors.length === 0, errors, warnings };
@@ -1583,6 +1652,41 @@ export function parseLegacyWeight(value) {
   return match ? Math.max(0, numeric(match[0], 0)) : 0;
 }
 
+export function inferLegacyInventorySize(item = {}) {
+  const official = item.officialData || {};
+  const explicit = normalizeInventorySize(
+    item.inventorySize
+      || item.size
+      || item.porte
+      || official.Tamanho
+      || official.Porte
+  );
+  if (explicit) return explicit;
+
+  const text = [
+    item.name,
+    item.category,
+    item.type,
+    item.kind,
+    item.summary,
+    ...arrayOf(item.tags),
+  ].filter(Boolean).join(" ").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  if (item.category === "weapon") {
+    if (/pistola|revolver|adaga|faca|punhal|manopla|soqueira/.test(text)) return INVENTORY_SIZES.SMALL;
+    if (/rifle|fuzil|carabina|sniper|lancador|bazuca|canhao|alabarda|tridente|arco|besta/.test(text)) {
+      return INVENTORY_SIZES.LARGE;
+    }
+    return INVENTORY_SIZES.MEDIUM;
+  }
+
+  if (item.category === "cube") return INVENTORY_SIZES.SMALL;
+  const weight = parseLegacyWeight(item.weight);
+  if (weight <= 2) return INVENTORY_SIZES.SMALL;
+  if (weight <= 10) return INVENTORY_SIZES.MEDIUM;
+  return INVENTORY_SIZES.LARGE;
+}
+
 function legacyStorageCapacity(item = {}) {
   const explicit = numeric(item.maxSlots ?? item.cubeSupport, NaN);
   if (Number.isFinite(explicit) && explicit > 0) return explicit;
@@ -1621,7 +1725,7 @@ export function definitionFromLegacyItem(item = {}) {
     price: Number.isFinite(item.price) ? item.price : 0,
     purchasable: Number.isFinite(item.price),
     tags: item.tags,
-    metadata: clone(item),
+    metadata: { ...clone(item), inventorySize: inferLegacyInventorySize(item) },
     sourceReference,
   };
   if (item.category === "weapon") {
@@ -1659,8 +1763,19 @@ export function definitionFromLegacyItem(item = {}) {
   if (/gancho/.test(text)) {
     return new HookDefinition({ ...common, maxSlots: item.maxSlots || 1 });
   }
+  if (/mochila/.test(text)) {
+    return new StorageDefinition({
+      ...common,
+      storageType: STORAGE_TYPES.CONTAINER,
+      maxSlots: 0,
+      maxWeight: Math.max(0.1, numeric(item.maxWeight, 10)),
+      allowedTypes: [ENTITY_TYPES.ITEM, ENTITY_TYPES.WEAPON, ENTITY_TYPES.CUBE],
+      allowedSizes: [INVENTORY_SIZES.SMALL],
+      quickAccess: false,
+    });
+  }
   if (
-    /armazenamento|recipiente|mochila|bolsa|maleta|pote|frasco|caixa|cesta|cesto|barril|balde|saco|estojo/.test(text)
+    /armazenamento|recipiente|bolsa|maleta|pote|frasco|caixa|cesta|cesto|barril|balde|saco|estojo/.test(text)
   ) {
     return new StorageDefinition({
       ...common,

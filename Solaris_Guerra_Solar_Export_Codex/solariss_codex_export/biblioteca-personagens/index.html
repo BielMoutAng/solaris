@@ -12,7 +12,7 @@
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./assets/icons/solaris-icon.svg" />
     <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./styles.css?v=20260613e" />
+    <link rel="stylesheet" href="./styles.css?v=20260614f" />
   </head>
   <body>
     <div class="app-shell">
@@ -246,6 +246,24 @@
               <button class="launcher-category" type="button" data-launcher-book="Livro 4"><span data-icon="book"></span><strong>Livro 4</strong><small>Cenários e História</small></button>
               <button class="launcher-category" type="button" data-launcher-book="Livro 5"><span data-icon="book"></span><strong>Livro 5</strong><small>Itens, Equipamentos e Habilidades</small></button>
             </div>
+            <article class="launcher-book-feature">
+              <img src="./assets/bestiary/book3-cover.jpg" alt="Capa da edição visual do Livro 3: Bestiário" />
+              <div>
+                <p>Edição visual disponível</p>
+                <h3>Livro 3: Bestiário de Guerra Solar</h3>
+                <span>54 fichas únicas, imagens das criaturas, chefes completos, variantes, tabelas e modelos de ficha.</span>
+                <div class="launcher-book-actions">
+                  <a class="book-file-link book-file-link-primary" href="./assets/books/Livro_3_Bestiario_Guerra_Solar_Edicao_Visual.pdf" target="_blank" rel="noopener">
+                    <span data-icon="book"></span>
+                    Abrir PDF
+                  </a>
+                  <a class="book-file-link" href="./assets/books/Livro_3_Bestiario_Guerra_Solar_Edicao_Visual.docx" download>
+                    <span data-icon="download"></span>
+                    Baixar DOCX
+                  </a>
+                </div>
+              </div>
+            </article>
           </div>
         </section>
 
@@ -580,6 +598,7 @@
               <div class="dice-layout">
                 <section class="inventory-panel">
                   <h3>Rolar</h3>
+                  <div class="dice-lock-notice" id="diceLockNotice" hidden></div>
                   <div class="dice-controls">
                     <label>
                       Dados
@@ -857,6 +876,34 @@
       </section>
     </div>
 
+    <div class="record-modal" id="monsterImageModal" hidden>
+      <div class="record-modal-backdrop" data-monster-image-close></div>
+      <section class="record-modal-window monster-image-window" role="dialog" aria-modal="true" aria-labelledby="monsterImageTitle">
+        <div class="record-modal-header">
+          <div>
+            <p>Retrato do bestiário</p>
+            <h2 id="monsterImageTitle">Imagem da criatura</h2>
+          </div>
+          <button class="icon-button" id="closeMonsterImage" type="button" aria-label="Fechar imagem da criatura">
+            <span data-icon="plus"></span>
+          </button>
+        </div>
+        <div class="monster-image-editor">
+          <button class="manual-image-dropzone monster-image-dropzone" id="monsterImageDropzone" type="button" aria-label="Adicionar imagem da criatura">
+            <img id="monsterImagePreview" alt="" hidden />
+            <span class="manual-image-placeholder" id="monsterImagePlaceholder">
+              <span data-icon="spark"></span>
+              <strong>Imagem da criatura</strong>
+              <small>Clique ou arraste uma imagem para o bestiário</small>
+            </span>
+          </button>
+          <input id="monsterImageInput" type="file" accept="image/*" hidden />
+          <button class="mini-button manual-image-remove" id="removeMonsterImageButton" type="button">Remover imagem</button>
+          <p class="inventory-note">A imagem fica salva neste dispositivo e também aparece nas fichas do monstro adicionadas à sessão.</p>
+        </div>
+      </section>
+    </div>
+
     <div class="record-modal" id="monsterAssetsModal" hidden>
       <div class="record-modal-backdrop" data-monster-assets-close></div>
       <section class="record-modal-window asset-manager-window" role="dialog" aria-modal="true" aria-labelledby="monsterAssetsTitle">
@@ -956,9 +1003,9 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="./official-books-data.js?v=20260612a"></script>
-    <script src="./official-book5-catalog.js?v=20260614c"></script>
-    <script src="./official-rulebook-compendium.js?v=20260614c"></script>
+    <script src="./official-books-data.js?v=20260614h"></script>
+    <script src="./official-book5-catalog.js?v=20260614h"></script>
+    <script src="./official-rulebook-compendium.js?v=20260614h"></script>
     <script type="importmap">
       {
         "imports": {
@@ -968,6 +1015,6 @@
       }
     </script>
     <script src="./HumanisVitalHUD.js?v=20260606e"></script>
-    <script type="module" src="./app.js?v=20260614c"></script>
+    <script type="module" src="./app.js?v=20260614h"></script>
   </body>
 </html>
