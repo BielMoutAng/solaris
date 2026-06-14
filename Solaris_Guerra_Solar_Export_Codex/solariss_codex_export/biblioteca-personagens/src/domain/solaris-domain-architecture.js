@@ -141,6 +141,93 @@ export function normalizeLocation(location = {}) {
   };
 }
 
+function normalizedCatalogKey(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+export function reconcileLegacyArmorCatalog(
+  legacyCharacter = {},
+  armorCatalog = [],
+  definitionSnapshotFactory = (armor) => armor
+) {
+  const catalog = arrayOf(armorCatalog);
+  const byId = new Map(catalog.map((armor) => [String(armor.id || ""), armor]).filter(([id]) => id));
+  const byName = new Map(catalog.map((armor) => [normalizedCatalogKey(armor.name), armor]).filter(([name]) => name));
+  const equippedArmorUid = String(legacyCharacter.equippedArmorUid || "");
+
+  const findArmor = (entry = {}, fallbackName = "") => {
+    const domainEntity = entry.domainEntity || {};
+    const snapshot = domainEntity.definitionSnapshot || {};
+    const ids = [entry.itemId, entry.id, domainEntity.definitionId, snapshot.id].filter(Boolean);
+    for (const id of ids) {
+      const armor = byId.get(String(id));
+      if (armor) return armor;
+    }
+    const names = [entry.name, domainEntity.name, snapshot.name, fallbackName];
+    for (const name of names) {
+      const armor = byName.get(normalizedCatalogKey(name));
+      if (armor) return armor;
+    }
+    return null;
+  };
+
+  const reconcileDomainEntity = (entity = {}, armor) => {
+    const definitionSnapshot = clone(definitionSnapshotFactory(armor)) || {};
+    return {
+      ...entity,
+      definitionId: armor.id,
+      entityType: ENTITY_TYPES.ARMOR,
+      name: armor.name,
+      category: "armor",
+      weight: Math.max(0, numeric(definitionSnapshot.weight, entity.weight || 0)),
+      definitionSnapshot,
+    };
+  };
+
+  const inventory = arrayOf(legacyCharacter.inventory).map((entry) => {
+    const armor = findArmor(entry, entry.uid === equippedArmorUid ? legacyCharacter.armor : "");
+    if (!armor) return entry;
+    return {
+      ...entry,
+      itemId: armor.id,
+      category: "armor",
+      name: armor.name,
+      ca: numeric(armor.ca, 0),
+      domainEntity: entry.domainEntity && typeof entry.domainEntity === "object"
+        ? reconcileDomainEntity(entry.domainEntity, armor)
+        : entry.domainEntity,
+    };
+  });
+
+  const entriesByUid = new Map(inventory.map((entry) => [entry.uid, entry]));
+  const domainCharacter = legacyCharacter.domainCharacter && typeof legacyCharacter.domainCharacter === "object"
+    ? {
+      ...legacyCharacter.domainCharacter,
+      inventory: Array.isArray(legacyCharacter.domainCharacter.inventory)
+        ? legacyCharacter.domainCharacter.inventory.map((entity) => {
+          const legacyEntry = entriesByUid.get(entity.id) || {};
+          const armor = findArmor({
+            ...legacyEntry,
+            itemId: legacyEntry.itemId || entity.definitionId,
+            domainEntity: entity,
+          }, entity.id === equippedArmorUid ? legacyCharacter.armor : "");
+          return armor ? reconcileDomainEntity(entity, armor) : entity;
+        })
+        : legacyCharacter.domainCharacter.inventory,
+    }
+    : legacyCharacter.domainCharacter;
+
+  return {
+    ...legacyCharacter,
+    inventory,
+    domainCharacter,
+  };
+}
+
 function storageLocationKind(storageType) {
   if (storageType === STORAGE_TYPES.CUBE) return LOCATION_KINDS.CUBE;
   if (storageType === STORAGE_TYPES.HOOK) return LOCATION_KINDS.HOOK;

@@ -46,11 +46,11 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "id": "book5",
       "label": "Livro 5",
       "title": "Itens, Equipamentos e Habilidades",
-      "file": "Livro_5_Itens_Equipamentos_Habilidades_punhos_corrigido.docx",
+      "file": "Livro_5_Itens_Equipamentos_Habilidades_CA_armaduras_corrigida.docx",
       "sections": 391,
-      "paragraphs": 4087,
+      "paragraphs": 4088,
       "tables": 254,
-      "characters": 392868
+      "characters": 393177
     }
   ],
   "sections": [
@@ -156901,7 +156901,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "summary": "Catálogo de equipamentos, armas, armaduras, mods, cubos, utilitários, veículos, robôs, preços, serviços e fichas de apoio."
     },
     {
-      "id": "book5-livro-5-itens-equipamentos-e-habilidades-livro-5-itens-equipamentos-e-habilidades-2",
+      "id": "book5-livro-5-itens-equipamentos-e-habilidades-livro-5-itens-equipamentos-e-habilidades",
       "category": "rulebook-section",
       "bookId": "book5",
       "bookLabel": "Livro 5",
@@ -160240,7 +160240,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "summary": "Equipamento em Guerra Solar deve criar escolhas."
     },
     {
-      "id": "book5-livro-5-itens-equipamentos-e-habilidades-livro-5-itens-equipamentos-e-habilidades-3",
+      "id": "book5-livro-5-itens-equipamentos-e-habilidades-livro-5-itens-equipamentos-e-habilidades",
       "category": "rulebook-section",
       "bookId": "book5",
       "bookLabel": "Livro 5",
@@ -162654,7 +162654,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "summary": "Regra editorial: os Mods Tier F devem ser simples e úteis, mas não podem substituir uma build inteira. Mods Tier E podem sustentar uma identidade de personagem ou equipamento. Mods Tier D já podem alterar significativamente uma função, mas ainda precisam de limite, risco ou custo."
     },
     {
-      "id": "book5-livro-5-itens-equipamentos-e-habilidades-livro-5-itens-equipamentos-e-habilidades-4",
+      "id": "book5-livro-5-itens-equipamentos-e-habilidades-livro-5-itens-equipamentos-e-habilidades",
       "category": "rulebook-section",
       "bookId": "book5",
       "bookLabel": "Livro 5",
@@ -163367,6 +163367,11 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
           "type": "paragraph",
           "text": "Nenhuma armadura Tier F deve ser perfeita. Se ela protege bem, deve atrapalhar em algo. Se é leve, protege pouco. Se é selada, é frágil ou limitada. Se carrega muitos itens, não deve ter a melhor defesa. Se interage com o Cosmos, deve trazer risco.",
           "style": "Normal"
+        },
+        {
+          "type": "paragraph",
+          "text": "Regra de CA por Tier: a CA base das armaduras segue a escala oficial de criação do item. Armaduras leves, médias e pesadas usam a tabela de CA por Tier. Armaduras utilitárias, cósmicas, seladas e improvisadas usam essa escala como referência, ajustando 1 ou 2 pontos para cima ou para baixo conforme função, ganchos, vedação, instabilidade e fragilidade.",
+          "style": "Normal"
         }
       ],
       "source": "Livro 5, 3.7.1",
@@ -163865,7 +163870,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "F",
               "Leve",
               "Roupa Reforçada",
-              "+0",
+              "+2",
               "—",
               "+1m",
               "1",
@@ -163881,7 +163886,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "F",
               "Média",
               "Colete de Placas",
-              "+1",
+              "+3",
               "—",
               "-1m",
               "1",
@@ -163897,7 +163902,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "F",
               "Pesada",
               "Armadura de Placas",
-              "+1",
+              "+5",
               "1 contra quedas e impactos ambientais",
               "-2 m",
               "1",
@@ -163913,7 +163918,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "F",
               "Utilitária",
               "Armadura Modular Utilitária",
-              "+0",
+              "+2",
               "—",
               "Normal",
               "3",
@@ -163929,7 +163934,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "F",
               "Utilitária",
               "Colete Utilitário",
-              "+1",
+              "+3",
               "—",
               "Normal",
               "2",
@@ -163945,7 +163950,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "F",
               "Cósmica",
               "Manto Condutor",
-              "+0",
+              "+1",
               "—",
               "Normal",
               "0",
@@ -163961,7 +163966,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "F",
               "Improvisada",
               "Armadura de Sucata",
-              "+1",
+              "+2",
               "—",
               "Normal",
               "1",
@@ -163977,7 +163982,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "F",
               "Improvisada",
               "Roupa Improvisada",
-              "+0",
+              "+1",
               "—",
               "Normal",
               "1",
@@ -164056,7 +164061,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "Colete de Suporte de Campo",
-              "Suporte tático com proteção mínima",
+              "Suporte tático com proteção média",
               "-1 em Furtividade se estiver com os 2 ganchos ocupados",
               "Em falha de sistema, um suporte trava e um item fica inacessível até ser liberado."
             ],
@@ -164113,7 +164118,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
         },
         {
           "type": "paragraph",
-          "text": "Ela não concede bônus de CA, mas possui 1 slot, permitindo uma customização inicial mesmo sendo Tier F. Essa característica faz da jaqueta uma boa escolha para personagens que desejam desenvolver a armadura ao longo da campanha.",
+          "text": "Ela concede +2 CA e possui 1 slot, permitindo uma customização inicial mesmo sendo Tier F. Essa característica faz da jaqueta uma boa escolha para personagens que desejam desenvolver a armadura ao longo da campanha.",
           "style": "Normal"
         },
         {
@@ -164141,7 +164146,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+0"
+              "+2"
             ],
             [
               "Redução",
@@ -164250,7 +164255,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+1"
+              "+3"
             ],
             [
               "Redução",
@@ -164331,7 +164336,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
         },
         {
           "type": "paragraph",
-          "text": "Ela concede CA +1, possui 1 slot, reduz 2 m de movimento e reduz 1 ponto de dano contra quedas e impactos ambientais, como pancadas contra parede, desabamentos leves, colisões pequenas ou quedas curtas. Essa redução não se aplica contra ataques comuns, salvo decisão específica do mestre.",
+          "text": "Ela concede +5 CA, possui 1 slot, reduz 2 m de movimento e reduz 1 ponto de dano contra quedas e impactos ambientais, como pancadas contra parede, desabamentos leves, colisões pequenas ou quedas curtas. Essa redução não se aplica contra ataques comuns, salvo decisão específica do mestre.",
           "style": "Normal"
         },
         {
@@ -164359,7 +164364,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+1"
+              "+5"
             ],
             [
               "Redução",
@@ -164468,7 +164473,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+0"
+              "+2"
             ],
             [
               "Redução",
@@ -164549,7 +164554,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
         },
         {
           "type": "paragraph",
-          "text": "Diferente do Arnês de Operário Kalar, ele oferece CA +1, mas possui menos ganchos e não possui slot de modificação. Seu papel é equilibrar proteção e suporte imediato.",
+          "text": "Diferente do Arnês de Operário Kalar, ele oferece +3 CA, mas possui menos ganchos e não possui slot de modificação. Seu papel é equilibrar proteção e suporte imediato.",
           "style": "Normal"
         },
         {
@@ -164577,7 +164582,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+1"
+              "+3"
             ],
             [
               "Redução",
@@ -164686,7 +164691,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+0"
+              "+1"
             ],
             [
               "Redução",
@@ -164771,7 +164776,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
         },
         {
           "type": "paragraph",
-          "text": "Ela oferece CA +1 por cobrir partes importantes do corpo, mas é instável, desconfortável e menos durável que uma armadura de verdade. Seu limite de rachaduras é 0/3.",
+          "text": "Ela oferece +2 CA por cobrir partes importantes do corpo, mas é instável, desconfortável e menos durável que uma armadura de verdade. Seu limite de rachaduras é 0/3.",
           "style": "Normal"
         },
         {
@@ -164799,7 +164804,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+1"
+              "+2"
             ],
             [
               "Redução",
@@ -164908,7 +164913,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+0"
+              "+1"
             ],
             [
               "Redução",
@@ -165263,7 +165268,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "summary": "Seção oficial do livro de regras Solaris."
     },
     {
-      "id": "book5-livro-5-itens-equipamentos-e-habilidades-livro-5-itens-equipamentos-e-habilidades-5",
+      "id": "book5-livro-5-itens-equipamentos-e-habilidades-livro-5-itens-equipamentos-e-habilidades",
       "category": "rulebook-section",
       "bookId": "book5",
       "bookLabel": "Livro 5",
@@ -165977,7 +165982,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "F",
               "Média",
               "Casaco Blindado",
-              "+1",
+              "+3",
               "Normal",
               "1",
               "1",
@@ -165989,7 +165994,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "F",
               "Leve",
               "Roupa Reforçada",
-              "+1",
+              "+2",
               "Normal",
               "1",
               "1",
@@ -166001,7 +166006,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "F",
               "Cósmica",
               "Manto Condutor",
-              "+0",
+              "+1",
               "Normal",
               "1",
               "1",
@@ -166013,7 +166018,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "F",
               "Utilitária",
               "Armadura de Sucata",
-              "+1",
+              "+2",
               "-1 m",
               "2",
               "1",
@@ -166047,7 +166052,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "E",
               "Pesada",
               "Armadura de Placas",
-              "+2",
+              "+6",
               "-1 m",
               "1",
               "2",
@@ -166059,7 +166064,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "E",
               "Média",
               "Colete de Placas",
-              "+1",
+              "+4",
               "Normal",
               "2",
               "1",
@@ -166071,7 +166076,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "E",
               "Cósmica",
               "Manto Condutor",
-              "+1",
+              "+2",
               "Normal",
               "1",
               "2",
@@ -166083,7 +166088,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "E",
               "Utilitária",
               "Armadura Modular Utilitária",
-              "+1",
+              "+3",
               "Normal",
               "3",
               "2",
@@ -166117,7 +166122,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "S",
               "Pesada",
               "Exotraje Simples",
-              "+5",
+              "+15",
               "-1 m",
               "2",
               "5",
@@ -166129,7 +166134,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "S",
               "Leve",
               "Traje Segmentado",
-              "+4",
+              "+10",
               "Normal",
               "2",
               "5",
@@ -166141,7 +166146,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "S",
               "Cósmica",
               "Manto Condutor",
-              "+2",
+              "+10",
               "Normal",
               "2",
               "5",
@@ -166153,7 +166158,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
               "S",
               "Utilitária",
               "Exotraje Simples",
-              "+3",
+              "+13",
               "Normal",
               "4",
               "5",
@@ -166189,7 +166194,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+1"
+              "+3"
             ],
             [
               "Redução",
@@ -166271,7 +166276,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+1"
+              "+2"
             ],
             [
               "Redução",
@@ -166353,7 +166358,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+0"
+              "+1"
             ],
             [
               "Redução",
@@ -166435,7 +166440,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+1"
+              "+2"
             ],
             [
               "Redução",
@@ -166522,7 +166527,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+2"
+              "+6"
             ],
             [
               "Redução",
@@ -166604,7 +166609,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+1"
+              "+4"
             ],
             [
               "Redução",
@@ -166686,7 +166691,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+1"
+              "+2"
             ],
             [
               "Redução",
@@ -166768,7 +166773,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+1"
+              "+3"
             ],
             [
               "Redução",
@@ -166862,7 +166867,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+5"
+              "+15"
             ],
             [
               "Redução",
@@ -166944,7 +166949,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+4"
+              "+10"
             ],
             [
               "Redução",
@@ -167026,7 +167031,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+2"
+              "+10"
             ],
             [
               "Redução",
@@ -167108,7 +167113,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
             ],
             [
               "CA",
-              "+3"
+              "+13"
             ],
             [
               "Redução",
@@ -169276,36 +169281,52 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
           "type": "table",
           "headers": [
             "Tier",
-            "Bônus de CA da armadura"
+            "Leve",
+            "Média",
+            "Pesada"
           ],
           "rows": [
             [
               "F",
-              "+0 a +1."
+              "+2",
+              "+3",
+              "+5"
             ],
             [
               "E",
-              "+1 a +2."
+              "+3",
+              "+4",
+              "+6"
             ],
             [
               "D",
-              "+2 a +3."
+              "+4",
+              "+6",
+              "+8"
             ],
             [
               "C",
-              "+3 a +4."
+              "+5",
+              "+7",
+              "+10"
             ],
             [
               "B",
-              "+4 a +5."
+              "+7",
+              "+9",
+              "+12"
             ],
             [
               "A",
-              "+5 a +6."
+              "+8",
+              "+11",
+              "+14"
             ],
             [
               "S",
-              "+6 ou mais, com efeito especial."
+              "+10",
+              "+13",
+              "+15"
             ]
           ]
         },
@@ -171749,7 +171770,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "summary": "Tabela de Materiais Geral — Preços Recalibrados em Luzentis"
     },
     {
-      "id": "book5-livro-5-itens-equipamentos-e-habilidades-guerra-solar-livro-5-itens-equipamentos-e-habilidades-guerra-solar-2",
+      "id": "book5-livro-5-itens-equipamentos-e-habilidades-guerra-solar-livro-5-itens-equipamentos-e-habilidades-guerra-solar",
       "category": "rulebook-section",
       "bookId": "book5",
       "bookLabel": "Livro 5",
@@ -176689,7 +176710,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "summary": "Utilitários existem para transformar problemas em escolhas. Uma granada pode limpar um corredor, mas pode destruir loot. Um drone pode revelar uma armadilha, mas pode chamar atenção. Uma torreta pode segurar uma porta, mas pode ser abandonada na fuga. Um kit pode salvar um aliado, mas é consumido. Uma bateria pode manter o sensor ligado, mas faltar depois pa..."
     },
     {
-      "id": "book5-livro-5-itens-equipamentos-e-habilidades-sistema-guerra-solar-livro-5-itens-equipamentos-e-habilidades-sistema-guerra-solar-2",
+      "id": "book5-livro-5-itens-equipamentos-e-habilidades-sistema-guerra-solar-livro-5-itens-equipamentos-e-habilidades-sistema-guerra-solar",
       "category": "rulebook-section",
       "bookId": "book5",
       "bookLabel": "Livro 5",
@@ -179492,7 +179513,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "summary": "Veículos existem para ampliar as escolhas dos jogadores, não para remover perigo. Um veículo pode salvar o grupo de uma caminhada mortal, mas também cria novas ameaças: combustível, manutenção, ruído, tamanho, peças, rastreio, emboscada e interesse de facções."
     },
     {
-      "id": "book5-livro-5-itens-equipamentos-e-habilidades-livro-5-itens-equipamentos-e-habilidades-6",
+      "id": "book5-livro-5-itens-equipamentos-e-habilidades-livro-5-itens-equipamentos-e-habilidades",
       "category": "rulebook-section",
       "bookId": "book5",
       "bookLabel": "Livro 5",
@@ -187335,7 +187356,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "summary": "Robôs em Tarantus são poderosos porque fazem o impossível parecer prático."
     },
     {
-      "id": "book5-livro-5-itens-equipamentos-e-habilidades-guerra-solar-livro-5-itens-equipamentos-e-habilidades-guerra-solar-3",
+      "id": "book5-livro-5-itens-equipamentos-e-habilidades-guerra-solar-livro-5-itens-equipamentos-e-habilidades-guerra-solar",
       "category": "rulebook-section",
       "bookId": "book5",
       "bookLabel": "Livro 5",
@@ -189114,7 +189135,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "summary": "Itens comuns não precisam de Tier, slots, rachaduras ou Jammed, salvo quando a própria ficha disser que existe função mecânica relevante. Itens de combate, armaduras, granadas, drones e sistemas especiais devem seguir seus capítulos próprios."
     },
     {
-      "id": "book5-livro-5-itens-equipamentos-e-habilidades-guerra-solar-livro-5-itens-equipamentos-e-habilidades-guerra-solar-4",
+      "id": "book5-livro-5-itens-equipamentos-e-habilidades-guerra-solar-livro-5-itens-equipamentos-e-habilidades-guerra-solar",
       "category": "rulebook-section",
       "bookId": "book5",
       "bookLabel": "Livro 5",
@@ -196868,7 +196889,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "summary": "Termos de equipamentos, recursos, economia, mods, cubos, crafting e arsenal."
     },
     {
-      "id": "book5-livro-5-itens-equipamentos-e-habilidades-livro-5-itens-equipamentos-e-habilidades-7",
+      "id": "book5-livro-5-itens-equipamentos-e-habilidades-livro-5-itens-equipamentos-e-habilidades",
       "category": "rulebook-section",
       "bookId": "book5",
       "bookLabel": "Livro 5",
@@ -196917,7 +196938,7 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "summary": "Consulta rápida para catálogo, fabricação, manutenção, uso e evolução de itens, armas, armaduras, mods, cubos, drones, veículos, focos e habilidades de equipamento."
     },
     {
-      "id": "book5-livro-5-itens-equipamentos-e-habilidades-livro-5-itens-equipamentos-e-habilidades-8",
+      "id": "book5-livro-5-itens-equipamentos-e-habilidades-livro-5-itens-equipamentos-e-habilidades",
       "category": "rulebook-section",
       "bookId": "book5",
       "bookLabel": "Livro 5",

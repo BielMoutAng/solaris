@@ -8,7 +8,8 @@ import {
   definitionFromLegacyItem,
   inferLegacyInventorySize,
   migrateLegacyCharacterData,
-} from "./src/domain/solaris-domain-architecture.js?v=20260614f";
+  reconcileLegacyArmorCatalog,
+} from "./src/domain/solaris-domain-architecture.js?v=20260614j";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -24,6 +25,18 @@ const LEVEL_COSMOS_BASE = { 1: 1, 2: 1, 3: 1, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2
 const STRESS_MAX = 6;
 const STARTING_CURRENCY = 2000;
 const BASE_CA = 4;
+const ARMOR_CA_BY_TIER = Object.freeze({
+  F: Object.freeze({ leve: 2, media: 3, pesada: 5 }),
+  E: Object.freeze({ leve: 3, media: 4, pesada: 6 }),
+  D: Object.freeze({ leve: 4, media: 6, pesada: 8 }),
+  C: Object.freeze({ leve: 5, media: 7, pesada: 10 }),
+  B: Object.freeze({ leve: 7, media: 9, pesada: 12 }),
+  A: Object.freeze({ leve: 8, media: 11, pesada: 14 }),
+  S: Object.freeze({ leve: 10, media: 13, pesada: 15 }),
+});
+const ARMOR_CA_TIER_RULE_SUMMARY = Object.entries(ARMOR_CA_BY_TIER)
+  .map(([tier, values]) => `Tier ${tier}: leve +${values.leve}, média +${values.media}, pesada +${values.pesada}`)
+  .join("; ");
 const ITEM_CRACK_MAX = 5;
 const TIER_ORDER = ["F", "E", "D", "C", "B", "A", "S"];
 const OFFICIAL_BOOK5 = globalThis.SOLARIS_OFFICIAL_BOOK5 || {
@@ -1167,6 +1180,7 @@ const monsterSheetTemplates = {
 };
 
 const legacyRuleData = [
+  { name: "CA das armaduras por Tier", tags: ["CA", "armadura", "tier"], summary: `${ARMOR_CA_TIER_RULE_SUMMARY}. Armaduras utilitárias, cósmicas, seladas e improvisadas usam essa escala como referência e podem variar 1 ou 2 pontos conforme função, ganchos, vedação, instabilidade e fragilidade.` },
   { name: "Rolagem padrão", tags: ["3d6", "modificador"], summary: "Role 3d6 + atributo/perícia + modificador situacional. 3 a 9 falha, 10 a 14 sucesso parcial, 15 a 18 sucesso completo." },
   { name: "Ataques", tags: ["1d20", "CA", "crítico"], summary: "Ataques usam 1d20 + atributo contra a CA. Corpo a corpo normalmente usa FOR, distância usa REF e ataques cósmicos usam MEN. 20 natural é crítico; 1 natural é erro crítico." },
   { name: "Iniciativa", tags: ["1d20", "REF"], summary: "A iniciativa usa 1d20 + MOD REF." },
@@ -6903,6 +6917,13 @@ function loadSaved() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     state.saved = raw ? JSON.parse(raw).map(normalizeCharacter) : [];
+    if (raw) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.saved));
+      } catch {
+        // Keep the migrated sheets loaded even if local persistence is blocked.
+      }
+    }
   } catch (error) {
     state.saved = [];
   }
@@ -9621,7 +9642,16 @@ function normalizeKnownAbility(ability) {
   return normalized;
 }
 
+function migrateStoredArmorDefinitions(character = {}) {
+  return reconcileLegacyArmorCatalog(
+    character,
+    armorData,
+    (armor) => domainDefinitionForItem(armor).toJSON()
+  );
+}
+
 function normalizeCharacter(character) {
+  character = migrateStoredArmorDefinitions(character);
   const base = emptyCharacter();
   const race = findRace(character.race);
   const profession = findProfession(character.profession);

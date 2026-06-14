@@ -20,6 +20,7 @@ import {
   WeaponDefinition,
   definitionFromLegacyItem,
   migrateLegacyCharacterData,
+  reconcileLegacyArmorCatalog,
 } from "../src/domain/solaris-domain-architecture.js";
 
 test("compra cria uma instância real, debita Luzentis e alerta sem localização", () => {
@@ -339,6 +340,64 @@ test("serialização e migração preservam recursos e referência de origem", (
 
   assert.equal(migrated.inventory.findById(instance.id).resources[0].current, 2);
   assert.equal(migrated.inventory.findById(instance.id).sourceReference.page, "42");
+});
+
+test("fichas antigas recebem a CA atual da armadura oficial", () => {
+  const armorCatalog = [{
+    id: "book5-armadura-couraca-leviata",
+    name: "Couraça Leviatã",
+    category: "armor",
+    ca: 15,
+    weight: 40,
+  }];
+  const legacy = {
+    armor: "Couraça Leviatã",
+    equippedArmorUid: "armor-instance",
+    inventory: [{
+      uid: "armor-instance",
+      itemId: "old-couraca-id",
+      category: "armor",
+      name: "Couraça Leviatã",
+      ca: 5,
+      domainEntity: {
+        id: "armor-instance",
+        definitionId: "old-couraca-id",
+        entityType: "armor",
+        name: "Couraça Leviatã",
+        weight: 40,
+        definitionSnapshot: {
+          id: "old-couraca-id",
+          name: "Couraça Leviatã",
+          ca: 5,
+        },
+      },
+    }],
+    domainCharacter: {
+      inventory: [{
+        id: "armor-instance",
+        definitionId: "old-couraca-id",
+        entityType: "armor",
+        name: "Couraça Leviatã",
+        weight: 40,
+        definitionSnapshot: {
+          id: "old-couraca-id",
+          name: "Couraça Leviatã",
+          ca: 5,
+        },
+      }],
+    },
+  };
+
+  const migrated = reconcileLegacyArmorCatalog(
+    legacy,
+    armorCatalog,
+    (armor) => ({ ...armor, entityType: "armor" })
+  );
+
+  assert.equal(migrated.inventory[0].itemId, armorCatalog[0].id);
+  assert.equal(migrated.inventory[0].ca, 15);
+  assert.equal(migrated.inventory[0].domainEntity.definitionSnapshot.ca, 15);
+  assert.equal(migrated.domainCharacter.inventory[0].definitionSnapshot.ca, 15);
 });
 
 test("ficha jogável de monstro preserva combate, condições e notas", () => {
