@@ -5,11 +5,12 @@ import {
   LOCATION_KINDS,
   MonsterDefinition,
   MonsterSheet,
+  buildMonsterLootTable,
   definitionFromLegacyItem,
   inferLegacyInventorySize,
   migrateLegacyCharacterData,
   reconcileLegacyArmorCatalog,
-} from "./src/domain/solaris-domain-architecture.js?v=20260614j";
+} from "./src/domain/solaris-domain-architecture.js?v=20260615b";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -7281,6 +7282,54 @@ function renderMonsterAbilityEntry(monster, ability, index) {
   `;
 }
 
+function monsterLootResultSummary(result) {
+  if (!result?.drops?.length) return "Nenhum recurso recuperado";
+  return result.drops
+    .map((drop) => `${drop.name}${drop.quantity > 1 ? ` x${drop.quantity}` : ""}`)
+    .join(", ");
+}
+
+function renderMonsterLootPanel(monster) {
+  if (!monster.lootTable?.length && monster.metadata?.resources) {
+    monster.lootTable = buildMonsterLootTable(monster.metadata.resources);
+  }
+  const table = monster.lootTable || [];
+  const history = monster.lootHistory || [];
+  const latest = history[0];
+  const tableMarkup = table.length
+    ? table.map((item) => `
+        <span class="monster-loot-chance rarity-${dataSlug(item.rarity)}" title="${escapeHtml(item.rarity)}">
+          ${escapeHtml(item.name)} <strong>${item.chance}%</strong>
+        </span>
+      `).join("")
+    : '<span class="inventory-note">Sem recursos coletáveis catalogados.</span>';
+  const logMarkup = history.length
+    ? history.slice(0, 3).map((entry) => `
+        <li>
+          <time datetime="${escapeHtml(entry.createdAt)}">${escapeHtml(new Date(entry.createdAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }))}</time>
+          <span>${escapeHtml(monsterLootResultSummary(entry))}</span>
+        </li>
+      `).join("")
+    : '<li class="monster-loot-empty">O resultado aparecerá quando a criatura for derrotada.</li>';
+  return `
+    <section class="monster-loot-panel" aria-label="Loot de ${escapeHtml(monster.name)}">
+      <div class="monster-loot-heading">
+        <div>
+          <strong>Loot</strong>
+          <span>${latest ? escapeHtml(monsterLootResultSummary(latest)) : "Chances por recurso"}</span>
+        </div>
+        ${monster.currentPV === 0 ? `
+          <button class="mini-button" type="button" data-monster-session-action="reroll-loot" data-monster-session-id="${escapeHtml(monster.id)}">
+            Rolar novamente
+          </button>
+        ` : ""}
+      </div>
+      <div class="monster-loot-table">${tableMarkup}</div>
+      <ol class="monster-loot-log" aria-label="Histórico de loot">${logMarkup}</ol>
+    </section>
+  `;
+}
+
 function renderMonsterSessionCard(sheet) {
   const monster = sheet.instance;
   const attacks = monsterSessionAttacks(monster);
@@ -7320,6 +7369,7 @@ function renderMonsterSessionCard(sheet) {
           : "<p>Nenhuma habilidade registrada.</p>"}
       </div>
       <div class="tag-row monster-condition-row">${conditionMarkup}</div>
+      ${renderMonsterLootPanel(monster)}
       <label class="monster-notes-field">
         Notas do mestre
         <textarea rows="2" data-monster-session-notes="${escapeHtml(monster.id)}">${escapeHtml(sheet.gmNotes || "")}</textarea>
@@ -7327,6 +7377,7 @@ function renderMonsterSessionCard(sheet) {
       ${latestRoll ? `<p class="monster-last-roll"><strong>Última rolagem:</strong> ${escapeHtml(latestRoll.label || latestRoll.formula)} = ${escapeHtml(latestRoll.total)}</p>` : ""}
       <div class="monster-session-actions">
         <button class="mini-button" type="button" data-monster-session-action="damage" data-monster-session-id="${escapeHtml(monster.id)}">Receber dano</button>
+        <button class="mini-button danger-mini-button" type="button" data-monster-session-action="defeat" data-monster-session-id="${escapeHtml(monster.id)}">Derrotar</button>
         <button class="mini-button" type="button" data-monster-session-action="heal" data-monster-session-id="${escapeHtml(monster.id)}">Curar</button>
         <button class="mini-button" type="button" data-monster-session-action="condition" data-monster-session-id="${escapeHtml(monster.id)}">Aplicar condição</button>
         <button class="mini-button" type="button" data-monster-session-action="save-notes" data-monster-session-id="${escapeHtml(monster.id)}">Salvar notas</button>
@@ -7428,12 +7479,41 @@ function handleMonsterSessionAction(action, instanceId, actionElement = null) {
     rollMonsterDamageFormula(monster, `${ability.name} - dano`, ability.damage || ability.description);
     return;
   }
+  if (action === "reroll-loot") {
+    if (monster.currentPV > 0) {
+      showToast("O loot só pode ser rolado depois que a criatura for derrotada.", "tech-error");
+      return;
+    }
+    const result = monster.generateLoot({ reason: "nova rolagem" });
+    persistMonsterSession();
+    renderMonsterSessionPanel();
+    showToast(`Novo loot de ${monster.name}: ${monsterLootResultSummary(result)}.`);
+    return;
+  }
+  if (action === "defeat") {
+    const previousLootCount = monster.lootHistory?.length || 0;
+    if (monster.currentPV > 0) monster.receiveDamage(monster.currentPV);
+    else if (!monster.lootGeneratedForDefeat) monster.markDefeated();
+    const result = monster.lootHistory?.length > previousLootCount ? monster.lootHistory[0] : null;
+    persistMonsterSession();
+    renderMonsterSessionPanel();
+    showToast(result
+      ? `${monster.name} derrotado. Loot: ${monsterLootResultSummary(result)}.`
+      : `${monster.name} já estava derrotado.`);
+    return;
+  }
   if (["damage", "heal"].includes(action)) {
     const requested = window.prompt(action === "damage" ? `Quanto dano ${monster.name} recebe?` : `Quantos PV ${monster.name} recupera?`, "1");
     if (requested === null) return;
     const amount = Math.max(0, numberValue(requested, 0));
-    if (action === "damage") monster.receiveDamage(amount);
-    else monster.heal(amount);
+    if (action === "damage") {
+      const previousPV = monster.currentPV;
+      const previousLootCount = monster.lootHistory?.length || 0;
+      monster.receiveDamage(amount);
+      if (previousPV > 0 && monster.currentPV === 0 && monster.lootHistory.length > previousLootCount) {
+        showToast(`${monster.name} derrotado. Loot: ${monsterLootResultSummary(monster.lootHistory[0])}.`);
+      }
+    } else monster.heal(amount);
   } else if (action === "condition") {
     const label = window.prompt(`Qual condição aplicar em ${monster.name}?`, "");
     if (!label?.trim()) return;

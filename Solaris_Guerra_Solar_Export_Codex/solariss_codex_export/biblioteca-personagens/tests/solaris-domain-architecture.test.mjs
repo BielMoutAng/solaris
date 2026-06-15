@@ -18,9 +18,12 @@ import {
   Rachaduras,
   StorageDefinition,
   WeaponDefinition,
+  buildMonsterLootTable,
   definitionFromLegacyItem,
   migrateLegacyCharacterData,
+  parseMonsterLootResources,
   reconcileLegacyArmorCatalog,
+  rollMonsterLoot,
 } from "../src/domain/solaris-domain-architecture.js";
 
 test("compra cria uma instância real, debita Luzentis e alerta sem localização", () => {
@@ -428,4 +431,65 @@ test("ficha jogável de monstro preserva combate, condições e notas", () => {
   assert.equal(restored.instance.conditions[0].id, condition.id);
   assert.equal(restored.instance.rollHistory[0].total, 9);
   assert.equal(restored.gmNotes, "Protege o ninho.");
+});
+
+test("recursos do bestiário viram uma tabela de loot do comum ao raro", () => {
+  const resources = "◆ Recursos coletáveis: couro, dentes, glândula rara e núcleo cósmico.";
+  const names = parseMonsterLootResources(resources);
+  const table = buildMonsterLootTable(resources);
+
+  assert.deepEqual(names, ["couro", "dentes", "glândula rara", "núcleo cósmico"]);
+  assert.deepEqual(table.map((item) => item.chance), [85, 63, 42, 20]);
+  assert.equal(table[0].rarity, "Comum");
+  assert.equal(table[3].rarity, "Exótico");
+});
+
+test("parser ignora condições e recursos ameaçados na ficha de chefe", () => {
+  const resources = [
+    "◆ Condicoes que aplica: Derrubado, Sangrando, Medo ou Estresse.",
+    "◆ Recursos ameacados: Armaduras, coberturas e rotas de retirada.",
+    "◆ Recursos coletaveis: Presa Ancestral, couro superior e glandula de dominio.",
+  ].join("\n");
+
+  assert.deepEqual(
+    parseMonsterLootResources(resources),
+    ["Presa Ancestral", "couro superior", "glandula de dominio"]
+  );
+});
+
+test("loot de monstro é rolado ao chegar a zero PV e persiste na ficha", () => {
+  const definition = new MonsterDefinition({
+    id: "predador-loot",
+    name: "Predador de Teste",
+    maxPV: 5,
+    metadata: {
+      resources: "◆ Couro.\n◆ Presa rara.",
+    },
+  });
+  const sheet = new MonsterSheet({ definition });
+  const rolls = [0.1, 0, 0.9];
+  const random = () => rolls.shift() ?? 0.99;
+
+  sheet.instance.receiveDamage(5, { random });
+
+  assert.equal(sheet.instance.currentPV, 0);
+  assert.equal(sheet.instance.lootHistory.length, 1);
+  assert.deepEqual(sheet.instance.lootHistory[0].drops.map((drop) => drop.name), ["Couro"]);
+
+  const restored = MonsterSheet.fromJSON(sheet.toJSON());
+  assert.equal(restored.instance.lootGeneratedForDefeat, true);
+  assert.equal(restored.instance.lootHistory[0].drops[0].name, "Couro");
+});
+
+test("rolagem manual de loot respeita a chance individual", () => {
+  const result = rollMonsterLoot([
+    { id: "comum", name: "Couro", chance: 80, rarity: "Comum", minQuantity: 1, maxQuantity: 1 },
+    { id: "raro", name: "Núcleo", chance: 20, rarity: "Raro", minQuantity: 1, maxQuantity: 1 },
+  ], (() => {
+    const rolls = [0.79, 0, 0.2];
+    return () => rolls.shift() ?? 0.99;
+  })());
+
+  assert.deepEqual(result.attempts.map((item) => item.roll), [80, 21]);
+  assert.deepEqual(result.drops.map((item) => item.name), ["Couro"]);
 });

@@ -4466,6 +4466,97 @@ textarea:focus {
   cursor: pointer;
 }
 
+.monster-loot-panel {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding-block: 10px;
+  border-block: 1px solid rgba(100, 217, 201, 0.12);
+}
+
+.monster-loot-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.monster-loot-heading > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.monster-loot-heading span {
+  color: var(--muted);
+  font-size: 0.74rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.monster-loot-table {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.monster-loot-chance {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  max-width: 100%;
+  padding: 4px 6px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  background: rgba(100, 217, 201, 0.035);
+  border-left: 2px solid rgba(100, 217, 201, 0.45);
+}
+
+.monster-loot-chance strong {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.monster-loot-chance.rarity-raro {
+  border-left-color: #d7a744;
+}
+
+.monster-loot-chance.rarity-exotico {
+  border-left-color: #a66cff;
+}
+
+.monster-loot-log {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.monster-loot-log li {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 7px;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.monster-loot-log time {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.monster-loot-log span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.monster-loot-log .monster-loot-empty {
+  display: block;
+}
+
 .monster-notes-field {
   display: grid;
   gap: 6px;

@@ -111,6 +111,106 @@ function clone(value) {
   return JSON.parse(JSON.stringify(value));
 }
 
+function normalizedLootName(value) {
+  return String(value || "")
+    .replace(/^[\s◆•●▪◦*+\-–—\d.)]+/u, "")
+    .replace(/^recursos?\s+colet[aá]veis?\s*:\s*/iu, "")
+    .replace(/[.;:]+$/u, "")
+    .trim();
+}
+
+export function parseMonsterLootResources(resources = "") {
+  const source = arrayOf(resources).length ? resources.join("\n") : String(resources || "");
+  const lines = source.replace(/\r/g, "").split(/\n+/);
+  const hasCollectibleSection = lines.some((line) => /recursos?\s+colet[aá]veis?/iu.test(line));
+  let collecting = !hasCollectibleSection;
+  const relevantLines = [];
+  lines.forEach((line) => {
+    if (/recursos?\s+colet[aá]veis?/iu.test(line)) {
+      collecting = true;
+      relevantLines.push(line);
+      return;
+    }
+    if (collecting && hasCollectibleSection && /^[\s◆•●▪◦*+\-–—]*[^:]+:\s*/u.test(line)) {
+      collecting = false;
+    }
+    if (collecting) relevantLines.push(line);
+  });
+  const entries = relevantLines
+    .flatMap((line) => {
+      const cleaned = normalizedLootName(line);
+      if (!cleaned) return [];
+      return cleaned.split(/\s*,\s*|\s+e\s+(?=[^,]+$)/iu);
+    })
+    .map(normalizedLootName)
+    .filter((name) => name && !/^(?:nenhum|nenhuma|n\/a)$/iu.test(name));
+  const seen = new Set();
+  return entries.filter((name) => {
+    const key = name.toLocaleLowerCase("pt-BR");
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function monsterLootChance(index, count) {
+  if (count <= 1) return 70;
+  if (count === 2) return [80, 35][index];
+  if (count === 3) return [85, 55, 25][index];
+  return Math.max(15, Math.round(85 - ((65 * index) / (count - 1))));
+}
+
+function monsterLootRarity(chance) {
+  if (chance >= 70) return "Comum";
+  if (chance >= 45) return "Incomum";
+  if (chance >= 25) return "Raro";
+  return "Exótico";
+}
+
+export function buildMonsterLootTable(resources = "") {
+  const names = parseMonsterLootResources(resources);
+  return names.map((name, index) => {
+    const chance = monsterLootChance(index, names.length);
+    return {
+      id: `loot-${index + 1}`,
+      name,
+      chance,
+      rarity: monsterLootRarity(chance),
+      minQuantity: 1,
+      maxQuantity: chance >= 70 ? 3 : (chance >= 45 ? 2 : 1),
+    };
+  });
+}
+
+export function rollMonsterLoot(table = [], random = Math.random, options = {}) {
+  const attempts = arrayOf(table).map((item) => {
+    const roll = Math.min(100, Math.max(1, Math.floor(numeric(random(), 0) * 100) + 1));
+    const dropped = roll <= numeric(item.chance, 0);
+    let quantity = 0;
+    if (dropped) {
+      const min = Math.max(1, positiveInteger(item.minQuantity, 1));
+      const max = Math.max(min, positiveInteger(item.maxQuantity, min));
+      quantity = min + Math.floor(numeric(random(), 0) * ((max - min) + 1));
+    }
+    return {
+      id: item.id,
+      name: item.name,
+      chance: item.chance,
+      rarity: item.rarity,
+      roll,
+      dropped,
+      quantity,
+    };
+  });
+  return {
+    id: createId("loot-roll"),
+    reason: String(options.reason || "manual"),
+    createdAt: options.createdAt || new Date().toISOString(),
+    attempts,
+    drops: attempts.filter((item) => item.dropped),
+  };
+}
+
 function normalizeSourceReference(sourceReference = {}) {
   return {
     book: String(sourceReference.book || ""),
@@ -1552,6 +1652,10 @@ export class MonsterInstance {
     notes = "",
     quickRolls = [],
     rollHistory = [],
+    lootTable = [],
+    lootHistory = [],
+    lootGeneratedForDefeat = false,
+    defeatedAt = null,
     metadata = {},
     sourceReference = {},
     createdAt = new Date().toISOString(),
@@ -1582,21 +1686,62 @@ export class MonsterInstance {
     this.quickRolls = clone(arrayOf(quickRolls));
     this.rollHistory = clone(arrayOf(rollHistory));
     this.metadata = clone(metadata) || {};
+    this.lootTable = arrayOf(lootTable).length
+      ? clone(lootTable)
+      : buildMonsterLootTable(this.metadata.resources);
+    this.lootHistory = clone(arrayOf(lootHistory));
+    this.lootGeneratedForDefeat = Boolean(lootGeneratedForDefeat);
+    this.defeatedAt = defeatedAt || null;
     this.sourceReference = normalizeSourceReference(sourceReference);
     this.createdAt = createdAt || new Date().toISOString();
     this.updatedAt = updatedAt;
   }
 
-  receiveDamage(amount = 0) {
+  receiveDamage(amount = 0, options = {}) {
+    const previousPV = this.currentPV;
     this.currentPV = Math.max(0, this.currentPV - Math.max(0, numeric(amount, 0)));
     this.updatedAt = new Date().toISOString();
+    if (previousPV > 0 && this.currentPV === 0) {
+      this.markDefeated({
+        resources: options.resources ?? this.metadata.resources,
+        random: options.random,
+      });
+    }
     return this.currentPV;
   }
 
   heal(amount = 0) {
+    const wasDefeated = this.currentPV === 0;
     this.currentPV = Math.min(this.maxPV, this.currentPV + Math.max(0, numeric(amount, 0)));
+    if (wasDefeated && this.currentPV > 0) {
+      this.defeatedAt = null;
+      this.lootGeneratedForDefeat = false;
+    }
     this.updatedAt = new Date().toISOString();
     return this.currentPV;
+  }
+
+  setLootTable(resources = this.metadata.resources) {
+    this.lootTable = buildMonsterLootTable(resources);
+    this.updatedAt = new Date().toISOString();
+    return this.lootTable;
+  }
+
+  generateLoot({ resources = this.metadata.resources, random = Math.random, reason = "manual" } = {}) {
+    if (!this.lootTable.length && resources) this.setLootTable(resources);
+    const result = rollMonsterLoot(this.lootTable, random, { reason });
+    this.lootHistory.unshift(result);
+    this.lootHistory = this.lootHistory.slice(0, 10);
+    this.updatedAt = new Date().toISOString();
+    return result;
+  }
+
+  markDefeated({ resources = this.metadata.resources, random = Math.random } = {}) {
+    this.currentPV = 0;
+    this.defeatedAt = this.defeatedAt || new Date().toISOString();
+    if (this.lootGeneratedForDefeat) return null;
+    this.lootGeneratedForDefeat = true;
+    return this.generateLoot({ resources, random, reason: "derrota" });
   }
 
   applyCondition(condition) {
@@ -1644,6 +1789,10 @@ export class MonsterInstance {
       notes: this.notes,
       quickRolls: clone(this.quickRolls),
       rollHistory: clone(this.rollHistory),
+      lootTable: clone(this.lootTable),
+      lootHistory: clone(this.lootHistory),
+      lootGeneratedForDefeat: this.lootGeneratedForDefeat,
+      defeatedAt: this.defeatedAt,
       metadata: clone(this.metadata),
       sourceReference: { ...this.sourceReference },
       createdAt: this.createdAt,
