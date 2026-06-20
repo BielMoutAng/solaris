@@ -12,7 +12,7 @@
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./assets/icons/solaris-icon.svg" />
     <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./styles.css?v=20260615b" />
+    <link rel="stylesheet" href="./styles.css?v=20260620c" />
   </head>
   <body>
     <div class="app-shell">
@@ -31,6 +31,10 @@
         </div>
 
         <nav class="nav-list" aria-label="Menu principal" aria-expanded="false">
+          <button class="nav-item" type="button" data-view="mesaVirtual">
+            <span class="nav-icon" data-icon="orbit"></span>
+            <span>Mesa virtual</span>
+          </button>
           <button class="nav-item active" type="button" data-view="personagens">
             <span class="nav-icon" data-icon="user"></span>
             <span>Personagens</span>
@@ -148,6 +152,11 @@
                 <span data-icon="package"></span>
                 <strong>Itens</strong>
                 <small>Equipamentos e inventário</small>
+              </button>
+              <button class="tablet-app-button" type="button" data-launcher-view="mesaVirtual">
+                <span data-icon="orbit"></span>
+                <strong>Mesa</strong>
+                <small>Sala, chat e rolagens</small>
               </button>
               <button class="tablet-app-button" type="button" data-launcher-view="skillsHub">
                 <span data-icon="spark"></span>
@@ -311,6 +320,10 @@
               <div class="saved-list" id="savedList"></div>
             </section>
           </div>
+        </section>
+
+        <section class="view" id="mesaVirtualView">
+          <div id="mesaVirtualRoot"></div>
         </section>
 
         <section class="view" id="personagensView">
@@ -1015,6 +1028,6 @@
       }
     </script>
     <script src="./HumanisVitalHUD.js?v=20260606e"></script>
-    <script type="module" src="./app.js?v=20260615b"></script>
+    <script type="module" src="./app.js?v=20260620c"></script>
   </body>
 </html>

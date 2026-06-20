@@ -10,7 +10,8 @@ import {
   inferLegacyInventorySize,
   migrateLegacyCharacterData,
   reconcileLegacyArmorCatalog,
-} from "./src/domain/solaris-domain-architecture.js?v=20260615b";
+} from "./src/domain/solaris-domain-architecture.js?v=20260615c";
+import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260620c";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -1448,6 +1449,8 @@ const el = {
   booksHubView: document.querySelector("#booksHubView"),
   rulesHubView: document.querySelector("#rulesHubView"),
   characterManagerView: document.querySelector("#characterManagerView"),
+  mesaVirtualView: document.querySelector("#mesaVirtualView"),
+  mesaVirtualRoot: document.querySelector("#mesaVirtualRoot"),
   topbar: document.querySelector(".topbar"),
   homeButton: document.querySelector("#homeButton"),
   launcherVitalTrigger: document.querySelector("#launcherVitalTrigger"),
@@ -1583,6 +1586,8 @@ const el = {
   toast: document.querySelector("#toast"),
 };
 
+let mesaVirtualUi = null;
+
 function init() {
   installIcons();
   syncNavState();
@@ -1600,6 +1605,7 @@ function init() {
   renderSavedList();
   renderSummary();
   renderLibrary();
+  mountMesaVirtual();
   switchView("inicio");
 }
 
@@ -2299,6 +2305,228 @@ function bindEvents() {
   });
 }
 
+function mountMesaVirtual() {
+  if (!el.mesaVirtualRoot || mesaVirtualUi) return;
+  mesaVirtualUi = mountSolarisSessionUI(el.mesaVirtualRoot, {
+    getCurrentCharacter: currentSessionCharacterSnapshot,
+    onOpenCharacter: () => switchView("personagens"),
+    onOpenInventory: () => {
+      switchView("personagens");
+      switchCharacterPage("equipamentos");
+    },
+    onResourceUpdate: applySessionResourceUpdate,
+    onRemoteCharacterUpdate: applySessionFullCharacterSnapshot,
+    getMonsterCatalog: sessionMonsterCatalog,
+    getShopCatalog: sessionShopCatalog,
+    notify: showToast,
+  });
+}
+
+function refreshMesaVirtual() {
+  if (mesaVirtualUi && state.activeView === "mesaVirtual") mesaVirtualUi.refresh();
+}
+
+function currentSessionCharacterSnapshot() {
+  const race = findRace(state.current.race);
+  const profession = findProfession(state.current.profession);
+  const attrs = totalAttributes();
+  const derived = derivedStats(attrs, race, profession);
+  const weapon = getEquippedMarketItem("weapon");
+  const armor = getEquippedMarketItem("armor");
+  const inventory = structuredCloneSafe(state.current.inventory || []);
+  const unassignedItems = inventory.filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.UNASSIGNED);
+  const equippedItems = inventory.filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.EQUIPPED);
+  const activeItems = inventory.filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.ACTIVE);
+  const cubes = inventory.filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.CUBE || entry.category === "cube");
+  const backpacks = inventory.filter((entry) => entry.category === "storage" || /mochila/i.test(findMarketItem(entry.itemId)?.name || ""));
+  const holsters = inventory.filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.HOLSTER || entry.supportSlot === "coldre");
+  const bandoliers = inventory.filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.BANDOLIER || entry.supportSlot === "bandoleira");
+  const hooks = inventory.filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.HOOK || entry.supportSlot === "gancho");
+  const modifiers = ATTRIBUTES.reduce((acc, attr) => {
+    acc[attr] = attributeModifier(attrs[attr]);
+    return acc;
+  }, {});
+  const cosmicSpells = cosmicSpellEntries().map((entry) => structuredCloneSafe(entry));
+  const modifierChips = modifierChipEntries().map((entry) => structuredCloneSafe(entry));
+  const racialAbilities = (state.current.knownAbilities || []).filter((ability) => ability.source === "Raça").map((entry) => structuredCloneSafe(entry));
+  const manualAbilities = (state.current.knownAbilities || []).filter((ability) => ability.source === "Manual" || ability.custom).map((entry) => structuredCloneSafe(entry));
+  return {
+    id: state.current.id,
+    characterId: state.current.id,
+    ownerId: "",
+    name: state.current.name || "Personagem sem nome",
+    player: state.current.player || "Jogador local",
+    race: race.name,
+    profession: profession.name,
+    level: state.current.level,
+    xp: state.current.xp || 0,
+    attributes: attrs,
+    modifiers,
+    derived,
+    skills: structuredCloneSafe(state.current.skillStates || state.current.skills || {}),
+    protections: structuredCloneSafe(state.current.protectionStates || state.current.protections || {}),
+    currentPV: state.current.pvCurrent,
+    pvCurrent: state.current.pvCurrent,
+    maxPV: derived.pvMax,
+    cosmosCurrent: state.current.cosmosCurrent,
+    cosmosMax: derived.cosmosMax,
+    stress: state.current.stress,
+    stressMax: derived.stressMax,
+    ca: derived.ca,
+    movement: derived.movement,
+    initiative: derived.initiative || modifiers.REF || 0,
+    inventory,
+    unassignedItems,
+    activeItems,
+    equipment: {
+      weapon: weapon ? structuredCloneSafe(weapon) : null,
+      armor: armor ? structuredCloneSafe(armor) : null,
+      equippedItems,
+      equippedWeaponUid: state.current.equippedWeaponUid || "",
+      equippedArmorUid: state.current.equippedArmorUid || "",
+    },
+    loadout: {
+      weaponUid: state.current.equippedWeaponUid || "",
+      armorUid: state.current.equippedArmorUid || "",
+    },
+    storage: structuredCloneSafe(state.current.domainCharacter?.inventory || {}),
+    cubes,
+    backpacks,
+    holsters,
+    bandoliers,
+    hooks,
+    cosmicSpells,
+    modifierChips,
+    professionChip: structuredCloneSafe(findProfession(state.current.profession) || {}),
+    installedMods: modifierChips.filter((entry) => entry.installed !== false),
+    racialAbilities,
+    manualAbilities,
+    abilities: structuredCloneSafe(state.current.knownAbilities || []),
+    conditions: structuredCloneSafe(state.current.conditions || []),
+    playerNotes: state.current.notes || "",
+    currency: numberValue(state.current.currency, STARTING_CURRENCY),
+    luzentis: numberValue(state.current.currency, STARTING_CURRENCY),
+    metadata: {
+      schemaVersion: 1,
+      appCache: "20260620c",
+      source: "solaris-local-character",
+      updatedAt: state.current.updatedAt || new Date().toISOString(),
+    },
+    revision: numberValue(state.current.sessionRevision, 0),
+    weapon: weapon?.name || state.current.weapon || "Arma nao equipada",
+    armor: armor?.name || state.current.armor || "Armadura nao equipada",
+    portrait: state.current.photoDataUrl || "",
+  };
+}
+
+function sessionMonsterCatalog() {
+  return getMonsterLibraryItems().map((monster) => ({
+    id: monster.id,
+    name: monster.name,
+    tier: monster.tier || "",
+    type: monster.type || "",
+    role: monster.role || "",
+    pv: Number(monster.pv ?? monster.maxPV ?? monster.pvMax ?? 24),
+    maxPV: Number(monster.maxPV ?? monster.pvMax ?? monster.pv ?? 24),
+    currentPV: Number(monster.currentPV ?? monster.pvAtual ?? monster.pv ?? monster.maxPV ?? 24),
+    ca: Number(monster.ca ?? 10),
+    movement: Number(monster.movement ?? monster.movimento ?? 6),
+    image: monster.imageDataUrl || monster.image || "",
+    imageDataUrl: monster.imageDataUrl || monster.image || "",
+    attacks: monster.attacks || monster.actions || "",
+    abilities: monster.abilities || monster.traits || "",
+    source: monster.source || "Bestiario Solaris",
+  })).slice(0, 40);
+}
+
+function sessionShopCatalog() {
+  const buckets = [
+    ["itens", "common"],
+    ["armas", "weapon"],
+    ["armaduras", "armor"],
+    ["armazenamento", "utility"],
+    ["chipsMod", "chip"],
+    ["magias", "spell"],
+    ["mods", "utility"],
+  ];
+  return buckets.flatMap(([view, sessionCategory]) => getLibraryItemsForView(view).map((item) => ({
+    ...structuredCloneSafe(item),
+    sessionCategory,
+    categoryLabel: libraryMap[view]?.title || "Item",
+    price: getLibraryPrice(item),
+    sourceView: view,
+  })));
+}
+
+function applySessionResourceUpdate(resources = {}) {
+  const race = findRace(state.current.race);
+  const profession = findProfession(state.current.profession);
+  const derived = derivedStats(totalAttributes(), race, profession);
+  if (resources.currentPV !== undefined || resources.pvCurrent !== undefined) {
+    state.current.pvCurrent = clamp(numberValue(resources.currentPV ?? resources.pvCurrent, state.current.pvCurrent), 0, derived.pvMax);
+  }
+  if (resources.cosmosCurrent !== undefined) {
+    state.current.cosmosCurrent = clamp(numberValue(resources.cosmosCurrent, state.current.cosmosCurrent), 0, derived.cosmosMax);
+  }
+  if (resources.stress !== undefined) {
+    state.current.stress = clamp(numberValue(resources.stress, state.current.stress), 0, derived.stressMax);
+  }
+  renderForm();
+  persistCurrentCharacterSilently();
+}
+
+function applySessionFullCharacterSnapshot(snapshot = {}) {
+  if (!snapshot) return;
+  const characterId = snapshot.characterId || snapshot.id;
+  if (characterId && characterId !== state.current.id) return;
+  const incomingRevision = numberValue(snapshot.revision, 0);
+  const currentRevision = numberValue(state.current.sessionRevision, 0);
+  if (incomingRevision && incomingRevision < currentRevision) return;
+  const race = findRace(state.current.race);
+  const profession = findProfession(state.current.profession);
+  const derived = derivedStats(totalAttributes(), race, profession);
+  if (snapshot.name !== undefined) state.current.name = String(snapshot.name || state.current.name);
+  if (snapshot.player !== undefined) state.current.player = String(snapshot.player || state.current.player);
+  if (snapshot.level !== undefined) state.current.level = clamp(numberValue(snapshot.level, state.current.level), 1, 10);
+  if (snapshot.xp !== undefined) state.current.xp = Math.max(0, numberValue(snapshot.xp, state.current.xp || 0));
+  if (snapshot.currentPV !== undefined || snapshot.pvCurrent !== undefined) {
+    state.current.pvCurrent = clamp(numberValue(snapshot.currentPV ?? snapshot.pvCurrent, state.current.pvCurrent), 0, derived.pvMax);
+  }
+  if (snapshot.cosmosCurrent !== undefined) {
+    state.current.cosmosCurrent = clamp(numberValue(snapshot.cosmosCurrent, state.current.cosmosCurrent), 0, derived.cosmosMax);
+  }
+  if (snapshot.stress !== undefined) {
+    state.current.stress = clamp(numberValue(snapshot.stress, state.current.stress), 0, derived.stressMax);
+  }
+  if (snapshot.currency !== undefined || snapshot.luzentis !== undefined) {
+    state.current.currency = Math.max(0, numberValue(snapshot.currency ?? snapshot.luzentis, state.current.currency));
+  }
+  if (Array.isArray(snapshot.inventory)) {
+    state.current.inventory = structuredCloneSafe(snapshot.inventory);
+  }
+  if (snapshot.equipment) {
+    state.current.equippedWeaponUid = snapshot.equipment.equippedWeaponUid || snapshot.loadout?.weaponUid || state.current.equippedWeaponUid || "";
+    state.current.equippedArmorUid = snapshot.equipment.equippedArmorUid || snapshot.loadout?.armorUid || state.current.equippedArmorUid || "";
+  }
+  if (Array.isArray(snapshot.abilities)) {
+    state.current.knownAbilities = structuredCloneSafe(snapshot.abilities);
+  } else if (Array.isArray(snapshot.cosmicSpells) || Array.isArray(snapshot.modifierChips)) {
+    const nonSessionAbilities = (state.current.knownAbilities || []).filter((ability) =>
+      ability.source !== "Cosmos" && ability.source !== "Chip modificador"
+    );
+    state.current.knownAbilities = [
+      ...nonSessionAbilities,
+      ...structuredCloneSafe(snapshot.cosmicSpells || []),
+      ...structuredCloneSafe(snapshot.modifierChips || []),
+    ];
+  }
+  if (Array.isArray(snapshot.conditions)) state.current.conditions = structuredCloneSafe(snapshot.conditions);
+  state.current.sessionRevision = incomingRevision || currentRevision;
+  state.current.updatedAt = new Date().toISOString();
+  renderForm();
+  persistCurrentCharacterSilently();
+}
+
 function handleNavClick(view) {
   if (view === state.activeView) {
     setNavExpanded(!state.navExpanded);
@@ -2346,8 +2574,9 @@ function switchView(view) {
     criador: el.characterManagerView,
   };
   const isHub = Boolean(hubViews[view]);
-  el.topbar.hidden = view === "inicio" || isHub;
+  el.topbar.hidden = view === "inicio" || isHub || view === "mesaVirtual";
   document.body.classList.toggle("is-tablet-home", view === "inicio");
+  document.body.classList.toggle("is-virtual-table", view === "mesaVirtual");
   document.querySelector("#saveButton").hidden = view !== "personagens";
   document.querySelector("#printButton").hidden = view !== "personagens";
 
@@ -2361,6 +2590,13 @@ function switchView(view) {
   if (isHub) {
     hubViews[view].classList.add("active");
     if (view === "criador") renderSavedList();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
+  if (view === "mesaVirtual") {
+    el.mesaVirtualView.classList.add("active");
+    refreshMesaVirtual();
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
@@ -2689,6 +2925,7 @@ function renderSummary() {
   renderLauncherSummary({ race, profession, derived, diceProfile });
   renderStressHud(diceProfile, derived);
   renderCharacterPages(derived);
+  refreshMesaVirtual();
 }
 
 function renderLauncherSummary(context = {}) {
@@ -3767,27 +4004,23 @@ function unassignedInventoryEntries() {
 function diceLockMessage(entries = unassignedInventoryEntries()) {
   const names = entries.slice(0, 3).map((entry) => findMarketItem(entry.itemId)?.name || "Item sem nome");
   const remaining = Math.max(0, entries.length - names.length);
-  return `Organize ${names.join(", ")}${remaining ? ` e mais ${remaining}` : ""} antes de rolar dados.`;
+  return `Itens sem local definido: ${names.join(", ")}${remaining ? ` e mais ${remaining}` : ""}.`;
 }
 
 function ensureDiceRollAllowed() {
-  const unassigned = unassignedInventoryEntries();
-  if (!unassigned.length) return true;
-  showToast(diceLockMessage(unassigned), "tech-error");
-  renderDicePage();
-  return false;
+  return true;
 }
 
 function renderDicePage() {
   const log = state.current.diceLog || [];
   const latest = log[0];
   const unassigned = unassignedInventoryEntries();
-  const rollsLocked = unassigned.length > 0;
-  el.rollDiceButton.disabled = rollsLocked;
-  el.rollInitiativeButton.disabled = rollsLocked;
-  el.diceLockNotice.hidden = !rollsLocked;
-  el.diceLockNotice.textContent = rollsLocked
-    ? `ROLAGENS BLOQUEADAS: ${diceLockMessage(unassigned)}`
+  const hasLocationWarnings = unassigned.length > 0;
+  el.rollDiceButton.disabled = false;
+  el.rollInitiativeButton.disabled = false;
+  el.diceLockNotice.hidden = !hasLocationWarnings;
+  el.diceLockNotice.textContent = hasLocationWarnings
+    ? `Aviso de inventário: ${diceLockMessage(unassigned)} As rolagens continuam liberadas.`
     : "";
   el.diceResultDisplay.classList.toggle("empty-state", !latest);
   el.diceResultDisplay.innerHTML = latest ? `
