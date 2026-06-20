@@ -10,7 +10,7 @@ import {
   inferLegacyInventorySize,
   migrateLegacyCharacterData,
   reconcileLegacyArmorCatalog,
-} from "./src/domain/solaris-domain-architecture.js?v=20260615b";
+} from "./src/domain/solaris-domain-architecture.js?v=20260615c";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -3767,27 +3767,27 @@ function unassignedInventoryEntries() {
 function diceLockMessage(entries = unassignedInventoryEntries()) {
   const names = entries.slice(0, 3).map((entry) => findMarketItem(entry.itemId)?.name || "Item sem nome");
   const remaining = Math.max(0, entries.length - names.length);
-  return `Organize ${names.join(", ")}${remaining ? ` e mais ${remaining}` : ""} antes de rolar dados.`;
+  return `Itens sem local definido: ${names.join(", ")}${remaining ? ` e mais ${remaining}` : ""}.`;
 }
 
 function ensureDiceRollAllowed() {
   const unassigned = unassignedInventoryEntries();
   if (!unassigned.length) return true;
-  showToast(diceLockMessage(unassigned), "tech-error");
+  showToast(`${diceLockMessage(unassigned)} As rolagens continuam liberadas.`);
   renderDicePage();
-  return false;
+  return true;
 }
 
 function renderDicePage() {
   const log = state.current.diceLog || [];
   const latest = log[0];
   const unassigned = unassignedInventoryEntries();
-  const rollsLocked = unassigned.length > 0;
-  el.rollDiceButton.disabled = rollsLocked;
-  el.rollInitiativeButton.disabled = rollsLocked;
-  el.diceLockNotice.hidden = !rollsLocked;
-  el.diceLockNotice.textContent = rollsLocked
-    ? `ROLAGENS BLOQUEADAS: ${diceLockMessage(unassigned)}`
+  const hasLocationWarnings = unassigned.length > 0;
+  el.rollDiceButton.disabled = false;
+  el.rollInitiativeButton.disabled = false;
+  el.diceLockNotice.hidden = !hasLocationWarnings;
+  el.diceLockNotice.textContent = hasLocationWarnings
+    ? `Aviso de inventario: ${diceLockMessage(unassigned)} As rolagens continuam liberadas.`
     : "";
   el.diceResultDisplay.classList.toggle("empty-state", !latest);
   el.diceResultDisplay.innerHTML = latest ? `
@@ -8579,7 +8579,7 @@ function closeInventoryLocationDialog() {
   state.pendingLocationReason = "";
   el.inventoryLocationModal.hidden = true;
   syncModalOpenState();
-  if (reason === "purchase") showToast("Item comprado e mantido sem local definido.", "tech-error");
+  if (reason === "purchase") showToast("Item comprado e mantido sem local definido. Isso e apenas um aviso de inventario.");
 }
 
 function applyPendingInventoryLocation(event) {
