@@ -242,6 +242,108 @@ test("mapa tatico sincroniza tokens, zonas, objetivos e permissoes", () => {
   assert.equal(room.scene.findTokenForEntity("monster", "monster-1"), null);
 });
 
+test("fase 5 do mapa aceita imagem, grid, medicao, areas, objetivos e visibilidade", () => {
+  const room = new GameRoom({
+    players: [
+      { id: "gm", name: "GM", role: SESSION_ROLES.GM },
+      { id: "p1", name: "Lyssara", role: SESSION_ROLES.PLAYER },
+    ],
+    characters: [
+      new SessionCharacter({
+        id: "char-1",
+        ownerPlayerId: "p1",
+        name: "Lyssara",
+        snapshot: { currentPV: 20, maxPV: 20, movement: 3 },
+      }),
+    ],
+    scene: {
+      columns: 8,
+      rows: 8,
+      tokens: [
+        new MapToken({ id: "token-1", entityType: "character", entityId: "char-1", name: "Lyssara", x: 1, y: 1, metadata: { movement: 3 } }),
+      ],
+    },
+  });
+
+  room.dispatch(GAME_EVENT_TYPES.SCENE_MAP_UPDATE, { mapImage: "data:image/png;base64,abc" }, "gm");
+  assert.equal(room.scene.mapImage, "data:image/png;base64,abc");
+
+  room.dispatch(GAME_EVENT_TYPES.SCENE_GRID_UPDATE, {
+    columns: 12,
+    rows: 10,
+    metersPerCell: 1.5,
+    gridVisible: false,
+    gridOpacity: 0.2,
+  }, "gm");
+  assert.equal(room.scene.columns, 12);
+  assert.equal(room.scene.gridVisible, false);
+  assert.equal(room.scene.gridOpacity, 0.2);
+
+  room.dispatch(GAME_EVENT_TYPES.SCENE_MEASUREMENT_CREATE, {
+    from: { x: 1, y: 1 },
+    to: { x: 4, y: 5 },
+  }, "p1");
+  assert.equal(room.scene.measurements[0].cells, 5);
+  assert.equal(room.scene.measurements[0].meters, 7.5);
+
+  room.dispatch(GAME_EVENT_TYPES.SCENE_AREA_CREATE, {
+    id: "area-1",
+    type: "circle",
+    label: "Pulso cosmico",
+    x: 4,
+    y: 4,
+    radius: 2,
+  }, "gm");
+  assert.equal(room.scene.areas[0].label, "Pulso cosmico");
+
+  room.dispatch(GAME_EVENT_TYPES.SCENE_AREA_UPDATE, {
+    id: "area-1",
+    label: "Pulso ampliado",
+    x: 4,
+    y: 4,
+    radius: 3,
+  }, "gm");
+  assert.equal(room.scene.areas[0].radius, 3);
+
+  room.dispatch(GAME_EVENT_TYPES.SCENE_OBJECTIVE_CREATE, {
+    id: "obj-1",
+    title: "Reativar console",
+    progressCurrent: 0,
+    progressMax: 3,
+    x: 3,
+    y: 3,
+  }, "gm");
+  room.dispatch(GAME_EVENT_TYPES.SCENE_OBJECTIVE_UPDATE, {
+    id: "obj-1",
+    title: "Reativar console",
+    progressCurrent: 2,
+    progressMax: 3,
+    x: 3,
+    y: 3,
+  }, "gm");
+  assert.equal(room.scene.objectives[0].progressCurrent, 2);
+
+  room.dispatch(GAME_EVENT_TYPES.SCENE_VISIBILITY_UPDATE, {
+    targetType: "token",
+    id: "token-1",
+    hidden: true,
+  }, "gm");
+  assert.equal(room.sceneForPlayer("gm").tokens.length, 1);
+  assert.equal(room.sceneForPlayer("p1").tokens.length, 0);
+
+  room.dispatch(GAME_EVENT_TYPES.SCENE_VISIBILITY_UPDATE, {
+    targetType: "token",
+    id: "token-1",
+    hidden: false,
+  }, "gm");
+  room.dispatch(GAME_EVENT_TYPES.TOKEN_MOVE, { tokenId: "token-1", x: 5, y: 1 }, "p1");
+  assert.equal(room.scene.tokens[0].metadata.lastMove.exceedsMovement, true);
+  assert.ok(room.combat.log[0].message.includes("Movimento excede"));
+
+  room.dispatch(GAME_EVENT_TYPES.SCENE_AREA_DELETE, { areaId: "area-1" }, "gm");
+  assert.equal(room.scene.areas.length, 0);
+});
+
 test("ficha completa sincroniza dados ricos, respeita permissoes e ignora revision antiga", () => {
   const room = new GameRoom({
     players: [
@@ -473,6 +575,7 @@ test("loja da sessao cria pedido, mestre aprova e registra transacao", () => {
   room.dispatch(GAME_EVENT_TYPES.SHOP_PURCHASE_REQUEST, {
     characterId: "char-1",
     items: [{ item: { id: "vela", name: "Vela", price: 5 }, quantity: 2, price: 5 }],
+    destination: { kind: "backpack" },
   }, "p1");
   const purchase = room.approvals[0];
   assert.equal(purchase.type, "purchase-cart");
@@ -487,6 +590,7 @@ test("loja da sessao cria pedido, mestre aprova e registra transacao", () => {
   const character = room.getCharacter("char-1");
   assert.equal(character.snapshot.currency, 490);
   assert.equal(character.snapshot.inventory.length, 2);
+  assert.equal(character.snapshot.inventory[0].location.kind, "backpack");
   assert.equal(room.transactionLog[0].type, "purchase");
 });
 
@@ -576,4 +680,29 @@ test("mestre cria e distribui loot para ficha sincronizada", () => {
   assert.equal(character.snapshot.inventory[0].name, "Nucleo de Fusao");
   assert.equal(room.lootPacks[0].status, "distributed");
   assert.equal(room.transactionLog[0].type, "loot:distribute");
+});
+
+test("monstro derrotado cria loot pendente automaticamente", () => {
+  const room = new GameRoom({
+    players: [{ id: "gm", name: "GM", role: SESSION_ROLES.GM }],
+  });
+
+  room.dispatch(GAME_EVENT_TYPES.MONSTER_CREATE, {
+    id: "monster-1",
+    name: "Vanguarda Xirax",
+    snapshot: {
+      currentPV: 5,
+      maxPV: 5,
+      loot: [{ id: "nucleo", name: "Nucleo Xirax", quantity: 1 }],
+      luzentis: 12,
+    },
+  }, "gm");
+
+  room.dispatch(GAME_EVENT_TYPES.MONSTER_DAMAGE, { monsterId: "monster-1", amount: 5 }, "gm");
+
+  assert.equal(room.lootPacks.length, 1);
+  assert.equal(room.lootPacks[0].name, "Loot pendente - Vanguarda Xirax");
+  assert.equal(room.lootPacks[0].items[0].item.name, "Nucleo Xirax");
+  assert.equal(room.lootPacks[0].luzentis, 12);
+  assert.ok(room.chat.at(-1).message.includes("Loot pendente criado"));
 });

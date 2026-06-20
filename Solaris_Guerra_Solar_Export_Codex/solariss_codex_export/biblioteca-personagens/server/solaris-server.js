@@ -63,7 +63,7 @@ function sendError(socket, message) {
   send(socket, "error", { message });
 }
 
-function roomPayload(room) {
+function roomPayload(room, viewerPlayerId = "") {
   const data = room.toJSON();
   return {
     roomId: data.id,
@@ -82,7 +82,7 @@ function roomPayload(room) {
     lootPacks: data.lootPacks,
     transactionLog: data.transactionLog,
     combat: data.combat,
-    scene: data.scene,
+    scene: viewerPlayerId ? room.sceneForPlayer(viewerPlayerId) : data.scene,
     sequence: data.sequence,
     updatedAt: data.updatedAt,
   };
@@ -92,7 +92,7 @@ function broadcastRoom(roomId) {
   const room = rooms.get(roomId);
   if (!room) return;
   for (const [socket, meta] of clients.entries()) {
-    if (meta.roomId === roomId) send(socket, "room:state", { room: roomPayload(room) });
+    if (meta.roomId === roomId) send(socket, "room:state", { room: roomPayload(room, meta.playerId) });
   }
 }
 

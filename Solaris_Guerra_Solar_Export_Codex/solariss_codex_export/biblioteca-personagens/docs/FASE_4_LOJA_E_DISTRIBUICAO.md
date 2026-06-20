@@ -1,6 +1,6 @@
 # Solaris Guerra Solar - Fase 4: Loja, Loot e Distribuicao em Sessao
 
-Status: alfa implementada em `20260620c`.
+Status: alfa implementada em `20260620c` e refinada no cache `20260620d`.
 
 ## Objetivo
 
@@ -18,6 +18,10 @@ Adicionar uma camada de economia compartilhada na Mesa Virtual sem quebrar o mod
 - Venda e exclusao em sessao como pedidos ao mestre.
 - Estado de sala com `shopState`, `lootPacks` e `transactionLog`.
 - Painel **Distribuicao de Loot** com criacao e distribuicao de pacotes.
+- Janela dedicada de loot para criar pacote, adicionar Luzentis, item oficial ou item manual e escolher destino.
+- Modal de detalhe de item dentro da Mesa Virtual.
+- Compra com destino de armazenamento.
+- Loot automatico pendente quando monstro derrotado chega a 0 PV.
 - Logs de transacao enviados ao chat/historico.
 - Integracao com ficha sincronizada: compra/loot adicionam itens ao inventario e incrementam a revisao.
 
@@ -49,7 +53,7 @@ Adicionar uma camada de economia compartilhada na Mesa Virtual sem quebrar o mod
 ## Como testar
 
 1. Rodar `npm run server`.
-2. Abrir `http://localhost:3000/?check=20260620c`.
+2. Abrir `http://localhost:3000/?view=mesaVirtual&check=20260620d`.
 3. Abrir **Mesa Virtual**.
 4. Criar sala como Mestre.
 5. Em outra aba, entrar como Jogador.
@@ -64,12 +68,10 @@ Adicionar uma camada de economia compartilhada na Mesa Virtual sem quebrar o mod
 
 ## Limitacoes da alfa
 
-- A loja visual ainda usa cards compactos, sem modal de detalhe dentro da Mesa Virtual.
 - O carrinho e local ao cliente; em sessao ele envia o pedido para o mestre.
 - Compra/venda/exclusao usam a camada generica de aprovacoes.
-- Distribuicao de loot usa prompts simples para a alfa.
 - Ainda falta uma tela dedicada para editar pacote de loot com varios destinatarios e divisao automatica.
-- Regras finas de requisito, espaco e local de armazenamento ainda devem ser refinadas na proxima etapa.
+- Regras finas de requisito e espaco ainda devem ser refinadas na proxima etapa.
 
 ## Proxima etapa recomendada
 

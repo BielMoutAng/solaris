@@ -11,7 +11,7 @@ import {
   migrateLegacyCharacterData,
   reconcileLegacyArmorCatalog,
 } from "./src/domain/solaris-domain-architecture.js?v=20260615c";
-import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260620c";
+import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260620d";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -1606,7 +1606,16 @@ function init() {
   renderSummary();
   renderLibrary();
   mountMesaVirtual();
-  switchView("inicio");
+  switchView(initialViewFromUrl());
+}
+
+function initialViewFromUrl() {
+  const params = new URLSearchParams(window.location.search || "");
+  const view = params.get("view") || params.get("start") || "";
+  const hashView = (window.location.hash || "").replace(/^#\/?/, "");
+  const requested = view || hashView;
+  if (requested === "mesaVirtual" || requested === "vtt" || requested === "tabletop") return "mesaVirtual";
+  return "inicio";
 }
 
 function installIcons() {
@@ -2408,7 +2417,7 @@ function currentSessionCharacterSnapshot() {
     luzentis: numberValue(state.current.currency, STARTING_CURRENCY),
     metadata: {
       schemaVersion: 1,
-      appCache: "20260620c",
+      appCache: "20260620d",
       source: "solaris-local-character",
       updatedAt: state.current.updatedAt || new Date().toISOString(),
     },

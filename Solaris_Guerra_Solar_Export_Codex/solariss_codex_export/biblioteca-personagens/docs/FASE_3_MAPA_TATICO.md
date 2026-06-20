@@ -1,6 +1,6 @@
 # Solaris Guerra Solar - Fase 3: Mapa Tatico
 
-Status: primeira versao implementada em `20260620a` e revalidada no cache `20260620c`.
+Status: primeira versao implementada em `20260620a` e expandida no cache `20260620d`.
 
 ## Objetivo
 
@@ -8,7 +8,13 @@ Transformar o placeholder central da Mesa Virtual em um mapa tatico funcional, m
 
 ## O que foi implementado
 
-- Cena com grid configuravel por colunas e linhas.
+- Cena com grid configuravel por colunas, linhas, escala, opacidade e visibilidade.
+- Upload/selecao de imagem de battlemap.
+- Medidor de distancia com casas e metros.
+- Movimento com aviso quando excede o MOV.
+- Areas visuais de efeito: circulo, cone e linha.
+- Ocultar/revelar elementos para jogadores.
+- Objetivos com progresso atual/maximo.
 - Tokens de personagens e monstros no estado compartilhado da sala.
 - Criacao automatica de token quando uma ficha entra na mesa.
 - Criacao automatica de token quando o mestre adiciona um monstro.
@@ -66,7 +72,7 @@ Cada token guarda:
 ## Como testar
 
 1. Rodar `npm run server`.
-2. Abrir `http://localhost:3000/?check=20260620c`.
+2. Abrir `http://localhost:3000/?view=mesaVirtual&check=20260620d`.
 3. Abrir **Mesa Virtual**.
 4. Criar sala.
 5. Conferir se o personagem atual aparece como token no mapa.
@@ -80,11 +86,9 @@ Cada token guarda:
 
 ## Limitacoes atuais
 
-- Ainda nao existe upload visual de mapa/battlemap pela UI.
-- Ainda nao existe medicao de distancia ou regra automatica de movimento por metros.
+- Areas ainda nao aplicam dano automatico.
 - Ainda nao existe linha de visao.
-- Zonas sao simples e nao aplicam efeitos automaticos.
-- Objetivos sao marcadores visuais, sem fluxo de missao completo.
+- Objetivos possuem progresso, mas ainda nao disparam automacoes de missao.
 
 ## Proxima etapa recomendada
 

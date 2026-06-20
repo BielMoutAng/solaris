@@ -51,7 +51,23 @@ export const SESSION_SOCKET_EVENTS = Object.freeze({
   INITIATIVE_UPDATE: "initiative:update",
   TURN_NEXT: "turn:next",
   SCENE_UPDATE: "scene:update",
+  SCENE_MAP_UPDATE: "scene:map:update",
+  SCENE_GRID_UPDATE: "scene:grid:update",
+  SCENE_MEASUREMENT_CREATE: "scene:measurement:create",
+  SCENE_MEASUREMENT_CLEAR: "scene:measurement:clear",
+  SCENE_AREA_CREATE: "scene:area:create",
+  SCENE_AREA_UPDATE: "scene:area:update",
+  SCENE_AREA_DELETE: "scene:area:delete",
+  SCENE_VISIBILITY_UPDATE: "scene:visibility:update",
+  SCENE_OBJECTIVE_CREATE: "scene:objective:create",
+  SCENE_OBJECTIVE_UPDATE: "scene:objective:update",
+  SCENE_OBJECTIVE_DELETE: "scene:objective:delete",
   TOKEN_MOVE: "token:move",
+  SHOP_ITEM_DETAILS: "shop:item:details",
+  SHOP_CART_STATE: "shop:cart:state",
+  SHOP_CART_SUBMIT: "shop:cart:submit",
+  SHOP_CART_APPROVE: "shop:cart:approve",
+  SHOP_CART_REJECT: "shop:cart:reject",
   SHOP_CATALOG_REQUEST: "shop:catalog:request",
   SHOP_CATALOG_STATE: "shop:catalog:state",
   SHOP_CART_UPDATE: "shop:cart:update",
@@ -73,6 +89,10 @@ export const SESSION_SOCKET_EVENTS = Object.freeze({
   LOOT_CLAIM: "loot:claim",
   LOOT_DISTRIBUTE: "loot:distribute",
   LOOT_STATE: "loot:state",
+  LOOT_PACK_CREATE: "loot:pack:create",
+  LOOT_PACK_UPDATE: "loot:pack:update",
+  LOOT_PACK_DISTRIBUTE: "loot:pack:distribute",
+  LOOT_MONSTER_DEFEATED: "loot:monster:defeated",
   TRANSACTION_LOG: "transaction:log",
   APPROVAL_REQUEST: "approval:request",
   APPROVAL_APPROVE: "approval:approve",
@@ -386,6 +406,50 @@ export class SolarisSessionClient extends EventTarget {
     return this.send(SESSION_SOCKET_EVENTS.SCENE_UPDATE, { patch: clone(patch) });
   }
 
+  updateSceneMap(mapImage = "", extra = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SCENE_MAP_UPDATE, { mapImage, ...clone(extra) });
+  }
+
+  updateSceneGrid(patch = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SCENE_GRID_UPDATE, clone(patch));
+  }
+
+  createSceneMeasurement(measurement = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SCENE_MEASUREMENT_CREATE, { measurement: clone(measurement) });
+  }
+
+  clearSceneMeasurements() {
+    return this.send(SESSION_SOCKET_EVENTS.SCENE_MEASUREMENT_CLEAR, {});
+  }
+
+  createSceneArea(area = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SCENE_AREA_CREATE, { area: clone(area) });
+  }
+
+  updateSceneArea(areaId = "", patch = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SCENE_AREA_UPDATE, { id: areaId, areaId, ...clone(patch) });
+  }
+
+  deleteSceneArea(areaId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.SCENE_AREA_DELETE, { areaId });
+  }
+
+  updateSceneVisibility(target = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SCENE_VISIBILITY_UPDATE, clone(target));
+  }
+
+  createSceneObjective(objective = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SCENE_OBJECTIVE_CREATE, { objective: clone(objective) });
+  }
+
+  updateSceneObjective(objectiveId = "", patch = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SCENE_OBJECTIVE_UPDATE, { id: objectiveId, objectiveId, ...clone(patch) });
+  }
+
+  deleteSceneObjective(objectiveId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.SCENE_OBJECTIVE_DELETE, { objectiveId });
+  }
+
   moveToken(tokenId = "", x = 0, y = 0) {
     return this.send(SESSION_SOCKET_EVENTS.TOKEN_MOVE, {
       tokenId,
@@ -398,6 +462,10 @@ export class SolarisSessionClient extends EventTarget {
     return this.send(SESSION_SOCKET_EVENTS.SHOP_CATALOG_REQUEST, { filters: clone(filters) });
   }
 
+  requestShopItemDetails(itemId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.SHOP_ITEM_DETAILS, { itemId });
+  }
+
   updateShopCart(characterId = "", items = [], extra = {}) {
     return this.send(SESSION_SOCKET_EVENTS.SHOP_CART_UPDATE, {
       characterId,
@@ -408,6 +476,14 @@ export class SolarisSessionClient extends EventTarget {
 
   requestShopPurchase(characterId = "", items = [], extra = {}) {
     return this.send(SESSION_SOCKET_EVENTS.SHOP_PURCHASE_REQUEST, {
+      characterId,
+      items: clone(items),
+      ...clone(extra),
+    });
+  }
+
+  submitShopCart(characterId = "", items = [], extra = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SHOP_CART_SUBMIT, {
       characterId,
       items: clone(items),
       ...clone(extra),
@@ -443,8 +519,16 @@ export class SolarisSessionClient extends EventTarget {
     return this.send(SESSION_SOCKET_EVENTS.LOOT_CREATE, { pack: clone(pack) });
   }
 
+  createLootPackV2(pack = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.LOOT_PACK_CREATE, { pack: clone(pack) });
+  }
+
   updateLootPack(lootPackId = "", patch = {}) {
     return this.send(SESSION_SOCKET_EVENTS.LOOT_UPDATE, { lootPackId, patch: clone(patch) });
+  }
+
+  updateLootPackV2(lootPackId = "", patch = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.LOOT_PACK_UPDATE, { lootPackId, patch: clone(patch) });
   }
 
   deleteLootPack(lootPackId = "") {
@@ -457,6 +541,18 @@ export class SolarisSessionClient extends EventTarget {
       characterId,
       ...clone(extra),
     });
+  }
+
+  distributeLootPackV2(lootPackId = "", characterId = "", extra = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.LOOT_PACK_DISTRIBUTE, {
+      lootPackId,
+      characterId,
+      ...clone(extra),
+    });
+  }
+
+  createLootFromDefeatedMonster(monsterId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.LOOT_MONSTER_DEFEATED, { monsterId });
   }
 
   claimLootPack(lootPackId = "", characterId = "", extra = {}) {

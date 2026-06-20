@@ -402,7 +402,7 @@ docs/FASE_3_MAPA_TATICO.md
 
 ### Passo 4 - Loja e distribuicao
 
-Status: alfa implementada em 2026-06-20 (`20260620c`).
+Status: alfa implementada em 2026-06-20 (`20260620c`) e refinada na Fase 5 (`20260620d`).
 
 - loja visual;
 - carrinho;
@@ -417,6 +417,20 @@ docs/FASE_4_LOJA_E_DISTRIBUICAO.md
 ```
 
 ### Passo 5 - Polimento visual
+
+Status: primeira versao funcional implementada em `20260620d`.
+
+- battlemap selecionavel;
+- grid configuravel;
+- medidor de distancia;
+- areas de efeito;
+- objetivos com progresso;
+- visibilidade de mestre/jogador;
+- modal de detalhe de item;
+- janela dedicada de loot;
+- loot automatico de monstro derrotado;
+- ficha de monstro refinada na mesa;
+- build `Solaris Tabletop Alpha` abre direto na Mesa Virtual.
 
 Comparar cada tela com as imagens de referencia:
 

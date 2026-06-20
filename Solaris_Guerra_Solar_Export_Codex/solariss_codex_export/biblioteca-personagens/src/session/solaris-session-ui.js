@@ -2,11 +2,11 @@ import {
   GAME_EVENT_TYPES,
   GameRoom,
   SESSION_ROLES,
-} from "./solaris-session-domain.js?v=20260620c";
+} from "./solaris-session-domain.js?v=20260620d";
 import {
   SESSION_SOCKET_EVENTS,
   SolarisSessionClient,
-} from "./solaris-session-client.js?v=20260620c";
+} from "./solaris-session-client.js?v=20260620d";
 
 const SESSION_SAVE_KEY = "solaris.virtual.table.session.v1";
 const PLAYER_SESSION_KEY = "solaris.virtual.table.playerId";
@@ -60,6 +60,10 @@ function normalizeScene(scene = {}, currentCharacter = {}) {
     notes: scene.notes || "Mapa tatico com grid, tokens e zonas da cena.",
     mapImage: scene.mapImage || "",
     gridSize: Number(scene.gridSize || 64),
+    gridVisible: scene.gridVisible !== false,
+    gridOpacity: Number(scene.gridOpacity ?? 0.38),
+    snapToGrid: scene.snapToGrid !== false,
+    metersPerCell: Number(scene.metersPerCell || 1.5),
     columns,
     rows,
     tokens: Array.isArray(scene.tokens) ? scene.tokens : [{
@@ -73,6 +77,8 @@ function normalizeScene(scene = {}, currentCharacter = {}) {
       color: "#39cfff",
     }],
     zones: Array.isArray(scene.zones) ? scene.zones : [],
+    areas: Array.isArray(scene.areas) ? scene.areas : [],
+    measurements: Array.isArray(scene.measurements) ? scene.measurements : [],
     objectives: Array.isArray(scene.objectives) ? scene.objectives : [],
   };
 }
@@ -82,8 +88,8 @@ function tokenInitial(token = {}) {
 }
 
 function tokenKindClass(token = {}) {
-  if (token.entityType === "monster") return "enemy";
   if (token.hidden) return "hidden";
+  if (token.entityType === "monster") return "enemy";
   return "ally";
 }
 
@@ -111,6 +117,65 @@ function zoneGridStyle(zone = {}, scene = {}) {
     `--zone-w:${(width / columns) * 100}%`,
     `--zone-h:${(height / rows) * 100}%`,
   ].join(";");
+}
+
+function areaGridStyle(area = {}, scene = {}) {
+  const columns = Math.max(4, Number(scene.columns || 12));
+  const rows = Math.max(4, Number(scene.rows || 8));
+  const x = clamp(Number(area.x || 1), 1, columns);
+  const y = clamp(Number(area.y || 1), 1, rows);
+  const radius = Math.max(0.5, Number(area.radius || area.length || 2));
+  const length = Math.max(1, Number(area.length || radius || 3));
+  const width = Math.max(1, Number(area.width || 1));
+  const left = ((x - 0.5) / columns) * 100;
+  const top = ((y - 0.5) / rows) * 100;
+  const w = area.type === "line" ? (length / columns) * 100 : area.type === "rectangle" ? (length / columns) * 100 : ((radius * 2) / columns) * 100;
+  const h = area.type === "line" ? Math.max(2.5, (width / rows) * 100) : area.type === "rectangle" ? (width / rows) * 100 : ((radius * 2) / rows) * 100;
+  return [
+    `--area-x:${left}%`,
+    `--area-y:${top}%`,
+    `--area-w:${w}%`,
+    `--area-h:${h}%`,
+    `--area-color:${escapeHtml(area.color || "#9b4dff")}`,
+  ].join(";");
+}
+
+function measurementStyle(measurement = {}, scene = {}) {
+  const columns = Math.max(4, Number(scene.columns || 12));
+  const rows = Math.max(4, Number(scene.rows || 8));
+  const from = measurement.from || {};
+  const to = measurement.to || {};
+  const x1 = ((clamp(from.x || 1, 1, columns) - 0.5) / columns) * 100;
+  const y1 = ((clamp(from.y || 1, 1, rows) - 0.5) / rows) * 100;
+  const x2 = ((clamp(to.x || 1, 1, columns) - 0.5) / columns) * 100;
+  const y2 = ((clamp(to.y || 1, 1, rows) - 0.5) / rows) * 100;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const length = Math.hypot(dx, dy);
+  const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+  return [
+    `--measure-x:${x1}%`,
+    `--measure-y:${y1}%`,
+    `--measure-length:${length}%`,
+    `--measure-angle:${angle}deg`,
+  ].join(";");
+}
+
+function visibleSceneItems(items = [], isGm = false) {
+  return isGm ? items : items.filter((item) => !item.hidden && item.visibleToPlayers !== false);
+}
+
+function destinationLabel(kind = "unassigned") {
+  const labels = {
+    unassigned: "Sem local definido",
+    active: "Ativo",
+    backpack: "Mochila",
+    cube: "Cubo",
+    holster: "Coldre",
+    bandolier: "Bandoleira",
+    hook: "Gancho",
+  };
+  return labels[kind] || kind;
 }
 
 function rollPool(count = 3, sides = 6, bonus = 0) {
@@ -604,8 +669,13 @@ class SolarisSessionUI {
     this.chatDraft = "";
     this.monsterPickerOpen = false;
     this.selectedCombatantId = "";
+    this.selectedMonsterSheetId = "";
     this.selectedMapTokenId = "";
     this.draggingMapTokenId = "";
+    this.mapTool = "move";
+    this.measurementStart = null;
+    this.purchaseDestination = "unassigned";
+    this.selectedShopItemId = "";
     this.shopQuery = "";
     this.shopCategory = "all";
     this.shopTier = "all";
@@ -613,6 +683,8 @@ class SolarisSessionUI {
     this.shopPage = 1;
     this.shopCart = [];
     this.lootPanelOpen = true;
+    this.lootModalOpen = false;
+    this.editingLootPackId = "";
     this.localSheetRevision = Number(current.revision || 0);
     this.lastRoomSequence = 0;
     this.characterRevisionMap = new Map();
@@ -871,6 +943,17 @@ class SolarisSessionUI {
     this.render();
   }
 
+  openShopItemDetails(itemId = "") {
+    this.selectedShopItemId = itemId;
+    if (this.client.isConnected) this.client.requestShopItemDetails(itemId);
+    this.render();
+  }
+
+  closeShopItemDetails() {
+    this.selectedShopItemId = "";
+    this.render();
+  }
+
   removeShopCartLine(lineId = "") {
     this.shopCart = this.shopCart.filter((line) => line.id !== lineId);
     if (this.client.isConnected) this.client.updateShopCart(this.currentSheetId(), this.shopCart);
@@ -880,6 +963,73 @@ class SolarisSessionUI {
   clearShopCart() {
     this.shopCart = [];
     if (this.client.isConnected) this.client.updateShopCart(this.currentSheetId(), []);
+    this.render();
+  }
+
+  monsterById(monsterId = "") {
+    const room = this.client.isConnected && this.client.room
+      ? normalizeServerRoom(this.client.room, this.options.getCurrentCharacter())
+      : normalizeServerRoom(this.room, this.options.getCurrentCharacter());
+    return (room.monsters || []).find((monster) => monster.id === monsterId || monster.definitionId === monsterId) || null;
+  }
+
+  openMonsterSheet(monsterId = "") {
+    this.selectedMonsterSheetId = monsterId;
+    this.render();
+  }
+
+  closeMonsterSheet() {
+    this.selectedMonsterSheetId = "";
+    this.render();
+  }
+
+  rollMonsterAttack(monsterId = "", attackIndex = 0) {
+    const monster = this.monsterById(monsterId);
+    if (!monster) return;
+    const snapshot = monster.snapshot || {};
+    const attack = (snapshot.attacks || [])[Number(attackIndex || 0)] || {};
+    const bonus = Number(attack.attack ?? attack.bonus ?? attack.mod ?? 0);
+    this.roll(`${monster.name} - ${attack.name || "Ataque"}`, 1, 20, bonus);
+  }
+
+  rollMonsterDamage(monsterId = "", attackIndex = 0) {
+    const monster = this.monsterById(monsterId);
+    if (!monster) return;
+    const snapshot = monster.snapshot || {};
+    const attack = (snapshot.attacks || [])[Number(attackIndex || 0)] || {};
+    const formula = String(attack.damage || attack.dano || "1d6");
+    const match = formula.match(/(\d*)d(\d+)([+-]\d+)?/i);
+    if (!match) {
+      this.sendChat(`${monster.name} - dano de ${attack.name || "ataque"}: ${formula}`);
+      return;
+    }
+    const count = Number(match[1] || 1);
+    const sides = Number(match[2] || 6);
+    const bonus = Number(match[3] || 0);
+    this.roll(`${monster.name} - Dano ${attack.name || ""}`.trim(), count, sides, bonus);
+  }
+
+  createLootFromMonster(monsterId = "") {
+    if (!monsterId) return;
+    if (this.client.isConnected) {
+      this.client.createLootFromDefeatedMonster(monsterId);
+      return;
+    }
+    const monster = this.monsterById(monsterId);
+    if (!monster) return;
+    const room = this.mutableOfflineRoom();
+    room.lootPacks = [{
+      id: createId("loot"),
+      name: `Loot pendente - ${monster.name}`,
+      source: monster.name,
+      status: "pending",
+      items: [],
+      luzentis: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      notes: "Criado a partir da ficha de monstro no modo local.",
+    }, ...(room.lootPacks || [])];
+    this.pushLocalCombatLog(`Loot pendente criado para ${monster.name}.`, "loot:monster:defeated", monster);
     this.render();
   }
 
@@ -899,7 +1049,11 @@ class SolarisSessionUI {
       this.clearShopCart();
       return;
     }
-    this.client.requestShopPurchase(this.currentSheetId(), this.shopCart, { total, direct });
+    this.client.requestShopPurchase(this.currentSheetId(), this.shopCart, {
+      total,
+      direct,
+      destination: { kind: this.purchaseDestination || "unassigned" },
+    });
     this.options.notify(direct ? "Compra enviada como acao direta do mestre." : "Pedido de compra enviado ao mestre.");
     this.clearShopCart();
   }
@@ -913,7 +1067,7 @@ class SolarisSessionUI {
       itemId: line.item.id,
       sourceItemId: line.item.id,
       price: line.price,
-      location: { kind: "unassigned" },
+      location: { kind: this.purchaseDestination || "unassigned" },
     })));
     this.options.onRemoteCharacterUpdate({
       ...current,
@@ -940,38 +1094,55 @@ class SolarisSessionUI {
   }
 
   createLootPackPrompt() {
-    const name = window.prompt("Nome do pacote de loot", "Loot da cena");
-    if (!name) return;
-    const luzentis = this.promptNumber("Luzentis no pacote", 0);
-    if (luzentis === null) return;
-    const firstCartItem = this.shopCart[0] || null;
-    const pack = {
-      name,
-      luzentis,
-      items: firstCartItem ? [firstCartItem] : [],
-      notes: firstCartItem ? "Criado a partir do primeiro item do carrinho." : "Pacote manual sem itens.",
-    };
-    if (this.client.isConnected) this.client.createLootPack(pack);
-    else {
-      this.room.lootPacks = [{ ...pack, id: createId("loot"), status: "pending", createdAt: new Date().toISOString() }, ...(this.room.lootPacks || [])];
-      this.render();
-    }
-    this.options.notify("Pacote de loot criado.");
+    this.lootModalOpen = true;
+    this.editingLootPackId = "";
+    this.render();
   }
 
   distributeLootPackPrompt(lootPackId = "") {
+    this.lootModalOpen = true;
+    this.editingLootPackId = lootPackId;
+    this.render();
+  }
+
+  closeLootModal() {
+    this.lootModalOpen = false;
+    this.editingLootPackId = "";
+    this.render();
+  }
+
+  submitLootModal(form) {
+    const data = new FormData(form);
     const room = this.client.isConnected && this.client.room
       ? normalizeServerRoom(this.client.room, this.options.getCurrentCharacter())
-      : this.room;
-    const pack = (room.lootPacks || []).find((entry) => entry.id === lootPackId);
-    if (!pack) return;
-    const characterId = window.prompt("ID do personagem destino", this.currentSheetId());
-    if (!characterId) return;
-    if (this.client.isConnected) {
-      this.client.distributeLootPack(pack.id, characterId);
-      return;
+      : this.mutableOfflineRoom();
+    const catalogItemId = String(data.get("itemId") || "");
+    const catalogItem = this.shopCatalog().find((item) => item.id === catalogItemId);
+    const manualName = String(data.get("manualItem") || "").trim();
+    const items = [];
+    if (catalogItem) items.push({ item: catalogItem, quantity: Number(data.get("quantity") || 1), price: 0 });
+    if (manualName) items.push({ item: { id: createId("manual-loot"), name: manualName, price: 0 }, quantity: Number(data.get("quantity") || 1), price: 0 });
+    const pack = {
+      name: String(data.get("name") || "Loot da cena"),
+      luzentis: Number(data.get("luzentis") || 0),
+      items,
+      notes: String(data.get("notes") || ""),
+    };
+    const targetCharacterId = String(data.get("characterId") || this.currentSheetId());
+    const destination = { kind: String(data.get("destination") || "unassigned") };
+    if (this.editingLootPackId) {
+      if (this.client.isConnected) this.client.distributeLootPackV2(this.editingLootPackId, targetCharacterId, { destination });
+      else this.options.notify("Modo offline: a distribuicao real acontece pela ficha local.");
+    } else if (this.client.isConnected) {
+      this.client.createLootPackV2(pack);
+    } else {
+      room.lootPacks = [{ ...pack, id: createId("loot"), status: "pending", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, ...(room.lootPacks || [])];
+      this.room = room;
     }
-    this.options.notify("Modo offline: distribua itens pela ficha local ou conecte ao servidor.");
+    this.lootModalOpen = false;
+    this.editingLootPackId = "";
+    this.options.notify("Loot atualizado.");
+    this.render();
   }
 
   async ensureConnected() {
@@ -1198,6 +1369,223 @@ class SolarisSessionUI {
     }
     this.room.scene = { ...scene, ...patch };
     this.render();
+  }
+
+  pushScenePatch(patch = {}, eventMethod = "updateScene") {
+    const room = this.client.isConnected && this.client.room
+      ? normalizeServerRoom(this.client.room, this.options.getCurrentCharacter())
+      : this.mutableOfflineRoom();
+    const scene = normalizeScene(room.scene, characterSnapshot(this.options.getCurrentCharacter()));
+    if (this.client.isConnected) {
+      if (!this.isLocalGm(room) && !["createSceneMeasurement", "clearSceneMeasurements"].includes(eventMethod)) {
+        this.options.notify("Apenas o mestre altera a cena compartilhada.");
+        return false;
+      }
+      if (typeof this.client[eventMethod] === "function") {
+        this.client[eventMethod](...(Array.isArray(patch) ? patch : [patch]));
+      } else {
+        this.client.updateScene(patch);
+      }
+      return true;
+    }
+    this.room.scene = { ...scene, ...patch };
+    this.render();
+    return true;
+  }
+
+  selectMapFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      const mapImage = String(reader.result || "");
+      if (!mapImage) return;
+      if (this.client.isConnected) {
+        this.client.updateSceneMap(mapImage, { name: file.name });
+      } else {
+        const room = this.mutableOfflineRoom();
+        this.room.scene = { ...normalizeScene(room.scene, this.options.getCurrentCharacter()), mapImage };
+        this.render();
+      }
+      this.options.notify("Mapa selecionado para a cena.");
+    });
+    reader.readAsDataURL(file);
+  }
+
+  updateGridSetting(field = "", value = "") {
+    const numericFields = new Set(["columns", "rows", "gridSize", "gridOpacity", "metersPerCell"]);
+    const booleanFields = new Set(["gridVisible", "snapToGrid"]);
+    const patch = {
+      [field]: booleanFields.has(field)
+        ? Boolean(value)
+        : numericFields.has(field)
+          ? Number(value)
+          : value,
+    };
+    this.pushScenePatch(patch, "updateSceneGrid");
+  }
+
+  setMapTool(tool = "move") {
+    this.mapTool = tool;
+    this.measurementStart = null;
+    this.render();
+  }
+
+  handleMapPoint(point = {}) {
+    if (this.mapTool === "measure") {
+      if (!this.measurementStart) {
+        this.measurementStart = point;
+        this.options.notify(`Medicao iniciada em ${gridLabel(point.x, point.y)}.`);
+        this.render();
+        return;
+      }
+      const measurement = { from: this.measurementStart, to: point, visibleToPlayers: true };
+      this.measurementStart = null;
+      if (this.client.isConnected) this.client.createSceneMeasurement(measurement);
+      else {
+        const room = this.mutableOfflineRoom();
+        const scene = normalizeScene(room.scene, this.options.getCurrentCharacter());
+        const cells = Math.hypot(point.x - measurement.from.x, point.y - measurement.from.y);
+        const meters = Number((cells * Number(scene.metersPerCell || 1.5)).toFixed(2));
+        scene.measurements = [{ ...measurement, id: createId("measurement"), cells: Number(cells.toFixed(2)), meters }, ...(scene.measurements || [])].slice(0, 12);
+        this.room.scene = scene;
+        this.render();
+      }
+      return;
+    }
+    this.moveMapToken(this.selectedMapTokenId, point.x, point.y);
+  }
+
+  clearMeasurements() {
+    if (this.client.isConnected) this.client.clearSceneMeasurements();
+    else {
+      const room = this.mutableOfflineRoom();
+      this.room.scene = { ...normalizeScene(room.scene, this.options.getCurrentCharacter()), measurements: [] };
+      this.render();
+    }
+  }
+
+  addSceneArea(type = "circle") {
+    const room = this.client.isConnected && this.client.room
+      ? normalizeServerRoom(this.client.room, this.options.getCurrentCharacter())
+      : this.mutableOfflineRoom();
+    const scene = normalizeScene(room.scene, characterSnapshot(this.options.getCurrentCharacter()));
+    if (this.client.isConnected && !this.isLocalGm(room)) {
+      this.options.notify("Apenas o mestre cria areas na cena.");
+      return;
+    }
+    const selected = scene.tokens.find((token) => token.id === this.selectedMapTokenId) || scene.tokens[0] || {};
+    const label = window.prompt("Nome da area", type === "cone" ? "Cone de efeito" : type === "line" ? "Linha de efeito" : "Area de efeito");
+    if (!label) return;
+    const radius = type === "circle" ? this.promptNumber("Raio em casas", 2) : 0;
+    const length = type !== "circle" ? this.promptNumber("Comprimento em casas", 4) : radius;
+    const width = type === "cone" ? this.promptNumber("Largura final em casas", 3) : type === "line" ? this.promptNumber("Largura em casas", 1) : radius;
+    const area = {
+      id: createId("area"),
+      type,
+      label,
+      x: selected.x || 2,
+      y: selected.y || 2,
+      radius: radius || 0,
+      length: length || radius || 2,
+      width: width || 1,
+      color: type === "circle" ? "#9b4dff" : type === "cone" ? "#ffb84d" : "#39cfff",
+      visibleToPlayers: true,
+    };
+    if (this.client.isConnected) this.client.createSceneArea(area);
+    else {
+      this.room.scene = { ...scene, areas: [...(scene.areas || []), area] };
+      this.render();
+    }
+  }
+
+  clearSceneAreas() {
+    const room = this.client.isConnected && this.client.room
+      ? normalizeServerRoom(this.client.room, this.options.getCurrentCharacter())
+      : this.mutableOfflineRoom();
+    if (this.client.isConnected && !this.isLocalGm(room)) {
+      this.options.notify("Apenas o mestre limpa areas da cena.");
+      return;
+    }
+    const scene = normalizeScene(room.scene, this.options.getCurrentCharacter());
+    if (this.client.isConnected) this.client.updateScene({ areas: [] });
+    else {
+      this.room.scene = { ...scene, areas: [] };
+      this.render();
+    }
+  }
+
+  toggleSelectedTokenVisibility() {
+    if (!this.selectedMapTokenId) return;
+    const room = this.client.isConnected && this.client.room
+      ? normalizeServerRoom(this.client.room, this.options.getCurrentCharacter())
+      : this.mutableOfflineRoom();
+    const scene = normalizeScene(room.scene, this.options.getCurrentCharacter());
+    const token = scene.tokens.find((entry) => entry.id === this.selectedMapTokenId);
+    if (!token) return;
+    const hidden = !token.hidden;
+    if (this.client.isConnected) {
+      if (!this.isLocalGm(room)) {
+        this.options.notify("Apenas o mestre oculta ou revela tokens.");
+        return;
+      }
+      this.client.updateSceneVisibility({ targetType: "token", id: token.id, hidden });
+      return;
+    }
+    token.hidden = hidden;
+    this.room.scene = scene;
+    this.render();
+  }
+
+  createObjectivePrompt() {
+    const room = this.client.isConnected && this.client.room
+      ? normalizeServerRoom(this.client.room, this.options.getCurrentCharacter())
+      : this.mutableOfflineRoom();
+    if (this.client.isConnected && !this.isLocalGm(room)) {
+      this.options.notify("Apenas o mestre cria objetivos.");
+      return;
+    }
+    const scene = normalizeScene(room.scene, this.options.getCurrentCharacter());
+    const title = window.prompt("Titulo do objetivo", "Ativar console");
+    if (!title) return;
+    const progressMax = this.promptNumber("Progresso maximo", 1);
+    if (progressMax === null) return;
+    const selected = scene.tokens.find((token) => token.id === this.selectedMapTokenId) || {};
+    const objective = {
+      id: createId("objective"),
+      title,
+      label: title,
+      description: window.prompt("Descricao curta", "") || "",
+      progressCurrent: 0,
+      progressMax,
+      x: selected.x || 2,
+      y: selected.y || 2,
+      visibleToPlayers: true,
+    };
+    if (this.client.isConnected) this.client.createSceneObjective(objective);
+    else {
+      this.room.scene = { ...scene, objectives: [...(scene.objectives || []), objective] };
+      this.render();
+    }
+  }
+
+  updateObjectiveProgress(objectiveId = "") {
+    const room = this.client.isConnected && this.client.room
+      ? normalizeServerRoom(this.client.room, this.options.getCurrentCharacter())
+      : this.mutableOfflineRoom();
+    const scene = normalizeScene(room.scene, this.options.getCurrentCharacter());
+    const objective = (scene.objectives || []).find((entry) => entry.id === objectiveId);
+    if (!objective) return;
+    const progressCurrent = this.promptNumber(`Progresso de ${objective.title || objective.label}`, objective.progressCurrent || 0);
+    if (progressCurrent === null) return;
+    const patch = { ...objective, progressCurrent, completed: progressCurrent >= Number(objective.progressMax || 1) };
+    if (this.client.isConnected) this.client.updateSceneObjective(objective.id, patch);
+    else {
+      this.room.scene = {
+        ...scene,
+        objectives: scene.objectives.map((entry) => entry.id === objective.id ? patch : entry),
+      };
+      this.render();
+    }
   }
 
   addSceneZone(type = "danger") {
@@ -1546,8 +1934,16 @@ class SolarisSessionUI {
 
   renderTacticalMap(room, current, combat) {
     const scene = normalizeScene(room.scene, current);
+    const localPlayer = this.localPlayer(room);
+    const isGm = localPlayer?.role === SESSION_ROLES.GM || localPlayer?.isGM;
+    const tokens = visibleSceneItems(scene.tokens || [], isGm);
+    const zones = visibleSceneItems(scene.zones || [], isGm);
+    const areas = visibleSceneItems(scene.areas || [], isGm);
+    const objectives = visibleSceneItems(scene.objectives || [], isGm);
+    const measurements = visibleSceneItems(scene.measurements || [], isGm);
     const selectedToken = scene.tokens.find((token) => token.id === this.selectedMapTokenId) || scene.tokens[0] || null;
     if (!this.selectedMapTokenId && selectedToken) this.selectedMapTokenId = selectedToken.id;
+    const movement = selectedToken?.metadata?.lastMove || null;
     return `
       <section class="vtt-map-panel">
         <div class="vtt-map-toolbar">
@@ -1555,23 +1951,39 @@ class SolarisSessionUI {
             <strong>Mapa tatico</strong>
             <span>${escapeHtml(scene.columns)} x ${escapeHtml(scene.rows)} casas</span>
           </div>
+          <input type="file" accept="image/*" data-vtt-map-file hidden />
+          <button type="button" data-vtt-map-action="select-map" ${isGm || !this.client.isConnected ? "" : "disabled"}>Selecionar Mapa</button>
           <button type="button" data-vtt-map-action="sync-tokens">Tokens</button>
           <button type="button" data-vtt-map-action="edit-scene">Cena</button>
-          <button type="button" data-vtt-map-action="add-danger">Perigo</button>
-          <button type="button" data-vtt-map-action="add-cover">Cobertura</button>
+          <button type="button" class="${this.mapTool === "measure" ? "active" : ""}" data-vtt-map-tool="measure">Medir Distancia</button>
+          <button type="button" data-vtt-map-action="clear-measurements">Limpar Medidas</button>
+          <button type="button" data-vtt-map-action="area-circle">Area Circular</button>
+          <button type="button" data-vtt-map-action="area-cone">Cone</button>
+          <button type="button" data-vtt-map-action="area-line">Linha</button>
+          <button type="button" data-vtt-map-action="clear-areas">Limpar Areas</button>
+          <button type="button" data-vtt-map-action="toggle-visibility" ${selectedToken ? "" : "disabled"}>${selectedToken?.hidden ? "Revelar" : "Ocultar"}</button>
+          <button type="button" data-vtt-map-action="create-objective">Objetivo</button>
+        </div>
+        <div class="vtt-grid-controls">
+          <label>Col.<input type="number" min="4" max="40" value="${escapeHtml(scene.columns)}" data-vtt-grid-setting="columns" /></label>
+          <label>Lin.<input type="number" min="4" max="40" value="${escapeHtml(scene.rows)}" data-vtt-grid-setting="rows" /></label>
+          <label>Escala<input type="number" min="0.5" max="12" step="0.5" value="${escapeHtml(scene.metersPerCell)}" data-vtt-grid-setting="metersPerCell" /></label>
+          <label>Grid<input type="checkbox" ${scene.gridVisible ? "checked" : ""} data-vtt-grid-toggle="gridVisible" /></label>
+          <label>Snap<input type="checkbox" ${scene.snapToGrid ? "checked" : ""} data-vtt-grid-toggle="snapToGrid" /></label>
+          <label>Opac.<input type="range" min="0" max="1" step="0.05" value="${escapeHtml(scene.gridOpacity)}" data-vtt-grid-setting="gridOpacity" /></label>
         </div>
         <div
-          class="vtt-map-grid"
+          class="vtt-map-grid ${scene.gridVisible ? "" : "grid-hidden"} ${this.mapTool === "measure" ? "measuring" : ""}"
           data-vtt-map-grid
           data-columns="${escapeHtml(scene.columns)}"
           data-rows="${escapeHtml(scene.rows)}"
           aria-label="Mapa tatico da cena"
-          style="--map-columns:${escapeHtml(scene.columns)};--map-rows:${escapeHtml(scene.rows)};${scene.mapImage ? `--map-image:url('${escapeHtml(scene.mapImage)}');` : ""}"
+          style="--map-columns:${escapeHtml(scene.columns)};--map-rows:${escapeHtml(scene.rows)};--grid-opacity:${escapeHtml(scene.gridOpacity)};${scene.mapImage ? `--map-image:url('${escapeHtml(scene.mapImage)}');` : ""}"
         >
           <div class="vtt-map-glow"></div>
           <div class="vtt-grid-coordinate top-left">A1</div>
           <div class="vtt-grid-coordinate bottom-right">${escapeHtml(gridLabel(scene.columns, scene.rows))}</div>
-          ${(scene.zones || []).map((zone) => `
+          ${zones.map((zone) => `
             <span
               class="vtt-map-zone ${escapeHtml(zone.type || "danger")}"
               title="${escapeHtml(zone.label || "Zona")}"
@@ -1580,16 +1992,31 @@ class SolarisSessionUI {
               ${escapeHtml(zone.label || "Zona")}
             </span>
           `).join("")}
-          ${(scene.objectives || []).filter((objective) => objective.x && objective.y).map((objective) => `
+          ${areas.map((area) => `
+            <span
+              class="vtt-map-area ${escapeHtml(area.type || "circle")} ${area.hidden ? "hidden" : ""}"
+              style="${areaGridStyle(area, scene)}"
+              title="${escapeHtml(area.label || "Area")}"
+            >
+              ${escapeHtml(area.label || "Area")}
+            </span>
+          `).join("")}
+          ${measurements.map((measurement) => `
+            <span class="vtt-map-measurement" style="${measurementStyle(measurement, scene)}">
+              <i></i><b>${escapeHtml(measurement.cells)} casas / ${escapeHtml(measurement.meters)}m</b>
+            </span>
+          `).join("")}
+          ${objectives.filter((objective) => objective.x && objective.y).map((objective) => `
             <span
               class="vtt-map-objective ${objective.completed ? "completed" : ""}"
               style="${tokenGridStyle({ x: objective.x, y: objective.y, color: "#f2c35b" }, scene)}"
-              title="${escapeHtml(objective.label)}"
+              title="${escapeHtml(objective.title || objective.label)}"
+              data-vtt-objective-progress="${escapeHtml(objective.id)}"
             >
-              OBJ
+              ${escapeHtml(`${objective.progressCurrent ?? 0}/${objective.progressMax ?? 1}`)}
             </span>
           `).join("")}
-          ${(scene.tokens || []).map((token) => `
+          ${tokens.map((token) => `
             <button
               type="button"
               class="vtt-map-token ${tokenKindClass(token)} ${token.id === this.selectedMapTokenId ? "selected" : ""} ${token.locked ? "locked" : ""}"
@@ -1604,12 +2031,15 @@ class SolarisSessionUI {
           <div class="vtt-map-caption">
             <strong>${escapeHtml(scene.name)}</strong>
             <small>${selectedToken ? `${escapeHtml(selectedToken.name)} selecionado em ${escapeHtml(gridLabel(selectedToken.x, selectedToken.y))}` : "Selecione um token para mover."}</small>
+            ${this.measurementStart ? `<small>Medindo desde ${escapeHtml(gridLabel(this.measurementStart.x, this.measurementStart.y))}</small>` : ""}
+            ${movement?.exceedsMovement ? `<small class="vtt-map-warning">Movimento excede o MOV (${escapeHtml(movement.meters)}m / ${escapeHtml(movement.movement)}m)</small>` : ""}
           </div>
         </div>
         <div class="vtt-map-footer">
           <span>${combat.active ? `Combate ativo: rodada ${escapeHtml(combat.round || 1)}` : "Cena livre"}</span>
-          <span>${escapeHtml((scene.tokens || []).length)} token${(scene.tokens || []).length === 1 ? "" : "s"}</span>
-          <span>${escapeHtml((scene.zones || []).length)} zona${(scene.zones || []).length === 1 ? "" : "s"}</span>
+          <span>${escapeHtml(tokens.length)} token${tokens.length === 1 ? "" : "s"}</span>
+          <span>${escapeHtml(areas.length)} area${areas.length === 1 ? "" : "s"}</span>
+          <span>1 casa = ${escapeHtml(scene.metersPerCell)}m</span>
         </div>
         <div class="vtt-quick-actions">
           <button type="button" data-vtt-roll="Teste rapido" data-count="3" data-sides="6">Rolar</button>
@@ -1675,6 +2105,14 @@ class SolarisSessionUI {
               <strong>Carrinho</strong>
               <small>Saldo: ${balance.toLocaleString("pt-BR")} ℓ</small>
             </div>
+            <label class="vtt-shop-destination">
+              Destino
+              <select data-vtt-shop-destination>
+                ${["unassigned", "active", "backpack", "cube", "holster", "bandolier", "hook"].map((kind) => `
+                  <option value="${escapeHtml(kind)}" ${this.purchaseDestination === kind ? "selected" : ""}>${escapeHtml(destinationLabel(kind))}</option>
+                `).join("")}
+              </select>
+            </label>
             <div class="vtt-shop-cart-lines">
               ${this.shopCart.length ? this.shopCart.map((line) => `
                 <article>
@@ -1691,6 +2129,7 @@ class SolarisSessionUI {
               <button type="button" data-vtt-shop-action="request-purchase" ${this.shopCart.length ? "" : "disabled"}>${this.client.isConnected && !isGm ? "Solicitar Compra" : "Comprar"}</button>
               ${isGm ? `<button type="button" data-vtt-shop-action="direct-purchase" ${this.shopCart.length ? "" : "disabled"}>Comprar como Mestre</button>` : ""}
             </footer>
+            ${isGm ? this.renderMasterCarts(room) : ""}
           </aside>
         </div>
       </section>
@@ -1707,7 +2146,7 @@ class SolarisSessionUI {
       item.weight ? `Peso ${item.weight}` : "",
     ].filter(Boolean).join(" - ");
     return `
-      <article class="vtt-shop-card">
+      <article class="vtt-shop-card" data-vtt-shop-card="${escapeHtml(item.id)}">
         <div>
           <span>${escapeHtml(item.categoryLabel)}</span>
           <strong>${escapeHtml(item.name)}</strong>
@@ -1717,10 +2156,28 @@ class SolarisSessionUI {
         <footer>
           <em>${escapeHtml(item.source || "Livro 5")}</em>
           <strong>${Number(item.price || 0).toLocaleString("pt-BR")} ℓ</strong>
+          <button type="button" data-vtt-shop-details="${escapeHtml(item.id)}">Detalhes</button>
           <button type="button" data-vtt-shop-add="${escapeHtml(item.id)}">Adicionar</button>
           <button type="button" data-vtt-shop-buy-now="${escapeHtml(item.id)}">Comprar Agora</button>
         </footer>
       </article>
+    `;
+  }
+
+  renderMasterCarts(room) {
+    const carts = Object.entries(room.shopState?.carts || {});
+    if (!carts.length) {
+      return `<div class="vtt-master-carts"><strong>Carrinhos da mesa</strong><small>Nenhum carrinho pendente.</small></div>`;
+    }
+    return `
+      <div class="vtt-master-carts">
+        <strong>Carrinhos da mesa</strong>
+        ${carts.slice(0, 5).map(([playerId, cart]) => {
+          const player = (room.players || []).find((entry) => entry.id === playerId);
+          const total = (cart.items || []).reduce((sum, line) => sum + cartLineTotal(line), 0);
+          return `<small>${escapeHtml(player?.name || playerId)}: ${escapeHtml(cart.items?.length || 0)} item(ns), ${total.toLocaleString("pt-BR")} â„“</small>`;
+        }).join("")}
+      </div>
     `;
   }
 
@@ -1754,6 +2211,157 @@ class SolarisSessionUI {
           ${transactions.slice(0, 5).map((entry) => `<small>${escapeHtml(entry.message || entry.type)}</small>`).join("") || "<small>Sem transacoes ainda.</small>"}
         </div>
       </section>
+    `;
+  }
+
+  renderItemDetailModal() {
+    const item = this.selectedShopItemId ? this.shopCatalog().find((entry) => entry.id === this.selectedShopItemId) : null;
+    if (!item) return "";
+    const rows = [
+      ["Tipo", item.type || item.categoryLabel],
+      ["Categoria", item.categoryLabel],
+      ["Tier", item.tier || "-"],
+      ["Preco", `${Number(item.price || 0).toLocaleString("pt-BR")} Lz`],
+      ["Peso", item.weight || item.peso || "-"],
+      ["Fonte", item.source || "Livro 5"],
+      ["Dano", item.damage || item.dano || ""],
+      ["Alcance", item.range || item.alcance || ""],
+      ["CA", item.ca || item.CA || ""],
+      ["Slots", item.slots || item.modSlots || ""],
+      ["Capacidade", item.capacity || item.capacidade || ""],
+      ["Custo", item.cost || item.custo || ""],
+      ["Acao", item.action || item.acao || ""],
+      ["Duracao", item.duration || item.duracao || ""],
+    ].filter(([, value]) => value !== undefined && value !== null && value !== "");
+    const description = item.description || item.summary || item.effect || item.effects || "Item oficial da biblioteca Solaris. Use os campos acima como referencia rapida de mesa.";
+    return `
+      <div class="vtt-modal-backdrop" data-vtt-modal-close="item">
+        <section class="vtt-modal vtt-item-detail-modal" role="dialog" aria-modal="true">
+          <header>
+            <div>
+              <span>${escapeHtml(item.categoryLabel)}</span>
+              <h3>${escapeHtml(item.name)}</h3>
+            </div>
+            <button type="button" data-vtt-modal-close="item">Fechar</button>
+          </header>
+          <div class="vtt-item-detail-body">
+            <div class="vtt-item-detail-icon">${item.image || item.imageDataUrl ? `<img src="${escapeHtml(item.image || item.imageDataUrl)}" alt="" />` : `<span>${escapeHtml(tokenInitial(item))}</span>`}</div>
+            <dl>
+              ${rows.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}
+            </dl>
+            <p>${escapeHtml(description)}</p>
+            ${item.requirements ? `<p><strong>Requisitos:</strong> ${escapeHtml(item.requirements)}</p>` : ""}
+            ${item.tags?.length ? `<p><strong>Tags:</strong> ${item.tags.map(escapeHtml).join(", ")}</p>` : ""}
+          </div>
+          <footer>
+            <button type="button" data-vtt-shop-add="${escapeHtml(item.id)}">Adicionar ao Carrinho</button>
+            <button type="button" data-vtt-shop-buy-now="${escapeHtml(item.id)}">Comprar Agora</button>
+            <button type="button" data-vtt-modal-close="item">Fechar</button>
+          </footer>
+        </section>
+      </div>
+    `;
+  }
+
+  renderLootModal(room) {
+    if (!this.lootModalOpen) return "";
+    const pack = this.editingLootPackId ? (room.lootPacks || []).find((entry) => entry.id === this.editingLootPackId) : null;
+    const characters = room.characters || [];
+    const catalog = this.shopCatalog().slice(0, 160);
+    return `
+      <div class="vtt-modal-backdrop" data-vtt-modal-close="loot">
+        <section class="vtt-modal vtt-loot-modal" role="dialog" aria-modal="true">
+          <header>
+            <div>
+              <span>Distribuicao de Loot</span>
+              <h3>${pack ? escapeHtml(pack.name) : "Novo pacote de loot"}</h3>
+            </div>
+            <button type="button" data-vtt-modal-close="loot">Fechar</button>
+          </header>
+          <form data-vtt-loot-form>
+            <label>Nome do pacote<input name="name" value="${escapeHtml(pack?.name || "Loot da cena")}" /></label>
+            <label>Luzentis<input name="luzentis" type="number" min="0" value="${escapeHtml(pack?.luzentis || 0)}" /></label>
+            <label>Item oficial
+              <select name="itemId">
+                <option value="">Nenhum</option>
+                ${catalog.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join("")}
+              </select>
+            </label>
+            <label>Item manual<input name="manualItem" placeholder="Nome do item criado na hora" /></label>
+            <label>Quantidade<input name="quantity" type="number" min="1" value="1" /></label>
+            <label>Destino
+              <select name="destination">
+                ${["unassigned", "active", "backpack", "cube", "holster", "bandolier", "hook"].map((kind) => `<option value="${escapeHtml(kind)}">${escapeHtml(destinationLabel(kind))}</option>`).join("")}
+              </select>
+            </label>
+            <label>Personagem destino
+              <select name="characterId">
+                ${characters.map((character) => `<option value="${escapeHtml(character.id)}">${escapeHtml(character.name || character.snapshot?.name || character.id)}</option>`).join("")}
+                <option value="${escapeHtml(this.currentSheetId())}">Ficha atual</option>
+              </select>
+            </label>
+            <label>Notas<textarea name="notes">${escapeHtml(pack?.notes || "")}</textarea></label>
+            <footer>
+              <button type="submit">${pack ? "Entregar loot" : "Criar pacote"}</button>
+              <button type="button" data-vtt-modal-close="loot">Cancelar</button>
+            </footer>
+          </form>
+        </section>
+      </div>
+    `;
+  }
+
+  renderMonsterSheetModal(room) {
+    const monster = this.selectedMonsterSheetId ? (room.monsters || []).find((entry) => entry.id === this.selectedMonsterSheetId) : null;
+    if (!monster) return "";
+    const snapshot = monster.snapshot || {};
+    const attacks = Array.isArray(snapshot.attacks) ? snapshot.attacks : [];
+    const abilities = Array.isArray(snapshot.abilities) ? snapshot.abilities : [];
+    return `
+      <div class="vtt-modal-backdrop" data-vtt-modal-close="monster">
+        <section class="vtt-modal vtt-monster-sheet-modal" role="dialog" aria-modal="true">
+          <header>
+            <div>
+              <span>${escapeHtml([snapshot.tier ? `Tier ${snapshot.tier}` : "", snapshot.role || snapshot.type || ""].filter(Boolean).join(" - "))}</span>
+              <h3>${escapeHtml(monster.name)}</h3>
+            </div>
+            <button type="button" data-vtt-modal-close="monster">Fechar</button>
+          </header>
+          <div class="vtt-monster-sheet-grid">
+            <figure>${snapshot.imageDataUrl || snapshot.image ? `<img src="${escapeHtml(snapshot.imageDataUrl || snapshot.image)}" alt="" />` : `<span>${escapeHtml(tokenInitial(monster))}</span>`}</figure>
+            <dl>
+              <div><dt>PV</dt><dd>${escapeHtml(snapshot.currentPV ?? snapshot.pvAtual ?? 0)} / ${escapeHtml(snapshot.maxPV ?? snapshot.pv ?? 0)}</dd></div>
+              <div><dt>CA</dt><dd>${escapeHtml(snapshot.ca ?? snapshot.CA ?? "-")}</dd></div>
+              <div><dt>Movimento</dt><dd>${escapeHtml(snapshot.movement ?? snapshot.movimento ?? "-")}m</dd></div>
+              <div><dt>Iniciativa</dt><dd>${escapeHtml(snapshot.initiative ?? snapshot.iniciativa ?? "-")}</dd></div>
+              <div><dt>Sentidos</dt><dd>${escapeHtml(snapshot.senses ?? snapshot.sentidos ?? "-")}</dd></div>
+              <div><dt>Habitat</dt><dd>${escapeHtml(snapshot.habitat ?? "-")}</dd></div>
+            </dl>
+          </div>
+          <section>
+            <h4>Ataques</h4>
+            ${attacks.length ? attacks.map((attack, index) => `
+              <article class="vtt-monster-attack-row">
+                <div><strong>${escapeHtml(attack.name || `Ataque ${index + 1}`)}</strong><small>${escapeHtml([attack.attack ? `Ataque ${attack.attack}` : "", attack.damage || attack.dano ? `Dano ${attack.damage || attack.dano}` : "", attack.range || attack.alcance || ""].filter(Boolean).join(" - "))}</small></div>
+                <button type="button" data-vtt-monster-attack="${escapeHtml(monster.id)}" data-attack-index="${index}">Atacar</button>
+                <button type="button" data-vtt-monster-damage="${escapeHtml(monster.id)}" data-attack-index="${index}">Rolar Dano</button>
+              </article>
+            `).join("") : "<small>Sem ataques estruturados.</small>"}
+          </section>
+          <section>
+            <h4>Habilidades e notas</h4>
+            ${abilities.length ? abilities.map((ability) => `<p><strong>${escapeHtml(ability.name || "Habilidade")}:</strong> ${escapeHtml(ability.description || ability.effect || "")}</p>`).join("") : "<small>Sem habilidades estruturadas.</small>"}
+            ${monster.notes || snapshot.notes ? `<p>${escapeHtml(monster.notes || snapshot.notes)}</p>` : ""}
+          </section>
+          <footer>
+            <button type="button" data-vtt-monster-loot="${escapeHtml(monster.id)}">Criar Loot</button>
+            <button type="button" data-vtt-damage-combatant="${escapeHtml(monster.id)}">Aplicar Dano</button>
+            <button type="button" data-vtt-heal-combatant="${escapeHtml(monster.id)}">Curar</button>
+            <button type="button" data-vtt-condition-combatant="${escapeHtml(monster.id)}">Aplicar Condicao</button>
+            <button type="button" class="danger" data-vtt-delete-monster="${escapeHtml(monster.id)}">Remover da Cena</button>
+          </footer>
+        </section>
+      </div>
     `;
   }
 
@@ -1868,10 +2476,10 @@ class SolarisSessionUI {
               <span>sessao</span>
             </div>
             <div class="vtt-objectives">
-              ${room.objectives.map((objective) => `
-                <article>
-                  <strong>${escapeHtml(objective.label)}</strong>
-                  <span>${escapeHtml(objective.progress)}</span>
+              ${(room.scene?.objectives || room.objectives || []).map((objective) => `
+                <article data-vtt-objective-progress="${escapeHtml(objective.id)}">
+                  <strong>${escapeHtml(objective.title || objective.label)}</strong>
+                  <span>${escapeHtml(objective.progress || `${objective.progressCurrent ?? 0}/${objective.progressMax ?? 1}`)}</span>
                 </article>
               `).join("")}
             </div>
@@ -1901,6 +2509,9 @@ class SolarisSessionUI {
           ${this.renderQuickSlot("Magia", "2")}
           ${Array.from({ length: 4 }, () => this.renderQuickSlot("+", "")).join("")}
         </footer>
+        ${this.renderItemDetailModal()}
+        ${this.renderLootModal(room)}
+        ${this.renderMonsterSheetModal(room)}
       </section>
     `;
     this.bindDom();
@@ -2047,7 +2658,7 @@ class SolarisSessionUI {
           <button type="button" data-vtt-damage-combatant="${escapeHtml(combatant.entityId)}">Dano</button>
           <button type="button" data-vtt-heal-combatant="${escapeHtml(combatant.entityId)}">Cura</button>
           <button type="button" data-vtt-condition-combatant="${escapeHtml(combatant.entityId)}">Condicao</button>
-          ${combatant.entityType === "monster" ? `<button type="button" class="danger" data-vtt-delete-monster="${escapeHtml(combatant.entityId)}">Remover</button>` : ""}
+          ${combatant.entityType === "monster" ? `<button type="button" data-vtt-open-monster-sheet="${escapeHtml(combatant.entityId)}">Ficha</button><button type="button" class="danger" data-vtt-delete-monster="${escapeHtml(combatant.entityId)}">Remover</button>` : ""}
         </div>
         <div class="vtt-combatant-conditions">
           ${conditions.length ? conditions.map((condition) => `
@@ -2207,6 +2818,9 @@ class SolarisSessionUI {
     this.root.querySelectorAll("[data-vtt-delete-monster]").forEach((button) => {
       button.addEventListener("click", () => this.deleteMonsterFromCombat(button.dataset.vttDeleteMonster));
     });
+    this.root.querySelectorAll("[data-vtt-open-monster-sheet]").forEach((button) => {
+      button.addEventListener("click", () => this.openMonsterSheet(button.dataset.vttOpenMonsterSheet));
+    });
     this.root.querySelectorAll("[data-vtt-approval-approve]").forEach((button) => {
       button.addEventListener("click", () => this.approveRequest(button.dataset.vttApprovalApprove));
     });
@@ -2233,6 +2847,10 @@ class SolarisSessionUI {
       this.shopPage = 1;
       this.render();
     });
+    this.root.querySelector("[data-vtt-shop-destination]")?.addEventListener("change", (event) => {
+      this.purchaseDestination = event.currentTarget.value || "unassigned";
+      this.render();
+    });
     this.root.querySelectorAll("[data-vtt-shop-page]").forEach((button) => {
       button.addEventListener("click", () => {
         this.shopPage = Number(button.dataset.vttShopPage || 1);
@@ -2241,6 +2859,16 @@ class SolarisSessionUI {
     });
     this.root.querySelectorAll("[data-vtt-shop-add]").forEach((button) => {
       button.addEventListener("click", () => this.addShopItemToCart(button.dataset.vttShopAdd));
+    });
+    this.root.querySelectorAll("[data-vtt-shop-details]").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this.openShopItemDetails(button.dataset.vttShopDetails);
+      });
+    });
+    this.root.querySelectorAll("[data-vtt-shop-card]").forEach((card) => {
+      card.addEventListener("dblclick", () => this.openShopItemDetails(card.dataset.vttShopCard));
     });
     this.root.querySelectorAll("[data-vtt-shop-buy-now]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -2267,13 +2895,44 @@ class SolarisSessionUI {
     this.root.querySelectorAll("[data-vtt-loot-distribute]").forEach((button) => {
       button.addEventListener("click", () => this.distributeLootPackPrompt(button.dataset.vttLootDistribute));
     });
+    this.root.querySelector("[data-vtt-loot-form]")?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      this.submitLootModal(event.currentTarget);
+    });
     this.root.querySelectorAll("[data-vtt-map-action]").forEach((button) => {
       button.addEventListener("click", () => {
         const action = button.dataset.vttMapAction;
+        if (action === "select-map") this.root.querySelector("[data-vtt-map-file]")?.click();
         if (action === "sync-tokens") this.syncSceneTokens();
         if (action === "edit-scene") this.editScene();
         if (action === "add-danger") this.addSceneZone("danger");
         if (action === "add-cover") this.addSceneZone("cover");
+        if (action === "clear-measurements") this.clearMeasurements();
+        if (action === "area-circle") this.addSceneArea("circle");
+        if (action === "area-cone") this.addSceneArea("cone");
+        if (action === "area-line") this.addSceneArea("line");
+        if (action === "clear-areas") this.clearSceneAreas();
+        if (action === "toggle-visibility") this.toggleSelectedTokenVisibility();
+        if (action === "create-objective") this.createObjectivePrompt();
+      });
+    });
+    this.root.querySelector("[data-vtt-map-file]")?.addEventListener("change", (event) => {
+      this.selectMapFile(event.currentTarget.files?.[0]);
+      event.currentTarget.value = "";
+    });
+    this.root.querySelectorAll("[data-vtt-map-tool]").forEach((button) => {
+      button.addEventListener("click", () => this.setMapTool(this.mapTool === button.dataset.vttMapTool ? "move" : button.dataset.vttMapTool));
+    });
+    this.root.querySelectorAll("[data-vtt-grid-setting]").forEach((input) => {
+      input.addEventListener("change", () => this.updateGridSetting(input.dataset.vttGridSetting, input.value));
+    });
+    this.root.querySelectorAll("[data-vtt-grid-toggle]").forEach((input) => {
+      input.addEventListener("change", () => this.updateGridSetting(input.dataset.vttGridToggle, input.checked));
+    });
+    this.root.querySelectorAll("[data-vtt-objective-progress]").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        this.updateObjectiveProgress(button.dataset.vttObjectiveProgress);
       });
     });
     this.root.querySelectorAll("[data-vtt-map-token]").forEach((button) => {
@@ -2295,7 +2954,7 @@ class SolarisSessionUI {
           ? normalizeServerRoom(this.client.room, this.options.getCurrentCharacter())
           : normalizeServerRoom(this.room, this.options.getCurrentCharacter());
         const point = this.mapPointFromEvent(event, normalizeScene(room.scene, this.options.getCurrentCharacter()));
-        this.moveMapToken(this.selectedMapTokenId, point.x, point.y);
+        this.handleMapPoint(point);
       });
       grid.addEventListener("dragover", (event) => event.preventDefault());
       grid.addEventListener("drop", (event) => {
@@ -2306,9 +2965,27 @@ class SolarisSessionUI {
           : normalizeServerRoom(this.room, this.options.getCurrentCharacter());
         const point = this.mapPointFromEvent(event, normalizeScene(room.scene, this.options.getCurrentCharacter()));
         this.selectedMapTokenId = tokenId;
-        this.moveMapToken(tokenId, point.x, point.y);
+        this.handleMapPoint(point);
         this.draggingMapTokenId = "";
       });
+    });
+    this.root.querySelectorAll("[data-vtt-modal-close]").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        if (event.target !== button && button.classList.contains("vtt-modal-backdrop")) return;
+        const modal = button.dataset.vttModalClose;
+        if (modal === "item") this.closeShopItemDetails();
+        if (modal === "loot") this.closeLootModal();
+        if (modal === "monster") this.closeMonsterSheet();
+      });
+    });
+    this.root.querySelectorAll("[data-vtt-monster-attack]").forEach((button) => {
+      button.addEventListener("click", () => this.rollMonsterAttack(button.dataset.vttMonsterAttack, button.dataset.attackIndex));
+    });
+    this.root.querySelectorAll("[data-vtt-monster-damage]").forEach((button) => {
+      button.addEventListener("click", () => this.rollMonsterDamage(button.dataset.vttMonsterDamage, button.dataset.attackIndex));
+    });
+    this.root.querySelectorAll("[data-vtt-monster-loot]").forEach((button) => {
+      button.addEventListener("click", () => this.createLootFromMonster(button.dataset.vttMonsterLoot));
     });
   }
 }

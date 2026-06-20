@@ -53,7 +53,23 @@ export const GAME_EVENT_TYPES = Object.freeze({
   INITIATIVE_UPDATE: "initiative:update",
   TURN_NEXT: "turn:next",
   SCENE_UPDATE: "scene:update",
+  SCENE_MAP_UPDATE: "scene:map:update",
+  SCENE_GRID_UPDATE: "scene:grid:update",
+  SCENE_MEASUREMENT_CREATE: "scene:measurement:create",
+  SCENE_MEASUREMENT_CLEAR: "scene:measurement:clear",
+  SCENE_AREA_CREATE: "scene:area:create",
+  SCENE_AREA_UPDATE: "scene:area:update",
+  SCENE_AREA_DELETE: "scene:area:delete",
+  SCENE_VISIBILITY_UPDATE: "scene:visibility:update",
+  SCENE_OBJECTIVE_CREATE: "scene:objective:create",
+  SCENE_OBJECTIVE_UPDATE: "scene:objective:update",
+  SCENE_OBJECTIVE_DELETE: "scene:objective:delete",
   TOKEN_MOVE: "token:move",
+  SHOP_ITEM_DETAILS: "shop:item:details",
+  SHOP_CART_STATE: "shop:cart:state",
+  SHOP_CART_SUBMIT: "shop:cart:submit",
+  SHOP_CART_APPROVE: "shop:cart:approve",
+  SHOP_CART_REJECT: "shop:cart:reject",
   SHOP_CATALOG_REQUEST: "shop:catalog:request",
   SHOP_CATALOG_STATE: "shop:catalog:state",
   SHOP_CART_UPDATE: "shop:cart:update",
@@ -75,6 +91,10 @@ export const GAME_EVENT_TYPES = Object.freeze({
   LOOT_CLAIM: "loot:claim",
   LOOT_DISTRIBUTE: "loot:distribute",
   LOOT_STATE: "loot:state",
+  LOOT_PACK_CREATE: "loot:pack:create",
+  LOOT_PACK_UPDATE: "loot:pack:update",
+  LOOT_PACK_DISTRIBUTE: "loot:pack:distribute",
+  LOOT_MONSTER_DEFEATED: "loot:monster:defeated",
   TRANSACTION_LOG: "transaction:log",
   APPROVAL_REQUEST: "approval:request",
   APPROVAL_APPROVE: "approval:approve",
@@ -429,7 +449,7 @@ function normalizeLootPack(value = {}) {
   };
 }
 
-function inventoryInstancesFromCart(items = []) {
+function inventoryInstancesFromCart(items = [], destination = null) {
   return arrayOf(items).flatMap((line) => {
     const normalized = normalizeCartLine(line);
     return Array.from({ length: normalized.quantity }, (_, index) => normalizeInventoryItem({
@@ -439,7 +459,7 @@ function inventoryInstancesFromCart(items = []) {
       sourceItemId: normalized.itemId || normalized.item.id,
       quantity: 1,
       price: normalized.price,
-      location: normalized.item.location || { kind: "unassigned" },
+      location: destination || normalized.item.location || { kind: "unassigned" },
       metadata: {
         ...(normalized.item.metadata || {}),
         shopLineId: normalized.id,
@@ -991,10 +1011,16 @@ export class Scene {
     name = "Cena sem nome",
     mapImage = "",
     gridSize = 64,
+    gridVisible = true,
+    gridOpacity = 0.38,
+    snapToGrid = true,
+    metersPerCell = 1.5,
     columns = 12,
     rows = 8,
     tokens = [],
     zones = [],
+    areas = [],
+    measurements = [],
     objectives = [],
     notes = "",
     metadata = {},
@@ -1003,10 +1029,16 @@ export class Scene {
     this.name = String(name || "Cena sem nome");
     this.mapImage = String(mapImage || "");
     this.gridSize = Math.max(1, numeric(gridSize, 64));
+    this.gridVisible = gridVisible !== false;
+    this.gridOpacity = Math.max(0, Math.min(1, numeric(gridOpacity, 0.38)));
+    this.snapToGrid = snapToGrid !== false;
+    this.metersPerCell = Math.max(0.1, numeric(metersPerCell, 1.5));
     this.columns = Math.max(4, Math.floor(numeric(columns, 12)));
     this.rows = Math.max(4, Math.floor(numeric(rows, 8)));
     this.tokens = arrayOf(tokens).map((token) => token instanceof MapToken ? token : MapToken.fromJSON(token));
     this.zones = arrayOf(zones).map((zone) => this.normalizeZone(zone));
+    this.areas = arrayOf(areas).map((area) => this.normalizeArea(area));
+    this.measurements = arrayOf(measurements).map((measurement) => this.normalizeMeasurement(measurement));
     this.objectives = arrayOf(objectives).map((objective) => this.normalizeObjective(objective));
     this.notes = String(notes || "");
     this.metadata = clone(metadata) || {};
@@ -1024,17 +1056,91 @@ export class Scene {
       color: String(zone.color || ""),
       notes: String(zone.notes || ""),
       hidden: Boolean(zone.hidden),
+      visibleToPlayers: zone.visibleToPlayers !== false && !zone.hidden,
+      metadata: clone(zone.metadata) || {},
+    };
+  }
+
+  normalizeArea(area = {}) {
+    return {
+      id: String(area.id || createId("area")),
+      type: String(area.type || "circle"),
+      x: bounded(area.x, 1, this.columns, 1),
+      y: bounded(area.y, 1, this.rows, 1),
+      radius: Math.max(0, numeric(area.radius, 2)),
+      length: Math.max(1, numeric(area.length, area.radius || 4)),
+      width: Math.max(1, numeric(area.width, 1)),
+      color: String(area.color || ""),
+      label: String(area.label || area.name || "Area"),
+      source: String(area.source || ""),
+      ownerId: String(area.ownerId || ""),
+      visibleToPlayers: area.visibleToPlayers !== false && !area.hidden,
+      hidden: Boolean(area.hidden),
+      metadata: clone(area.metadata) || {},
+    };
+  }
+
+  normalizeMeasurement(measurement = {}) {
+    const from = measurement.from || {};
+    const to = measurement.to || {};
+    const startX = bounded(from.x ?? measurement.startX ?? measurement.x1, 1, this.columns, 1);
+    const startY = bounded(from.y ?? measurement.startY ?? measurement.y1, 1, this.rows, 1);
+    const endX = bounded(to.x ?? measurement.endX ?? measurement.x2, 1, this.columns, startX);
+    const endY = bounded(to.y ?? measurement.endY ?? measurement.y2, 1, this.rows, startY);
+    const cells = this.measureDistanceCells(startX, startY, endX, endY);
+    return {
+      id: String(measurement.id || createId("measurement")),
+      from: { x: startX, y: startY },
+      to: { x: endX, y: endY },
+      cells,
+      meters: Number((cells * this.metersPerCell).toFixed(2)),
+      ownerId: String(measurement.ownerId || ""),
+      createdAt: measurement.createdAt || nowIso(),
+      visibleToPlayers: measurement.visibleToPlayers !== false,
+      metadata: clone(measurement.metadata) || {},
     };
   }
 
   normalizeObjective(objective = {}) {
+    const progressCurrent = Math.max(0, numeric(objective.progressCurrent ?? objective.current, 0));
+    const progressMax = Math.max(1, numeric(objective.progressMax ?? objective.max, 1));
     return {
       id: String(objective.id || createId("objective")),
-      label: String(objective.label || objective.name || "Objetivo"),
-      progress: String(objective.progress || ""),
+      title: String(objective.title || objective.label || objective.name || "Objetivo"),
+      label: String(objective.label || objective.title || objective.name || "Objetivo"),
+      description: String(objective.description || objective.notes || ""),
+      progressCurrent,
+      progressMax,
+      progress: String(objective.progress || `${progressCurrent}/${progressMax}`),
       x: objective.x === undefined ? null : bounded(objective.x, 1, this.columns, 1),
       y: objective.y === undefined ? null : bounded(objective.y, 1, this.rows, 1),
       completed: Boolean(objective.completed),
+      visibleToPlayers: objective.visibleToPlayers !== false && !objective.hidden,
+      hidden: Boolean(objective.hidden),
+    };
+  }
+
+  measureDistanceCells(x1 = 1, y1 = 1, x2 = 1, y2 = 1) {
+    const dx = numeric(x2, x1) - numeric(x1, 1);
+    const dy = numeric(y2, y1) - numeric(y1, 1);
+    return Number(Math.hypot(dx, dy).toFixed(2));
+  }
+
+  movementPreview(tokenId = "", x = 1, y = 1) {
+    const token = this.tokens.find((entry) => entry.id === tokenId);
+    if (!token) return null;
+    const cells = this.measureDistanceCells(token.x, token.y, x, y);
+    const meters = Number((cells * this.metersPerCell).toFixed(2));
+    const movement = Math.max(0, numeric(token.metadata?.movement ?? token.metadata?.movimento ?? token.movement, 0));
+    return {
+      tokenId: token.id,
+      tokenName: token.name,
+      from: { x: token.x, y: token.y },
+      to: { x, y },
+      cells,
+      meters,
+      movement,
+      exceedsMovement: Boolean(movement && meters > movement),
     };
   }
 
@@ -1063,16 +1169,72 @@ export class Scene {
     this.tokens = this.tokens.filter((token) => token.id !== tokenId);
   }
 
+  addMeasurement(measurement = {}) {
+    const next = this.normalizeMeasurement(measurement);
+    this.measurements.unshift(next);
+    this.measurements = this.measurements.slice(0, 12);
+    return next;
+  }
+
+  clearMeasurements() {
+    this.measurements = [];
+    return this.measurements;
+  }
+
+  upsertArea(area = {}) {
+    const next = this.normalizeArea(area);
+    const index = this.areas.findIndex((entry) => entry.id === next.id);
+    if (index >= 0) this.areas[index] = next;
+    else this.areas.push(next);
+    return next;
+  }
+
+  removeArea(areaId = "") {
+    const existing = this.areas.find((entry) => entry.id === areaId) || null;
+    this.areas = this.areas.filter((entry) => entry.id !== areaId);
+    return existing;
+  }
+
+  upsertObjective(objective = {}) {
+    const next = this.normalizeObjective(objective);
+    const index = this.objectives.findIndex((entry) => entry.id === next.id);
+    if (index >= 0) this.objectives[index] = next;
+    else this.objectives.push(next);
+    return next;
+  }
+
+  removeObjective(objectiveId = "") {
+    const existing = this.objectives.find((entry) => entry.id === objectiveId) || null;
+    this.objectives = this.objectives.filter((entry) => entry.id !== objectiveId);
+    return existing;
+  }
+
+  updateVisibility({ targetType = "token", id = "", hidden = false, visibleToPlayers } = {}) {
+    const list = targetType === "area" ? this.areas : targetType === "objective" ? this.objectives : this.tokens;
+    const target = list.find((entry) => entry.id === id);
+    if (!target) throw new Error("Elemento de cena nao encontrado.");
+    target.hidden = Boolean(hidden);
+    if (visibleToPlayers !== undefined) target.visibleToPlayers = Boolean(visibleToPlayers);
+    else if ("visibleToPlayers" in target) target.visibleToPlayers = !target.hidden;
+    return target;
+  }
+
   update(patch = {}) {
     if (patch.name !== undefined) this.name = String(patch.name || "Cena sem nome");
     if (patch.mapImage !== undefined) this.mapImage = String(patch.mapImage || "");
     if (patch.gridSize !== undefined) this.gridSize = Math.max(1, numeric(patch.gridSize, this.gridSize));
+    if (patch.gridVisible !== undefined) this.gridVisible = patch.gridVisible !== false;
+    if (patch.gridOpacity !== undefined) this.gridOpacity = Math.max(0, Math.min(1, numeric(patch.gridOpacity, this.gridOpacity)));
+    if (patch.snapToGrid !== undefined) this.snapToGrid = patch.snapToGrid !== false;
+    if (patch.metersPerCell !== undefined) this.metersPerCell = Math.max(0.1, numeric(patch.metersPerCell, this.metersPerCell));
     if (patch.columns !== undefined) this.columns = Math.max(4, Math.floor(numeric(patch.columns, this.columns)));
     if (patch.rows !== undefined) this.rows = Math.max(4, Math.floor(numeric(patch.rows, this.rows)));
     if (patch.notes !== undefined) this.notes = String(patch.notes || "");
     if (patch.metadata) this.metadata = { ...this.metadata, ...clone(patch.metadata) };
     if (patch.tokens) this.tokens = arrayOf(patch.tokens).map((token) => token instanceof MapToken ? token : MapToken.fromJSON(token));
     if (patch.zones) this.zones = arrayOf(patch.zones).map((zone) => this.normalizeZone(zone));
+    if (patch.areas) this.areas = arrayOf(patch.areas).map((area) => this.normalizeArea(area));
+    if (patch.measurements) this.measurements = arrayOf(patch.measurements).map((measurement) => this.normalizeMeasurement(measurement));
     if (patch.objectives) this.objectives = arrayOf(patch.objectives).map((objective) => this.normalizeObjective(objective));
     return this;
   }
@@ -1083,10 +1245,16 @@ export class Scene {
       name: this.name,
       mapImage: this.mapImage,
       gridSize: this.gridSize,
+      gridVisible: this.gridVisible,
+      gridOpacity: this.gridOpacity,
+      snapToGrid: this.snapToGrid,
+      metersPerCell: this.metersPerCell,
       columns: this.columns,
       rows: this.rows,
       tokens: this.tokens.map((token) => token.toJSON()),
       zones: this.zones.map((zone) => ({ ...zone })),
+      areas: this.areas.map((area) => clone(area)),
+      measurements: this.measurements.map((measurement) => clone(measurement)),
       objectives: this.objectives.map((objective) => ({ ...objective })),
       notes: this.notes,
       metadata: clone(this.metadata),
@@ -1378,6 +1546,8 @@ export class PermissionManager {
       GAME_EVENT_TYPES.SHOP_DELETE_REQUEST,
       GAME_EVENT_TYPES.LOOT_STATE,
       GAME_EVENT_TYPES.LOOT_CLAIM,
+      GAME_EVENT_TYPES.SCENE_MEASUREMENT_CREATE,
+      GAME_EVENT_TYPES.SCENE_MEASUREMENT_CLEAR,
     ].includes(action)) return true;
     if ([GAME_EVENT_TYPES.APPROVAL_APPROVE, GAME_EVENT_TYPES.APPROVAL_REJECT].includes(action)) return false;
     if (action === GAME_EVENT_TYPES.INITIATIVE_ROLL) {
@@ -1498,6 +1668,11 @@ export class GameRoom {
         return this.applyApprovalEvent(event.type, payload, actor);
       case GAME_EVENT_TYPES.SHOP_CATALOG_REQUEST:
       case GAME_EVENT_TYPES.SHOP_CATALOG_STATE:
+      case GAME_EVENT_TYPES.SHOP_ITEM_DETAILS:
+      case GAME_EVENT_TYPES.SHOP_CART_STATE:
+      case GAME_EVENT_TYPES.SHOP_CART_SUBMIT:
+      case GAME_EVENT_TYPES.SHOP_CART_APPROVE:
+      case GAME_EVENT_TYPES.SHOP_CART_REJECT:
       case GAME_EVENT_TYPES.SHOP_CART_UPDATE:
       case GAME_EVENT_TYPES.SHOP_PURCHASE_REQUEST:
       case GAME_EVENT_TYPES.SHOP_PURCHASE_APPROVE:
@@ -1518,6 +1693,10 @@ export class GameRoom {
       case GAME_EVENT_TYPES.LOOT_CLAIM:
       case GAME_EVENT_TYPES.LOOT_DISTRIBUTE:
       case GAME_EVENT_TYPES.LOOT_STATE:
+      case GAME_EVENT_TYPES.LOOT_PACK_CREATE:
+      case GAME_EVENT_TYPES.LOOT_PACK_UPDATE:
+      case GAME_EVENT_TYPES.LOOT_PACK_DISTRIBUTE:
+      case GAME_EVENT_TYPES.LOOT_MONSTER_DEFEATED:
         return this.applyLootEvent(event.type, payload, actor);
       case GAME_EVENT_TYPES.TRANSACTION_LOG:
         this.assertAllowed(actor, event.type);
@@ -1548,6 +1727,18 @@ export class GameRoom {
       case GAME_EVENT_TYPES.TURN_NEXT:
         this.assertAllowed(actor, event.type);
         return this.nextTurn(actor);
+      case GAME_EVENT_TYPES.SCENE_MAP_UPDATE:
+      case GAME_EVENT_TYPES.SCENE_GRID_UPDATE:
+      case GAME_EVENT_TYPES.SCENE_MEASUREMENT_CREATE:
+      case GAME_EVENT_TYPES.SCENE_MEASUREMENT_CLEAR:
+      case GAME_EVENT_TYPES.SCENE_AREA_CREATE:
+      case GAME_EVENT_TYPES.SCENE_AREA_UPDATE:
+      case GAME_EVENT_TYPES.SCENE_AREA_DELETE:
+      case GAME_EVENT_TYPES.SCENE_VISIBILITY_UPDATE:
+      case GAME_EVENT_TYPES.SCENE_OBJECTIVE_CREATE:
+      case GAME_EVENT_TYPES.SCENE_OBJECTIVE_UPDATE:
+      case GAME_EVENT_TYPES.SCENE_OBJECTIVE_DELETE:
+        return this.applySceneEvent(event.type, payload, actor);
       case GAME_EVENT_TYPES.SCENE_UPDATE:
         this.assertAllowed(actor, event.type);
         this.scene.update(payload.patch || payload);
@@ -1864,16 +2055,69 @@ export class GameRoom {
     return this.shopState;
   }
 
+  applySceneEvent(type, payload = {}, actor = null) {
+    this.assertAllowed(actor, type);
+    if (type === GAME_EVENT_TYPES.SCENE_MAP_UPDATE) {
+      this.scene.update({
+        mapImage: payload.mapImage || payload.image || "",
+        name: payload.name ?? this.scene.name,
+        notes: payload.notes ?? this.scene.notes,
+      });
+      this.addChatMessage({
+        playerId: actor?.id || "",
+        authorName: "Sistema Solaris",
+        message: `${actor?.name || "Mestre"} selecionou um mapa para a cena.`,
+      });
+      return this.scene;
+    }
+    if (type === GAME_EVENT_TYPES.SCENE_GRID_UPDATE) {
+      this.scene.update(payload.patch || payload);
+      return this.scene;
+    }
+    if (type === GAME_EVENT_TYPES.SCENE_MEASUREMENT_CREATE) {
+      const measurement = this.scene.addMeasurement({
+        ...payload.measurement,
+        ...payload,
+        ownerId: actor?.id || payload.ownerId || "",
+      });
+      return measurement;
+    }
+    if (type === GAME_EVENT_TYPES.SCENE_MEASUREMENT_CLEAR) {
+      return this.scene.clearMeasurements();
+    }
+    if (type === GAME_EVENT_TYPES.SCENE_AREA_CREATE || type === GAME_EVENT_TYPES.SCENE_AREA_UPDATE) {
+      const area = this.scene.upsertArea({
+        ...payload.area,
+        ...payload,
+        ownerId: payload.ownerId || actor?.id || "",
+      });
+      return area;
+    }
+    if (type === GAME_EVENT_TYPES.SCENE_AREA_DELETE) {
+      return this.scene.removeArea(payload.areaId || payload.id);
+    }
+    if (type === GAME_EVENT_TYPES.SCENE_VISIBILITY_UPDATE) {
+      return this.scene.updateVisibility(payload);
+    }
+    if (type === GAME_EVENT_TYPES.SCENE_OBJECTIVE_CREATE || type === GAME_EVENT_TYPES.SCENE_OBJECTIVE_UPDATE) {
+      return this.scene.upsertObjective(payload.objective || payload);
+    }
+    if (type === GAME_EVENT_TYPES.SCENE_OBJECTIVE_DELETE) {
+      return this.scene.removeObjective(payload.objectiveId || payload.id);
+    }
+    return this.scene;
+  }
+
   applyShopEvent(type, payload = {}, actor = null) {
-    if ([GAME_EVENT_TYPES.SHOP_CATALOG_REQUEST, GAME_EVENT_TYPES.SHOP_CATALOG_STATE].includes(type)) {
+    if ([GAME_EVENT_TYPES.SHOP_CATALOG_REQUEST, GAME_EVENT_TYPES.SHOP_CATALOG_STATE, GAME_EVENT_TYPES.SHOP_ITEM_DETAILS, GAME_EVENT_TYPES.SHOP_CART_STATE].includes(type)) {
       this.assertAllowed(actor, GAME_EVENT_TYPES.SHOP_CATALOG_REQUEST);
       return this.shopState;
     }
-    if (type === GAME_EVENT_TYPES.SHOP_CART_UPDATE) return this.updateShopCart(payload, actor);
-    if ([GAME_EVENT_TYPES.SHOP_PURCHASE_APPROVE, GAME_EVENT_TYPES.SHOP_SELL_APPROVE].includes(type)) {
+    if ([GAME_EVENT_TYPES.SHOP_CART_UPDATE, GAME_EVENT_TYPES.SHOP_CART_SUBMIT].includes(type)) return this.updateShopCart(payload, actor);
+    if ([GAME_EVENT_TYPES.SHOP_PURCHASE_APPROVE, GAME_EVENT_TYPES.SHOP_SELL_APPROVE, GAME_EVENT_TYPES.SHOP_CART_APPROVE].includes(type)) {
       return this.applyApprovalEvent(GAME_EVENT_TYPES.APPROVAL_APPROVE, payload, actor);
     }
-    if ([GAME_EVENT_TYPES.SHOP_PURCHASE_REJECT, GAME_EVENT_TYPES.SHOP_SELL_REJECT, GAME_EVENT_TYPES.SHOP_DELETE_REJECT].includes(type)) {
+    if ([GAME_EVENT_TYPES.SHOP_PURCHASE_REJECT, GAME_EVENT_TYPES.SHOP_SELL_REJECT, GAME_EVENT_TYPES.SHOP_DELETE_REJECT, GAME_EVENT_TYPES.SHOP_CART_REJECT].includes(type)) {
       return this.applyApprovalEvent(GAME_EVENT_TYPES.APPROVAL_REJECT, payload, actor);
     }
     if (type === GAME_EVENT_TYPES.SHOP_DELETE_APPROVE) {
@@ -1891,7 +2135,13 @@ export class GameRoom {
         ? arrayOf(payload.items).map(normalizeCartLine)
         : [normalizeCartLine({ item: payload.item || payload.itemSnapshot || payload, quantity: payload.quantity || 1, price: payload.price })];
       const total = Math.max(0, numeric(payload.total, items.reduce((sum, item) => sum + item.total, 0)));
-      const requestPayload = { characterId: character.id, items, price: total, total };
+      const requestPayload = {
+        characterId: character.id,
+        items,
+        price: total,
+        total,
+        destination: payload.destination || payload.location || { kind: "unassigned" },
+      };
       if (actor?.isGM || payload.direct === true) {
         return this.executeApprovedRequest({
           characterId: character.id,
@@ -1969,7 +2219,10 @@ export class GameRoom {
     }
 
     this.assertAllowed(actor, type);
-    if (type === GAME_EVENT_TYPES.LOOT_CREATE) {
+    if (type === GAME_EVENT_TYPES.LOOT_MONSTER_DEFEATED) {
+      return this.createLootFromMonster(payload.monsterId || payload.entityId || payload.id, actor);
+    }
+    if (type === GAME_EVENT_TYPES.LOOT_CREATE || type === GAME_EVENT_TYPES.LOOT_PACK_CREATE) {
       const pack = normalizeLootPack({
         ...payload.pack,
         ...payload,
@@ -1989,7 +2242,7 @@ export class GameRoom {
     const packId = payload.lootPackId || payload.packId || payload.id;
     const pack = this.lootPacks.find((entry) => entry.id === packId);
     if (!pack) throw new Error("Pacote de loot nao encontrado.");
-    if (type === GAME_EVENT_TYPES.LOOT_UPDATE || type === GAME_EVENT_TYPES.LOOT_ASSIGN) {
+    if (type === GAME_EVENT_TYPES.LOOT_UPDATE || type === GAME_EVENT_TYPES.LOOT_PACK_UPDATE || type === GAME_EVENT_TYPES.LOOT_ASSIGN) {
       Object.assign(pack, normalizeLootPack({ ...pack, ...payload.patch, ...payload, id: pack.id, updatedAt: nowIso() }));
       return pack;
     }
@@ -2004,7 +2257,7 @@ export class GameRoom {
       });
       return pack;
     }
-    if (type === GAME_EVENT_TYPES.LOOT_DISTRIBUTE) {
+    if (type === GAME_EVENT_TYPES.LOOT_DISTRIBUTE || type === GAME_EVENT_TYPES.LOOT_PACK_DISTRIBUTE) {
       const character = this.getCharacter(payload.characterId || payload.targetCharacterId || pack.assignedTo);
       if (!character) throw new Error("Personagem destino do loot nao encontrado.");
       const result = this.distributeLootPack(pack, character, actor, payload);
@@ -2016,7 +2269,8 @@ export class GameRoom {
   distributeLootPack(pack, character, actor = null, payload = {}) {
     const snapshot = normalizeSheetSnapshot(character.snapshot);
     const selectedItems = arrayOf(payload.items).length ? arrayOf(payload.items).map(normalizeCartLine) : pack.items;
-    const instances = inventoryInstancesFromCart(selectedItems);
+    const destination = payload.destination || payload.location || { kind: "unassigned" };
+    const instances = inventoryInstancesFromCart(selectedItems, destination);
     snapshot.inventory = uniqueById([...snapshot.inventory, ...instances]);
     const luzentis = Math.max(0, numeric(payload.luzentis ?? pack.luzentis, 0));
     if (luzentis > 0) updateCurrency(snapshot, luzentis);
@@ -2039,6 +2293,40 @@ export class GameRoom {
       message: `${actor?.name || "Mestre"} entregou ${pack.name} para ${character.name}.`,
     });
     return { pack, character, items: instances };
+  }
+
+  createLootFromMonster(monsterId = "", actor = null) {
+    const monster = this.getMonster(monsterId);
+    if (!monster) throw new Error("Monstro da sessao nao encontrado.");
+    const snapshot = clone(monster.snapshot) || {};
+    if (snapshot.lootPackId && this.lootPacks.some((pack) => pack.id === snapshot.lootPackId)) {
+      return this.lootPacks.find((pack) => pack.id === snapshot.lootPackId);
+    }
+    const rawLoot = arrayOf(snapshot.loot || snapshot.lootTable || snapshot.drops || snapshot.rewards);
+    const items = rawLoot.map((entry) => normalizeCartLine({
+      item: entry.item || entry,
+      quantity: entry.quantity || entry.qty || 1,
+      price: entry.price || 0,
+    }));
+    const pack = normalizeLootPack({
+      name: `Loot pendente - ${monster.name}`,
+      source: monster.name,
+      items,
+      luzentis: Math.max(0, numeric(snapshot.luzentis || snapshot.credits || snapshot.currency, 0)),
+      notes: items.length ? "Criado automaticamente ao derrotar a criatura." : "Pacote vazio criado automaticamente; mestre define recompensas.",
+      createdBy: actor?.id || "",
+    });
+    monster.snapshot.lootPackId = pack.id;
+    this.lootPacks.unshift(pack);
+    this.lootPacks = this.lootPacks.slice(0, 80);
+    this.addTransaction({
+      type: "loot:monster:defeated",
+      actorId: actor?.id || "",
+      actorName: actor?.name || "Mestre",
+      status: "pending",
+      message: `Loot pendente criado para ${monster.name}.`,
+    });
+    return pack;
   }
 
   getApproval(approvalId = "") {
@@ -2111,7 +2399,7 @@ export class GameRoom {
       const items = type === "purchase-cart"
         ? arrayOf(payload.items).map(normalizeCartLine)
         : [normalizeCartLine({ item: payload.item || { name: payload.itemName || "Item comprado" }, quantity: payload.quantity || 1, price: payload.price })];
-      const instances = inventoryInstancesFromCart(items);
+      const instances = inventoryInstancesFromCart(items, payload.destination || payload.location || { kind: "unassigned" });
       const price = Math.max(0, numeric(payload.price ?? payload.total, items.reduce((sum, line) => sum + line.total, 0)));
       const snapshot = normalizeSheetSnapshot(character.snapshot);
       const currentMoney = numeric(snapshot.currency ?? snapshot.luzentis, 0);
@@ -2436,6 +2724,7 @@ export class GameRoom {
         targetName: monster.name,
         message: `${monster.name} sofreu ${Math.max(0, numeric(payload.amount, 0))} de dano.`,
       });
+      if (current <= 0) this.createLootFromMonster(monster.id, actor);
       return current;
     }
     if (type === GAME_EVENT_TYPES.MONSTER_HEAL) {
@@ -2480,17 +2769,37 @@ export class GameRoom {
       ...token,
       ownerPlayerId: character?.ownerPlayerId || "",
     });
+    const movement = this.scene.movementPreview(payload.tokenId, payload.x, payload.y);
     const moved = this.scene.moveToken(payload.tokenId, payload.x, payload.y);
+    moved.metadata = { ...(moved.metadata || {}), lastMove: movement };
     const label = `${String.fromCharCode(64 + Math.max(1, Math.floor(moved.x)))}${Math.max(1, Math.floor(moved.y))}`;
+    const warning = movement?.exceedsMovement
+      ? ` Movimento excede o MOV do personagem (${movement.meters}m > ${movement.movement}m).`
+      : "";
     this.addCombatLog({
       type: "token:move",
       actorId: actor?.id || "",
       actorName: actor?.name || "Mesa",
       targetId: moved.entityId,
       targetName: moved.name,
-      message: `${actor?.name || "Mesa"} moveu ${moved.name} para ${label}.`,
+      message: `${actor?.name || "Mesa"} moveu ${moved.name} para ${label}.${warning}`,
     });
     return moved;
+  }
+
+  sceneForPlayer(playerId = "") {
+    const actor = this.getPlayer(playerId);
+    const scene = this.scene.toJSON();
+    if (actor?.isGM) return scene;
+    const visible = (entry) => !entry.hidden && entry.visibleToPlayers !== false;
+    return {
+      ...scene,
+      tokens: scene.tokens.filter(visible),
+      zones: scene.zones.filter(visible),
+      areas: scene.areas.filter(visible),
+      measurements: scene.measurements.filter(visible),
+      objectives: scene.objectives.filter(visible),
+    };
   }
 
   toJSON() {

@@ -1,19 +1,19 @@
-const STATIC_CACHE = "solaris-biblioteca-static-20260620c";
-const RUNTIME_CACHE = "solaris-biblioteca-runtime-20260620c";
+const STATIC_CACHE = "solaris-biblioteca-static-20260620d";
+const RUNTIME_CACHE = "solaris-biblioteca-runtime-20260620d";
 
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css?v=20260620c",
+  "./styles.css?v=20260620d",
   "./official-books-data.js?v=20260614h",
   "./official-book5-catalog.js?v=20260614j",
   "./official-rulebook-compendium.js?v=20260614j",
   "./HumanisVitalHUD.js?v=20260606e",
-  "./app.js?v=20260620c",
+  "./app.js?v=20260620d",
   "./src/domain/solaris-domain-architecture.js?v=20260615c",
-  "./src/session/solaris-session-domain.js?v=20260620c",
-  "./src/session/solaris-session-client.js?v=20260620c",
-  "./src/session/solaris-session-ui.js?v=20260620c",
+  "./src/session/solaris-session-domain.js?v=20260620d",
+  "./src/session/solaris-session-client.js?v=20260620d",
+  "./src/session/solaris-session-ui.js?v=20260620d",
   "./manifest.webmanifest",
   "./assets/icons/solaris-icon.svg",
   "./assets/icons/apple-touch-icon.png",

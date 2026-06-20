@@ -502,7 +502,7 @@ No modo offline/simulado, a ficha local continua funcionando como antes. A aprov
 ## Como testar ficha sincronizada
 
 1. Rodar `npm run server`.
-2. Abrir `http://localhost:3000/?check=20260620c`.
+2. Abrir `http://localhost:3000/?view=mesaVirtual&check=20260620d`.
 3. Abrir a Mesa Virtual.
 4. Como mestre, clicar em **Criar Sala**.
 5. Em outra aba, abrir a mesma URL e clicar em **Entrar em Sala**.
@@ -553,3 +553,12 @@ Documentacao da loja alfa:
 ```txt
 docs/FASE_4_LOJA_E_DISTRIBUICAO.md
 ```
+## Fase 5 - Polimento funcional
+
+Implementada no cache `20260620d`.
+
+- Mapa com imagem, grid configuravel, medicao, areas e objetivos com progresso.
+- Visibilidade filtrada para jogadores.
+- Loja com detalhe de item, destino de armazenamento e carrinhos visiveis ao mestre.
+- Loot com janela dedicada e pacote automatico ao derrotar monstro.
+- Ficha de monstro modal com ataque, dano, condicoes e criacao de loot.
