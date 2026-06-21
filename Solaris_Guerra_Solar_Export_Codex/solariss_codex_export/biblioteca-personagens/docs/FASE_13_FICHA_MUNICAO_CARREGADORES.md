@@ -1,6 +1,6 @@
 # Fase 13 - Ficha virtual: armas, municao e carregadores
 
-Status: implementado no cache `20260621a`.
+Status: implementado no cache `20260621b`.
 
 ## Objetivo
 
@@ -45,6 +45,16 @@ Na aba de equipamentos, a arma equipada agora mostra:
 - recarga interna para revolveres, escopetas, lancadores, armas de celula e armas de cinta.
 
 Tambem foi adicionada a secao `Municao e carregadores`, que lista pilhas e carregadores como itens da ficha.
+
+## Biblioteca Solaris
+
+A biblioteca de armas agora usa a mesma arquitetura da ficha virtual.
+
+- Cards de armas mostram um resumo curto do sistema de municao.
+- A loja inclui carregador, capacidade resumida e preco na mesma linha de metadados.
+- O duplo clique no nome da arma abre a janela de detalhes com `Perfil de municao e carregador`.
+- O guia de uso da arma explica alimentacao, carregador/recarga, modos de disparo e regra de cubo de municao.
+- A biblioteca usa `ammoProfile` quando existir; quando nao existir, infere o perfil inicial pelo nome, categoria e tags da arma.
 
 ## Regras preservadas
 

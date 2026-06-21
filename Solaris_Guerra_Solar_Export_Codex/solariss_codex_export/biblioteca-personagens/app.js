@@ -1,5 +1,6 @@
 import {
   Character as DomainCharacter,
+  AMMO_CUBE_BULK,
   AMMO_KINDS,
   ENTITY_TYPES,
   FEED_SYSTEMS,
@@ -24,7 +25,7 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260621a";
+} from "./src/domain/solaris-domain-architecture.js?v=20260621b";
 import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260620j";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
@@ -2436,7 +2437,7 @@ function currentSessionCharacterSnapshot() {
     luzentis: numberValue(state.current.currency, STARTING_CURRENCY),
     metadata: {
       schemaVersion: 1,
-      appCache: "20260621a",
+      appCache: "20260621b",
       source: "solaris-local-character",
       updatedAt: state.current.updatedAt || new Date().toISOString(),
     },
@@ -4356,6 +4357,7 @@ const universalDetailFieldLabels = {
   details: "Texto detalhado do livro",
   contentBlocks: "Conteúdo integral do livro",
   bookExcerpts: "Regras oficiais aplicáveis",
+  ammoProfile: "Perfil de munição e carregador",
   bookLabel: "Livro",
   bookTitle: "Título do livro",
   number: "Seção",
@@ -4415,6 +4417,7 @@ const universalDetailFieldOrder = [
   "context",
   "contentBlocks",
   "bookExcerpts",
+  "ammoProfile",
   "details",
   "tier",
   "rank",
@@ -4840,12 +4843,18 @@ function detailTransportGuide(record, { equipped = false } = {}) {
 function buildUsageGuide(record, view) {
   if (!record || view === "regras" || record.category === "rulebook-section") return {};
   if (view === "armas" || record.category === "weapon") {
+    const ammoProfile = weaponLibraryAmmoProfile(record);
+    const ammoSummary = weaponLibraryAmmoSummary(record);
     return compactGuide({
       "Função": [record.type || "Arma", record.tier ? `Tier ${record.tier}` : ""].filter(Boolean).join(" - "),
       "Teste de ataque": record.attack ? `Role usando ${record.attack}. Aplique vantagens, desvantagens e bônus situacionais indicados pela categoria ou pela arma.` : "",
       "Em caso de acerto": record.damage ? `Cause ${record.damage}.` : "",
       "Alcance e operação": [record.range && `Alcance: ${record.range}`, record.handling && `Empunhadura: ${record.handling}`].filter(Boolean).join(". "),
       "Munição e cadência": [record.ammo && `Munição: ${record.ammo}`, record.capacity && `Capacidade/Cadência: ${record.capacity}`].filter(Boolean).join(". "),
+      "Arquitetura de munição": ammoSummary,
+      "Carregador e recarga": ammoProfile?.Carregador,
+      "Modos de disparo": Array.isArray(ammoProfile?.["Modos de disparo"]) ? ammoProfile["Modos de disparo"].join("; ") : "",
+      "Cubo de munição": ammoProfile?.["Cubo de munição"],
       "Mods e integridade": [detailValueIsPresent(record.mods) && `${record.mods} espaço(s) de mod`, record.cracks && `rachaduras ${record.cracks}`, record.jammed && `falha: ${record.jammed}`].filter(Boolean).join(". "),
       "Limites próprios": record.summary,
       "Transporte": detailTransportGuide(record, { equipped: true }),
@@ -4926,7 +4935,7 @@ function buildUsageGuide(record, view) {
 
 function enrichDetailRecordWithRulebooks(record, view) {
   if (!record) return record;
-  const sanitized = { ...record };
+  const sanitized = enrichLibraryRecordForAmmo({ ...record });
   ["notes", "documentNotes", "metadata", "sourceReference", "sourceRow"].forEach((key) => delete sanitized[key]);
   if (sanitized.officialData) sanitized.officialData = sanitizeOfficialDetailData(sanitized.officialData);
   sanitized.summary = standardizedDetailSummary(sanitized);
@@ -6317,6 +6326,7 @@ function renderLibrary() {
 
   el.libraryGrid.innerHTML = paginated.items.map((item) => {
     const meta = isMarketLibrary ? marketMeta(item) : isMonsterLibrary ? monsterMeta(item) : libraryMeta(item);
+    const libraryAmmoSummary = item.category === "weapon" ? weaponLibraryAmmoSummary(item) : "";
     const bonus = item.bonus ? Object.entries(item.bonus).map(([key, value]) => `${key} ${formatMod(value)}`).join("  ") : "";
     const tags = (item.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
     const alreadyLearned = isLearnLibrary && learnedAbilityIds.has(item.id);
@@ -6339,6 +6349,7 @@ function renderLibrary() {
         <div class="card-face">
           <h3>${isRaceLibrary ? escapeHtml(item.name) : renderCardTitleButton(item.name)}</h3>
           ${meta || bonus ? `<p class="card-meta-line">${escapeHtml(meta || bonus)}</p>` : ""}
+          ${libraryAmmoSummary ? `<p class="ammo-card-line library-ammo-line">${escapeHtml(libraryAmmoSummary)}</p>` : ""}
           ${showsInlineSummary ? `<p class="library-inline-summary">${escapeHtml(item.summary)}</p>` : ""}
         </div>
         ${isMarketLibrary ? renderLibraryPurchaseControls(item) : ""}
@@ -6355,6 +6366,7 @@ function renderLibrary() {
         <div class="card-hover-popover" role="tooltip">
           <strong>${escapeHtml(item.name)}</strong>
           ${meta || bonus ? `<p>${escapeHtml(meta || bonus)}</p>` : ""}
+          ${libraryAmmoSummary ? `<p class="library-ammo-popover">${escapeHtml(libraryAmmoSummary)}</p>` : ""}
           <p>${escapeHtml(item.summary)}</p>
           ${isMonsterLibrary ? renderMonsterPopoverDetails(item) : ""}
           ${tags ? `<div class="tag-row">${tags}</div>` : ""}
@@ -8899,15 +8911,122 @@ function createLocalUid(prefix = "entry") {
 
 function ammoKindLabel(kind) {
   const labels = {
-    [AMMO_KINDS.NONE]: "Sem municao",
-    [AMMO_KINDS.LIGHT]: "Municao leve",
-    [AMMO_KINDS.MEDIUM]: "Municao media",
+    [AMMO_KINDS.NONE]: "Sem munição",
+    [AMMO_KINDS.LIGHT]: "Munição leve",
+    [AMMO_KINDS.MEDIUM]: "Munição média",
     [AMMO_KINDS.SHELL]: "Cartucho",
-    [AMMO_KINDS.ENERGY_CELL]: "Celula de energia",
+    [AMMO_KINDS.ENERGY_CELL]: "Célula de energia",
     [AMMO_KINDS.GRENADE]: "Granada",
     [AMMO_KINDS.ROCKET]: "Foguete",
   };
-  return labels[kind] || "Municao";
+  return labels[kind] || "Munição";
+}
+
+function feedSystemLabel(feedSystem) {
+  const labels = {
+    [FEED_SYSTEMS.NONE]: "Não usa munição",
+    [FEED_SYSTEMS.DETACHABLE_MAGAZINE]: "Carregador removível",
+    [FEED_SYSTEMS.INTERNAL_MAGAZINE]: "Alimentação interna",
+    [FEED_SYSTEMS.CYLINDER]: "Tambor interno",
+    [FEED_SYSTEMS.SINGLE_LOAD]: "Carga única",
+    [FEED_SYSTEMS.ENERGY_CELL]: "Célula de energia",
+    [FEED_SYSTEMS.BELT]: "Cinta ou caixa de munição",
+  };
+  return labels[feedSystem] || "Alimentação";
+}
+
+function fireModeLibraryLabel(modeId) {
+  const mode = FIRE_MODES[modeId];
+  if (!mode) return "";
+  const extras = [
+    `custo ${mode.ammoCost}`,
+    mode.rollMode === "advantage" ? "vantagem" : "",
+    mode.rollMode === "disadvantage" ? "desvantagem" : "",
+    mode.damageDiceBonus ? `+${mode.damageDiceBonus} dado(s) de dano` : "",
+    mode.targetSave ? `alvo testa ${mode.targetSave}` : "",
+  ].filter(Boolean).join(", ");
+  return `${mode.label}${extras ? ` (${extras})` : ""}`;
+}
+
+function weaponLibraryAmmoState(item) {
+  if (!item || item.category !== "weapon") return null;
+  return createWeaponAmmoState({
+    id: item.id,
+    definitionId: item.id,
+    name: item.name,
+    category: "weapon",
+    type: item.type || item.kind || "",
+    tags: item.tags || [],
+    ammoProfile: item.ammoProfile,
+    metadata: {
+      category: item.category,
+      type: item.type || item.kind || "",
+      subtype: item.subtype || "",
+    },
+    definitionSnapshot: {
+      name: item.name,
+      category: "weapon",
+      tags: item.tags || [],
+      metadata: {
+        category: item.category,
+        type: item.type || item.kind || "",
+        subtype: item.subtype || "",
+      },
+    },
+  });
+}
+
+function weaponLibraryAmmoSummary(item) {
+  const ammoState = weaponLibraryAmmoState(item);
+  if (!ammoState || ammoState.feedSystem === FEED_SYSTEMS.NONE) return "";
+  const ammoKinds = ammoState.acceptedAmmoKinds.map(ammoKindLabel).join(", ");
+  const modes = ammoState.fireModes.map((modeId) => FIRE_MODES[modeId]?.label).filter(Boolean).join(", ");
+  return [
+    feedSystemLabel(ammoState.feedSystem),
+    ammoKinds,
+    ammoState.defaultCapacity ? `${ammoState.defaultCapacity} munições` : "",
+    modes ? `Modos: ${modes}` : "",
+  ].filter(Boolean).join(" - ");
+}
+
+function compactWeaponAmmoMeta(item) {
+  const ammoState = weaponLibraryAmmoState(item);
+  if (!ammoState || ammoState.feedSystem === FEED_SYSTEMS.NONE) return "";
+  return [
+    feedSystemLabel(ammoState.feedSystem),
+    ammoState.defaultCapacity ? `${ammoState.defaultCapacity} mun.` : "",
+  ].filter(Boolean).join(" ");
+}
+
+function weaponLibraryAmmoProfile(item) {
+  const ammoState = weaponLibraryAmmoState(item);
+  if (!ammoState || ammoState.feedSystem === FEED_SYSTEMS.NONE) {
+    return item?.category === "weapon" ? { "Sistema": "Não usa munição ou usa recurso narrativo próprio." } : null;
+  }
+  return compactGuide({
+    "Sistema": feedSystemLabel(ammoState.feedSystem),
+    "Munição aceita": ammoState.acceptedAmmoKinds.map(ammoKindLabel).join(", "),
+    "Capacidade padrão": ammoState.defaultCapacity ? `${ammoState.defaultCapacity} munição${ammoState.defaultCapacity === 1 ? "" : "es"}` : "",
+    "Carregador": ammoState.feedSystem === FEED_SYSTEMS.DETACHABLE_MAGAZINE
+      ? "Usa carregador removível. A munição fica no carregador, não na arma."
+      : "A munição fica na própria arma enquanto estiver carregada.",
+    "Modelo de carregador": ammoState.compatibleMagazineTemplateIds?.join(", "),
+    "Modos de disparo": ammoState.fireModes.map(fireModeLibraryLabel).filter(Boolean),
+    "Estado especial": ammoState.requiresPumpAfterShot ? "Depois de disparar, precisa bombear antes do próximo tiro." : "",
+    "Cubo de munição": ammoState.acceptedAmmoKinds
+      .map((kind) => `${AMMO_CUBE_BULK[kind] || 1} ${ammoKindLabel(kind).toLowerCase()} = 1 unidade`)
+      .join("; "),
+  });
+}
+
+function enrichLibraryRecordForAmmo(record) {
+  if (!record || record.category !== "weapon") return record;
+  const ammoProfile = weaponLibraryAmmoProfile(record);
+  if (!ammoProfile) return record;
+  return {
+    ...record,
+    ammoProfile,
+  };
 }
 
 function ammoKindFromEntry(entry) {
@@ -10064,6 +10183,7 @@ function marketMeta(item) {
     item.tier ? `Tier ${item.tier}` : "",
     item.type || item.kind || "",
     item.damage ? `Dano ${item.damage}` : "",
+    item.category === "weapon" ? compactWeaponAmmoMeta(item) : "",
     item.ca ? `CA ${item.ca}` : "",
     item.mods !== undefined && item.mods !== "" ? `${item.mods} mods` : "",
     item.weight || "",
@@ -10082,6 +10202,7 @@ function compactMarketMeta(item) {
     item.tier ? `Tier ${item.tier}` : "",
     item.type || item.kind || "",
     item.damage ? `Dano ${item.damage}` : "",
+    item.category === "weapon" ? compactWeaponAmmoMeta(item) : "",
     item.ca ? `CA ${item.ca}` : "",
     Number.isFinite(item.price) ? formatCurrency(item.price) : "",
   ].filter(Boolean);

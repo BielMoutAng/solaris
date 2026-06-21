@@ -585,11 +585,11 @@ Comparar cada tela com as imagens de referencia:
 - escudo;
 - tabelas rapidas.
 
-## Fase 13 - ficha virtual: municao e carregadores
+## Fase 13 - ficha virtual e biblioteca: municao e carregadores
 
-Status: implementada no cache `20260621a`.
+Status: implementada no cache `20260621b`.
 
-Foi adicionada a arquitetura de arma, municao, carregador e fonte de alimentacao na ficha virtual.
+Foi adicionada a arquitetura de arma, municao, carregador e fonte de alimentacao na ficha virtual e na biblioteca Solaris.
 
 Agora existem no dominio:
 
@@ -615,6 +615,13 @@ Na aba de equipamentos da ficha:
 - rajada e rajada pesada consomem municao e deixam bonus de dano pendente;
 - escopeta pode exigir bombear antes de disparar de novo;
 - existe secao `Municao e carregadores` para pilhas e carregadores.
+
+Na biblioteca Solaris:
+
+- cards de armas mostram resumo de municao/carregador;
+- metadados de loja indicam sistema de alimentacao e capacidade curta;
+- duplo clique no nome da arma abre detalhes com `Perfil de municao e carregador`;
+- guia de uso detalha carregador, recarga, modos de disparo e unidades de cubo de municao.
 
 Documentacao:
 

@@ -2933,6 +2933,18 @@ textarea:focus {
   font-size: 0.78rem;
 }
 
+.library-ammo-line {
+  display: -webkit-box;
+  overflow: hidden;
+  color: rgba(100, 217, 201, 0.92);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.library-ammo-popover {
+  color: rgba(100, 217, 201, 0.92) !important;
+}
+
 .ammo-logistics-section {
   overflow: visible;
 }
