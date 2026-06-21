@@ -51,6 +51,113 @@ export const EFFECT_OPERATIONS = Object.freeze({
   SET: "set",
 });
 
+export const AMMO_KINDS = Object.freeze({
+  NONE: "none",
+  LIGHT: "light",
+  MEDIUM: "medium",
+  SHELL: "shell",
+  ENERGY_CELL: "energy_cell",
+  GRENADE: "grenade",
+  ROCKET: "rocket",
+});
+
+export const FEED_SYSTEMS = Object.freeze({
+  NONE: "none",
+  DETACHABLE_MAGAZINE: "detachable_magazine",
+  INTERNAL_MAGAZINE: "internal_magazine",
+  CYLINDER: "cylinder",
+  SINGLE_LOAD: "single_load",
+  ENERGY_CELL: "energy_cell",
+  BELT: "belt",
+});
+
+export const FIRE_MODE_IDS = Object.freeze({
+  SINGLE: "single",
+  BURST: "burst",
+  HEAVY_BURST: "heavy_burst",
+  SHOTGUN_CONE: "shotgun_cone",
+  LAUNCHER_SHOT: "launcher_shot",
+  MACHINEGUN_BURST: "machinegun_burst",
+  SUPPRESSION: "suppression",
+});
+
+export const FIRE_MODES = Object.freeze({
+  [FIRE_MODE_IDS.SINGLE]: Object.freeze({
+    id: FIRE_MODE_IDS.SINGLE,
+    label: "Tiro",
+    ammoCost: 1,
+    rollMode: "normal",
+    damageDiceBonus: 0,
+    targetSave: "",
+  }),
+  [FIRE_MODE_IDS.BURST]: Object.freeze({
+    id: FIRE_MODE_IDS.BURST,
+    label: "Rajada",
+    ammoCost: 4,
+    rollMode: "advantage",
+    damageDiceBonus: 1,
+    targetSave: "",
+  }),
+  [FIRE_MODE_IDS.HEAVY_BURST]: Object.freeze({
+    id: FIRE_MODE_IDS.HEAVY_BURST,
+    label: "Rajada pesada",
+    ammoCost: 4,
+    rollMode: "disadvantage",
+    damageDiceBonus: 3,
+    targetSave: "",
+  }),
+  [FIRE_MODE_IDS.SHOTGUN_CONE]: Object.freeze({
+    id: FIRE_MODE_IDS.SHOTGUN_CONE,
+    label: "Cone",
+    ammoCost: 1,
+    rollMode: "save",
+    damageDiceBonus: 0,
+    targetSave: "JPR",
+  }),
+  [FIRE_MODE_IDS.LAUNCHER_SHOT]: Object.freeze({
+    id: FIRE_MODE_IDS.LAUNCHER_SHOT,
+    label: "Disparo de lancador",
+    ammoCost: 1,
+    rollMode: "normal",
+    damageDiceBonus: 0,
+    targetSave: "",
+  }),
+  [FIRE_MODE_IDS.MACHINEGUN_BURST]: Object.freeze({
+    id: FIRE_MODE_IDS.MACHINEGUN_BURST,
+    label: "Rajada de metralhadora",
+    ammoCost: 6,
+    rollMode: "normal",
+    damageDiceBonus: 1,
+    targetSave: "",
+  }),
+  [FIRE_MODE_IDS.SUPPRESSION]: Object.freeze({
+    id: FIRE_MODE_IDS.SUPPRESSION,
+    label: "Supressao",
+    ammoCost: 10,
+    rollMode: "save",
+    damageDiceBonus: 0,
+    targetSave: "JPR",
+  }),
+});
+
+export const AMMO_CUBE_BULK = Object.freeze({
+  [AMMO_KINDS.LIGHT]: 20,
+  [AMMO_KINDS.MEDIUM]: 10,
+  [AMMO_KINDS.SHELL]: 5,
+  [AMMO_KINDS.ENERGY_CELL]: 2,
+  [AMMO_KINDS.GRENADE]: 1,
+  [AMMO_KINDS.ROCKET]: 1,
+});
+
+export const AMMO_TYPE_LIBRARY = Object.freeze({
+  light_round: Object.freeze({ id: "light_round", name: "Municao leve", ammoKind: AMMO_KINDS.LIGHT, cubeBulk: 20 }),
+  medium_round: Object.freeze({ id: "medium_round", name: "Municao media", ammoKind: AMMO_KINDS.MEDIUM, cubeBulk: 10 }),
+  shell: Object.freeze({ id: "shell", name: "Cartucho de escopeta", ammoKind: AMMO_KINDS.SHELL, cubeBulk: 5 }),
+  energy_cell: Object.freeze({ id: "energy_cell", name: "Celula de energia", ammoKind: AMMO_KINDS.ENERGY_CELL, cubeBulk: 2 }),
+  grenade_round: Object.freeze({ id: "grenade_round", name: "Granada de lancador", ammoKind: AMMO_KINDS.GRENADE, cubeBulk: 1 }),
+  rocket: Object.freeze({ id: "rocket", name: "Foguete", ammoKind: AMMO_KINDS.ROCKET, cubeBulk: 1 }),
+});
+
 const DEFINITION_CLASS_BY_TYPE = new Map();
 
 function createId(prefix = "entity") {
@@ -109,6 +216,517 @@ function clone(value) {
   if (value === undefined) return undefined;
   if (typeof structuredClone === "function") return structuredClone(value);
   return JSON.parse(JSON.stringify(value));
+}
+
+function normalizeRuleText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function ammoId(prefix = "ammo") {
+  return createId(prefix);
+}
+
+function weaponRuleText(weapon = {}) {
+  const snapshot = weapon.definitionSnapshot || {};
+  const metadata = weapon.metadata || snapshot.metadata || {};
+  return normalizeRuleText([
+    weapon.name,
+    weapon.category,
+    weapon.type,
+    snapshot.name,
+    snapshot.category,
+    metadata.category,
+    metadata.type,
+    metadata.subtype,
+    metadata.classe,
+    metadata.kind,
+    ...(weapon.tags || []),
+    ...(snapshot.tags || []),
+  ].filter(Boolean).join(" "));
+}
+
+function defaultMagazineTemplateId(weapon = {}, profile = null) {
+  const sourceId = weapon.definitionId || weapon.id || weapon.name || "weapon";
+  const slug = normalizeRuleText(sourceId).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "weapon";
+  return `${slug}-${profile?.defaultAmmoKind || AMMO_KINDS.LIGHT}-mag`;
+}
+
+function ammoProfileFromData(weapon = {}) {
+  const direct = weapon.ammoProfile || weapon.metadata?.ammoProfile || weapon.definitionSnapshot?.ammoProfile || weapon.definitionSnapshot?.metadata?.ammoProfile;
+  return direct && typeof direct === "object" ? clone(direct) : null;
+}
+
+export function normalizeAmmoKind(value) {
+  const normalized = normalizeRuleText(value).replace(/[\s-]+/g, "_");
+  const aliases = {
+    none: AMMO_KINDS.NONE,
+    sem_municao: AMMO_KINDS.NONE,
+    leve: AMMO_KINDS.LIGHT,
+    light: AMMO_KINDS.LIGHT,
+    bala_leve: AMMO_KINDS.LIGHT,
+    municao_leve: AMMO_KINDS.LIGHT,
+    media: AMMO_KINDS.MEDIUM,
+    medium: AMMO_KINDS.MEDIUM,
+    bala_media: AMMO_KINDS.MEDIUM,
+    municao_media: AMMO_KINDS.MEDIUM,
+    cartucho: AMMO_KINDS.SHELL,
+    shell: AMMO_KINDS.SHELL,
+    escopeta: AMMO_KINDS.SHELL,
+    celula: AMMO_KINDS.ENERGY_CELL,
+    celula_de_energia: AMMO_KINDS.ENERGY_CELL,
+    energy: AMMO_KINDS.ENERGY_CELL,
+    energy_cell: AMMO_KINDS.ENERGY_CELL,
+    granada: AMMO_KINDS.GRENADE,
+    grenade: AMMO_KINDS.GRENADE,
+    foguete: AMMO_KINDS.ROCKET,
+    rocket: AMMO_KINDS.ROCKET,
+  };
+  return aliases[normalized] || Object.values(AMMO_KINDS).find((kind) => kind === normalized) || AMMO_KINDS.LIGHT;
+}
+
+export function inferWeaponAmmoProfile(weapon = {}) {
+  const explicit = ammoProfileFromData(weapon);
+  if (explicit) {
+    const acceptedAmmoKinds = arrayOf(explicit.acceptedAmmoKinds || explicit.ammoKinds)
+      .map(normalizeAmmoKind)
+      .filter((kind) => kind !== AMMO_KINDS.NONE);
+    const defaultAmmoKind = normalizeAmmoKind(explicit.defaultAmmoKind || acceptedAmmoKinds[0]);
+    const feedSystem = Object.values(FEED_SYSTEMS).includes(explicit.feedSystem)
+      ? explicit.feedSystem
+      : FEED_SYSTEMS.DETACHABLE_MAGAZINE;
+    return {
+      feedSystem,
+      defaultAmmoKind,
+      acceptedAmmoKinds: acceptedAmmoKinds.length ? acceptedAmmoKinds : (feedSystem === FEED_SYSTEMS.NONE ? [] : [defaultAmmoKind]),
+      defaultCapacity: Math.max(0, positiveInteger(explicit.defaultCapacity ?? explicit.capacity, feedSystem === FEED_SYSTEMS.NONE ? 0 : 1)),
+      fireModes: uniqueStrings(explicit.fireModes).filter((mode) => FIRE_MODES[mode]),
+      requiresPumpAfterShot: Boolean(explicit.requiresPumpAfterShot),
+      magazineTemplateId: explicit.magazineTemplateId || "",
+      label: explicit.label || "",
+    };
+  }
+
+  const text = weaponRuleText(weapon);
+  if (!text || /(punho|briga|espada|lamina|machado|martelo|lanca|cajado|adaga|faca|corpo a corpo|melee)/i.test(text)) {
+    return {
+      feedSystem: FEED_SYSTEMS.NONE,
+      defaultAmmoKind: AMMO_KINDS.NONE,
+      acceptedAmmoKinds: [],
+      defaultCapacity: 0,
+      fireModes: [],
+      requiresPumpAfterShot: false,
+      magazineTemplateId: "",
+      label: "Sem municao",
+    };
+  }
+
+  if (/escopeta|shotgun|serrada/.test(text)) {
+    return {
+      feedSystem: FEED_SYSTEMS.INTERNAL_MAGAZINE,
+      defaultAmmoKind: AMMO_KINDS.SHELL,
+      acceptedAmmoKinds: [AMMO_KINDS.SHELL],
+      defaultCapacity: /serrada/.test(text) ? 2 : 5,
+      fireModes: [FIRE_MODE_IDS.SINGLE, FIRE_MODE_IDS.SHOTGUN_CONE],
+      requiresPumpAfterShot: true,
+      magazineTemplateId: "",
+      label: "Tubo interno",
+    };
+  }
+
+  if (/revolver|tambor/.test(text)) {
+    return {
+      feedSystem: FEED_SYSTEMS.CYLINDER,
+      defaultAmmoKind: AMMO_KINDS.LIGHT,
+      acceptedAmmoKinds: [AMMO_KINDS.LIGHT],
+      defaultCapacity: 6,
+      fireModes: [FIRE_MODE_IDS.SINGLE],
+      requiresPumpAfterShot: false,
+      magazineTemplateId: "",
+      label: "Tambor interno",
+    };
+  }
+
+  if (/lancador|launcher|foguete|bazuca/.test(text)) {
+    const ammoKind = /foguete|rocket|bazuca/.test(text) ? AMMO_KINDS.ROCKET : AMMO_KINDS.GRENADE;
+    return {
+      feedSystem: FEED_SYSTEMS.SINGLE_LOAD,
+      defaultAmmoKind: ammoKind,
+      acceptedAmmoKinds: [ammoKind],
+      defaultCapacity: 1,
+      fireModes: [FIRE_MODE_IDS.LAUNCHER_SHOT],
+      requiresPumpAfterShot: false,
+      magazineTemplateId: "",
+      label: "Carga unica",
+    };
+  }
+
+  if (/submetralhadora|smg/.test(text)) {
+    return {
+      feedSystem: FEED_SYSTEMS.DETACHABLE_MAGAZINE,
+      defaultAmmoKind: AMMO_KINDS.LIGHT,
+      acceptedAmmoKinds: [AMMO_KINDS.LIGHT],
+      defaultCapacity: 30,
+      fireModes: [FIRE_MODE_IDS.SINGLE, FIRE_MODE_IDS.BURST],
+      requiresPumpAfterShot: false,
+      magazineTemplateId: "",
+      label: "Carregador",
+    };
+  }
+
+  if (/metralhadora|machinegun|suporte pesado/.test(text)) {
+    return {
+      feedSystem: FEED_SYSTEMS.BELT,
+      defaultAmmoKind: AMMO_KINDS.MEDIUM,
+      acceptedAmmoKinds: [AMMO_KINDS.MEDIUM],
+      defaultCapacity: 60,
+      fireModes: [FIRE_MODE_IDS.MACHINEGUN_BURST, FIRE_MODE_IDS.SUPPRESSION],
+      requiresPumpAfterShot: false,
+      magazineTemplateId: "",
+      label: "Cinta interna",
+    };
+  }
+
+  if (/laser|plasma|energia|energetic|celula/.test(text)) {
+    return {
+      feedSystem: FEED_SYSTEMS.ENERGY_CELL,
+      defaultAmmoKind: AMMO_KINDS.ENERGY_CELL,
+      acceptedAmmoKinds: [AMMO_KINDS.ENERGY_CELL],
+      defaultCapacity: 8,
+      fireModes: [FIRE_MODE_IDS.SINGLE, FIRE_MODE_IDS.BURST],
+      requiresPumpAfterShot: false,
+      magazineTemplateId: "",
+      label: "Celula interna",
+    };
+  }
+
+  if (/rifle|fuzil|carabina|precisao/.test(text)) {
+    const modes = /fuzil|assalto/.test(text)
+      ? [FIRE_MODE_IDS.SINGLE, FIRE_MODE_IDS.BURST, FIRE_MODE_IDS.HEAVY_BURST]
+      : [FIRE_MODE_IDS.SINGLE, FIRE_MODE_IDS.BURST];
+    return {
+      feedSystem: FEED_SYSTEMS.DETACHABLE_MAGAZINE,
+      defaultAmmoKind: AMMO_KINDS.MEDIUM,
+      acceptedAmmoKinds: [AMMO_KINDS.MEDIUM],
+      defaultCapacity: /precisao|precisão/.test(text) ? 5 : 20,
+      fireModes: modes,
+      requiresPumpAfterShot: false,
+      magazineTemplateId: "",
+      label: "Carregador",
+    };
+  }
+
+  return {
+    feedSystem: FEED_SYSTEMS.DETACHABLE_MAGAZINE,
+    defaultAmmoKind: AMMO_KINDS.LIGHT,
+    acceptedAmmoKinds: [AMMO_KINDS.LIGHT],
+    defaultCapacity: 12,
+    fireModes: [FIRE_MODE_IDS.SINGLE],
+    requiresPumpAfterShot: false,
+    magazineTemplateId: "",
+    label: "Carregador",
+  };
+}
+
+export function createWeaponAmmoState(weapon = {}, options = {}) {
+  const profile = inferWeaponAmmoProfile(weapon);
+  const acceptedAmmoKinds = arrayOf(profile.acceptedAmmoKinds)
+    .map(normalizeAmmoKind)
+    .filter((kind) => kind !== AMMO_KINDS.NONE);
+  const feedSystem = profile.feedSystem || FEED_SYSTEMS.NONE;
+  const defaultCapacity = Math.max(0, positiveInteger(options.defaultCapacity ?? profile.defaultCapacity, 0));
+  const fireModes = uniqueStrings(options.fireModes || profile.fireModes).filter((mode) => FIRE_MODES[mode]);
+  const internalFeedSystems = [
+    FEED_SYSTEMS.INTERNAL_MAGAZINE,
+    FEED_SYSTEMS.CYLINDER,
+    FEED_SYSTEMS.SINGLE_LOAD,
+    FEED_SYSTEMS.ENERGY_CELL,
+    FEED_SYSTEMS.BELT,
+  ];
+  return {
+    schemaVersion: 1,
+    feedSystem,
+    acceptedAmmoKinds,
+    defaultAmmoKind: normalizeAmmoKind(options.defaultAmmoKind || profile.defaultAmmoKind || acceptedAmmoKinds[0] || AMMO_KINDS.NONE),
+    defaultCapacity,
+    compatibleMagazineTemplateIds: feedSystem === FEED_SYSTEMS.DETACHABLE_MAGAZINE
+      ? [options.magazineTemplateId || profile.magazineTemplateId || defaultMagazineTemplateId(weapon, profile)]
+      : [],
+    attachedMagazineId: options.attachedMagazineId || "",
+    internalAmmo: internalFeedSystems.includes(feedSystem)
+      ? {
+          ammoKind: normalizeAmmoKind(options.ammoKind || profile.defaultAmmoKind || acceptedAmmoKinds[0]),
+          currentAmmo: clampNumber(options.currentAmmo ?? defaultCapacity, 0, defaultCapacity),
+          capacity: defaultCapacity,
+        }
+      : null,
+    status: {
+      needsPump: Boolean(options.needsPump),
+      jammed: Boolean(options.jammed),
+      overheated: Boolean(options.overheated),
+    },
+    requiresPumpAfterShot: Boolean(options.requiresPumpAfterShot ?? profile.requiresPumpAfterShot),
+    fireModes: fireModes.length ? fireModes : (feedSystem === FEED_SYSTEMS.NONE ? [] : [FIRE_MODE_IDS.SINGLE]),
+    label: profile.label || "",
+  };
+}
+
+function coerceWeaponAmmoState(weapon = {}) {
+  const state = weapon.ammoState || weapon.customData?.ammoState || weapon.metadata?.ammoState;
+  if (!state || typeof state !== "object") return createWeaponAmmoState(weapon);
+  const profile = inferWeaponAmmoProfile(weapon);
+  const base = createWeaponAmmoState(weapon, {
+    ...profile,
+    ...state,
+    currentAmmo: state.internalAmmo?.currentAmmo,
+    ammoKind: state.internalAmmo?.ammoKind,
+  });
+  return {
+    ...base,
+    ...clone(state),
+    acceptedAmmoKinds: arrayOf(state.acceptedAmmoKinds || base.acceptedAmmoKinds).map(normalizeAmmoKind).filter((kind) => kind !== AMMO_KINDS.NONE),
+    compatibleMagazineTemplateIds: uniqueStrings(state.compatibleMagazineTemplateIds || base.compatibleMagazineTemplateIds),
+    status: { ...base.status, ...(state.status || {}) },
+    internalAmmo: state.internalAmmo ? {
+      ...base.internalAmmo,
+      ...state.internalAmmo,
+      ammoKind: normalizeAmmoKind(state.internalAmmo.ammoKind || base.internalAmmo?.ammoKind),
+      capacity: Math.max(0, positiveInteger(state.internalAmmo.capacity, base.internalAmmo?.capacity || 0)),
+      currentAmmo: clampNumber(state.internalAmmo.currentAmmo, 0, Math.max(0, positiveInteger(state.internalAmmo.capacity, base.internalAmmo?.capacity || 0))),
+    } : base.internalAmmo,
+    fireModes: uniqueStrings(state.fireModes || base.fireModes).filter((mode) => FIRE_MODES[mode]),
+  };
+}
+
+export function createMagazineInstance(template = {}, options = {}) {
+  const acceptedAmmoKinds = arrayOf(template.acceptedAmmoKinds || template.ammoKinds || options.acceptedAmmoKinds)
+    .map(normalizeAmmoKind)
+    .filter((kind) => kind !== AMMO_KINDS.NONE);
+  const capacity = Math.max(1, positiveInteger(options.capacity ?? template.capacity, 1));
+  const ammoKind = normalizeAmmoKind(options.ammoKind || options.loadedAmmoKind || template.defaultAmmoKind || acceptedAmmoKinds[0]);
+  return {
+    id: options.id || ammoId("magazine"),
+    templateId: options.templateId || template.id || "",
+    name: options.name || template.name || "Carregador",
+    category: "magazine",
+    compatibleWeaponIds: uniqueStrings(options.compatibleWeaponIds || template.compatibleWeaponIds),
+    compatibleWeaponCategories: uniqueStrings(options.compatibleWeaponCategories || template.compatibleWeaponCategories),
+    acceptedAmmoKinds: acceptedAmmoKinds.length ? acceptedAmmoKinds : [ammoKind],
+    loadedAmmoKind: ammoKind,
+    currentAmmo: clampNumber(options.currentAmmo ?? capacity, 0, capacity),
+    capacity,
+    attachedToWeaponId: options.attachedToWeaponId || "",
+  };
+}
+
+function normalizeMagazine(magazine = {}) {
+  return createMagazineInstance(magazine, {
+    ...magazine,
+    id: magazine.id,
+    templateId: magazine.templateId,
+    currentAmmo: magazine.currentAmmo,
+    capacity: magazine.capacity,
+    loadedAmmoKind: magazine.loadedAmmoKind || magazine.ammoKind,
+  });
+}
+
+function magazineCompatibleWithWeapon(magazine = {}, weapon = {}, ammoState = coerceWeaponAmmoState(weapon)) {
+  const normalized = normalizeMagazine(magazine);
+  if (ammoState.feedSystem !== FEED_SYSTEMS.DETACHABLE_MAGAZINE) return false;
+  if (normalized.templateId && ammoState.compatibleMagazineTemplateIds.includes(normalized.templateId)) return true;
+  if (normalized.compatibleWeaponIds.includes(weapon.id) || normalized.compatibleWeaponIds.includes(weapon.definitionId)) return true;
+  if (normalized.compatibleWeaponCategories.includes(weapon.category)) return true;
+  return normalized.acceptedAmmoKinds.some((kind) => ammoState.acceptedAmmoKinds.includes(kind));
+}
+
+export function validateAmmoCompatibility(weapon = {}, ammoOrMagazine = {}) {
+  const ammoState = coerceWeaponAmmoState(weapon);
+  if (ammoState.feedSystem === FEED_SYSTEMS.NONE) throw new Error("Esta arma nao usa municao.");
+  if (ammoOrMagazine.category === "magazine" || ammoOrMagazine.capacity !== undefined) {
+    if (!magazineCompatibleWithWeapon(ammoOrMagazine, weapon, ammoState)) {
+      throw new Error("Este carregador nao e compativel com a arma.");
+    }
+    return true;
+  }
+  const ammoKind = normalizeAmmoKind(ammoOrMagazine.ammoKind || ammoOrMagazine.loadedAmmoKind || ammoOrMagazine.kind);
+  if (!ammoState.acceptedAmmoKinds.includes(ammoKind)) throw new Error("Municao incompativel com a arma.");
+  return true;
+}
+
+export function attachMagazineToWeapon(weapon = {}, magazine = {}) {
+  const nextWeapon = clone(weapon) || {};
+  const nextMagazine = normalizeMagazine(magazine);
+  const ammoState = coerceWeaponAmmoState(nextWeapon);
+  if (ammoState.feedSystem !== FEED_SYSTEMS.DETACHABLE_MAGAZINE) throw new Error("Esta arma nao aceita carregador removivel.");
+  validateAmmoCompatibility(nextWeapon, nextMagazine);
+  ammoState.attachedMagazineId = nextMagazine.id;
+  nextMagazine.attachedToWeaponId = nextWeapon.id || nextWeapon.uid || "";
+  nextWeapon.ammoState = ammoState;
+  return { weapon: nextWeapon, magazine: nextMagazine };
+}
+
+export function detachMagazineFromWeapon(weapon = {}, magazines = []) {
+  const nextWeapon = clone(weapon) || {};
+  const ammoState = coerceWeaponAmmoState(nextWeapon);
+  const detachedId = ammoState.attachedMagazineId || "";
+  ammoState.attachedMagazineId = "";
+  nextWeapon.ammoState = ammoState;
+  const nextMagazines = arrayOf(magazines).map((magazine) => {
+    const nextMagazine = normalizeMagazine(magazine);
+    if (nextMagazine.id === detachedId) nextMagazine.attachedToWeaponId = "";
+    return nextMagazine;
+  });
+  return { weapon: nextWeapon, magazines: nextMagazines, detachedMagazineId: detachedId };
+}
+
+export function loadAmmoIntoMagazine(magazine = {}, ammoStack = {}, requestedAmount = Number.POSITIVE_INFINITY) {
+  const nextMagazine = normalizeMagazine(magazine);
+  const nextAmmoStack = clone(ammoStack) || {};
+  const ammoKind = normalizeAmmoKind(nextAmmoStack.ammoKind || nextAmmoStack.kind);
+  if (!nextMagazine.acceptedAmmoKinds.includes(ammoKind)) throw new Error("Municao incompativel com este carregador.");
+  if (nextMagazine.currentAmmo > 0 && nextMagazine.loadedAmmoKind !== ammoKind) {
+    throw new Error("Esvazie o carregador antes de trocar o tipo de municao.");
+  }
+  const available = Math.max(0, positiveInteger(nextAmmoStack.quantity ?? nextAmmoStack.currentAmmo, 0));
+  const capacityLeft = Math.max(0, nextMagazine.capacity - nextMagazine.currentAmmo);
+  const amount = Math.min(available, capacityLeft, Math.max(0, positiveInteger(requestedAmount, capacityLeft)));
+  if (amount <= 0) throw new Error("Nao ha municao ou espaco suficiente para municiar.");
+  nextMagazine.loadedAmmoKind = ammoKind;
+  nextMagazine.currentAmmo += amount;
+  nextAmmoStack.quantity = available - amount;
+  return { magazine: nextMagazine, ammoStack: nextAmmoStack, loaded: amount };
+}
+
+export function reloadInternalWeapon(weapon = {}, ammoStack = {}, requestedAmount = Number.POSITIVE_INFINITY) {
+  const nextWeapon = clone(weapon) || {};
+  const ammoState = coerceWeaponAmmoState(nextWeapon);
+  if (!ammoState.internalAmmo) throw new Error("Esta arma precisa de carregador, nao de recarga interna.");
+  const nextAmmoStack = clone(ammoStack) || {};
+  const ammoKind = normalizeAmmoKind(nextAmmoStack.ammoKind || nextAmmoStack.kind);
+  if (!ammoState.acceptedAmmoKinds.includes(ammoKind)) throw new Error("Municao incompativel com a arma.");
+  if (ammoState.internalAmmo.currentAmmo > 0 && ammoState.internalAmmo.ammoKind !== ammoKind) {
+    throw new Error("Esvazie a arma antes de trocar o tipo de municao.");
+  }
+  const available = Math.max(0, positiveInteger(nextAmmoStack.quantity ?? nextAmmoStack.currentAmmo, 0));
+  const capacityLeft = Math.max(0, ammoState.internalAmmo.capacity - ammoState.internalAmmo.currentAmmo);
+  const amount = Math.min(available, capacityLeft, Math.max(0, positiveInteger(requestedAmount, capacityLeft)));
+  if (amount <= 0) throw new Error("Nao ha municao ou espaco suficiente para recarregar.");
+  ammoState.internalAmmo.ammoKind = ammoKind;
+  ammoState.internalAmmo.currentAmmo += amount;
+  nextAmmoStack.quantity = available - amount;
+  ammoState.status.needsPump = false;
+  nextWeapon.ammoState = ammoState;
+  return { weapon: nextWeapon, ammoStack: nextAmmoStack, loaded: amount };
+}
+
+export function resolveActiveAmmoSource(weapon = {}, magazines = []) {
+  const ammoState = coerceWeaponAmmoState(weapon);
+  if (ammoState.feedSystem === FEED_SYSTEMS.NONE) {
+    return { kind: FEED_SYSTEMS.NONE, label: "Sem municao", currentAmmo: Number.POSITIVE_INFINITY, capacity: 0, missing: false };
+  }
+  if (ammoState.feedSystem === FEED_SYSTEMS.DETACHABLE_MAGAZINE) {
+    const magazine = arrayOf(magazines).map(normalizeMagazine).find((entry) => entry.id === ammoState.attachedMagazineId) || null;
+    if (!magazine) return { kind: FEED_SYSTEMS.DETACHABLE_MAGAZINE, label: "Sem carregador", currentAmmo: 0, capacity: 0, missing: true, magazine: null };
+    return {
+      kind: FEED_SYSTEMS.DETACHABLE_MAGAZINE,
+      label: magazine.name || "Carregador",
+      currentAmmo: magazine.currentAmmo,
+      capacity: magazine.capacity,
+      ammoKind: magazine.loadedAmmoKind,
+      missing: false,
+      magazine,
+    };
+  }
+  const internalAmmo = ammoState.internalAmmo || { currentAmmo: 0, capacity: 0, ammoKind: ammoState.defaultAmmoKind };
+  return {
+    kind: ammoState.feedSystem,
+    label: ammoState.label || (ammoState.feedSystem === FEED_SYSTEMS.CYLINDER ? "Tambor interno" : "Alimentacao interna"),
+    currentAmmo: internalAmmo.currentAmmo,
+    capacity: internalAmmo.capacity,
+    ammoKind: internalAmmo.ammoKind,
+    missing: false,
+    internalAmmo,
+  };
+}
+
+export function validateAmmoAvailable(source = {}, amount = 1) {
+  if (source.currentAmmo === Number.POSITIVE_INFINITY) return true;
+  if (Math.max(0, positiveInteger(source.currentAmmo, 0)) < amount) {
+    throw new Error(`Municao insuficiente: precisa de ${amount}.`);
+  }
+  return true;
+}
+
+export function validateWeaponCanFire(weapon = {}, magazines = [], modeId = FIRE_MODE_IDS.SINGLE) {
+  const ammoState = coerceWeaponAmmoState(weapon);
+  const mode = FIRE_MODES[modeId] || FIRE_MODES[FIRE_MODE_IDS.SINGLE];
+  if (ammoState.feedSystem === FEED_SYSTEMS.NONE) return { ammoState, mode, source: resolveActiveAmmoSource(weapon, magazines) };
+  if (!ammoState.fireModes.includes(mode.id)) throw new Error("Modo de disparo indisponivel para esta arma.");
+  if (ammoState.status?.jammed) throw new Error("A arma esta travada.");
+  if (ammoState.status?.overheated) throw new Error("A arma esta superaquecida.");
+  if (ammoState.status?.needsPump) throw new Error("A arma precisa ser bombeada antes de disparar.");
+  const source = resolveActiveAmmoSource(weapon, magazines);
+  if (source.missing) throw new Error("Sem carregador.");
+  validateAmmoAvailable(source, mode.ammoCost);
+  return { ammoState, mode, source };
+}
+
+export function fireWeapon(weapon = {}, options = {}) {
+  const modeId = options.modeId || options.fireModeId || FIRE_MODE_IDS.SINGLE;
+  const nextWeapon = clone(weapon) || {};
+  const nextMagazines = arrayOf(options.magazines).map(normalizeMagazine);
+  const { ammoState, mode, source } = validateWeaponCanFire(nextWeapon, nextMagazines, modeId);
+  if (ammoState.feedSystem === FEED_SYSTEMS.NONE) {
+    return { weapon: nextWeapon, magazines: nextMagazines, consumed: 0, mode, source, message: "Arma sem municao disparada." };
+  }
+  if (ammoState.feedSystem === FEED_SYSTEMS.DETACHABLE_MAGAZINE) {
+    const magazine = nextMagazines.find((entry) => entry.id === ammoState.attachedMagazineId);
+    magazine.currentAmmo = Math.max(0, magazine.currentAmmo - mode.ammoCost);
+  } else if (ammoState.internalAmmo) {
+    ammoState.internalAmmo.currentAmmo = Math.max(0, ammoState.internalAmmo.currentAmmo - mode.ammoCost);
+    if (ammoState.requiresPumpAfterShot) ammoState.status.needsPump = true;
+  }
+  nextWeapon.ammoState = ammoState;
+  return {
+    weapon: nextWeapon,
+    magazines: nextMagazines,
+    consumed: mode.ammoCost,
+    mode,
+    source: resolveActiveAmmoSource(nextWeapon, nextMagazines),
+    message: `${mode.label}: ${mode.ammoCost} municao consumida.`,
+  };
+}
+
+export function pumpWeapon(weapon = {}) {
+  const nextWeapon = clone(weapon) || {};
+  const ammoState = coerceWeaponAmmoState(nextWeapon);
+  if (!ammoState.requiresPumpAfterShot) throw new Error("Esta arma nao precisa bombear.");
+  ammoState.status.needsPump = false;
+  nextWeapon.ammoState = ammoState;
+  return nextWeapon;
+}
+
+export function moveItem(items = [], itemId = "", location = {}) {
+  return arrayOf(items).map((item) => {
+    if ((item.id || item.uid) !== itemId) return clone(item);
+    return { ...clone(item), location: normalizeLocation(location) };
+  });
+}
+
+export function ammoCubeUnitsFor(item = {}) {
+  if (item.category === "magazine" || item.ammoMagazine || item.capacity !== undefined) return Math.max(1, positiveInteger(item.quantity, 1));
+  const ammoKind = normalizeAmmoKind(item.ammoKind || item.kind || item.loadedAmmoKind);
+  const bulk = AMMO_CUBE_BULK[ammoKind] || 1;
+  const quantity = Math.max(1, positiveInteger(item.quantity ?? item.currentAmmo, 1));
+  return Math.max(1, Math.ceil(quantity / bulk));
+}
+
+export function canStoreInAmmoCube(item = {}) {
+  if (item.category === "magazine" || item.ammoMagazine || item.capacity !== undefined) return true;
+  const category = normalizeRuleText(item.category || item.type || item.name);
+  return category.includes("municao") || category.includes("ammo") || Boolean(item.ammoKind);
 }
 
 function normalizedLootName(value) {
@@ -724,10 +1342,11 @@ export class WeaponDefinition extends EquipmentDefinition {
     this.damage = String(data.damage || "");
     this.range = String(data.range || "");
     this.modSlots = positiveInteger(data.modSlots, 0);
+    this.ammoProfile = data.ammoProfile ? clone(data.ammoProfile) : null;
   }
 
   toJSON() {
-    return { ...super.toJSON(), damage: this.damage, range: this.range, modSlots: this.modSlots };
+    return { ...super.toJSON(), damage: this.damage, range: this.range, modSlots: this.modSlots, ammoProfile: clone(this.ammoProfile) };
   }
 }
 

@@ -72,7 +72,7 @@ Cada token guarda:
 ## Como testar
 
 1. Rodar `npm run server`.
-2. Abrir `http://localhost:3000/?view=mesaVirtual&check=20260620d`.
+2. Abrir `http://localhost:3000/?view=mesaVirtual&check=20260620e`.
 3. Abrir **Mesa Virtual**.
 4. Criar sala.
 5. Conferir se o personagem atual aparece como token no mapa.

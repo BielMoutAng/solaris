@@ -432,6 +432,148 @@ Status: primeira versao funcional implementada em `20260620d`.
 - ficha de monstro refinada na mesa;
 - build `Solaris Tabletop Alpha` abre direto na Mesa Virtual.
 
+### Passo 6 - Alvos e dano tatico
+
+Status: primeira versao funcional implementada em `20260620e`.
+
+- modo Alvo no mapa tatico;
+- clique em token para marcar alvo;
+- botao Alvo nos cards de combatente;
+- ficha de monstro com Atacar Alvo e Dano no Alvo;
+- rolagem de ataque compara com CA do alvo quando disponivel;
+- dano de ataque de monstro pode ser aplicado automaticamente no alvo marcado;
+- areas de efeito clicaveis;
+- dano de area aplicado aos tokens dentro da area selecionada;
+- logs de dano registram a fonte do ataque ou efeito.
+
+Documentacao:
+
+```txt
+docs/FASE_6_ALVOS_E_DANO.md
+```
+
+### Passo 7 - Previa de areas e build VTT
+
+Status: primeira versao funcional implementada em `20260620f`.
+
+- cones e linhas possuem direcao simples (`east`, `west`, `north`, `south`);
+- area selecionada mostra quais tokens serao atingidos;
+- tokens atingidos por area recebem destaque visual;
+- legenda do mapa lista os atingidos antes de aplicar dano;
+- build Windows de teste passa para `Solaris Tabletop Alpha 0.6.0-alpha.3`.
+
+Documentacao:
+
+```txt
+docs/FASE_7_PREVIA_AREAS.md
+```
+
+### Passo 8 - Separacao ficha/VTT
+
+Status: primeira versao estrutural implementada apos `20260620f`.
+
+- `electron-main.cjs` agora e a entrada da ficha/biblioteca;
+- `electron-main-vtt.cjs` e a entrada da Mesa Virtual/Tabletop;
+- `electron-builder.ficha.cjs` gera `Solaris Biblioteca`;
+- `electron-builder.vtt.cjs` gera `Solaris Tabletop Alpha`;
+- `npm run dist:ficha` cria build separada em `dist-ficha/`;
+- `npm run dist:vtt` cria build separada em `dist-vtt/`;
+- a build do VTT inclui o servidor local embutido;
+- a build da ficha nao inclui `server/**/*`.
+
+Documentacao:
+
+```txt
+docs/FASE_8_SEPARACAO_PROJETOS.md
+```
+
+### Passo 9 - Persistencia de sessoes e campanhas
+
+Status: primeira versao funcional implementada em `20260620g`.
+
+- novo modulo `src/session/solaris-session-persistence.js`;
+- schema inicial de sessao `1.0.0`;
+- campanhas salvas no host via `localStorage`;
+- sessao salva com jogadores, chat, dados, fichas, combate, cena, mapa, tokens, areas, monstros, loja, loot, aprovacoes e logs;
+- modal **Campanhas** dentro da Mesa Virtual;
+- Nova Campanha, Continuar, Duplicar, Exportar, Importar e Excluir;
+- autosave local com limite;
+- snapshot manual;
+- restaurar/excluir autosave;
+- aviso de sessao recente nao encerrada;
+- eventos preparados no cliente/servidor: `campaign:*` e `session:*`;
+- servidor pode receber/restaurar estado enviado pelo host;
+- limitacao documentada: Electron ainda usa localStorage/JSON, sem ponte IPC nativa para arquivo automatico.
+
+Documentacao:
+
+```txt
+docs/FASE_9_PERSISTENCIA_SESSOES.md
+```
+
+### Passo 10 - Painel do Mestre / Escudo do Mestre
+
+Status: primeira versao alfa implementada em `20260620h`.
+
+- Botao **Painel do Mestre** dentro da Mesa Virtual.
+- Modal privado para mestre com Resumo, Cenas, Encontros, Notas, Contadores, Ambiente, Escudo e Logs.
+- Notas secretas podem ser criadas, reveladas e excluidas.
+- Contadores secretos podem ser criados, incrementados, reduzidos, revelados e excluidos.
+- Efeitos ambientais podem ser criados e removidos.
+- Cenas salvas podem ser criadas, salvas a partir da cena atual, trocadas e excluidas.
+- Encontros preparados podem ser criados, iniciados, concluidos e excluidos.
+- O servidor filtra dados privados para jogadores.
+- Campanhas, snapshots e autosaves preservam os dados do mestre.
+- CSS do Tabletop recebeu rolagem interna e contencao para impedir paineis sobrepostos.
+
+Documentacao:
+
+```txt
+docs/FASE_10_PAINEL_MESTRE.md
+```
+
+### Passo 11 - Consolidacao do Mestre, campanhas e escudo
+
+Status: primeira versao funcional implementada em `20260620i`.
+
+- Tela dedicada **Minhas Campanhas** em `?view=campaigns`, fora do modal da mesa.
+- Cards de campanha com dados de sessao, cenas, personagens, autosaves e snapshots.
+- Criar, continuar, editar, duplicar, exportar, importar e excluir campanha com confirmacao forte.
+- Formulario dedicado para notas do mestre, contadores, efeitos ambientais, cenas e encontros preparados.
+- Gerador de encontros com filtros do bestiario e opcao de salvar preparado ou adicionar direto a cena.
+- Escudo do Mestre com busca rapida, regras fixadas, copiar regra e enviar regra ao chat.
+- Relatorio de sessao refinado em Markdown, com opcoes para chat, notas secretas, logs tecnicos, transacoes, combate e loot.
+- Persistencia de `pinnedShieldRules`, `favoriteShieldRules` e `reportSettings` dentro de `gmDashboardSettings`.
+- Rotas claras preservadas: `?view=ficha`, `?view=mesaVirtual` e `?view=campaigns`.
+- `npm run start:vtt` abre o Tabletop direto na tela de campanhas.
+
+Documentacao:
+
+```txt
+docs/FASE_11_CONSOLIDACAO_MESTRE.md
+```
+
+### Passo 12 - Editores visuais e polimento de usabilidade
+
+Status: primeira versao alfa implementada em `20260620j`.
+
+- Editor Visual de Cena para criar, duplicar, exportar, salvar e ativar cenas.
+- Preview de mapa/grid/tokens/zonas/objetivos dentro do editor.
+- Adicao rapida de objetivo, zona de perigo, cobertura e token marcador.
+- Editor Visual de Encontro com cena vinculada, lista de monstros, preview e inicio do encontro.
+- Balanceamento alfa via `estimateEncounterBalance`.
+- Posicoes iniciais de monstros ao iniciar encontro preparado, incluindo `hidden`, `locked` e cor.
+- Relatorio com preview, copiar, baixar `.md`, baixar `.html` e salvar na campanha.
+- Persistencia de `sessionReports` em sessao, autosave, snapshot e export/import.
+- CSS reforcado com rolagem interna para paineis, listas, modais e quadros com muito conteudo.
+- Versao do Solaris Tabletop Alpha: `0.6.0-alpha.5`.
+
+Documentacao:
+
+```txt
+docs/FASE_12_EDITORES_POLIMENTO_USABILIDADE.md
+```
+
 Comparar cada tela com as imagens de referencia:
 
 - criador;
@@ -442,6 +584,43 @@ Comparar cada tela com as imagens de referencia:
 - loja;
 - escudo;
 - tabelas rapidas.
+
+## Fase 13 - ficha virtual: municao e carregadores
+
+Status: implementada no cache `20260621a`.
+
+Foi adicionada a arquitetura de arma, municao, carregador e fonte de alimentacao na ficha virtual.
+
+Agora existem no dominio:
+
+- `AMMO_KINDS`;
+- `FEED_SYSTEMS`;
+- `FIRE_MODE_IDS`;
+- `FIRE_MODES`;
+- `createWeaponAmmoState`;
+- `createMagazineInstance`;
+- `attachMagazineToWeapon`;
+- `detachMagazineFromWeapon`;
+- `loadAmmoIntoMagazine`;
+- `reloadInternalWeapon`;
+- `fireWeapon`;
+- `pumpWeapon`;
+- `ammoCubeUnitsFor`.
+
+Na aba de equipamentos da ficha:
+
+- a arma equipada mostra fonte de municao, quantidade atual/maxima e estado;
+- carregadores removiveis guardam a propria municao;
+- revolver, escopeta, lancador, celula e cinta usam municao interna;
+- rajada e rajada pesada consomem municao e deixam bonus de dano pendente;
+- escopeta pode exigir bombear antes de disparar de novo;
+- existe secao `Municao e carregadores` para pilhas e carregadores.
+
+Documentacao:
+
+```txt
+docs/FASE_13_FICHA_MUNICAO_CARREGADORES.md
+```
 
 ## Como validar sem quebrar o app atual
 
@@ -455,7 +634,10 @@ node --check src/domain/solaris-domain-architecture.js
 node --check src/session/solaris-session-domain.js
 node --check src/session/solaris-session-client.js
 node --check src/session/solaris-session-ui.js
+node --check src/session/solaris-session-persistence.js
 node --check server/solaris-server.js
+node --check electron-main-vtt.cjs
+node --check electron-main.cjs
 ```
 
 Depois abrir:

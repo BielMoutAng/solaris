@@ -63,7 +63,7 @@ Evoluir a Mesa Virtual de alfa funcional para uma experiencia mais confortavel d
 A build Windows da Mesa Virtual agora usa o produto `Solaris Tabletop Alpha` e abre direto em:
 
 ```txt
-http://localhost:3000/?view=mesaVirtual&tabletop=1&check=20260620d
+http://localhost:3000/?view=mesaVirtual&tabletop=1&check=20260620e
 ```
 
 No Electron, a build tabletop tenta iniciar o servidor local embutido. Se isso falhar, abre o app em modo offline/simulado na propria Mesa Virtual.
@@ -91,7 +91,7 @@ Testes automatizados adicionados:
 
 ## Proxima etapa recomendada
 
-- Selecao de alvo no mapa.
-- Aplicar dano automatico a partir de ataque/area.
+- Selecao de alvo no mapa: implementada na Fase 6.
+- Aplicar dano automatico a partir de ataque/area: primeira versao implementada na Fase 6.
 - Biblioteca visual de mapas/tokens.
 - Painel do mestre com controle de encontros, cenas e notas secretas.

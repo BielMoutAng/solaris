@@ -98,6 +98,47 @@ export const SESSION_SOCKET_EVENTS = Object.freeze({
   APPROVAL_APPROVE: "approval:approve",
   APPROVAL_REJECT: "approval:reject",
   APPROVAL_STATE: "approval:state",
+  CAMPAIGN_CREATE: "campaign:create",
+  CAMPAIGN_UPDATE: "campaign:update",
+  CAMPAIGN_DELETE: "campaign:delete",
+  CAMPAIGN_LIST: "campaign:list",
+  CAMPAIGN_LOAD: "campaign:load",
+  SESSION_SAVE: "session:save",
+  SESSION_LOAD: "session:load",
+  SESSION_EXPORT: "session:export",
+  SESSION_IMPORT: "session:import",
+  SESSION_AUTOSAVE: "session:autosave",
+  SESSION_SNAPSHOT_CREATE: "session:snapshot:create",
+  SESSION_SNAPSHOT_RESTORE: "session:snapshot:restore",
+  SESSION_RESTORE_AVAILABLE: "session:restore:available",
+  GM_DASHBOARD_STATE: "gm:dashboard:state",
+  GM_NOTE_CREATE: "gm:note:create",
+  GM_NOTE_UPDATE: "gm:note:update",
+  GM_NOTE_DELETE: "gm:note:delete",
+  GM_NOTE_REVEAL: "gm:note:reveal",
+  GM_COUNTER_CREATE: "gm:counter:create",
+  GM_COUNTER_UPDATE: "gm:counter:update",
+  GM_COUNTER_DELETE: "gm:counter:delete",
+  GM_COUNTER_TICK: "gm:counter:tick",
+  GM_COUNTER_REVEAL: "gm:counter:reveal",
+  GM_ENVIRONMENT_CREATE: "gm:environment:create",
+  GM_ENVIRONMENT_UPDATE: "gm:environment:update",
+  GM_ENVIRONMENT_DELETE: "gm:environment:delete",
+  GM_SCENE_CREATE: "gm:scene:create",
+  GM_SCENE_UPDATE: "gm:scene:update",
+  GM_SCENE_DELETE: "gm:scene:delete",
+  GM_SCENE_SWITCH: "gm:scene:switch",
+  GM_ENCOUNTER_CREATE: "gm:encounter:create",
+  GM_ENCOUNTER_UPDATE: "gm:encounter:update",
+  GM_ENCOUNTER_DELETE: "gm:encounter:delete",
+  GM_ENCOUNTER_START: "gm:encounter:start",
+  GM_ENCOUNTER_COMPLETE: "gm:encounter:complete",
+  GM_ENCOUNTER_GENERATE: "gm:encounter:generate",
+  GM_SHIELD_SEARCH: "gm:shield:search",
+  GM_SHIELD_PIN: "gm:shield:pin",
+  GM_SHIELD_SEND_TO_CHAT: "gm:shield:send-to-chat",
+  GM_REPORT_EXPORT: "gm:report:export",
+  GM_REPORT_SAVE: "gm:report:save",
   ERROR: "error",
 });
 
@@ -567,6 +608,166 @@ export class SolarisSessionClient extends EventTarget {
     return this.send(SESSION_SOCKET_EVENTS.LOOT_STATE, {});
   }
 
+  requestGmDashboardState() {
+    return this.send(SESSION_SOCKET_EVENTS.GM_DASHBOARD_STATE, {});
+  }
+
+  createGmNote(note = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_NOTE_CREATE, { note: clone(note) });
+  }
+
+  updateGmNote(noteId = "", patch = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_NOTE_UPDATE, { noteId, patch: clone(patch) });
+  }
+
+  deleteGmNote(noteId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.GM_NOTE_DELETE, { noteId });
+  }
+
+  revealGmNote(noteId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.GM_NOTE_REVEAL, { noteId });
+  }
+
+  createGmCounter(counter = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_COUNTER_CREATE, { counter: clone(counter) });
+  }
+
+  updateGmCounter(counterId = "", patch = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_COUNTER_UPDATE, { counterId, patch: clone(patch) });
+  }
+
+  deleteGmCounter(counterId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.GM_COUNTER_DELETE, { counterId });
+  }
+
+  tickGmCounter(counterId = "", delta = 1) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_COUNTER_TICK, { counterId, delta: Number(delta || 0) });
+  }
+
+  revealGmCounter(counterId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.GM_COUNTER_REVEAL, { counterId });
+  }
+
+  createGmEnvironment(effect = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_ENVIRONMENT_CREATE, { effect: clone(effect) });
+  }
+
+  updateGmEnvironment(effectId = "", patch = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_ENVIRONMENT_UPDATE, { effectId, patch: clone(patch) });
+  }
+
+  deleteGmEnvironment(effectId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.GM_ENVIRONMENT_DELETE, { effectId });
+  }
+
+  createGmScene(scene = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_SCENE_CREATE, { scene: clone(scene) });
+  }
+
+  updateGmScene(sceneId = "", patch = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_SCENE_UPDATE, { sceneId, patch: clone(patch) });
+  }
+
+  deleteGmScene(sceneId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.GM_SCENE_DELETE, { sceneId });
+  }
+
+  switchGmScene(sceneId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.GM_SCENE_SWITCH, { sceneId });
+  }
+
+  createGmEncounter(encounter = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_ENCOUNTER_CREATE, { encounter: clone(encounter) });
+  }
+
+  updateGmEncounter(encounterId = "", patch = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_ENCOUNTER_UPDATE, { encounterId, patch: clone(patch) });
+  }
+
+  deleteGmEncounter(encounterId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.GM_ENCOUNTER_DELETE, { encounterId });
+  }
+
+  startGmEncounter(encounterId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.GM_ENCOUNTER_START, { encounterId });
+  }
+
+  completeGmEncounter(encounterId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.GM_ENCOUNTER_COMPLETE, { encounterId });
+  }
+
+  generateGmEncounter(payload = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_ENCOUNTER_GENERATE, clone(payload));
+  }
+
+  searchGmShield(query = "", results = []) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_SHIELD_SEARCH, { query, results: clone(results) });
+  }
+
+  pinGmShieldRule(ruleId = "", pinned = true) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_SHIELD_PIN, { ruleId, pinned });
+  }
+
+  sendGmShieldRuleToChat(rule = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_SHIELD_SEND_TO_CHAT, { rule: clone(rule) });
+  }
+
+  exportGmReport(options = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_REPORT_EXPORT, { options: clone(options) });
+  }
+
+  saveGmReport(report = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.GM_REPORT_SAVE, { report: clone(report) });
+  }
+
+  listCampaigns() {
+    return this.send(SESSION_SOCKET_EVENTS.CAMPAIGN_LIST, {});
+  }
+
+  createCampaign(campaign = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.CAMPAIGN_CREATE, { campaign: clone(campaign) });
+  }
+
+  updateCampaign(campaignId = "", patch = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.CAMPAIGN_UPDATE, { campaignId, patch: clone(patch) });
+  }
+
+  deleteCampaign(campaignId = "", confirmation = "") {
+    return this.send(SESSION_SOCKET_EVENTS.CAMPAIGN_DELETE, { campaignId, confirmation });
+  }
+
+  loadCampaign(campaignId = "", sessionId = "") {
+    return this.send(SESSION_SOCKET_EVENTS.CAMPAIGN_LOAD, { campaignId, sessionId });
+  }
+
+  saveSession(sessionState = {}, extra = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SESSION_SAVE, { sessionState: clone(sessionState), ...clone(extra) });
+  }
+
+  loadSession(sessionState = {}, extra = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SESSION_LOAD, { sessionState: clone(sessionState), ...clone(extra) });
+  }
+
+  importSession(bundle = {}, extra = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SESSION_IMPORT, { bundle: clone(bundle), ...clone(extra) });
+  }
+
+  exportSession(extra = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SESSION_EXPORT, clone(extra));
+  }
+
+  autosaveSession(sessionState = {}, extra = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SESSION_AUTOSAVE, { sessionState: clone(sessionState), ...clone(extra) });
+  }
+
+  createSessionSnapshot(sessionState = {}, extra = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SESSION_SNAPSHOT_CREATE, { sessionState: clone(sessionState), ...clone(extra) });
+  }
+
+  restoreSessionSnapshot(snapshotId = "", extra = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.SESSION_SNAPSHOT_RESTORE, { snapshotId, ...clone(extra) });
+  }
+
   rollInitiative({ entityId = "", characterId = "", monsterId = "", bonus = 0, sides = 20 } = {}) {
     return this.send(SESSION_SOCKET_EVENTS.INITIATIVE_ROLL, {
       entityId,
@@ -581,13 +782,15 @@ export class SolarisSessionClient extends EventTarget {
     return this.send(SESSION_SOCKET_EVENTS.INITIATIVE_UPDATE, { entry: clone(entry) });
   }
 
-  damageCombatant({ entityType = "character", entityId = "", amount = 0 } = {}) {
+  damageCombatant({ entityType = "character", entityId = "", amount = 0, sourceLabel = "", attackName = "" } = {}) {
     const type = entityType === "monster"
       ? SESSION_SOCKET_EVENTS.MONSTER_DAMAGE
       : SESSION_SOCKET_EVENTS.CHARACTER_DAMAGE;
     return this.send(type, {
       [`${entityType}Id`]: entityId,
       amount: Number(amount || 0),
+      sourceLabel,
+      attackName,
     });
   }
 

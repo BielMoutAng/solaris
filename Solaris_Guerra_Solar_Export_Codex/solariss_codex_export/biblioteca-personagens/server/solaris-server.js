@@ -12,6 +12,16 @@ import {
   SESSION_ROLES,
   SessionCharacter,
 } from "../src/session/solaris-session-domain.js";
+import {
+  createAutosave,
+  createCampaign,
+  createSessionExportBundle,
+  createSessionSnapshot,
+  migrateCampaign,
+  migrateSessionState,
+  parseSessionExportBundle,
+  upsertCampaignSession,
+} from "../src/session/solaris-session-persistence.js";
 
 const PORT = Number(process.env.PORT || 3000);
 const APP_ROOT = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
@@ -37,6 +47,8 @@ const contentTypes = {
 
 const rooms = new Map();
 const clients = new Map();
+const campaigns = new Map();
+let activeCampaignId = "";
 const ROOM_EVENT_TYPES = new Set(Object.values(GAME_EVENT_TYPES));
 
 function createId(prefix = "session") {
@@ -65,6 +77,8 @@ function sendError(socket, message) {
 
 function roomPayload(room, viewerPlayerId = "") {
   const data = room.toJSON();
+  const viewer = viewerPlayerId ? room.getPlayer(viewerPlayerId) : null;
+  const gmDashboard = room.gmDashboardStateFor(viewer);
   return {
     roomId: data.id,
     roomName: data.name,
@@ -81,11 +95,99 @@ function roomPayload(room, viewerPlayerId = "") {
     shopState: data.shopState,
     lootPacks: data.lootPacks,
     transactionLog: data.transactionLog,
+    gmNotes: gmDashboard.gmNotes,
+    revealedNotes: gmDashboard.revealedNotes,
+    gmCounters: gmDashboard.gmCounters,
+    counters: gmDashboard.gmCounters,
+    environmentalEffects: gmDashboard.environmentalEffects,
+    preparedEncounters: gmDashboard.preparedEncounters,
+    sessionReports: gmDashboard.sessionReports,
+    sceneList: gmDashboard.sceneList,
+    scenes: gmDashboard.sceneList,
+    activeSceneId: gmDashboard.activeSceneId,
+    gmDashboard,
     combat: data.combat,
     scene: viewerPlayerId ? room.sceneForPlayer(viewerPlayerId) : data.scene,
     sequence: data.sequence,
     updatedAt: data.updatedAt,
   };
+}
+
+function campaignPayload(campaign = {}) {
+  const data = migrateCampaign(campaign);
+  return {
+    ...data,
+    sessions: data.sessions.map((session) => ({
+      roomId: session.roomId,
+      roomName: session.roomName,
+      updatedAt: session.updatedAt,
+      players: session.players.length,
+      characters: session.characters.length,
+      monsters: session.monsters.length,
+    })),
+  };
+}
+
+function campaignListPayload() {
+  return Array.from(campaigns.values())
+    .map(campaignPayload)
+    .sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
+}
+
+function sessionFromRoom(room) {
+  return migrateSessionState(room.toJSON());
+}
+
+function roomDataFromSession(sessionState = {}) {
+  const state = migrateSessionState(sessionState);
+  return {
+    ...state,
+    id: state.roomId,
+    name: state.roomName,
+    hostPlayerId: state.hostPlayerId || state.hostId,
+    chat: state.chatMessages,
+    diceLog: state.diceRolls,
+    combat: state.combatState || state.combat,
+    scene: {
+      ...(state.scene || {}),
+      tokens: state.mapTokens.length ? state.mapTokens : state.scene?.tokens,
+      zones: state.zones.length ? state.zones : state.scene?.zones,
+      objectives: state.objectives.length ? state.objectives : state.scene?.objectives,
+      measurements: state.measurements.length ? state.measurements : state.scene?.measurements,
+      areas: state.areas.length ? state.areas : state.scene?.areas,
+    },
+    approvals: state.approvals,
+    gmNotes: state.gmNotes,
+    revealedNotes: state.revealedNotes,
+    gmCounters: state.gmCounters,
+    environmentalEffects: state.environmentalEffects,
+    preparedEncounters: state.preparedEncounters,
+    sessionReports: state.sessionReports,
+    sceneList: state.sceneList || state.scenes,
+    activeSceneId: state.activeSceneId,
+    gmDashboardSettings: state.gmDashboardSettings,
+    events: state.logs.length ? state.logs : state.events,
+  };
+}
+
+function createOrUpdateActiveCampaign(room, patch = {}) {
+  const current = activeCampaignId ? campaigns.get(activeCampaignId) : null;
+  const base = current || createCampaign({
+    name: room?.name || DEFAULT_ROOM_NAME,
+    ownerName: room?.getPlayer?.(room.hostPlayerId)?.name || "Solaris GM",
+    sessionState: room ? sessionFromRoom(room) : null,
+  });
+  const next = migrateCampaign({
+    ...base,
+    ...patch,
+    id: patch.id || base.id,
+    sessions: patch.sessions || base.sessions,
+    autosaves: patch.autosaves || base.autosaves,
+    updatedAt: new Date().toISOString(),
+  });
+  campaigns.set(next.id, next);
+  activeCampaignId = next.id;
+  return next;
 }
 
 function broadcastRoom(roomId) {
@@ -266,6 +368,159 @@ function handleCharacterSyncRequest(socket, payload = {}) {
   broadcastRoom(room.id);
 }
 
+function sendCampaignState(socket, extra = {}) {
+  send(socket, "campaign:list", {
+    campaigns: campaignListPayload(),
+    activeCampaignId,
+    ...extra,
+  });
+}
+
+function assertGmForPersistence(room, playerId = "") {
+  const actor = room?.getPlayer?.(playerId);
+  if (!actor?.isGM) throw new Error("Apenas o mestre pode alterar campanhas e restaurar sessoes no servidor.");
+  return actor;
+}
+
+function handleCampaignSocketEvent(socket, type, payload = {}) {
+  const { meta, room } = currentRoom(socket);
+  if (type === GAME_EVENT_TYPES.CAMPAIGN_LIST || type === GAME_EVENT_TYPES.SESSION_RESTORE_AVAILABLE) {
+    sendCampaignState(socket);
+    return;
+  }
+  const resolvedRoom = room || createOrGetRoom();
+  const actor = assertGmForPersistence(resolvedRoom, meta?.playerId);
+
+  if (type === GAME_EVENT_TYPES.CAMPAIGN_CREATE) {
+    const campaign = migrateCampaign(payload.campaign || {
+      name: payload.name || resolvedRoom.name || DEFAULT_ROOM_NAME,
+      ownerName: actor.name,
+      sessionState: sessionFromRoom(resolvedRoom),
+    });
+    campaigns.set(campaign.id, campaign);
+    activeCampaignId = campaign.id;
+    resolvedRoom.addChatMessage({
+      playerId: actor.id,
+      authorName: "Sistema Solaris",
+      message: `Campanha criada: ${campaign.name}.`,
+    });
+    sendCampaignState(socket, { campaign: campaignPayload(campaign) });
+    broadcastRoom(resolvedRoom.id);
+    return;
+  }
+
+  if (type === GAME_EVENT_TYPES.CAMPAIGN_UPDATE) {
+    const campaign = campaigns.get(payload.campaignId || activeCampaignId);
+    if (!campaign) throw new Error("Campanha nao encontrada.");
+    const next = migrateCampaign({ ...campaign, ...(payload.patch || {}), id: campaign.id, updatedAt: new Date().toISOString() });
+    campaigns.set(next.id, next);
+    sendCampaignState(socket, { campaign: campaignPayload(next) });
+    return;
+  }
+
+  if (type === GAME_EVENT_TYPES.CAMPAIGN_DELETE) {
+    const campaign = campaigns.get(payload.campaignId);
+    if (!campaign) throw new Error("Campanha nao encontrada.");
+    if (String(payload.confirmation || "") !== campaign.name) {
+      throw new Error("Confirmacao forte invalida para excluir campanha.");
+    }
+    campaigns.delete(campaign.id);
+    if (activeCampaignId === campaign.id) activeCampaignId = "";
+    sendCampaignState(socket);
+    return;
+  }
+
+  if (type === GAME_EVENT_TYPES.SESSION_SAVE || type === GAME_EVENT_TYPES.SESSION_SNAPSHOT_CREATE) {
+    const currentCampaign = createOrUpdateActiveCampaign(resolvedRoom);
+    const next = upsertCampaignSession(currentCampaign, payload.sessionState || sessionFromRoom(resolvedRoom), payload.label || "Sessao salva");
+    campaigns.set(next.id, next);
+    activeCampaignId = next.id;
+    const snapshot = createSessionSnapshot({
+      room: payload.sessionState || sessionFromRoom(resolvedRoom),
+      campaignId: next.id,
+      label: payload.label || "Snapshot manual",
+    });
+    resolvedRoom.addChatMessage({
+      playerId: actor.id,
+      authorName: "Sistema Solaris",
+      message: `Sessao salva em ${next.name}.`,
+    });
+    send(socket, type, { campaign: campaignPayload(next), snapshot });
+    sendCampaignState(socket);
+    broadcastRoom(resolvedRoom.id);
+    return;
+  }
+
+  if (type === GAME_EVENT_TYPES.SESSION_AUTOSAVE) {
+    const currentCampaign = createOrUpdateActiveCampaign(resolvedRoom);
+    const result = createAutosave(currentCampaign, payload.sessionState || sessionFromRoom(resolvedRoom), {
+      label: payload.label || "Autosave",
+      maxAutosaves: payload.maxAutosaves || currentCampaign.settings?.maxAutosaves || 10,
+    });
+    campaigns.set(result.campaign.id, result.campaign);
+    activeCampaignId = result.campaign.id;
+    send(socket, type, { campaign: campaignPayload(result.campaign), snapshot: result.snapshot });
+    sendCampaignState(socket);
+    return;
+  }
+
+  if (type === GAME_EVENT_TYPES.SESSION_EXPORT) {
+    const currentCampaign = createOrUpdateActiveCampaign(resolvedRoom);
+    const bundle = createSessionExportBundle({
+      campaign: currentCampaign,
+      sessionState: payload.sessionState || sessionFromRoom(resolvedRoom),
+      appVersion: payload.appVersion || "0.6.0-alpha.3",
+      notes: payload.notes || "",
+    });
+    send(socket, type, { bundle });
+    return;
+  }
+
+  if (type === GAME_EVENT_TYPES.SESSION_IMPORT) {
+    const bundle = parseSessionExportBundle(payload.bundle || payload.session || payload);
+    campaigns.set(bundle.campaign.id, bundle.campaign);
+    activeCampaignId = bundle.campaign.id;
+    const importedRoom = new GameRoom(roomDataFromSession(bundle.sessionState));
+    rooms.set(importedRoom.id, importedRoom);
+    clients.set(socket, { roomId: importedRoom.id, playerId: actor.id, role: actor.role });
+    sendCampaignState(socket, { campaign: campaignPayload(bundle.campaign) });
+    broadcastRoom(importedRoom.id);
+    return;
+  }
+
+  if (type === GAME_EVENT_TYPES.CAMPAIGN_LOAD || type === GAME_EVENT_TYPES.SESSION_LOAD || type === GAME_EVENT_TYPES.SESSION_SNAPSHOT_RESTORE) {
+    const campaign = campaigns.get(payload.campaignId || activeCampaignId);
+    if (!campaign) throw new Error("Campanha nao encontrada.");
+    let state = null;
+    if (type === GAME_EVENT_TYPES.SESSION_SNAPSHOT_RESTORE) {
+      const snapshot = campaign.autosaves.find((entry) => entry.id === payload.snapshotId);
+      state = snapshot?.stateSnapshot || null;
+    } else if (payload.sessionState) {
+      state = payload.sessionState;
+    } else {
+      state = campaign.sessions.find((session) => session.roomId === payload.sessionId) || campaign.sessions[0];
+    }
+    if (!state) throw new Error("Sessao salva nao encontrada.");
+    const loadedRoom = new GameRoom(roomDataFromSession(state));
+    const actorInLoadedRoom = loadedRoom.getPlayer(actor.id);
+    if (!actorInLoadedRoom) loadedRoom.players.push(new PlayerConnection({ ...actor.toJSON(), online: true }));
+    loadedRoom.hostPlayerId = loadedRoom.hostPlayerId || actor.id;
+    rooms.set(loadedRoom.id, loadedRoom);
+    activeCampaignId = campaign.id;
+    clients.set(socket, { roomId: loadedRoom.id, playerId: actor.id, role: actor.role });
+    loadedRoom.addChatMessage({
+      playerId: actor.id,
+      authorName: "Sistema Solaris",
+      message: `Sessao carregada da campanha ${campaign.name}.`,
+    });
+    sendCampaignState(socket, { campaign: campaignPayload(campaign) });
+    broadcastRoom(loadedRoom.id);
+    return;
+  }
+
+  throw new Error(`Evento de campanha desconhecido: ${type}`);
+}
+
 function handleSocketMessage(socket, raw) {
   let message;
   try {
@@ -281,6 +536,21 @@ function handleSocketMessage(socket, raw) {
     if (message.type === "dice:roll") return handleDice(socket, message.payload);
     if (message.type === "character:resources:update") return handleCharacterResources(socket, message.payload);
     if (message.type === GAME_EVENT_TYPES.CHARACTER_SYNC_REQUEST) return handleCharacterSyncRequest(socket, message.payload);
+    if ([
+      GAME_EVENT_TYPES.CAMPAIGN_CREATE,
+      GAME_EVENT_TYPES.CAMPAIGN_UPDATE,
+      GAME_EVENT_TYPES.CAMPAIGN_DELETE,
+      GAME_EVENT_TYPES.CAMPAIGN_LIST,
+      GAME_EVENT_TYPES.CAMPAIGN_LOAD,
+      GAME_EVENT_TYPES.SESSION_SAVE,
+      GAME_EVENT_TYPES.SESSION_LOAD,
+      GAME_EVENT_TYPES.SESSION_EXPORT,
+      GAME_EVENT_TYPES.SESSION_IMPORT,
+      GAME_EVENT_TYPES.SESSION_AUTOSAVE,
+      GAME_EVENT_TYPES.SESSION_SNAPSHOT_CREATE,
+      GAME_EVENT_TYPES.SESSION_SNAPSHOT_RESTORE,
+      GAME_EVENT_TYPES.SESSION_RESTORE_AVAILABLE,
+    ].includes(message.type)) return handleCampaignSocketEvent(socket, message.type, message.payload);
     if (ROOM_EVENT_TYPES.has(message.type)) return dispatchRoomEvent(socket, message.type, message.payload);
     return sendError(socket, `Evento desconhecido: ${message.type}`);
   } catch (error) {

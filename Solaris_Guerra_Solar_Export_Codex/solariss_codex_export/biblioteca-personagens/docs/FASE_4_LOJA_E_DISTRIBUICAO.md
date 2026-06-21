@@ -53,7 +53,7 @@ Adicionar uma camada de economia compartilhada na Mesa Virtual sem quebrar o mod
 ## Como testar
 
 1. Rodar `npm run server`.
-2. Abrir `http://localhost:3000/?view=mesaVirtual&check=20260620d`.
+2. Abrir `http://localhost:3000/?view=mesaVirtual&check=20260620e`.
 3. Abrir **Mesa Virtual**.
 4. Criar sala como Mestre.
 5. Em outra aba, entrar como Jogador.

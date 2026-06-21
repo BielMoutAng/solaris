@@ -502,7 +502,7 @@ No modo offline/simulado, a ficha local continua funcionando como antes. A aprov
 ## Como testar ficha sincronizada
 
 1. Rodar `npm run server`.
-2. Abrir `http://localhost:3000/?view=mesaVirtual&check=20260620d`.
+2. Abrir `http://localhost:3000/?view=mesaVirtual&check=20260620e`.
 3. Abrir a Mesa Virtual.
 4. Como mestre, clicar em **Criar Sala**.
 5. Em outra aba, abrir a mesma URL e clicar em **Entrar em Sala**.
@@ -562,3 +562,110 @@ Implementada no cache `20260620d`.
 - Loja com detalhe de item, destino de armazenamento e carrinhos visiveis ao mestre.
 - Loot com janela dedicada e pacote automatico ao derrotar monstro.
 - Ficha de monstro modal com ataque, dano, condicoes e criacao de loot.
+
+## Fase 6 - Alvos e dano tatico
+
+Implementada no cache `20260620e`.
+
+- Modo Alvo no mapa tatico.
+- Token alvo destacado visualmente.
+- Botao Alvo nos cards de combatente.
+- Ficha de monstro com Atacar Alvo e Dano no Alvo.
+- Areas de efeito clicaveis.
+- Dano na area aplicado aos tokens dentro da area.
+- Logs de dano registram a fonte do ataque ou efeito.
+
+Documentacao:
+
+```txt
+docs/FASE_6_ALVOS_E_DANO.md
+```
+
+## Fase 7 - Previa de areas
+
+Implementada no cache `20260620f`.
+
+- Cones e linhas possuem direcao (`east`, `west`, `north`, `south`).
+- Area selecionada mostra quais tokens serao atingidos.
+- Tokens atingidos por area recebem destaque visual.
+- A legenda da area mostra os nomes atingidos antes de aplicar dano.
+- Build de teste do VTT passa para `0.6.0-alpha.3`.
+
+Documentacao:
+
+```txt
+docs/FASE_7_PREVIA_AREAS.md
+```
+
+## Fase 8 - Separacao ficha/VTT
+
+Implementada apos o cache `20260620f`.
+
+- Ficha/biblioteca volta a ter entrada Electron propria em `electron-main.cjs`.
+- Mesa Virtual ganha entrada propria em `electron-main-vtt.cjs`.
+- Build da ficha usa `electron-builder.ficha.cjs`.
+- Build do VTT usa `electron-builder.vtt.cjs`.
+- `dist:ficha` gera `Solaris Biblioteca`.
+- `dist:vtt` gera `Solaris Tabletop Alpha`.
+- Saidas separadas em `dist-ficha/` e `dist-vtt/`.
+
+Documentacao:
+
+```txt
+docs/FASE_8_SEPARACAO_PROJETOS.md
+```
+
+## Fase 9 - Persistencia de sessoes e campanhas
+
+Implementada no cache `20260620g`.
+
+- Modulo puro `src/session/solaris-session-persistence.js`.
+- Schema de sessao `1.0.0`.
+- Campanhas e sessoes salvas no host via `localStorage`.
+- Exportacao/importacao JSON de sessao.
+- Autosaves com limite.
+- Snapshot manual.
+- Recuperacao de sessao recente nao encerrada.
+- Modal **Campanhas** dentro da Mesa Virtual.
+- Eventos `campaign:*` e `session:*` preparados no cliente/servidor.
+- Servidor local pode receber e restaurar estado enviado pelo host.
+
+Documentacao:
+
+```txt
+docs/FASE_9_PERSISTENCIA_SESSOES.md
+```
+
+## Fase 10 - Painel do Mestre
+
+Implementada no cache `20260620h`.
+
+- Painel privado do mestre com abas de resumo, cenas, encontros, notas, contadores, ambiente, escudo e logs.
+- Eventos `gm:*` no dominio, cliente e servidor.
+- Notas, contadores e efeitos ocultos sao filtrados para jogadores.
+- Cenas salvas e encontros preparados entram no estado persistente da campanha.
+- Layout do Tabletop recebeu rolagem interna para evitar caixas sobrepostas quando listas crescem.
+
+Documentacao:
+
+```txt
+docs/FASE_10_PAINEL_MESTRE.md
+```
+
+## Fase 11 - Consolidacao do Mestre, campanhas e escudo
+
+Implementada no cache `20260620i`.
+
+- Tela dedicada **Minhas Campanhas** em `?view=campaigns`.
+- Formularios dedicados para notas, contadores, efeitos ambientais, cenas e encontros.
+- Gerador de encontros com filtros do bestiario.
+- Escudo do Mestre com busca, regras fixadas, copiar e enviar ao chat.
+- Relatorio de sessao refinado com opcoes de inclusao.
+- Persistencia de configuracoes do mestre em `gmDashboardSettings`.
+- `npm run start:vtt` passa a abrir o Tabletop na tela de campanhas.
+
+Documentacao:
+
+```txt
+docs/FASE_11_CONSOLIDACAO_MESTRE.md
+```

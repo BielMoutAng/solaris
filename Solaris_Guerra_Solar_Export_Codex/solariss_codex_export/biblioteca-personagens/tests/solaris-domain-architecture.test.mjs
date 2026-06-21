@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   ArmorDefinition,
+  AMMO_KINDS,
   BandolierDefinition,
   Character,
   Condition,
@@ -14,15 +15,25 @@ import {
   LOCATION_KINDS,
   MonsterDefinition,
   MonsterSheet,
+  FIRE_MODE_IDS,
   ResourcePool,
   Rachaduras,
   StorageDefinition,
   WeaponDefinition,
+  ammoCubeUnitsFor,
+  attachMagazineToWeapon,
   buildMonsterLootTable,
+  createMagazineInstance,
+  createWeaponAmmoState,
+  detachMagazineFromWeapon,
   definitionFromLegacyItem,
+  fireWeapon,
+  loadAmmoIntoMagazine,
   migrateLegacyCharacterData,
+  pumpWeapon,
   parseMonsterLootResources,
   reconcileLegacyArmorCatalog,
+  reloadInternalWeapon,
   rollMonsterLoot,
 } from "../src/domain/solaris-domain-architecture.js";
 
@@ -306,6 +317,115 @@ test("rachaduras, recursos, efeitos e condições mantêm regras próprias", () 
     value: 2,
   }));
   assert.equal(character.getDerivedStat("ca"), 10);
+});
+
+test("arma com carregador removivel consome municao no carregador e preserva ao remover", () => {
+  const weapon = {
+    id: "rifle-1",
+    definitionId: "rifle-pulso",
+    name: "Rifle de Pulso Mk. II",
+    category: "weapon",
+    ammoState: createWeaponAmmoState({
+      id: "rifle-1",
+      name: "Rifle de Pulso Mk. II",
+      category: "weapon",
+    }),
+  };
+  const magazine = createMagazineInstance({
+    id: weapon.ammoState.compatibleMagazineTemplateIds[0],
+    name: "Carregador de rifle",
+    capacity: 20,
+    acceptedAmmoKinds: [AMMO_KINDS.MEDIUM],
+  }, {
+    id: "mag-1",
+    currentAmmo: 8,
+  });
+
+  const attached = attachMagazineToWeapon(weapon, magazine);
+  const fired = fireWeapon(attached.weapon, {
+    magazines: [attached.magazine],
+    modeId: FIRE_MODE_IDS.BURST,
+  });
+
+  assert.equal(fired.weapon.ammoState.attachedMagazineId, "mag-1");
+  assert.equal(fired.magazines[0].currentAmmo, 4);
+
+  const detached = detachMagazineFromWeapon(fired.weapon, fired.magazines);
+  assert.equal(detached.weapon.ammoState.attachedMagazineId, "");
+  assert.equal(detached.magazines[0].currentAmmo, 4);
+});
+
+test("armas internas recarregam e disparam sem aceitar carregador removivel", () => {
+  const revolver = {
+    id: "rev-1",
+    name: "Revolver Antigo",
+    category: "weapon",
+    ammoState: createWeaponAmmoState({ name: "Revolver Antigo", category: "weapon" }, { currentAmmo: 0 }),
+  };
+  const ammoStack = { id: "ammo-light", ammoKind: AMMO_KINDS.LIGHT, quantity: 12 };
+
+  assert.throws(
+    () => attachMagazineToWeapon(revolver, createMagazineInstance({ acceptedAmmoKinds: [AMMO_KINDS.LIGHT], capacity: 6 })),
+    /nao aceita carregador/
+  );
+
+  const reloaded = reloadInternalWeapon(revolver, ammoStack, 6);
+  assert.equal(reloaded.weapon.ammoState.internalAmmo.currentAmmo, 6);
+  assert.equal(reloaded.ammoStack.quantity, 6);
+
+  const fired = fireWeapon(reloaded.weapon, { modeId: FIRE_MODE_IDS.SINGLE });
+  assert.equal(fired.weapon.ammoState.internalAmmo.currentAmmo, 5);
+});
+
+test("rajada exige municao suficiente e municao compativel", () => {
+  const weapon = {
+    id: "smg-1",
+    name: "Submetralhadora de Sucatas",
+    category: "weapon",
+    ammoState: createWeaponAmmoState({ id: "smg-1", name: "Submetralhadora de Sucatas", category: "weapon" }),
+  };
+  const magazine = attachMagazineToWeapon(weapon, createMagazineInstance({
+    id: weapon.ammoState.compatibleMagazineTemplateIds[0],
+    capacity: 30,
+    acceptedAmmoKinds: [AMMO_KINDS.LIGHT],
+  }, {
+    id: "mag-smg",
+    currentAmmo: 3,
+  }));
+
+  assert.throws(
+    () => fireWeapon(magazine.weapon, { magazines: [magazine.magazine], modeId: FIRE_MODE_IDS.BURST }),
+    /Municao insuficiente/
+  );
+
+  assert.throws(
+    () => loadAmmoIntoMagazine(magazine.magazine, { ammoKind: AMMO_KINDS.MEDIUM, quantity: 10 }, 4),
+    /incompativel/
+  );
+});
+
+test("escopeta exige bombear antes do proximo disparo", () => {
+  const shotgun = {
+    id: "shotgun-1",
+    name: "Escopeta Serrada de Sucata",
+    category: "weapon",
+    ammoState: createWeaponAmmoState({ name: "Escopeta Serrada de Sucata", category: "weapon" }),
+  };
+
+  const fired = fireWeapon(shotgun, { modeId: FIRE_MODE_IDS.SHOTGUN_CONE });
+  assert.equal(fired.weapon.ammoState.status.needsPump, true);
+  assert.throws(() => fireWeapon(fired.weapon, { modeId: FIRE_MODE_IDS.SINGLE }), /precisa ser bombeada/);
+
+  const pumped = pumpWeapon(fired.weapon);
+  assert.equal(pumped.ammoState.status.needsPump, false);
+  assert.equal(fireWeapon(pumped, { modeId: FIRE_MODE_IDS.SINGLE }).weapon.ammoState.internalAmmo.currentAmmo, 0);
+});
+
+test("cubo de municao calcula unidades por pilha e carregador", () => {
+  assert.equal(ammoCubeUnitsFor({ category: "ammo", ammoKind: AMMO_KINDS.LIGHT, quantity: 20 }), 1);
+  assert.equal(ammoCubeUnitsFor({ category: "ammo", ammoKind: AMMO_KINDS.LIGHT, quantity: 21 }), 2);
+  assert.equal(ammoCubeUnitsFor({ category: "ammo", ammoKind: AMMO_KINDS.SHELL, quantity: 9 }), 2);
+  assert.equal(ammoCubeUnitsFor({ category: "magazine", quantity: 2 }), 2);
 });
 
 test("serialização e migração preservam recursos e referência de origem", () => {

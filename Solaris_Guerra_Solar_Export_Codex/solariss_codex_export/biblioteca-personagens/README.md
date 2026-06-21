@@ -6,6 +6,26 @@ App local para criar, salvar, exportar e imprimir fichas de personagem de Solari
 
 Abra `index.html` no navegador.
 
+## Mesa Virtual / Tabletop
+
+A Mesa Virtual fica disponivel pela tela `Mesa virtual` do app e tambem pode abrir direto com:
+
+```txt
+http://localhost:3000/?view=campaigns&check=20260620j
+```
+
+Ela possui modo offline/simulado quando nao ha servidor e modo multiplayer quando `npm run server:vtt` esta ativo. A fase atual inclui sala, jogadores, chat, rolagens, ficha sincronizada, combate, monstros, loja, loot, mapa tatico, selecao de alvo, dano automatico no alvo ou em areas, previa visual de tokens atingidos por areas, persistencia local de campanhas/sessoes e Painel do Mestre com notas, contadores, cenas, encontros, gerador de encontros, editores visuais de cena/encontro, escudo rapido conectado ao compendio quando houver dados estruturados e relatorio com preview antes de salvar/exportar.
+
+O Solaris Tabletop Alpha abre pela tela **Minhas Campanhas**. Ali voce pode criar campanha, continuar sessao salva, editar detalhes, duplicar, excluir com confirmacao forte, exportar/importar JSON e restaurar autosaves. Dentro da mesa, o botao **Minhas Campanhas** volta para essa entrada e o botao **Painel do Mestre** abre as ferramentas privadas do mestre.
+
+A versao `0.6.0-alpha.5` adiciona editores visuais para preparar cenas e encontros, balanceamento alfa de encontros, relatorios salvos na campanha e rolagem interna nos quadros para evitar sobreposicao quando houver muito conteudo.
+
+Rotas uteis no navegador:
+
+- `?view=ficha`: abre a ficha/biblioteca.
+- `?view=mesaVirtual`: abre diretamente a mesa.
+- `?view=campaigns`: abre a tela Minhas Campanhas do Tabletop.
+
 ## iPhone e Android
 
 O app pode ser usado como PWA quando publicado pelo GitHub Pages. No iPhone, abra `https://bielmoutang.github.io/solaris/` no Safari, toque em Compartilhar e escolha Adicionar a Tela de Inicio. Depois disso ele abre como um app instalado.
@@ -14,22 +34,31 @@ Cada aparelho salva suas proprias fichas localmente no navegador. Para levar uma
 
 ## Aplicativo Windows
 
-Esta biblioteca também pode virar um aplicativo de Windows com Electron.
+Agora existem dois aplicativos Windows separados no mesmo projeto:
 
-- `npm install`: instala as dependências de empacotamento.
-- `npm run start`: abre o app em modo desktop para testar.
-- `npm run dist`: gera os arquivos em `dist/`.
+- `Solaris Biblioteca`: ficha local/online, bibliotecas e PWA.
+- `Solaris Tabletop Alpha`: Mesa Virtual / VTT com servidor local embutido.
 
-Arquivos gerados:
+Comandos da ficha:
 
-- `dist/Solaris Biblioteca Setup 0.1.1.exe`: instalador para enviar aos jogadores.
-- `dist/Solaris Biblioteca 0.1.1.exe`: versão portátil, abre direto sem instalar.
+- `npm run start:ficha`: abre a ficha em modo desktop.
+- `npm run dist:ficha`: gera instalador e portatil em `dist-ficha/`.
 
-Versões prontas para download também podem ser colocadas em `downloads/windows/v0.1.1/`.
+Comandos do VTT:
 
-Cada computador salva as próprias fichas localmente. Para mover uma ficha entre PCs, use `Exportar` e `Importar`.
+- `npm run start:vtt`: abre a Mesa Virtual em modo desktop.
+- `npm run server:vtt`: sobe o servidor local da mesa.
+- `npm run dist:vtt`: gera instalador e portatil em `dist-vtt/`.
 
-Como o app ainda não tem assinatura digital paga, o Windows pode exibir aviso de segurança ao abrir o instalador. Isso é esperado em builds locais sem certificado.
+Aliases mantidos:
+
+- `npm start`: aponta para a ficha.
+- `npm run server`: aponta para o servidor da mesa.
+- `npm run dist`: aponta para o build da ficha.
+
+Cada computador salva as proprias fichas localmente. Para mover uma ficha entre PCs, use `Exportar` e `Importar`.
+
+Como o app ainda nao tem assinatura digital paga, o Windows pode exibir aviso de seguranca ao abrir o instalador. Isso e esperado em builds locais sem certificado.
 
 ## Dados salvos
 

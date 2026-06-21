@@ -1,17 +1,31 @@
 import {
   Character as DomainCharacter,
+  AMMO_KINDS,
   ENTITY_TYPES,
+  FEED_SYSTEMS,
+  FIRE_MODE_IDS,
+  FIRE_MODES,
   INVENTORY_SIZES,
   LOCATION_KINDS,
   MonsterDefinition,
   MonsterSheet,
+  ammoCubeUnitsFor,
+  attachMagazineToWeapon,
   buildMonsterLootTable,
+  createMagazineInstance,
+  createWeaponAmmoState,
   definitionFromLegacyItem,
+  detachMagazineFromWeapon,
+  fireWeapon,
   inferLegacyInventorySize,
+  loadAmmoIntoMagazine,
   migrateLegacyCharacterData,
+  pumpWeapon,
   reconcileLegacyArmorCatalog,
-} from "./src/domain/solaris-domain-architecture.js?v=20260615c";
-import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260620d";
+  reloadInternalWeapon,
+  resolveActiveAmmoSource,
+} from "./src/domain/solaris-domain-architecture.js?v=20260621a";
+import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260620j";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -1396,6 +1410,7 @@ const emptyCharacter = () => ({
   customItems: [],
   customRecords: [],
   diceLog: [],
+  pendingWeaponFireMode: null,
   initialAttributeRoll: { rolls: [], kept: [] },
   skillTraining: {},
   pendingCosmicEffect: "",
@@ -1614,7 +1629,8 @@ function initialViewFromUrl() {
   const view = params.get("view") || params.get("start") || "";
   const hashView = (window.location.hash || "").replace(/^#\/?/, "");
   const requested = view || hashView;
-  if (requested === "mesaVirtual" || requested === "vtt" || requested === "tabletop") return "mesaVirtual";
+  if (requested === "mesaVirtual" || requested === "vtt" || requested === "tabletop" || requested === "campaigns") return "mesaVirtual";
+  if (requested === "ficha") return "personagens";
   return "inicio";
 }
 
@@ -2316,7 +2332,10 @@ function bindEvents() {
 
 function mountMesaVirtual() {
   if (!el.mesaVirtualRoot || mesaVirtualUi) return;
+  const params = new URLSearchParams(window.location.search || "");
+  const requestedView = params.get("view") || params.get("start") || "";
   mesaVirtualUi = mountSolarisSessionUI(el.mesaVirtualRoot, {
+    initialScreen: requestedView === "campaigns" ? "campaigns" : "table",
     getCurrentCharacter: currentSessionCharacterSnapshot,
     onOpenCharacter: () => switchView("personagens"),
     onOpenInventory: () => {
@@ -2417,7 +2436,7 @@ function currentSessionCharacterSnapshot() {
     luzentis: numberValue(state.current.currency, STARTING_CURRENCY),
     metadata: {
       schemaVersion: 1,
-      appCache: "20260620d",
+      appCache: "20260621a",
       source: "solaris-local-character",
       updatedAt: state.current.updatedAt || new Date().toISOString(),
     },
@@ -3501,6 +3520,7 @@ function renderEquipmentPage(derived) {
       <h3>Suportes externos</h3>
       ${renderExternalSupportPanel(supportState)}
     </section>
+    ${renderAmmoLogisticsSection()}
     ${renderInventoryLocationSection("Equipado", inventoryGroups.equipped, "Armas, armadura e itens atualmente prontos no loadout.")}
     ${renderInventoryLocationSection("Ativos / acesso rápido", inventoryGroups.active, "Itens preparados para uso imediato durante uma cena.")}
     ${renderInventoryLocationSection("Ganchos", inventoryGroups.hooks, "Itens presos em ganchos externos.")}
@@ -3589,6 +3609,7 @@ function renderEquipmentCombatPanel(equippedWeapon) {
         <button class="primary-button" type="button" data-equipment-roll="attack" ${equippedWeapon && !broken ? "" : "disabled"}>Ataque (${attackAttr})</button>
         <button class="ghost-button" type="button" data-equipment-roll="damage" ${equippedWeapon?.damage && !broken ? "" : "disabled"}>Dano ${escapeHtml(equippedWeapon?.damage || "")}</button>
       </div>
+      ${renderWeaponAmmoPanel(equippedWeaponEntry, equippedWeapon)}
     </div>
   `;
 }
@@ -5119,6 +5140,7 @@ function renderInventoryCards(entries, options = {}) {
         const crackLevel = itemCrackLevel(entry);
         const chipInstalled = entityType === ENTITY_TYPES.CHIP_MOD && entry.location?.slotId === "chip";
         const consumable = isConsumableItem(item);
+        const ammoSource = item.category === "weapon" && weaponUsesAmmo(entry, item) ? weaponAmmoSource(entry, item) : null;
         return `
           <article class="inventory-card compact-card ${item.imageDataUrl ? "with-image" : ""}" tabindex="0" data-detail-kind="inventory" data-detail-id="${escapeHtml(item.id)}" data-detail-uid="${escapeHtml(entry.uid)}"${draggableAttrs}${storageDropAttrs}>
             ${renderCardImage(item)}
@@ -5126,6 +5148,7 @@ function renderInventoryCards(entries, options = {}) {
               <span class="ability-source">${escapeHtml(domainEntityTypeLabel(entityType))}${consumable ? ' · <span class="inventory-consumable-tag">Consumível</span>' : ""}</span>
               <h4>${renderCardTitleButton(item.name)}</h4>
               <p class="card-meta-line">${escapeHtml(cardMeta)}</p>
+              ${ammoSource ? `<p class="ammo-card-line">${escapeHtml(`${ammoSource.label}: ${ammoSource.missing ? "Sem carregador" : `${ammoSource.currentAmmo}/${ammoSource.capacity}`}`)}</p>` : ""}
             </div>
             <div class="inventory-actions">
               ${storageEntity ? `<button class="mini-button" type="button" data-inventory-action="open-storage" data-uid="${entry.uid}">Abrir</button>` : ""}
@@ -5590,14 +5613,21 @@ function rollWeaponDamage(weapon) {
     showToast("Essa arma não tem dano em formato de dado.");
     return;
   }
-  const rolls = Array.from({ length: expression.count }, () => Math.floor(Math.random() * expression.sides) + 1);
+  const equippedWeaponEntry = getEquippedInventoryEntry("weapon");
+  const pendingMode = state.current.pendingWeaponFireMode?.weaponUid === equippedWeaponEntry?.uid
+    ? state.current.pendingWeaponFireMode
+    : null;
+  const bonusDice = Math.max(0, numberValue(pendingMode?.damageDiceBonus, 0));
+  const diceCount = expression.count + bonusDice;
+  const rolls = Array.from({ length: diceCount }, () => Math.floor(Math.random() * expression.sides) + 1);
   const passiveBonus = passiveDamageBonus(weapon);
   const totalBonus = expression.bonus + passiveBonus;
   const total = rolls.reduce((sum, roll) => sum + roll, 0) + totalBonus;
-  const formula = `Dano ${weapon.name}: ${expression.count}d${expression.sides}${totalBonus ? formatMod(totalBonus) : ""}`;
+  const formula = `Dano ${weapon.name}: ${diceCount}d${expression.sides}${totalBonus ? formatMod(totalBonus) : ""}${pendingMode ? ` (${pendingMode.label})` : ""}`;
+  if (pendingMode) state.current.pendingWeaponFireMode = null;
   pushDiceLog({
     label: `Dano - ${weapon.name}`,
-    count: expression.count,
+    count: diceCount,
     sides: expression.sides,
     bonus: totalBonus,
     rolls,
@@ -5937,6 +5967,11 @@ function handleInventoryAction(action, uid, trigger = null) {
   if (!entry) return;
   const item = findMarketItem(entry.itemId);
   if (!item) return;
+
+  if (isAmmoInventoryAction(action)) {
+    handleAmmoInventoryAction(action, uid, trigger);
+    return;
+  }
 
   if (action === "open-storage") {
     const domain = domainCharacterFromLegacy();
@@ -8851,6 +8886,533 @@ function applyPendingInventoryLocation(event) {
 
 function getInventoryEntry(uid) {
   return state.current.inventory.find((entry) => entry.uid === uid);
+}
+
+function createLocalUid(prefix = "entry") {
+  const suffix = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  return `${prefix}-${suffix}`;
+}
+
+function ammoKindLabel(kind) {
+  const labels = {
+    [AMMO_KINDS.NONE]: "Sem municao",
+    [AMMO_KINDS.LIGHT]: "Municao leve",
+    [AMMO_KINDS.MEDIUM]: "Municao media",
+    [AMMO_KINDS.SHELL]: "Cartucho",
+    [AMMO_KINDS.ENERGY_CELL]: "Celula de energia",
+    [AMMO_KINDS.GRENADE]: "Granada",
+    [AMMO_KINDS.ROCKET]: "Foguete",
+  };
+  return labels[kind] || "Municao";
+}
+
+function ammoKindFromEntry(entry) {
+  return entry?.ammoStack?.ammoKind || entry?.ammoMagazine?.loadedAmmoKind || entry?.ammoMagazine?.acceptedAmmoKinds?.[0] || AMMO_KINDS.LIGHT;
+}
+
+function isAmmoStackEntry(entry) {
+  return Boolean(entry?.ammoStack) || entry?.category === "ammo";
+}
+
+function isMagazineEntry(entry) {
+  return Boolean(entry?.ammoMagazine) || entry?.category === "magazine";
+}
+
+function isAmmoLogisticsEntry(entry) {
+  return isAmmoStackEntry(entry) || isMagazineEntry(entry);
+}
+
+function weaponLikeForAmmo(entry, item = findMarketItem(entry?.itemId)) {
+  return {
+    ...(item || {}),
+    id: entry?.uid || item?.id || "",
+    uid: entry?.uid || "",
+    definitionId: item?.id || entry?.itemId || "",
+    name: item?.name || entry?.name || "Arma",
+    category: "weapon",
+    ammoState: entry?.ammoState,
+  };
+}
+
+function normalizeAmmoStateForEntry(entry, item = findMarketItem(entry?.itemId)) {
+  if (!entry || item?.category !== "weapon") return null;
+  const weaponLike = weaponLikeForAmmo(entry, item);
+  const base = createWeaponAmmoState(weaponLike);
+  const saved = entry.ammoState && typeof entry.ammoState === "object" ? entry.ammoState : {};
+  const capacity = Math.max(0, numberValue(saved.internalAmmo?.capacity, base.internalAmmo?.capacity || base.defaultCapacity || 0));
+  const internalAmmo = saved.internalAmmo || base.internalAmmo
+    ? {
+        ...(base.internalAmmo || {}),
+        ...(saved.internalAmmo || {}),
+        capacity,
+        currentAmmo: clamp(numberValue(saved.internalAmmo?.currentAmmo, base.internalAmmo?.currentAmmo || 0), 0, capacity),
+        ammoKind: saved.internalAmmo?.ammoKind || base.internalAmmo?.ammoKind || base.defaultAmmoKind,
+      }
+    : null;
+  return {
+    ...base,
+    ...saved,
+    acceptedAmmoKinds: Array.isArray(saved.acceptedAmmoKinds) && saved.acceptedAmmoKinds.length ? saved.acceptedAmmoKinds : base.acceptedAmmoKinds,
+    compatibleMagazineTemplateIds: Array.isArray(saved.compatibleMagazineTemplateIds) && saved.compatibleMagazineTemplateIds.length
+      ? saved.compatibleMagazineTemplateIds
+      : base.compatibleMagazineTemplateIds,
+    fireModes: Array.isArray(saved.fireModes) && saved.fireModes.length ? saved.fireModes : base.fireModes,
+    status: { ...base.status, ...(saved.status || {}) },
+    internalAmmo,
+  };
+}
+
+function ensureWeaponAmmoState(entry, item = findMarketItem(entry?.itemId)) {
+  const ammoState = normalizeAmmoStateForEntry(entry, item);
+  if (!ammoState) return null;
+  entry.ammoState = ammoState;
+  return ammoState;
+}
+
+function weaponUsesAmmo(entry, item = findMarketItem(entry?.itemId)) {
+  const ammoState = ensureWeaponAmmoState(entry, item);
+  return Boolean(ammoState && ammoState.feedSystem !== FEED_SYSTEMS.NONE);
+}
+
+function magazineStateFromEntry(entry) {
+  if (!entry) return null;
+  const item = findMarketItem(entry.itemId);
+  return {
+    id: entry.uid,
+    name: item?.name || entry.ammoMagazine?.name || "Carregador",
+    ...(entry.ammoMagazine || {}),
+  };
+}
+
+function updateMagazineEntryFromState(magazine) {
+  const entry = getInventoryEntry(magazine?.id);
+  if (!entry) return;
+  entry.ammoMagazine = {
+    ...(entry.ammoMagazine || {}),
+    ...magazine,
+    id: entry.uid,
+  };
+}
+
+function magazineEntriesForWeapon(weaponEntry) {
+  const ammoState = ensureWeaponAmmoState(weaponEntry);
+  if (!ammoState) return [];
+  return (state.current.inventory || []).filter((entry) => {
+    if (!isMagazineEntry(entry)) return false;
+    const magazine = magazineStateFromEntry(entry);
+    const templateMatches = magazine.templateId && ammoState.compatibleMagazineTemplateIds.includes(magazine.templateId);
+    const kindMatches = (magazine.acceptedAmmoKinds || []).some((kind) => ammoState.acceptedAmmoKinds.includes(kind));
+    const attachedHere = magazine.attachedToWeaponId === weaponEntry.uid;
+    const unattached = !magazine.attachedToWeaponId;
+    return (templateMatches || kindMatches || attachedHere) && (attachedHere || unattached);
+  });
+}
+
+function compatibleAmmoStackForKinds(kinds = []) {
+  return (state.current.inventory || []).find((entry) =>
+    isAmmoStackEntry(entry)
+    && kinds.includes(entry.ammoStack?.ammoKind)
+    && numberValue(entry.ammoStack?.quantity, 0) > 0
+  ) || null;
+}
+
+function weaponAmmoSource(entry, item = findMarketItem(entry?.itemId)) {
+  const ammoState = ensureWeaponAmmoState(entry, item);
+  if (!ammoState) return null;
+  const magazines = (state.current.inventory || []).filter(isMagazineEntry).map(magazineStateFromEntry);
+  return resolveActiveAmmoSource(weaponLikeForAmmo(entry, item), magazines);
+}
+
+function addCustomInventoryLibraryItem(item) {
+  state.current.customItems = state.current.customItems || [];
+  if (!state.current.customItems.some((entry) => entry.id === item.id)) state.current.customItems.unshift(item);
+}
+
+function createAmmoStackEntry(ammoKind, quantity = 20) {
+  const uid = createLocalUid("ammo");
+  const item = {
+    id: `custom-ammo-${ammoKind}-${uid}`,
+    category: "ammo",
+    name: ammoKindLabel(ammoKind),
+    tier: "Custom",
+    price: 0,
+    weight: "0 Kg",
+    inventorySize: "small",
+    tags: ["municao", ammoKind],
+    summary: `Pilha de ${ammoKindLabel(ammoKind).toLowerCase()} para municiar armas e carregadores.`,
+  };
+  addCustomInventoryLibraryItem(item);
+  state.current.inventory.unshift({
+    uid,
+    itemId: item.id,
+    category: "ammo",
+    location: { kind: LOCATION_KINDS.UNASSIGNED },
+    ammoStack: {
+      ammoKind,
+      quantity: Math.max(1, numberValue(quantity, 1)),
+    },
+  });
+  return uid;
+}
+
+function createMagazineEntryForWeapon(weaponEntry, item = findMarketItem(weaponEntry?.itemId)) {
+  const ammoState = ensureWeaponAmmoState(weaponEntry, item);
+  if (!ammoState || ammoState.feedSystem !== FEED_SYSTEMS.DETACHABLE_MAGAZINE) {
+    showToast("Esta arma nao usa carregador removivel.", "tech-error");
+    return null;
+  }
+  const templateId = ammoState.compatibleMagazineTemplateIds[0] || `mag-${weaponEntry.uid}`;
+  const magazine = createMagazineInstance({
+    id: templateId,
+    name: `Carregador - ${item.name}`,
+    capacity: ammoState.defaultCapacity,
+    acceptedAmmoKinds: ammoState.acceptedAmmoKinds,
+    defaultAmmoKind: ammoState.defaultAmmoKind,
+    compatibleWeaponIds: [weaponEntry.uid, item.id],
+    compatibleWeaponCategories: ["weapon"],
+  }, {
+    id: createLocalUid("mag"),
+    currentAmmo: 0,
+  });
+  const marketItem = {
+    id: `custom-magazine-${magazine.id}`,
+    category: "magazine",
+    name: magazine.name,
+    tier: "Custom",
+    price: 0,
+    weight: "0,2 Kg",
+    inventorySize: "small",
+    tags: ["carregador", ...ammoState.acceptedAmmoKinds],
+    summary: `Carregador ${magazine.currentAmmo}/${magazine.capacity} para ${item.name}.`,
+  };
+  addCustomInventoryLibraryItem(marketItem);
+  state.current.inventory.unshift({
+    uid: magazine.id,
+    itemId: marketItem.id,
+    category: "magazine",
+    location: { kind: LOCATION_KINDS.UNASSIGNED },
+    ammoMagazine: magazine,
+  });
+  return magazine.id;
+}
+
+function persistAmmoInventoryState() {
+  state.current.domainCharacter = null;
+  syncDomainSnapshotFromLegacy({ autoSave: true });
+}
+
+function renderAmmoModeButton(modeId, source, ammoState, weaponEntry) {
+  const mode = FIRE_MODES[modeId];
+  if (!mode) return "";
+  const blockedByAmmo = source?.missing || source?.currentAmmo < mode.ammoCost;
+  const blockedByStatus = ammoState.status?.needsPump || ammoState.status?.jammed || ammoState.status?.overheated;
+  const disabled = blockedByAmmo || blockedByStatus ? "disabled" : "";
+  const title = mode.damageDiceBonus
+    ? `${mode.label}: consome ${mode.ammoCost} e adiciona +${mode.damageDiceBonus} dado(s) no proximo dano.`
+    : `${mode.label}: consome ${mode.ammoCost}.`;
+  return `<button class="mini-button ammo-fire-button" type="button" data-inventory-action="weapon-fire" data-fire-mode="${escapeHtml(mode.id)}" data-uid="${escapeHtml(weaponEntry.uid)}" title="${escapeHtml(title)}" ${disabled}>${escapeHtml(mode.label)}</button>`;
+}
+
+function renderWeaponAmmoPanel(weaponEntry, item = findMarketItem(weaponEntry?.itemId), { compact = false } = {}) {
+  if (!weaponEntry || item?.category !== "weapon") return "";
+  const ammoState = ensureWeaponAmmoState(weaponEntry, item);
+  if (!ammoState || ammoState.feedSystem === FEED_SYSTEMS.NONE) return "";
+  const source = weaponAmmoSource(weaponEntry, item);
+  const percent = source?.capacity ? clamp(Math.round((source.currentAmmo / source.capacity) * 100), 0, 100) : 0;
+  const compatibleMags = magazineEntriesForWeapon(weaponEntry);
+  const attached = source?.magazine;
+  const needsPump = ammoState.status?.needsPump;
+  const modeButtons = ammoState.fireModes.map((modeId) => renderAmmoModeButton(modeId, source, ammoState, weaponEntry)).join("");
+  return `
+    <div class="weapon-ammo-panel ${compact ? "compact-ammo-panel" : ""}">
+      <div class="ammo-panel-head">
+        <span>${escapeHtml(source?.label || "Municao")}</span>
+        <strong>${source?.currentAmmo === Number.POSITIVE_INFINITY ? "Livre" : `${source?.currentAmmo || 0}/${source?.capacity || 0}`}</strong>
+      </div>
+      <div class="ammo-meter" aria-label="Municao atual"><span style="width:${percent}%"></span></div>
+      <p class="inventory-note">
+        ${escapeHtml(source?.missing ? "Sem carregador" : `${ammoKindLabel(source?.ammoKind || ammoState.defaultAmmoKind)} - ${ammoState.feedSystem === FEED_SYSTEMS.CYLINDER ? "Tambor interno" : ammoState.label || "Fonte ativa"}`)}
+        ${needsPump ? " - Precisa bombear" : ""}
+      </p>
+      <div class="ammo-actions">
+        ${modeButtons}
+        ${ammoState.requiresPumpAfterShot ? `<button class="mini-button" type="button" data-inventory-action="weapon-pump" data-uid="${escapeHtml(weaponEntry.uid)}" ${needsPump ? "" : "disabled"}>Bombear</button>` : ""}
+        ${ammoState.feedSystem === FEED_SYSTEMS.DETACHABLE_MAGAZINE
+          ? attached
+            ? `
+              <button class="mini-button" type="button" data-inventory-action="weapon-detach-magazine" data-uid="${escapeHtml(weaponEntry.uid)}">Remover carregador</button>
+              <button class="mini-button" type="button" data-inventory-action="weapon-fill-magazine" data-uid="${escapeHtml(weaponEntry.uid)}">Municiar carregador</button>
+            `
+            : `
+              <button class="mini-button" type="button" data-inventory-action="weapon-attach-magazine" data-uid="${escapeHtml(weaponEntry.uid)}" ${compatibleMags.length ? "" : "disabled"}>Colocar carregador</button>
+              <button class="mini-button" type="button" data-inventory-action="weapon-create-magazine" data-uid="${escapeHtml(weaponEntry.uid)}">Criar carregador</button>
+            `
+          : `<button class="mini-button" type="button" data-inventory-action="weapon-reload-internal" data-uid="${escapeHtml(weaponEntry.uid)}" ${source?.currentAmmo >= source?.capacity ? "disabled" : ""}>Recarregar interno</button>`}
+        <button class="mini-button" type="button" data-inventory-action="weapon-create-ammo" data-uid="${escapeHtml(weaponEntry.uid)}">Adicionar municao</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderAmmoLogisticsSection() {
+  const entries = (state.current.inventory || []).filter(isAmmoLogisticsEntry);
+  const equippedWeaponEntry = getEquippedInventoryEntry("weapon");
+  return `
+    <section class="inventory-panel inventory-panel-wide ammo-logistics-section">
+      <div class="inventory-section-heading">
+        <div>
+          <h3>Municao e carregadores</h3>
+          <p class="inventory-note">Armas, carregadores e pilhas de municao sao separados. Carregadores preservam a propria municao quando removidos.</p>
+        </div>
+        <strong>${entries.length}</strong>
+      </div>
+      ${equippedWeaponEntry ? `<div class="ammo-toolbar"><button class="mini-button" type="button" data-inventory-action="weapon-create-ammo" data-uid="${escapeHtml(equippedWeaponEntry.uid)}">Adicionar municao da arma equipada</button></div>` : ""}
+      ${entries.length ? `
+        <div class="ammo-logistics-grid">
+          ${entries.map((entry) => renderAmmoLogisticsCard(entry)).join("")}
+        </div>
+      ` : '<div class="empty-state">Nenhuma municao ou carregador criado ainda.</div>'}
+    </section>
+  `;
+}
+
+function renderAmmoLogisticsCard(entry) {
+  const item = findMarketItem(entry.itemId) || { name: "Entrada de municao" };
+  const location = inventoryLocationLabel(entry);
+  if (isMagazineEntry(entry)) {
+    const magazine = magazineStateFromEntry(entry);
+    const percent = magazine.capacity ? clamp(Math.round((magazine.currentAmmo / magazine.capacity) * 100), 0, 100) : 0;
+    return `
+      <article class="ammo-logistics-card">
+        <div>
+          <span class="ability-source">Carregador</span>
+          <h4>${escapeHtml(item.name)}</h4>
+          <p class="inventory-note">${escapeHtml(`${ammoKindLabel(magazine.loadedAmmoKind)} - ${location}`)}</p>
+        </div>
+        <strong>${magazine.currentAmmo}/${magazine.capacity}</strong>
+        <div class="ammo-meter"><span style="width:${percent}%"></span></div>
+        <div class="ammo-actions">
+          <button class="mini-button" type="button" data-inventory-action="magazine-fill" data-uid="${escapeHtml(entry.uid)}" ${magazine.currentAmmo >= magazine.capacity ? "disabled" : ""}>Municiar</button>
+          <button class="mini-button" type="button" data-inventory-action="move" data-uid="${escapeHtml(entry.uid)}">Mover</button>
+          <button class="mini-button danger-mini-button" type="button" data-inventory-action="delete" data-uid="${escapeHtml(entry.uid)}">Excluir</button>
+        </div>
+      </article>
+    `;
+  }
+  const units = ammoCubeUnitsFor({ category: "ammo", ammoKind: entry.ammoStack?.ammoKind, quantity: entry.ammoStack?.quantity });
+  return `
+    <article class="ammo-logistics-card">
+      <div>
+        <span class="ability-source">Pilha de municao</span>
+        <h4>${escapeHtml(item.name)}</h4>
+        <p class="inventory-note">${escapeHtml(`${ammoKindLabel(entry.ammoStack?.ammoKind)} - ${location}`)}</p>
+      </div>
+      <strong>x${escapeHtml(entry.ammoStack?.quantity || 0)}</strong>
+      <p class="inventory-note">Ocupa ${units} unidade${units === 1 ? "" : "s"} em cubo de municao.</p>
+      <div class="ammo-actions">
+        <button class="mini-button" type="button" data-inventory-action="move" data-uid="${escapeHtml(entry.uid)}">Mover</button>
+        <button class="mini-button danger-mini-button" type="button" data-inventory-action="delete" data-uid="${escapeHtml(entry.uid)}">Excluir</button>
+      </div>
+    </article>
+  `;
+}
+
+function isAmmoInventoryAction(action) {
+  return [
+    "weapon-fire",
+    "weapon-pump",
+    "weapon-attach-magazine",
+    "weapon-detach-magazine",
+    "weapon-create-magazine",
+    "weapon-fill-magazine",
+    "weapon-reload-internal",
+    "weapon-create-ammo",
+    "magazine-fill",
+  ].includes(action);
+}
+
+function removeEmptyAmmoStacks() {
+  state.current.inventory = (state.current.inventory || []).filter((entry) =>
+    !isAmmoStackEntry(entry) || numberValue(entry.ammoStack?.quantity, 0) > 0
+  );
+}
+
+function chooseMagazineForWeapon(weaponEntry) {
+  const options = magazineEntriesForWeapon(weaponEntry);
+  if (!options.length) return null;
+  if (options.length === 1) return options[0];
+  const label = options.map((entry, index) => {
+    const item = findMarketItem(entry.itemId);
+    const magazine = magazineStateFromEntry(entry);
+    return `${index + 1}. ${item?.name || magazine.name} (${magazine.currentAmmo}/${magazine.capacity})`;
+  }).join("\n");
+  const selected = window.prompt(`Escolha o carregador:\n${label}`, "1");
+  if (selected === null) return null;
+  return options[clamp(numberValue(selected, 1) - 1, 0, options.length - 1)] || null;
+}
+
+function fillMagazineFromInventory(magazineEntry) {
+  const magazine = magazineStateFromEntry(magazineEntry);
+  const stackEntry = compatibleAmmoStackForKinds(magazine.acceptedAmmoKinds || []);
+  if (!stackEntry) {
+    showToast(`Sem pilha de ${ammoKindLabel(magazine.loadedAmmoKind || magazine.acceptedAmmoKinds?.[0]).toLowerCase()} disponivel.`, "tech-error");
+    return false;
+  }
+  try {
+    const result = loadAmmoIntoMagazine(magazine, stackEntry.ammoStack);
+    magazineEntry.ammoMagazine = result.magazine;
+    stackEntry.ammoStack = result.ammoStack;
+    removeEmptyAmmoStacks();
+    showToast(`${result.loaded} municao carregada em ${magazineEntry.ammoMagazine.name}.`);
+    return true;
+  } catch (error) {
+    showToast(error.message || "Nao foi possivel municiar o carregador.", "tech-error");
+    return false;
+  }
+}
+
+function reloadInternalWeaponFromInventory(weaponEntry, item) {
+  const ammoState = ensureWeaponAmmoState(weaponEntry, item);
+  const stackEntry = compatibleAmmoStackForKinds(ammoState.acceptedAmmoKinds || []);
+  if (!stackEntry) {
+    showToast(`Sem pilha de ${ammoKindLabel(ammoState.defaultAmmoKind).toLowerCase()} disponivel.`, "tech-error");
+    return false;
+  }
+  try {
+    const result = reloadInternalWeapon(weaponLikeForAmmo(weaponEntry, item), stackEntry.ammoStack);
+    weaponEntry.ammoState = result.weapon.ammoState;
+    stackEntry.ammoStack = result.ammoStack;
+    removeEmptyAmmoStacks();
+    showToast(`${item.name} recebeu ${result.loaded} municao.`);
+    return true;
+  } catch (error) {
+    showToast(error.message || "Nao foi possivel recarregar a arma.", "tech-error");
+    return false;
+  }
+}
+
+function handleAmmoInventoryAction(action, uid, trigger = null) {
+  const entry = getInventoryEntry(uid);
+  if (!entry) return;
+  const item = findMarketItem(entry.itemId);
+  if (!item) return;
+
+  if (action === "weapon-create-ammo") {
+    const ammoState = ensureWeaponAmmoState(entry, item);
+    if (!ammoState || ammoState.feedSystem === FEED_SYSTEMS.NONE) return;
+    const defaultQuantity = Math.max(1, ammoState.defaultCapacity || 20);
+    const requested = window.prompt(`Quantidade de ${ammoKindLabel(ammoState.defaultAmmoKind)} a adicionar:`, String(defaultQuantity));
+    if (requested === null) return;
+    const quantity = Math.max(1, numberValue(requested, defaultQuantity));
+    createAmmoStackEntry(ammoState.defaultAmmoKind, quantity);
+    persistAmmoInventoryState();
+    renderForm();
+    showToast(`${quantity} ${ammoKindLabel(ammoState.defaultAmmoKind).toLowerCase()} adicionada ao inventario.`);
+    return;
+  }
+
+  if (action === "weapon-create-magazine") {
+    const magazineId = createMagazineEntryForWeapon(entry, item);
+    if (!magazineId) return;
+    persistAmmoInventoryState();
+    renderForm();
+    showToast("Carregador criado sem municao. Use Municiar para carregar.");
+    return;
+  }
+
+  if (action === "weapon-attach-magazine") {
+    const magazineEntry = chooseMagazineForWeapon(entry);
+    if (!magazineEntry) {
+      showToast("Nenhum carregador compativel disponivel.", "tech-error");
+      return;
+    }
+    try {
+      const result = attachMagazineToWeapon(weaponLikeForAmmo(entry, item), magazineStateFromEntry(magazineEntry));
+      entry.ammoState = result.weapon.ammoState;
+      magazineEntry.ammoMagazine = result.magazine;
+      persistAmmoInventoryState();
+      renderForm();
+      showToast(`${findMarketItem(magazineEntry.itemId)?.name || "Carregador"} colocado em ${item.name}.`);
+    } catch (error) {
+      showToast(error.message || "Nao foi possivel colocar o carregador.", "tech-error");
+    }
+    return;
+  }
+
+  if (action === "weapon-detach-magazine") {
+    const result = detachMagazineFromWeapon(weaponLikeForAmmo(entry, item), (state.current.inventory || []).filter(isMagazineEntry).map(magazineStateFromEntry));
+    entry.ammoState = result.weapon.ammoState;
+    result.magazines.forEach(updateMagazineEntryFromState);
+    persistAmmoInventoryState();
+    renderForm();
+    showToast("Carregador removido sem perder a municao.");
+    return;
+  }
+
+  if (action === "weapon-fill-magazine") {
+    const source = weaponAmmoSource(entry, item);
+    const magazineEntry = source?.magazine?.id ? getInventoryEntry(source.magazine.id) : null;
+    if (!magazineEntry) {
+      showToast("Nenhum carregador acoplado.", "tech-error");
+      return;
+    }
+    if (fillMagazineFromInventory(magazineEntry)) {
+      persistAmmoInventoryState();
+      renderForm();
+    }
+    return;
+  }
+
+  if (action === "magazine-fill") {
+    if (fillMagazineFromInventory(entry)) {
+      persistAmmoInventoryState();
+      renderForm();
+    }
+    return;
+  }
+
+  if (action === "weapon-reload-internal") {
+    if (reloadInternalWeaponFromInventory(entry, item)) {
+      persistAmmoInventoryState();
+      renderForm();
+    }
+    return;
+  }
+
+  if (action === "weapon-pump") {
+    try {
+      const result = pumpWeapon(weaponLikeForAmmo(entry, item));
+      entry.ammoState = result.ammoState;
+      persistAmmoInventoryState();
+      renderForm();
+      showToast(`${item.name} bombeada e pronta para disparar.`);
+    } catch (error) {
+      showToast(error.message || "Nao foi possivel bombear a arma.", "tech-error");
+    }
+    return;
+  }
+
+  if (action === "weapon-fire") {
+    const modeId = trigger?.dataset.fireMode || FIRE_MODE_IDS.SINGLE;
+    try {
+      const result = fireWeapon(weaponLikeForAmmo(entry, item), {
+        magazines: (state.current.inventory || []).filter(isMagazineEntry).map(magazineStateFromEntry),
+        modeId,
+      });
+      entry.ammoState = result.weapon.ammoState;
+      result.magazines.forEach(updateMagazineEntryFromState);
+      state.current.pendingWeaponFireMode = result.mode.damageDiceBonus
+        ? { weaponUid: entry.uid, modeId: result.mode.id, damageDiceBonus: result.mode.damageDiceBonus, label: result.mode.label }
+        : null;
+      persistAmmoInventoryState();
+      renderForm();
+      const bonusText = result.mode.damageDiceBonus ? ` Proximo dano: +${result.mode.damageDiceBonus} dado(s).` : "";
+      const saveText = result.mode.targetSave ? ` Alvo testa ${result.mode.targetSave}.` : "";
+      showToast(`${result.mode.label} com ${item.name}: -${result.consumed} municao.${bonusText}${saveText}`);
+    } catch (error) {
+      showToast(error.message || "Nao foi possivel disparar.", "tech-error");
+    }
+  }
 }
 
 function isCubeEntry(entry) {

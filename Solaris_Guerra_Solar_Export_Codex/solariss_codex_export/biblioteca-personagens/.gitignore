@@ -1,5 +1,7 @@
 node_modules/
 dist/
+dist-ficha/
+dist-vtt/
 dist-v*/
 npm-debug.log*
 *.log

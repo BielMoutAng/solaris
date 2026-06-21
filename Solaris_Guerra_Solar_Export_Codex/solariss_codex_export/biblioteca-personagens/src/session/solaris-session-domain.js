@@ -100,6 +100,47 @@ export const GAME_EVENT_TYPES = Object.freeze({
   APPROVAL_APPROVE: "approval:approve",
   APPROVAL_REJECT: "approval:reject",
   APPROVAL_STATE: "approval:state",
+  CAMPAIGN_CREATE: "campaign:create",
+  CAMPAIGN_UPDATE: "campaign:update",
+  CAMPAIGN_DELETE: "campaign:delete",
+  CAMPAIGN_LIST: "campaign:list",
+  CAMPAIGN_LOAD: "campaign:load",
+  SESSION_SAVE: "session:save",
+  SESSION_LOAD: "session:load",
+  SESSION_EXPORT: "session:export",
+  SESSION_IMPORT: "session:import",
+  SESSION_AUTOSAVE: "session:autosave",
+  SESSION_SNAPSHOT_CREATE: "session:snapshot:create",
+  SESSION_SNAPSHOT_RESTORE: "session:snapshot:restore",
+  SESSION_RESTORE_AVAILABLE: "session:restore:available",
+  GM_DASHBOARD_STATE: "gm:dashboard:state",
+  GM_NOTE_CREATE: "gm:note:create",
+  GM_NOTE_UPDATE: "gm:note:update",
+  GM_NOTE_DELETE: "gm:note:delete",
+  GM_NOTE_REVEAL: "gm:note:reveal",
+  GM_COUNTER_CREATE: "gm:counter:create",
+  GM_COUNTER_UPDATE: "gm:counter:update",
+  GM_COUNTER_DELETE: "gm:counter:delete",
+  GM_COUNTER_TICK: "gm:counter:tick",
+  GM_COUNTER_REVEAL: "gm:counter:reveal",
+  GM_ENVIRONMENT_CREATE: "gm:environment:create",
+  GM_ENVIRONMENT_UPDATE: "gm:environment:update",
+  GM_ENVIRONMENT_DELETE: "gm:environment:delete",
+  GM_SCENE_CREATE: "gm:scene:create",
+  GM_SCENE_UPDATE: "gm:scene:update",
+  GM_SCENE_DELETE: "gm:scene:delete",
+  GM_SCENE_SWITCH: "gm:scene:switch",
+  GM_ENCOUNTER_CREATE: "gm:encounter:create",
+  GM_ENCOUNTER_UPDATE: "gm:encounter:update",
+  GM_ENCOUNTER_DELETE: "gm:encounter:delete",
+  GM_ENCOUNTER_START: "gm:encounter:start",
+  GM_ENCOUNTER_COMPLETE: "gm:encounter:complete",
+  GM_ENCOUNTER_GENERATE: "gm:encounter:generate",
+  GM_SHIELD_SEARCH: "gm:shield:search",
+  GM_SHIELD_PIN: "gm:shield:pin",
+  GM_SHIELD_SEND_TO_CHAT: "gm:shield:send-to-chat",
+  GM_REPORT_EXPORT: "gm:report:export",
+  GM_REPORT_SAVE: "gm:report:save",
 });
 
 export const APPROVAL_STATUSES = Object.freeze({
@@ -163,6 +204,37 @@ const IMPORTANT_CHARACTER_EVENTS = new Set([
   GAME_EVENT_TYPES.CHARACTER_CONDITION_ADD,
   GAME_EVENT_TYPES.CHARACTER_CONDITION_REMOVE,
   GAME_EVENT_TYPES.CHARACTER_SYNC_FULL,
+]);
+
+export const GM_DASHBOARD_EVENTS = new Set([
+  GAME_EVENT_TYPES.GM_DASHBOARD_STATE,
+  GAME_EVENT_TYPES.GM_NOTE_CREATE,
+  GAME_EVENT_TYPES.GM_NOTE_UPDATE,
+  GAME_EVENT_TYPES.GM_NOTE_DELETE,
+  GAME_EVENT_TYPES.GM_NOTE_REVEAL,
+  GAME_EVENT_TYPES.GM_COUNTER_CREATE,
+  GAME_EVENT_TYPES.GM_COUNTER_UPDATE,
+  GAME_EVENT_TYPES.GM_COUNTER_DELETE,
+  GAME_EVENT_TYPES.GM_COUNTER_TICK,
+  GAME_EVENT_TYPES.GM_COUNTER_REVEAL,
+  GAME_EVENT_TYPES.GM_ENVIRONMENT_CREATE,
+  GAME_EVENT_TYPES.GM_ENVIRONMENT_UPDATE,
+  GAME_EVENT_TYPES.GM_ENVIRONMENT_DELETE,
+  GAME_EVENT_TYPES.GM_SCENE_CREATE,
+  GAME_EVENT_TYPES.GM_SCENE_UPDATE,
+  GAME_EVENT_TYPES.GM_SCENE_DELETE,
+  GAME_EVENT_TYPES.GM_SCENE_SWITCH,
+  GAME_EVENT_TYPES.GM_ENCOUNTER_CREATE,
+  GAME_EVENT_TYPES.GM_ENCOUNTER_UPDATE,
+  GAME_EVENT_TYPES.GM_ENCOUNTER_DELETE,
+  GAME_EVENT_TYPES.GM_ENCOUNTER_START,
+  GAME_EVENT_TYPES.GM_ENCOUNTER_COMPLETE,
+  GAME_EVENT_TYPES.GM_ENCOUNTER_GENERATE,
+  GAME_EVENT_TYPES.GM_SHIELD_SEARCH,
+  GAME_EVENT_TYPES.GM_SHIELD_PIN,
+  GAME_EVENT_TYPES.GM_SHIELD_SEND_TO_CHAT,
+  GAME_EVENT_TYPES.GM_REPORT_EXPORT,
+  GAME_EVENT_TYPES.GM_REPORT_SAVE,
 ]);
 
 function createId(prefix = "session") {
@@ -447,6 +519,339 @@ function normalizeLootPack(value = {}) {
     updatedAt: value.updatedAt || nowIso(),
     notes: String(value.notes || ""),
   };
+}
+
+function normalizeTags(value = []) {
+  if (Array.isArray(value)) return value.map((entry) => String(entry || "").trim()).filter(Boolean);
+  return String(value || "").split(",").map((entry) => entry.trim()).filter(Boolean);
+}
+
+function normalizeText(value = "") {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function normalizeGmNote(value = {}) {
+  return {
+    id: String(value.id || createId("gm-note")),
+    title: String(value.title || value.name || "Nota secreta"),
+    body: String(value.body || value.description || value.text || ""),
+    tags: normalizeTags(value.tags),
+    important: Boolean(value.important),
+    secret: value.secret !== false,
+    visibleToPlayers: Boolean(value.visibleToPlayers || value.revealed),
+    revealed: Boolean(value.revealed),
+    sceneId: String(value.sceneId || ""),
+    linkedType: String(value.linkedType || ""),
+    linkedId: String(value.linkedId || ""),
+    createdAt: value.createdAt || nowIso(),
+    updatedAt: value.updatedAt || nowIso(),
+  };
+}
+
+function normalizeGmCounter(value = {}) {
+  const max = Math.max(1, Math.floor(numeric(value.max ?? value.maximum, 6)));
+  const current = bounded(value.current ?? value.value, 0, max, max);
+  return {
+    id: String(value.id || createId("gm-counter")),
+    name: String(value.name || "Contador secreto"),
+    type: String(value.type || "ameaca"),
+    current,
+    max,
+    direction: String(value.direction || "down"),
+    color: String(value.color || "#a35dff"),
+    description: String(value.description || ""),
+    tags: normalizeTags(value.tags),
+    visibleToPlayers: Boolean(value.visibleToPlayers || value.revealed),
+    revealed: Boolean(value.revealed),
+    paused: Boolean(value.paused),
+    triggerText: String(value.triggerText || ""),
+    createdAt: value.createdAt || nowIso(),
+    updatedAt: value.updatedAt || nowIso(),
+  };
+}
+
+function normalizeEnvironmentalEffect(value = {}) {
+  return {
+    id: String(value.id || createId("gm-effect")),
+    name: String(value.name || "Efeito ambiental"),
+    description: String(value.description || ""),
+    type: String(value.type || "outro"),
+    duration: String(value.duration || ""),
+    mechanicalEffect: String(value.mechanicalEffect || value.mechanics || ""),
+    color: String(value.color || "#35d4ff"),
+    icon: String(value.icon || ""),
+    active: value.active !== false,
+    visibleToPlayers: Boolean(value.visibleToPlayers || value.revealed),
+    revealed: Boolean(value.revealed),
+    sceneId: String(value.sceneId || ""),
+    tags: normalizeTags(value.tags),
+    createdAt: value.createdAt || nowIso(),
+    updatedAt: value.updatedAt || nowIso(),
+  };
+}
+
+function normalizePreparedEncounter(value = {}) {
+  return {
+    id: String(value.id || createId("gm-encounter")),
+    name: String(value.name || "Encontro preparado"),
+    description: String(value.description || ""),
+    sceneId: String(value.sceneId || ""),
+    monsters: arrayOf(value.monsters).map((monster) => clone(monster)),
+    npcs: arrayOf(value.npcs).map((npc) => clone(npc)),
+    initialPositions: arrayOf(value.initialPositions || value.positions).map((position) => clone(position)),
+    objectives: arrayOf(value.objectives).map((objective) => clone(objective)),
+    zones: arrayOf(value.zones).map((zone) => clone(zone)),
+    conditions: arrayOf(value.conditions).map((condition) => clone(condition)),
+    difficulty: String(value.difficulty || ""),
+    estimatedDifficulty: String(value.estimatedDifficulty || value.balance?.classification || value.difficulty || ""),
+    threatXp: Math.max(0, numeric(value.threatXp ?? value.xp, 0)),
+    threatScore: Math.max(0, numeric(value.threatScore ?? value.balance?.totalThreat, value.threatXp ?? value.xp ?? 0)),
+    balance: clone(value.balance || {}) || {},
+    sourceFilters: clone(value.sourceFilters || value.filters || {}) || {},
+    generated: Boolean(value.generated),
+    rewards: clone(value.rewards || {}) || {},
+    lootSuggested: clone(value.lootSuggested || value.suggestedLoot || {}) || {},
+    notes: String(value.notes || ""),
+    publicNotes: String(value.publicNotes || ""),
+    secretNotes: String(value.secretNotes || ""),
+    status: String(value.status || "prepared"),
+    model: Boolean(value.model || value.template),
+    createdAt: value.createdAt || nowIso(),
+    updatedAt: value.updatedAt || nowIso(),
+  };
+}
+
+function normalizeSessionReport(value = {}) {
+  return {
+    id: String(value.id || createId("session-report")),
+    sessionId: String(value.sessionId || ""),
+    title: String(value.title || "Relatorio da sessao"),
+    createdAt: value.createdAt || nowIso(),
+    updatedAt: value.updatedAt || value.createdAt || nowIso(),
+    options: clone(value.options || {}) || {},
+    markdown: String(value.markdown || ""),
+    summary: String(value.summary || ""),
+    metadata: clone(value.metadata || {}) || {},
+  };
+}
+
+function normalizeGmDashboardSettings(value = {}) {
+  const reportSettings = clone(value.reportSettings || {}) || {};
+  return {
+    ...(clone(value) || {}),
+    showPlayerFacingCounters: Boolean(value.showPlayerFacingCounters),
+    pauseCounters: Boolean(value.pauseCounters),
+    lastReportAt: String(value.lastReportAt || ""),
+    pinnedShieldRules: normalizeTags(value.pinnedShieldRules),
+    favoriteShieldRules: normalizeTags(value.favoriteShieldRules),
+    reportSettings: {
+      includeFullChat: Boolean(reportSettings.includeFullChat),
+      includeSecretNotes: Boolean(reportSettings.includeSecretNotes),
+      includeTechnicalLogs: Boolean(reportSettings.includeTechnicalLogs),
+      includeTransactions: reportSettings.includeTransactions !== false,
+      includeCombat: reportSettings.includeCombat !== false,
+      includeLoot: reportSettings.includeLoot !== false,
+      includeCounters: reportSettings.includeCounters !== false,
+      includeEnvironment: reportSettings.includeEnvironment !== false,
+      includePending: reportSettings.includePending !== false,
+      includeScenes: reportSettings.includeScenes !== false,
+      includeEncounters: reportSettings.includeEncounters !== false,
+      includeObjectives: reportSettings.includeObjectives !== false,
+    },
+  };
+}
+
+function normalizeSceneList(scenes = [], activeScene = {}) {
+  const source = arrayOf(scenes).length ? arrayOf(scenes) : [activeScene];
+  return source
+    .filter(Boolean)
+    .map((scene, index) => {
+      const normalized = Scene.fromJSON({
+        ...scene,
+        id: String(scene.id || `scene-${index + 1}`),
+        name: String(scene.name || scene.title || `Cena ${index + 1}`),
+      }).toJSON();
+      return {
+        ...normalized,
+        createdAt: scene.createdAt || nowIso(),
+        updatedAt: scene.updatedAt || nowIso(),
+      };
+    });
+}
+
+const ENCOUNTER_TIER_POINTS = Object.freeze({
+  F: 1,
+  E: 2,
+  D: 4,
+  C: 8,
+  B: 16,
+  A: 32,
+  S: 64,
+});
+
+function normalizedTier(value = "") {
+  const text = String(value || "").toUpperCase().trim();
+  if (ENCOUNTER_TIER_POINTS[text]) return text;
+  const number = numeric(text, 0);
+  if (number <= 1) return "F";
+  if (number === 2) return "E";
+  if (number === 3) return "D";
+  if (number === 4) return "C";
+  if (number === 5) return "B";
+  if (number === 6) return "A";
+  return number > 6 ? "S" : "F";
+}
+
+function roleThreatMultiplier(monster = {}) {
+  const role = normalizeText([monster.role, monster.papel, monster.tags, monster.type, monster.category].flat().join(" "));
+  if (/boss|chefe|climax|lenda/.test(role)) return 2.5;
+  if (/elite|campeao|vanguarda/.test(role)) return 1.5;
+  if (/controlador|suporte|artilh|conjur|lider/.test(role)) return 1.15;
+  if (/minion|servo|fraco|drone|enxame/.test(role)) return 0.75;
+  return 1;
+}
+
+function monsterThreatScoreValue(monster = {}) {
+  const snapshot = monster.snapshot || monster.monster || monster;
+  const tier = normalizedTier(snapshot.tier || snapshot.rank || snapshot.nivel || snapshot.level);
+  return Number((ENCOUNTER_TIER_POINTS[tier] * roleThreatMultiplier(snapshot)).toFixed(2));
+}
+
+export function estimateEncounterBalance({ monsters = [], characters = [] } = {}) {
+  const list = arrayOf(monsters);
+  const party = arrayOf(characters);
+  const totalThreat = Number(list.reduce((sum, monster) => sum + monsterThreatScoreValue(monster), 0).toFixed(2));
+  const partySize = Math.max(1, party.length || 4);
+  const averageLevel = party.length
+    ? party.reduce((sum, character) => sum + numeric(character.level || character.nivel || character.snapshot?.level || character.snapshot?.nivel, 1), 0) / party.length
+    : 1;
+  const partyBudget = Math.max(2, partySize * Math.max(1, averageLevel) * 2);
+  const ratio = totalThreat / partyBudget;
+  const hasBoss = list.some((monster) => roleThreatMultiplier(monster.snapshot || monster) >= 2);
+  const minionCount = list.filter((monster) => roleThreatMultiplier(monster.snapshot || monster) <= 0.75).length;
+  const classification = hasBoss && ratio >= 0.9
+    ? "Boss/Climax"
+    : ratio < 0.45
+      ? "Trivial"
+      : ratio < 0.75
+        ? "Facil"
+        : ratio < 1.15
+          ? "Moderado"
+          : ratio < 1.65
+            ? "Dificil"
+            : "Mortal";
+  const warnings = [];
+  if (ratio >= 1.65) warnings.push("Encontro mortal: reduza criaturas, tier ou suporte se nao for climax.");
+  if (ratio < 0.45) warnings.push("Encontro trivial: adicione suporte, minions ou uma ameaca de tier maior.");
+  if (minionCount >= partySize * 2) warnings.push("Muitos minions podem alongar o turno; agrupe rolagens quando possivel.");
+  if (hasBoss && list.length === 1) warnings.push("Boss solo pode oscilar muito; considere suporte ou objetivos de cena.");
+  const suggestions = [];
+  if (ratio > 1.25) suggestions.push("Remover 1 criatura ou trocar um elite por combatente padrao.");
+  if (ratio < 0.75) suggestions.push("Adicionar 1 suporte/minion ou elevar um tier da ameaca principal.");
+  suggestions.push(`Recompensa sugerida: ${Math.max(25, Math.round(totalThreat * 35))} Luzentis ou loot equivalente.`);
+  return {
+    totalThreat,
+    partySize,
+    averageLevel: Number(averageLevel.toFixed(2)),
+    partyBudget: Number(partyBudget.toFixed(2)),
+    ratio: Number(ratio.toFixed(2)),
+    classification,
+    hasBoss,
+    minionCount,
+    warnings,
+    suggestions,
+    alpha: true,
+  };
+}
+
+function generateSessionReport(room, options = {}) {
+  const data = room.toJSON();
+  const settings = {
+    includeFullChat: false,
+    includeSecretNotes: false,
+    includeTechnicalLogs: false,
+    includeTransactions: true,
+    includeCombat: true,
+    includeLoot: true,
+    ...(clone(options) || {}),
+  };
+  const revealedNotes = (data.gmNotes || []).filter((note) => note.revealed || note.visibleToPlayers);
+  const visibleNotes = settings.includeSecretNotes ? (data.gmNotes || []) : revealedNotes;
+  const combatLog = data.combat?.log || [];
+  const chats = data.chat || [];
+  const transactions = data.transactionLog || [];
+  const lootPacks = data.lootPacks || [];
+  const scenes = data.sceneList || data.scenes || [];
+  const encounters = data.preparedEncounters || [];
+  const completedObjectives = arrayOf(data.scene?.objectives).filter((objective) =>
+    objective.completed || numeric(objective.progressCurrent, 0) >= numeric(objective.progressMax, 1)
+  );
+  const lines = [
+    `# Relatorio da Sessao - ${data.name}`,
+    "",
+    `Sistema: ${data.system}`,
+    `Gerado em: ${nowIso()}`,
+    `Duracao registrada: ${data.metadata?.duration || "nao registrada"}`,
+    `Cena ativa: ${data.scene?.name || "-"}`,
+    `Combate: ${data.combat?.active ? `Rodada ${data.combat.round || 1}` : "inativo"}`,
+    "",
+    "## Jogadores",
+    ...(data.players || []).map((player) => `- ${player.name} (${player.role}) ${player.online ? "online" : "offline"}`),
+    "",
+    "## Personagens",
+    ...((data.characters || []).length ? data.characters.map((character) => `- ${character.name || character.snapshot?.name || character.id}`) : ["- Nenhum personagem sincronizado."]),
+    "",
+    "## Cenas visitadas",
+    ...(scenes.length ? scenes.map((scene) => `- ${scene.name || scene.title || scene.id}`) : ["- Nenhuma cena salva."]),
+    "",
+    "## Monstros ativos",
+    ...((data.monsters || []).length ? data.monsters.map((monster) => `- ${monster.name}`) : ["- Nenhum monstro ativo."]),
+    "",
+    "## Encontros",
+    ...(encounters.length ? encounters.map((encounter) => `- ${encounter.name}: ${encounter.status || "preparado"} (${arrayOf(encounter.monsters).length} criatura(s))`) : ["- Nenhum encontro preparado."]),
+    "",
+    "## Notas do mestre",
+    ...(visibleNotes.length ? visibleNotes.map((note) => `- ${note.important ? "[!]" : "[ ]"} ${note.title}: ${note.body}`) : ["- Nenhuma nota revelada."]),
+    "",
+    "## Contadores",
+    ...((data.gmCounters || []).length ? data.gmCounters.map((counter) => `- ${counter.name}: ${counter.current}/${counter.max}`) : ["- Nenhum contador."]),
+    "",
+    "## Efeitos ambientais",
+    ...((data.environmentalEffects || []).length ? data.environmentalEffects.map((effect) => `- ${effect.name}: ${effect.description || effect.mechanicalEffect || "sem detalhe"}`) : ["- Nenhum efeito ambiental."]),
+    "",
+    "## Objetivos concluidos",
+    ...(completedObjectives.length ? completedObjectives.map((objective) => `- ${objective.title || objective.label}`) : ["- Nenhum objetivo concluido registrado."]),
+    "",
+    ...(settings.includeCombat ? [
+      "## Combate",
+      ...(combatLog.length ? combatLog.slice(-40).map((entry) => `- ${entry.message || entry.type || "Evento"}`) : ["- Nenhum log de combate."]),
+      "",
+    ] : []),
+    ...(settings.includeLoot ? [
+      "## Loot",
+      ...(lootPacks.length ? lootPacks.map((pack) => `- ${pack.name}: ${pack.luzentis || 0}L, ${arrayOf(pack.items).length} item(ns), status ${pack.status || "pendente"}`) : ["- Nenhum loot registrado."]),
+      "",
+    ] : []),
+    ...(settings.includeTransactions ? [
+      "## Transacoes",
+      ...(transactions.length ? transactions.slice(-40).map((entry) => `- ${entry.message || entry.type || "Transacao"}`) : ["- Nenhuma transacao registrada."]),
+      "",
+    ] : []),
+    "## Resumo do chat",
+    ...((settings.includeFullChat ? chats : chats.slice(-20)).map((entry) => `- ${entry.authorName || "Mesa"}: ${entry.message || ""}`)),
+    "",
+    "## Pendencias para a proxima sessao",
+    "- Revisar contadores ativos, encontros preparados e objetivos ainda abertos.",
+    ...(settings.includeTechnicalLogs ? [
+      "",
+      "## Logs tecnicos",
+      ...((data.events || []).slice(-40).map((entry) => `- ${entry.type || "Evento"} ${entry.createdAt || ""}`)),
+    ] : []),
+  ];
+  return lines.join("\n");
 }
 
 function inventoryInstancesFromCart(items = [], destination = null) {
@@ -1009,10 +1414,12 @@ export class Scene {
   constructor({
     id = createId("scene"),
     name = "Cena sem nome",
+    description = "",
     mapImage = "",
     gridSize = 64,
     gridVisible = true,
     gridOpacity = 0.38,
+    gridColor = "#1aa8ff",
     snapToGrid = true,
     metersPerCell = 1.5,
     columns = 12,
@@ -1023,14 +1430,26 @@ export class Scene {
     measurements = [],
     objectives = [],
     notes = "",
+    publicNotes = "",
+    gmNotes = "",
+    lighting = "",
+    illumination = "",
+    climate = "",
+    weather = "",
+    danger = "",
+    dangerLevel = "",
+    linkedMonsters = [],
+    linkedNpcs = [],
     metadata = {},
   } = {}) {
     this.id = String(id || createId("scene"));
     this.name = String(name || "Cena sem nome");
+    this.description = String(description || notes || "");
     this.mapImage = String(mapImage || "");
     this.gridSize = Math.max(1, numeric(gridSize, 64));
     this.gridVisible = gridVisible !== false;
     this.gridOpacity = Math.max(0, Math.min(1, numeric(gridOpacity, 0.38)));
+    this.gridColor = String(gridColor || "#1aa8ff");
     this.snapToGrid = snapToGrid !== false;
     this.metersPerCell = Math.max(0.1, numeric(metersPerCell, 1.5));
     this.columns = Math.max(4, Math.floor(numeric(columns, 12)));
@@ -1041,6 +1460,16 @@ export class Scene {
     this.measurements = arrayOf(measurements).map((measurement) => this.normalizeMeasurement(measurement));
     this.objectives = arrayOf(objectives).map((objective) => this.normalizeObjective(objective));
     this.notes = String(notes || "");
+    this.publicNotes = String(publicNotes || notes || "");
+    this.gmNotes = String(gmNotes || "");
+    this.lighting = String(lighting || illumination || "");
+    this.illumination = this.lighting;
+    this.climate = String(climate || weather || "");
+    this.weather = this.climate;
+    this.danger = String(danger || dangerLevel || "");
+    this.dangerLevel = this.danger;
+    this.linkedMonsters = arrayOf(linkedMonsters).map((entry) => clone(entry));
+    this.linkedNpcs = arrayOf(linkedNpcs).map((entry) => clone(entry));
     this.metadata = clone(metadata) || {};
   }
 
@@ -1053,8 +1482,14 @@ export class Scene {
       y: bounded(zone.y, 1, this.rows, 1),
       width: Math.max(1, Math.min(this.columns, numeric(zone.width, 2))),
       height: Math.max(1, Math.min(this.rows, numeric(zone.height, 2))),
+      shape: String(zone.shape || zone.forma || "rectangle"),
+      direction: String(zone.direction || zone.facing || ""),
+      opacity: Math.max(0, Math.min(1, numeric(zone.opacity, 0.32))),
       color: String(zone.color || ""),
       notes: String(zone.notes || ""),
+      description: String(zone.description || zone.notes || ""),
+      mechanicalEffect: String(zone.mechanicalEffect || zone.effect || ""),
+      duration: String(zone.duration || ""),
       hidden: Boolean(zone.hidden),
       visibleToPlayers: zone.visibleToPlayers !== false && !zone.hidden,
       metadata: clone(zone.metadata) || {},
@@ -1062,6 +1497,7 @@ export class Scene {
   }
 
   normalizeArea(area = {}) {
+    const direction = String(area.direction || area.facing || area.metadata?.direction || "east").toLowerCase();
     return {
       id: String(area.id || createId("area")),
       type: String(area.type || "circle"),
@@ -1070,6 +1506,7 @@ export class Scene {
       radius: Math.max(0, numeric(area.radius, 2)),
       length: Math.max(1, numeric(area.length, area.radius || 4)),
       width: Math.max(1, numeric(area.width, 1)),
+      direction: ["east", "west", "north", "south"].includes(direction) ? direction : "east",
       color: String(area.color || ""),
       label: String(area.label || area.name || "Area"),
       source: String(area.source || ""),
@@ -1117,6 +1554,10 @@ export class Scene {
       completed: Boolean(objective.completed),
       visibleToPlayers: objective.visibleToPlayers !== false && !objective.hidden,
       hidden: Boolean(objective.hidden),
+      color: String(objective.color || "#f2c35b"),
+      icon: String(objective.icon || ""),
+      reward: String(objective.reward || ""),
+      gmNotes: String(objective.gmNotes || ""),
     };
   }
 
@@ -1195,6 +1636,50 @@ export class Scene {
     return existing;
   }
 
+  areaContainsPoint(areaRef = {}, point = {}) {
+    const area = typeof areaRef === "string"
+      ? this.areas.find((entry) => entry.id === areaRef)
+      : this.normalizeArea(areaRef);
+    if (!area) return false;
+    const x = numeric(point.x, 0);
+    const y = numeric(point.y, 0);
+    if (area.type === "circle") return this.measureDistanceCells(area.x, area.y, x, y) <= Math.max(0, numeric(area.radius, 0));
+    const dx = x - area.x;
+    const dy = y - area.y;
+    const length = Math.max(1, numeric(area.length, 1));
+    const width = Math.max(1, numeric(area.width, 1));
+    const direction = String(area.direction || "east").toLowerCase();
+    let along = dx;
+    let side = dy;
+    if (direction === "west") {
+      along = -dx;
+      side = dy;
+    } else if (direction === "south") {
+      along = dy;
+      side = dx;
+    } else if (direction === "north") {
+      along = -dy;
+      side = dx;
+    }
+    if (area.type === "cone") {
+      if (along < 0 || along > length) return false;
+      const halfWidth = Math.max(0.5, (width / 2) * (along / length));
+      return Math.abs(side) <= halfWidth;
+    }
+    if (area.type === "line") {
+      return along >= 0 && along <= length && Math.abs(side) <= width / 2;
+    }
+    return along >= 0 && along <= length && Math.abs(side) <= width / 2;
+  }
+
+  tokensInsideArea(areaRef = {}) {
+    const area = typeof areaRef === "string"
+      ? this.areas.find((entry) => entry.id === areaRef)
+      : this.normalizeArea(areaRef);
+    if (!area) return [];
+    return this.tokens.filter((token) => this.areaContainsPoint(area, token));
+  }
+
   upsertObjective(objective = {}) {
     const next = this.normalizeObjective(objective);
     const index = this.objectives.findIndex((entry) => entry.id === next.id);
@@ -1221,16 +1706,34 @@ export class Scene {
 
   update(patch = {}) {
     if (patch.name !== undefined) this.name = String(patch.name || "Cena sem nome");
+    if (patch.description !== undefined) this.description = String(patch.description || "");
     if (patch.mapImage !== undefined) this.mapImage = String(patch.mapImage || "");
     if (patch.gridSize !== undefined) this.gridSize = Math.max(1, numeric(patch.gridSize, this.gridSize));
     if (patch.gridVisible !== undefined) this.gridVisible = patch.gridVisible !== false;
     if (patch.gridOpacity !== undefined) this.gridOpacity = Math.max(0, Math.min(1, numeric(patch.gridOpacity, this.gridOpacity)));
+    if (patch.gridColor !== undefined) this.gridColor = String(patch.gridColor || this.gridColor);
     if (patch.snapToGrid !== undefined) this.snapToGrid = patch.snapToGrid !== false;
     if (patch.metersPerCell !== undefined) this.metersPerCell = Math.max(0.1, numeric(patch.metersPerCell, this.metersPerCell));
     if (patch.columns !== undefined) this.columns = Math.max(4, Math.floor(numeric(patch.columns, this.columns)));
     if (patch.rows !== undefined) this.rows = Math.max(4, Math.floor(numeric(patch.rows, this.rows)));
     if (patch.notes !== undefined) this.notes = String(patch.notes || "");
+    if (patch.publicNotes !== undefined) this.publicNotes = String(patch.publicNotes || "");
+    if (patch.gmNotes !== undefined) this.gmNotes = String(patch.gmNotes || "");
+    if (patch.lighting !== undefined || patch.illumination !== undefined) {
+      this.lighting = String(patch.lighting || patch.illumination || "");
+      this.illumination = this.lighting;
+    }
+    if (patch.climate !== undefined || patch.weather !== undefined) {
+      this.climate = String(patch.climate || patch.weather || "");
+      this.weather = this.climate;
+    }
+    if (patch.danger !== undefined || patch.dangerLevel !== undefined) {
+      this.danger = String(patch.danger || patch.dangerLevel || "");
+      this.dangerLevel = this.danger;
+    }
     if (patch.metadata) this.metadata = { ...this.metadata, ...clone(patch.metadata) };
+    if (patch.linkedMonsters) this.linkedMonsters = arrayOf(patch.linkedMonsters).map((entry) => clone(entry));
+    if (patch.linkedNpcs) this.linkedNpcs = arrayOf(patch.linkedNpcs).map((entry) => clone(entry));
     if (patch.tokens) this.tokens = arrayOf(patch.tokens).map((token) => token instanceof MapToken ? token : MapToken.fromJSON(token));
     if (patch.zones) this.zones = arrayOf(patch.zones).map((zone) => this.normalizeZone(zone));
     if (patch.areas) this.areas = arrayOf(patch.areas).map((area) => this.normalizeArea(area));
@@ -1243,10 +1746,12 @@ export class Scene {
     return {
       id: this.id,
       name: this.name,
+      description: this.description,
       mapImage: this.mapImage,
       gridSize: this.gridSize,
       gridVisible: this.gridVisible,
       gridOpacity: this.gridOpacity,
+      gridColor: this.gridColor,
       snapToGrid: this.snapToGrid,
       metersPerCell: this.metersPerCell,
       columns: this.columns,
@@ -1257,6 +1762,16 @@ export class Scene {
       measurements: this.measurements.map((measurement) => clone(measurement)),
       objectives: this.objectives.map((objective) => ({ ...objective })),
       notes: this.notes,
+      publicNotes: this.publicNotes,
+      gmNotes: this.gmNotes,
+      lighting: this.lighting,
+      illumination: this.illumination,
+      climate: this.climate,
+      weather: this.weather,
+      danger: this.danger,
+      dangerLevel: this.dangerLevel,
+      linkedMonsters: this.linkedMonsters.map((entry) => clone(entry)),
+      linkedNpcs: this.linkedNpcs.map((entry) => clone(entry)),
       metadata: clone(this.metadata),
     };
   }
@@ -1538,6 +2053,7 @@ export class PermissionManager {
     if (player.isGM) return true;
     if ([GAME_EVENT_TYPES.CHAT_MESSAGE, GAME_EVENT_TYPES.DICE_ROLL, GAME_EVENT_TYPES.PLAYER_LEAVE].includes(action)) return true;
     if (action === GAME_EVENT_TYPES.APPROVAL_REQUEST) return true;
+    if (GM_DASHBOARD_EVENTS.has(action)) return false;
     if ([
       GAME_EVENT_TYPES.SHOP_CATALOG_REQUEST,
       GAME_EVENT_TYPES.SHOP_CART_UPDATE,
@@ -1582,6 +2098,17 @@ export class GameRoom {
     pendingApprovals = [],
     lootPacks = [],
     transactionLog = [],
+    gmNotes = [],
+    revealedNotes = [],
+    gmCounters = [],
+    counters = [],
+    environmentalEffects = [],
+    preparedEncounters = [],
+    sessionReports = [],
+    sceneList = [],
+    scenes = [],
+    activeSceneId = "",
+    gmDashboardSettings = {},
     events = [],
     sequence = 0,
     createdAt = nowIso(),
@@ -1603,6 +2130,15 @@ export class GameRoom {
     this.shopState = normalizeShopState(shopState);
     this.lootPacks = arrayOf(lootPacks).map(normalizeLootPack);
     this.transactionLog = arrayOf(transactionLog).map(normalizeTransactionEntry);
+    this.gmNotes = arrayOf(gmNotes).map(normalizeGmNote);
+    this.revealedNotes = arrayOf(revealedNotes).map(normalizeGmNote);
+    this.gmCounters = arrayOf(gmCounters.length ? gmCounters : counters).map(normalizeGmCounter);
+    this.environmentalEffects = arrayOf(environmentalEffects).map(normalizeEnvironmentalEffect);
+    this.preparedEncounters = arrayOf(preparedEncounters).map(normalizePreparedEncounter);
+    this.sessionReports = arrayOf(sessionReports).map(normalizeSessionReport);
+    this.sceneList = normalizeSceneList(arrayOf(sceneList).length ? sceneList : scenes, this.scene.toJSON());
+    this.activeSceneId = String(activeSceneId || this.scene.id || this.sceneList[0]?.id || "");
+    this.gmDashboardSettings = normalizeGmDashboardSettings(gmDashboardSettings);
     this.events = arrayOf(events).map((event) => event instanceof GameEvent ? event : GameEvent.fromJSON(event));
     this.sequence = Math.max(0, Math.floor(numeric(sequence, 0)));
     this.createdAt = createdAt || nowIso();
@@ -1701,6 +2237,35 @@ export class GameRoom {
       case GAME_EVENT_TYPES.TRANSACTION_LOG:
         this.assertAllowed(actor, event.type);
         return this.addTransaction({ ...payload, actorId: event.actorId, actorName: actor?.name || payload.actorName });
+      case GAME_EVENT_TYPES.GM_DASHBOARD_STATE:
+      case GAME_EVENT_TYPES.GM_NOTE_CREATE:
+      case GAME_EVENT_TYPES.GM_NOTE_UPDATE:
+      case GAME_EVENT_TYPES.GM_NOTE_DELETE:
+      case GAME_EVENT_TYPES.GM_NOTE_REVEAL:
+      case GAME_EVENT_TYPES.GM_COUNTER_CREATE:
+      case GAME_EVENT_TYPES.GM_COUNTER_UPDATE:
+      case GAME_EVENT_TYPES.GM_COUNTER_DELETE:
+      case GAME_EVENT_TYPES.GM_COUNTER_TICK:
+      case GAME_EVENT_TYPES.GM_COUNTER_REVEAL:
+      case GAME_EVENT_TYPES.GM_ENVIRONMENT_CREATE:
+      case GAME_EVENT_TYPES.GM_ENVIRONMENT_UPDATE:
+      case GAME_EVENT_TYPES.GM_ENVIRONMENT_DELETE:
+      case GAME_EVENT_TYPES.GM_SCENE_CREATE:
+      case GAME_EVENT_TYPES.GM_SCENE_UPDATE:
+      case GAME_EVENT_TYPES.GM_SCENE_DELETE:
+      case GAME_EVENT_TYPES.GM_SCENE_SWITCH:
+      case GAME_EVENT_TYPES.GM_ENCOUNTER_CREATE:
+      case GAME_EVENT_TYPES.GM_ENCOUNTER_UPDATE:
+      case GAME_EVENT_TYPES.GM_ENCOUNTER_DELETE:
+      case GAME_EVENT_TYPES.GM_ENCOUNTER_START:
+      case GAME_EVENT_TYPES.GM_ENCOUNTER_COMPLETE:
+      case GAME_EVENT_TYPES.GM_ENCOUNTER_GENERATE:
+      case GAME_EVENT_TYPES.GM_SHIELD_SEARCH:
+      case GAME_EVENT_TYPES.GM_SHIELD_PIN:
+      case GAME_EVENT_TYPES.GM_SHIELD_SEND_TO_CHAT:
+      case GAME_EVENT_TYPES.GM_REPORT_EXPORT:
+      case GAME_EVENT_TYPES.GM_REPORT_SAVE:
+        return this.applyGmDashboardEvent(event.type, payload, actor);
       case GAME_EVENT_TYPES.MONSTER_CREATE:
       case GAME_EVENT_TYPES.MONSTER_UPDATE:
       case GAME_EVENT_TYPES.MONSTER_DELETE:
@@ -2106,6 +2671,358 @@ export class GameRoom {
       return this.scene.removeObjective(payload.objectiveId || payload.id);
     }
     return this.scene;
+  }
+
+  gmDashboardStateFor(actor = null) {
+    const isGm = Boolean(actor?.isGM);
+    const visibleNote = (note) => note.visibleToPlayers || note.revealed;
+    const visibleCounter = (counter) => counter.visibleToPlayers || counter.revealed;
+    const visibleEffect = (effect) => effect.visibleToPlayers || effect.revealed;
+    return {
+      gmNotes: isGm ? this.gmNotes.map(clone) : this.gmNotes.filter(visibleNote).map(clone),
+      revealedNotes: this.revealedNotes.map(clone),
+      gmCounters: isGm ? this.gmCounters.map(clone) : this.gmCounters.filter(visibleCounter).map(clone),
+      environmentalEffects: isGm ? this.environmentalEffects.map(clone) : this.environmentalEffects.filter(visibleEffect).map(clone),
+      preparedEncounters: isGm ? this.preparedEncounters.map(clone) : [],
+      sessionReports: isGm ? this.sessionReports.map(clone) : [],
+      sceneList: this.sceneList.map(clone),
+      activeSceneId: this.activeSceneId,
+      settings: isGm ? clone(this.gmDashboardSettings) : {},
+    };
+  }
+
+  applyGmDashboardEvent(type, payload = {}, actor = null) {
+    this.assertAllowed(actor, type);
+    if (type === GAME_EVENT_TYPES.GM_DASHBOARD_STATE) return this.gmDashboardStateFor(actor);
+
+    if (type === GAME_EVENT_TYPES.GM_NOTE_CREATE) {
+      const note = normalizeGmNote({ ...payload.note, ...payload });
+      this.gmNotes.unshift(note);
+      this.gmNotes = this.gmNotes.slice(0, 160);
+      return note;
+    }
+    if (type === GAME_EVENT_TYPES.GM_NOTE_UPDATE) {
+      const note = this.gmNotes.find((entry) => entry.id === (payload.noteId || payload.id));
+      if (!note) throw new Error("Nota do mestre nao encontrada.");
+      Object.assign(note, normalizeGmNote({ ...note, ...(payload.patch || payload), id: note.id, createdAt: note.createdAt, updatedAt: nowIso() }));
+      return note;
+    }
+    if (type === GAME_EVENT_TYPES.GM_NOTE_DELETE) {
+      const noteId = payload.noteId || payload.id;
+      const note = this.gmNotes.find((entry) => entry.id === noteId);
+      this.gmNotes = this.gmNotes.filter((entry) => entry.id !== noteId);
+      this.revealedNotes = this.revealedNotes.filter((entry) => entry.id !== noteId);
+      return note || null;
+    }
+    if (type === GAME_EVENT_TYPES.GM_NOTE_REVEAL) {
+      const note = this.gmNotes.find((entry) => entry.id === (payload.noteId || payload.id));
+      if (!note) throw new Error("Nota do mestre nao encontrada.");
+      note.revealed = true;
+      note.visibleToPlayers = true;
+      note.updatedAt = nowIso();
+      this.revealedNotes = [normalizeGmNote(note), ...this.revealedNotes.filter((entry) => entry.id !== note.id)].slice(0, 80);
+      this.addChatMessage({
+        playerId: actor?.id || "",
+        authorName: "Sistema Solaris",
+        message: `Nota revelada: ${note.title}${note.body ? ` - ${note.body}` : ""}`,
+      });
+      return note;
+    }
+
+    if (type === GAME_EVENT_TYPES.GM_COUNTER_CREATE) {
+      const counter = normalizeGmCounter({ ...payload.counter, ...payload });
+      this.gmCounters.unshift(counter);
+      this.gmCounters = this.gmCounters.slice(0, 80);
+      return counter;
+    }
+    if (type === GAME_EVENT_TYPES.GM_COUNTER_UPDATE) {
+      const counter = this.gmCounters.find((entry) => entry.id === (payload.counterId || payload.id));
+      if (!counter) throw new Error("Contador do mestre nao encontrado.");
+      Object.assign(counter, normalizeGmCounter({ ...counter, ...(payload.patch || payload), id: counter.id, createdAt: counter.createdAt, updatedAt: nowIso() }));
+      return counter;
+    }
+    if (type === GAME_EVENT_TYPES.GM_COUNTER_DELETE) {
+      const counterId = payload.counterId || payload.id;
+      const counter = this.gmCounters.find((entry) => entry.id === counterId);
+      this.gmCounters = this.gmCounters.filter((entry) => entry.id !== counterId);
+      return counter || null;
+    }
+    if (type === GAME_EVENT_TYPES.GM_COUNTER_TICK) {
+      const counter = this.gmCounters.find((entry) => entry.id === (payload.counterId || payload.id));
+      if (!counter) throw new Error("Contador do mestre nao encontrado.");
+      if (counter.paused) return counter;
+      const delta = numeric(payload.delta, counter.direction === "up" ? 1 : -1);
+      const previous = counter.current;
+      counter.current = bounded(counter.current + delta, 0, counter.max, counter.current);
+      counter.updatedAt = nowIso();
+      if (counter.current === 0 || counter.current === counter.max) {
+        this.addCombatLog({
+          type: "gm:counter",
+          actorId: actor?.id || "",
+          actorName: actor?.name || "Mestre",
+          targetId: counter.id,
+          targetName: counter.name,
+          message: counter.triggerText || `${counter.name} atingiu ${counter.current}/${counter.max}.`,
+        });
+      }
+      return { ...counter, previous };
+    }
+    if (type === GAME_EVENT_TYPES.GM_COUNTER_REVEAL) {
+      const counter = this.gmCounters.find((entry) => entry.id === (payload.counterId || payload.id));
+      if (!counter) throw new Error("Contador do mestre nao encontrado.");
+      counter.revealed = true;
+      counter.visibleToPlayers = true;
+      counter.updatedAt = nowIso();
+      this.addChatMessage({
+        playerId: actor?.id || "",
+        authorName: "Sistema Solaris",
+        message: `Contador revelado: ${counter.name} (${counter.current}/${counter.max}).`,
+      });
+      return counter;
+    }
+
+    if (type === GAME_EVENT_TYPES.GM_ENVIRONMENT_CREATE) {
+      const effect = normalizeEnvironmentalEffect({ ...payload.effect, ...payload });
+      this.environmentalEffects.unshift(effect);
+      this.environmentalEffects = this.environmentalEffects.slice(0, 80);
+      return effect;
+    }
+    if (type === GAME_EVENT_TYPES.GM_ENVIRONMENT_UPDATE) {
+      const effect = this.environmentalEffects.find((entry) => entry.id === (payload.effectId || payload.id));
+      if (!effect) throw new Error("Efeito ambiental nao encontrado.");
+      Object.assign(effect, normalizeEnvironmentalEffect({ ...effect, ...(payload.patch || payload), id: effect.id, createdAt: effect.createdAt, updatedAt: nowIso() }));
+      return effect;
+    }
+    if (type === GAME_EVENT_TYPES.GM_ENVIRONMENT_DELETE) {
+      const effectId = payload.effectId || payload.id;
+      const effect = this.environmentalEffects.find((entry) => entry.id === effectId);
+      this.environmentalEffects = this.environmentalEffects.filter((entry) => entry.id !== effectId);
+      return effect || null;
+    }
+
+    if (type === GAME_EVENT_TYPES.GM_SCENE_CREATE) {
+      const scene = normalizeSceneList([{ ...payload.scene, ...payload }], this.scene.toJSON())[0];
+      this.sceneList.unshift(scene);
+      return scene;
+    }
+    if (type === GAME_EVENT_TYPES.GM_SCENE_UPDATE) {
+      const sceneId = payload.sceneId || payload.id;
+      const index = this.sceneList.findIndex((entry) => entry.id === sceneId);
+      if (index < 0) throw new Error("Cena salva nao encontrada.");
+      this.sceneList[index] = normalizeSceneList([{ ...this.sceneList[index], ...(payload.patch || payload), id: sceneId }], this.sceneList[index])[0];
+      if (this.activeSceneId === sceneId) this.scene.update(this.sceneList[index]);
+      return this.sceneList[index];
+    }
+    if (type === GAME_EVENT_TYPES.GM_SCENE_DELETE) {
+      const sceneId = payload.sceneId || payload.id;
+      if (sceneId === this.activeSceneId) throw new Error("Nao e possivel excluir a cena ativa.");
+      const scene = this.sceneList.find((entry) => entry.id === sceneId);
+      this.sceneList = this.sceneList.filter((entry) => entry.id !== sceneId);
+      return scene || null;
+    }
+    if (type === GAME_EVENT_TYPES.GM_SCENE_SWITCH) {
+      const scene = this.sceneList.find((entry) => entry.id === (payload.sceneId || payload.id));
+      if (!scene) throw new Error("Cena salva nao encontrada.");
+      this.scene = Scene.fromJSON(scene);
+      this.activeSceneId = this.scene.id;
+      this.syncSceneTokens();
+      this.addChatMessage({
+        playerId: actor?.id || "",
+        authorName: "Sistema Solaris",
+        message: `${actor?.name || "Mestre"} trocou para a cena: ${this.scene.name}.`,
+      });
+      return this.scene;
+    }
+
+    if (type === GAME_EVENT_TYPES.GM_ENCOUNTER_CREATE) {
+      const encounter = normalizePreparedEncounter({ ...payload.encounter, ...payload });
+      this.preparedEncounters.unshift(encounter);
+      return encounter;
+    }
+    if (type === GAME_EVENT_TYPES.GM_ENCOUNTER_UPDATE) {
+      const encounterId = payload.encounterId || payload.id;
+      const encounter = this.preparedEncounters.find((entry) => entry.id === encounterId);
+      if (!encounter) throw new Error("Encontro preparado nao encontrado.");
+      Object.assign(encounter, normalizePreparedEncounter({ ...encounter, ...(payload.patch || payload), id: encounter.id, createdAt: encounter.createdAt, updatedAt: nowIso() }));
+      return encounter;
+    }
+    if (type === GAME_EVENT_TYPES.GM_ENCOUNTER_DELETE) {
+      const encounterId = payload.encounterId || payload.id;
+      const encounter = this.preparedEncounters.find((entry) => entry.id === encounterId);
+      this.preparedEncounters = this.preparedEncounters.filter((entry) => entry.id !== encounterId);
+      return encounter || null;
+    }
+    if (type === GAME_EVENT_TYPES.GM_ENCOUNTER_START) {
+      const encounter = this.preparedEncounters.find((entry) => entry.id === (payload.encounterId || payload.id));
+      if (!encounter) throw new Error("Encontro preparado nao encontrado.");
+      if (payload.loadScene && encounter.sceneId && encounter.sceneId !== this.activeSceneId) {
+        const scene = this.sceneList.find((entry) => entry.id === encounter.sceneId);
+        if (scene) {
+          this.scene = Scene.fromJSON(scene);
+          this.activeSceneId = this.scene.id;
+        }
+      }
+      const created = [];
+      const positions = arrayOf(encounter.initialPositions);
+      arrayOf(encounter.monsters).forEach((entry) => {
+        const monster = new SharedMonster({
+          ...(entry.monster || entry),
+          id: entry.sessionMonsterId || createId("encounter-monster"),
+          definitionId: entry.definitionId || entry.id || entry.monsterId || "",
+          name: entry.name || entry.monster?.name || "Criatura",
+          snapshot: clone(entry.snapshot || entry.monster || entry),
+        });
+        this.monsters.push(monster);
+        created.push(monster);
+      });
+      encounter.status = "active";
+      encounter.updatedAt = nowIso();
+      this.syncCombatants();
+      this.syncSceneTokens();
+      created.forEach((monster, index) => {
+        const position = positions[index] || encounter.monsters[index]?.position || {};
+        if (!position.x || !position.y) return;
+        const token = this.scene.findTokenForEntity("monster", monster.id);
+        if (token) {
+          token.moveTo(position.x, position.y);
+          if (position.hidden !== undefined) token.hidden = Boolean(position.hidden);
+          if (position.locked !== undefined) token.locked = Boolean(position.locked);
+          if (position.color) token.color = String(position.color);
+        }
+      });
+      this.addCombatLog({
+        type: "gm:encounter:start",
+        actorId: actor?.id || "",
+        actorName: actor?.name || "Mestre",
+        targetId: encounter.id,
+        targetName: encounter.name,
+        message: `Encontro iniciado: ${encounter.name} (${created.length} criatura(s)).`,
+      });
+      return { encounter, monsters: created };
+    }
+    if (type === GAME_EVENT_TYPES.GM_ENCOUNTER_COMPLETE) {
+      const encounter = this.preparedEncounters.find((entry) => entry.id === (payload.encounterId || payload.id));
+      if (!encounter) throw new Error("Encontro preparado nao encontrado.");
+      encounter.status = "completed";
+      encounter.updatedAt = nowIso();
+      this.addCombatLog({
+        type: "gm:encounter:complete",
+        actorId: actor?.id || "",
+        actorName: actor?.name || "Mestre",
+        targetId: encounter.id,
+        targetName: encounter.name,
+        message: `Encontro concluido: ${encounter.name}.`,
+      });
+      return encounter;
+    }
+    if (type === GAME_EVENT_TYPES.GM_ENCOUNTER_GENERATE) {
+      const balance = payload.balance || estimateEncounterBalance({
+        monsters: arrayOf(payload.monsters),
+        characters: this.characters.map((character) => character.snapshot || character),
+      });
+      const encounter = normalizePreparedEncounter({
+        name: payload.name || "Encontro gerado",
+        description: payload.description || "Criado pelo gerador de encontros.",
+        sceneId: payload.sceneId || this.activeSceneId,
+        monsters: arrayOf(payload.monsters).map((monster) => clone(monster)),
+        difficulty: payload.difficulty || "moderado",
+        estimatedDifficulty: balance.classification,
+        threatXp: payload.threatXp || balance.totalThreat || 0,
+        threatScore: payload.threatScore || balance.totalThreat || 0,
+        balance,
+        sourceFilters: payload.filters || {},
+        generated: true,
+        rewards: payload.rewards || {},
+        notes: payload.notes || "",
+      });
+      this.preparedEncounters.unshift(encounter);
+      if (payload.startNow) {
+        const created = [];
+        arrayOf(encounter.monsters).forEach((entry) => {
+          const monster = new SharedMonster({
+            ...(entry.monster || entry),
+            id: entry.sessionMonsterId || createId("encounter-monster"),
+            definitionId: entry.definitionId || entry.id || entry.monsterId || "",
+            name: entry.name || entry.monster?.name || "Criatura",
+            snapshot: clone(entry.snapshot || entry.monster || entry),
+          });
+          this.monsters.push(monster);
+          created.push(monster);
+        });
+        encounter.status = "active";
+        encounter.updatedAt = nowIso();
+        this.syncCombatants();
+        this.syncSceneTokens();
+        this.addCombatLog({
+          type: "gm:encounter:start",
+          actorId: actor?.id || "",
+          actorName: actor?.name || "Mestre",
+          targetId: encounter.id,
+          targetName: encounter.name,
+          message: `Encontro gerado e iniciado: ${encounter.name} (${created.length} criatura(s)).`,
+        });
+        return { encounter, monsters: created };
+      }
+      return encounter;
+    }
+    if (type === GAME_EVENT_TYPES.GM_SHIELD_SEARCH) {
+      return { query: String(payload.query || ""), results: arrayOf(payload.results).map(clone) };
+    }
+    if (type === GAME_EVENT_TYPES.GM_SHIELD_PIN) {
+      const ruleId = String(payload.ruleId || payload.id || "");
+      if (!ruleId) return clone(this.gmDashboardSettings);
+      const current = new Set(normalizeTags(this.gmDashboardSettings.pinnedShieldRules));
+      if (payload.pinned === false || current.has(ruleId)) current.delete(ruleId);
+      else current.add(ruleId);
+      this.gmDashboardSettings = normalizeGmDashboardSettings({
+        ...this.gmDashboardSettings,
+        pinnedShieldRules: Array.from(current),
+      });
+      return clone(this.gmDashboardSettings);
+    }
+    if (type === GAME_EVENT_TYPES.GM_SHIELD_SEND_TO_CHAT) {
+      const title = String(payload.title || payload.rule?.title || "Regra rapida");
+      const summary = String(payload.summary || payload.rule?.summary || payload.text || "");
+      this.addChatMessage({
+        playerId: actor?.id || "",
+        authorName: "Escudo do Mestre",
+        message: `${title}${summary ? ` - ${summary}` : ""}`,
+      });
+      return { title, summary };
+    }
+    if (type === GAME_EVENT_TYPES.GM_REPORT_EXPORT) {
+      this.gmDashboardSettings = normalizeGmDashboardSettings({
+        ...this.gmDashboardSettings,
+        reportSettings: {
+          ...(this.gmDashboardSettings.reportSettings || {}),
+          ...(payload.options || {}),
+        },
+        lastReportAt: nowIso(),
+      });
+      return { report: generateSessionReport(this, payload.options || this.gmDashboardSettings.reportSettings), generatedAt: nowIso() };
+    }
+    if (type === GAME_EVENT_TYPES.GM_REPORT_SAVE) {
+      const report = normalizeSessionReport({
+        ...payload.report,
+        sessionId: payload.sessionId || this.id,
+        title: payload.title || payload.report?.title || `Relatorio - ${this.name}`,
+        options: payload.options || payload.report?.options || this.gmDashboardSettings.reportSettings,
+        markdown: payload.markdown || payload.report?.markdown || generateSessionReport(this, payload.options || this.gmDashboardSettings.reportSettings),
+        summary: payload.summary || payload.report?.summary || "Relatorio salvo pelo mestre.",
+      });
+      this.sessionReports = [report, ...this.sessionReports.filter((entry) => entry.id !== report.id)].slice(0, 40);
+      this.gmDashboardSettings = normalizeGmDashboardSettings({
+        ...this.gmDashboardSettings,
+        reportSettings: {
+          ...(this.gmDashboardSettings.reportSettings || {}),
+          ...(report.options || {}),
+        },
+        lastReportAt: report.createdAt,
+      });
+      return report;
+    }
+
+    return this.gmDashboardStateFor(actor);
   }
 
   applyShopEvent(type, payload = {}, actor = null) {
@@ -2631,13 +3548,14 @@ export class GameRoom {
     if (type === GAME_EVENT_TYPES.CHARACTER_DAMAGE) {
       const current = character.applyDamage(payload.amount);
       this.syncCombatants();
+      const source = payload.sourceLabel || payload.attackName ? ` por ${payload.sourceLabel || payload.attackName}` : "";
       this.addCombatLog({
         type: "damage",
         actorId: actor?.id || "",
         actorName: actor?.name || "Mesa",
         targetId: character.id,
         targetName: character.name,
-        message: `${character.name} sofreu ${Math.max(0, numeric(payload.amount, 0))} de dano.`,
+        message: `${character.name} sofreu ${Math.max(0, numeric(payload.amount, 0))} de dano${source}.`,
       });
       return current;
     }
@@ -2716,13 +3634,14 @@ export class GameRoom {
     if (type === GAME_EVENT_TYPES.MONSTER_DAMAGE) {
       const current = monster.applyDamage(payload.amount);
       this.syncCombatants();
+      const source = payload.sourceLabel || payload.attackName ? ` por ${payload.sourceLabel || payload.attackName}` : "";
       this.addCombatLog({
         type: "damage",
         actorId: actor?.id || "",
         actorName: actor?.name || "Mestre",
         targetId: monster.id,
         targetName: monster.name,
-        message: `${monster.name} sofreu ${Math.max(0, numeric(payload.amount, 0))} de dano.`,
+        message: `${monster.name} sofreu ${Math.max(0, numeric(payload.amount, 0))} de dano${source}.`,
       });
       if (current <= 0) this.createLootFromMonster(monster.id, actor);
       return current;
@@ -2821,6 +3740,18 @@ export class GameRoom {
       shopState: clone(this.shopState),
       lootPacks: this.lootPacks.map((pack) => clone(pack)),
       transactionLog: this.transactionLog.map((transaction) => clone(transaction)),
+      gmNotes: this.gmNotes.map((note) => clone(note)),
+      revealedNotes: this.revealedNotes.map((note) => clone(note)),
+      gmCounters: this.gmCounters.map((counter) => clone(counter)),
+      counters: this.gmCounters.map((counter) => clone(counter)),
+      environmentalEffects: this.environmentalEffects.map((effect) => clone(effect)),
+      preparedEncounters: this.preparedEncounters.map((encounter) => clone(encounter)),
+      sessionReports: this.sessionReports.map((report) => clone(report)),
+      sceneList: this.sceneList.map((scene) => clone(scene)),
+      scenes: this.sceneList.map((scene) => clone(scene)),
+      activeSceneId: this.activeSceneId,
+      gmDashboardSettings: clone(this.gmDashboardSettings),
+      gmDashboard: this.gmDashboardStateFor({ isGM: true }),
       events: this.events.map((event) => event.toJSON()),
       sequence: this.sequence,
       createdAt: this.createdAt,
