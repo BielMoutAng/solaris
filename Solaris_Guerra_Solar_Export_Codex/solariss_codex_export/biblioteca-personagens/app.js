@@ -4038,6 +4038,10 @@ function diceLockMessage(entries = unassignedInventoryEntries()) {
 }
 
 function ensureDiceRollAllowed() {
+  const unassigned = unassignedInventoryEntries();
+  if (!unassigned.length) return true;
+  showToast(`${diceLockMessage(unassigned)} As rolagens continuam liberadas.`);
+  renderDicePage();
   return true;
 }
 
@@ -8856,7 +8860,7 @@ function closeInventoryLocationDialog() {
   state.pendingLocationReason = "";
   el.inventoryLocationModal.hidden = true;
   syncModalOpenState();
-  if (reason === "purchase") showToast("Item comprado e mantido sem local definido.", "tech-error");
+  if (reason === "purchase") showToast("Item comprado e mantido sem local definido. Isso e apenas um aviso de inventario.");
 }
 
 function applyPendingInventoryLocation(event) {
