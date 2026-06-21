@@ -415,20 +415,20 @@ export class SolarisSessionClient extends EventTarget {
     return this.send(SESSION_SOCKET_EVENTS.APPROVAL_STATE, {});
   }
 
-  approveApproval(approvalId = "") {
-    return this.send(SESSION_SOCKET_EVENTS.APPROVAL_APPROVE, { approvalId });
+  approveApproval(approvalId = "", extra = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.APPROVAL_APPROVE, { approvalId, ...clone(extra) });
   }
 
-  rejectApproval(approvalId = "", message = "") {
-    return this.send(SESSION_SOCKET_EVENTS.APPROVAL_REJECT, { approvalId, message });
+  rejectApproval(approvalId = "", message = "", extra = {}) {
+    return this.send(SESSION_SOCKET_EVENTS.APPROVAL_REJECT, { approvalId, message, ...clone(extra) });
   }
 
-  approveRequest(requestId = "") {
-    return this.approveApproval(requestId);
+  approveRequest(requestId = "", extra = {}) {
+    return this.approveApproval(requestId, extra);
   }
 
-  rejectRequest(requestId = "", message = "") {
-    return this.rejectApproval(requestId, message);
+  rejectRequest(requestId = "", message = "", extra = {}) {
+    return this.rejectApproval(requestId, message, extra);
   }
 
   startCombat(payload = {}) {

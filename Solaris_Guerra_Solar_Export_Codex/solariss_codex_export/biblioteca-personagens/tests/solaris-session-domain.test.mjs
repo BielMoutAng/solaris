@@ -698,6 +698,48 @@ test("loja da sessao cria pedido, mestre aprova e registra transacao", () => {
   assert.equal(room.transactionLog[0].type, "purchase");
 });
 
+test("loja avancada aprova item individual e respeita destino por linha", () => {
+  const room = new GameRoom({
+    players: [
+      { id: "gm", name: "GM", role: SESSION_ROLES.GM },
+      { id: "p1", name: "Lyssara", role: SESSION_ROLES.PLAYER },
+    ],
+    characters: [
+      new SessionCharacter({
+        id: "char-1",
+        ownerPlayerId: "p1",
+        name: "Lyssara",
+        snapshot: { currency: 500, luzentis: 500, inventory: [] },
+      }),
+    ],
+  });
+
+  room.dispatch(GAME_EVENT_TYPES.SHOP_PURCHASE_REQUEST, {
+    characterId: "char-1",
+    items: [
+      { id: "line-rifle", item: { id: "rifle", name: "Rifle de Pulso", price: 120 }, quantity: 1, price: 120, destination: { kind: "bandolier", id: "band-1" } },
+      { id: "line-kit", item: { id: "kit", name: "Kit de Cura", price: 40 }, quantity: 1, price: 40, destination: { kind: "backpack", id: "bag-1" } },
+    ],
+  }, "p1");
+
+  const approval = room.approvals[0];
+  room.dispatch(GAME_EVENT_TYPES.APPROVAL_APPROVE, { approvalId: approval.id, shopLineId: "line-rifle" }, "gm");
+
+  let character = room.getCharacter("char-1");
+  assert.equal(character.snapshot.currency, 380);
+  assert.equal(character.snapshot.inventory.length, 1);
+  assert.equal(character.snapshot.inventory[0].name, "Rifle de Pulso");
+  assert.equal(character.snapshot.inventory[0].location.kind, "bandolier");
+  assert.equal(approval.status, APPROVAL_STATUSES.PENDING);
+  assert.equal(approval.payload.items.find((line) => line.id === "line-rifle").status, "approved");
+
+  room.dispatch(GAME_EVENT_TYPES.APPROVAL_REJECT, { approvalId: approval.id, shopLineId: "line-kit", message: "Kit indisponivel." }, "gm");
+  character = room.getCharacter("char-1");
+  assert.equal(character.snapshot.inventory.length, 1);
+  assert.equal(character.snapshot.inventory.some((item) => item.name === "Kit de Cura"), false);
+  assert.equal(approval.payload.items.find((line) => line.id === "line-kit").status, "rejected");
+});
+
 test("loja da sessao vende, exclui e mantem item sem local apenas como estado visual", () => {
   const room = new GameRoom({
     players: [
@@ -1029,6 +1071,54 @@ test("fase 12 salva cenas ricas do editor visual e preserva estrutura em persist
   const state = migrateSessionState(room.toJSON());
   assert.equal(state.sceneList.find((scene) => scene.id === "scene-editor").gmNotes, "Reforcos chegam em 3 rodadas.");
   assert.equal(state.sceneList.find((scene) => scene.id === "scene-editor").zones[0].mechanicalEffect, "1d6 termico");
+});
+
+test("fase 14 edita elementos granulares da cena e preserva no snapshot", () => {
+  const room = new GameRoom({
+    players: [{ id: "gm", name: "GM", role: SESSION_ROLES.GM }],
+    scene: { id: "scene-base", name: "Base", tokens: [] },
+  });
+
+  room.dispatch(GAME_EVENT_TYPES.GM_SCENE_CREATE, {
+    scene: {
+      id: "scene-editor",
+      name: "Ponte de comando",
+      columns: 14,
+      rows: 9,
+      zones: [{ id: "zone-1", label: "Plasma", type: "danger", x: 2, y: 2, width: 2, height: 2 }],
+      areas: [{ id: "area-1", label: "Pulso", type: "cone", x: 4, y: 4, length: 3, width: 3, direction: "east" }],
+      objectives: [{ id: "obj-1", title: "Abrir comporta", progressCurrent: 0, progressMax: 2, x: 5, y: 5 }],
+      tokens: [{ id: "token-1", entityType: "object", entityId: "terminal", name: "Terminal", x: 6, y: 6 }],
+    },
+  }, "gm");
+  room.dispatch(GAME_EVENT_TYPES.GM_SCENE_SWITCH, { sceneId: "scene-editor" }, "gm");
+
+  const edited = new Scene({
+    ...room.scene.toJSON(),
+    zones: [{ ...room.scene.zones[0], label: "Plasma instavel", x: 7, y: 3, width: 4, mechanicalEffect: "2d6 termico" }],
+    areas: [{ ...room.scene.areas[0], x: 8, y: 4, direction: "north", length: 5, source: "Granada" }],
+    objectives: [{ ...room.scene.objectives[0], progressCurrent: 2, completed: true, x: 9, y: 4, reward: "Abrir rota segura" }],
+    tokens: [{ ...room.scene.tokens[0].toJSON(), name: "Terminal mestre", x: 10, y: 5, locked: true, metadata: { movement: 0, notes: "Controle central" } }],
+  }).toJSON();
+
+  room.dispatch(GAME_EVENT_TYPES.GM_SCENE_UPDATE, { sceneId: "scene-editor", patch: edited }, "gm");
+
+  assert.equal(room.scene.zones[0].label, "Plasma instavel");
+  assert.equal(room.scene.zones[0].x, 7);
+  assert.equal(room.scene.zones[0].mechanicalEffect, "2d6 termico");
+  assert.equal(room.scene.areas[0].direction, "north");
+  assert.equal(room.scene.areas[0].source, "Granada");
+  assert.equal(room.scene.objectives[0].completed, true);
+  assert.equal(room.scene.objectives[0].reward, "Abrir rota segura");
+  assert.equal(room.scene.tokens[0].name, "Terminal mestre");
+  assert.equal(room.scene.tokens[0].locked, true);
+  assert.equal(room.scene.tokens[0].metadata.notes, "Controle central");
+
+  const state = migrateSessionState(room.toJSON());
+  const savedScene = state.sceneList.find((scene) => scene.id === "scene-editor");
+  assert.equal(savedScene.areas[0].direction, "north");
+  assert.equal(savedScene.objectives[0].completed, true);
+  assert.equal(savedScene.tokens[0].metadata.notes, "Controle central");
 });
 
 test("fase 12 balanceia encontro e aplica posicoes iniciais ao iniciar cena", () => {

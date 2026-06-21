@@ -24,6 +24,45 @@
   --radius: 8px;
   --radius-sm: 6px;
   --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --solaris-bg-main: #020711;
+  --solaris-bg-panel: rgba(4, 17, 30, 0.88);
+  --solaris-bg-card: rgba(5, 22, 36, 0.78);
+  --solaris-bg-card-strong: rgba(8, 35, 56, 0.84);
+  --solaris-border: rgba(79, 207, 255, 0.22);
+  --solaris-border-strong: rgba(124, 236, 255, 0.52);
+  --solaris-cyan: #39d8ff;
+  --solaris-blue: #1787ff;
+  --solaris-purple: #9b4dff;
+  --solaris-red: #ff5368;
+  --solaris-green: #22e58b;
+  --solaris-yellow: #f2c35b;
+  --solaris-gold: #f3b75c;
+  --solaris-text: #eef8ff;
+  --solaris-text-secondary: #a7bdca;
+  --solaris-text-muted: #708797;
+  --solaris-glow-cyan: 0 0 24px rgba(57, 216, 255, 0.22);
+  --solaris-glow-purple: 0 0 24px rgba(155, 77, 255, 0.18);
+  --solaris-glow-red: 0 0 24px rgba(255, 83, 104, 0.18);
+  --solaris-glow-green: 0 0 24px rgba(34, 229, 139, 0.16);
+  --solaris-shadow-panel: 0 24px 70px rgba(0, 0, 0, 0.38), inset 0 0 34px rgba(57, 216, 255, 0.045);
+  --solaris-shadow-modal: 0 30px 100px rgba(0, 0, 0, 0.68), 0 0 44px rgba(57, 216, 255, 0.16);
+  --solaris-gap-xs: 6px;
+  --solaris-gap-sm: 10px;
+  --solaris-gap-md: 14px;
+  --solaris-gap-lg: 20px;
+  --solaris-panel-padding: 14px;
+  --solaris-card-padding: 12px;
+  --solaris-topbar-height: 64px;
+  --solaris-sidebar-width: 292px;
+  --solaris-radius-sm: 6px;
+  --solaris-radius-md: 8px;
+  --solaris-radius-lg: 12px;
+  --solaris-title-lg: clamp(1.4rem, 2vw, 2rem);
+  --solaris-title-panel: 0.95rem;
+  --solaris-body: 0.88rem;
+  --solaris-caption: 0.72rem;
+  --solaris-number: 1.32rem;
+  --solaris-badge: 0.66rem;
 }
 
 .is-virtual-table {
@@ -9552,7 +9591,20 @@ body .vital-hud-modal #hud-humanis .hvh-segment {
 .vtt-editor-map-preview .vtt-map-token,
 .vtt-editor-map-preview .vtt-map-area,
 .vtt-editor-map-preview .vtt-map-objective {
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: grab;
+  user-select: none;
+}
+
+.vtt-editor-map-preview [draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.vtt-editor-map-preview .editor-selected {
+  z-index: 14;
+  outline: 2px solid rgba(242, 195, 91, 0.95);
+  outline-offset: 3px;
+  filter: drop-shadow(0 0 16px rgba(242, 195, 91, 0.58));
 }
 
 .vtt-editor-canvas-actions {
@@ -9570,7 +9622,7 @@ body .vital-hud-modal #hud-humanis .hvh-segment {
 
 .vtt-editor-lists {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   min-height: 0;
   overflow: hidden;
@@ -9594,7 +9646,7 @@ body .vital-hud-modal #hud-humanis .hvh-segment {
 
 .vtt-editor-lists div {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
   gap: 8px;
   align-items: center;
   min-height: 32px;
@@ -9659,8 +9711,43 @@ body .vital-hud-modal #hud-humanis .hvh-segment {
 
 .vtt-editor-properties footer {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
+}
+
+.vtt-editor-entry-form {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(57, 207, 255, 0.18);
+}
+
+.vtt-editor-entry-form h4 {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #f2c35b;
+  font-size: 0.82rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.vtt-editor-element-empty {
+  display: grid;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 12px;
+  color: var(--vtt-muted);
+  border: 1px dashed rgba(57, 207, 255, 0.24);
+  background: rgba(57, 207, 255, 0.045);
+}
+
+.vtt-editor-element-empty strong {
+  color: var(--vtt-text);
+}
+
+.vtt-editor-element-empty p {
+  margin: 0;
+  line-height: 1.45;
 }
 
 .vtt-editor-balance {
@@ -9764,5 +9851,1100 @@ body .vital-hud-modal #hud-humanis .hvh-segment {
 
   .vtt-editor-header-actions button {
     flex: 1 1 130px;
+  }
+}
+
+/* Fase 15 - Loja Solaris visual avancada */
+.solaris-store-shell {
+  --store-cyan: #27d9ff;
+  --store-violet: #9b4dff;
+  --store-gold: #f2c35b;
+  --store-green: #35e6a9;
+  --store-danger: #ff5c6c;
+  display: grid;
+  grid-template-columns: minmax(170px, 0.72fr) minmax(0, 3.2fr);
+  min-height: 620px;
+  padding: 0;
+  overflow: hidden;
+  border-color: rgba(39, 217, 255, 0.34);
+  background:
+    radial-gradient(circle at 18% 8%, rgba(39, 217, 255, 0.12), transparent 34%),
+    radial-gradient(circle at 84% 24%, rgba(155, 77, 255, 0.12), transparent 30%),
+    linear-gradient(135deg, rgba(2, 12, 24, 0.96), rgba(4, 17, 24, 0.98));
+}
+
+.solaris-store-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 14px;
+  border-right: 1px solid rgba(39, 217, 255, 0.22);
+  background: linear-gradient(180deg, rgba(3, 22, 30, 0.86), rgba(2, 9, 18, 0.96));
+}
+
+.solaris-store-brand {
+  display: grid;
+  gap: 4px;
+  padding: 8px 10px 16px;
+  border-bottom: 1px solid rgba(39, 217, 255, 0.16);
+}
+
+.solaris-store-brand span,
+.solaris-store-category small,
+.solaris-store-balance small,
+.solaris-store-result-heading small {
+  color: #7cecff;
+}
+
+.solaris-store-brand strong {
+  color: #eefbff;
+  font-size: 1.22rem;
+  letter-spacing: 0.08em;
+}
+
+.solaris-store-sidebar nav {
+  display: grid;
+  gap: 7px;
+  max-height: 560px;
+  overflow: auto;
+  padding-right: 3px;
+}
+
+.solaris-store-category {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  border: 1px solid rgba(39, 217, 255, 0.14);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: #d9f7ff;
+  background: rgba(4, 18, 28, 0.66);
+  text-align: left;
+}
+
+.solaris-store-category.active,
+.solaris-store-category:hover {
+  border-color: rgba(39, 217, 255, 0.65);
+  background: linear-gradient(90deg, rgba(39, 217, 255, 0.22), rgba(155, 77, 255, 0.08));
+  box-shadow: inset 3px 0 0 var(--store-cyan), 0 0 18px rgba(39, 217, 255, 0.18);
+}
+
+.solaris-store-main {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 12px;
+  padding: 16px;
+}
+
+.solaris-store-topbar,
+.solaris-store-filters,
+.solaris-store-cart,
+.solaris-store-card,
+.solaris-store-modal {
+  border: 1px solid rgba(39, 217, 255, 0.18);
+  background: rgba(3, 15, 25, 0.78);
+  box-shadow: inset 0 0 24px rgba(39, 217, 255, 0.04);
+}
+
+.solaris-store-topbar {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.8fr) minmax(220px, 1.4fr) minmax(120px, 0.48fr) auto;
+  align-items: end;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.solaris-store-topbar h3 {
+  margin: 0;
+  font-size: 1.22rem;
+  text-transform: uppercase;
+}
+
+.solaris-store-topbar span,
+.solaris-store-filter span,
+.solaris-store-search span,
+.solaris-store-check span,
+.solaris-store-card small,
+.solaris-store-cart small {
+  color: #94afba;
+  font-size: 0.72rem;
+}
+
+.solaris-store-search,
+.solaris-store-filter,
+.solaris-store-check,
+.solaris-store-cart-item label {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.solaris-store-search input,
+.solaris-store-filter input,
+.solaris-store-filter select,
+.solaris-store-cart select,
+.solaris-store-cart input {
+  width: 100%;
+  min-height: 34px;
+  border: 1px solid rgba(124, 236, 255, 0.2);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: #eefbff;
+  background: rgba(2, 9, 14, 0.84);
+}
+
+.solaris-store-balance {
+  min-width: 124px;
+  border: 1px solid rgba(124, 236, 255, 0.22);
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: rgba(39, 217, 255, 0.08);
+}
+
+.solaris-store-balance strong {
+  display: block;
+  color: #eefbff;
+  font-size: 1.05rem;
+}
+
+.solaris-store-filters {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(94px, 1fr));
+  gap: 9px;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.solaris-store-check {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  align-content: end;
+  min-height: 54px;
+  border: 1px solid rgba(124, 236, 255, 0.16);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.solaris-store-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 0.34fr);
+  gap: 12px;
+  min-height: 0;
+}
+
+.solaris-store-results {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.solaris-store-result-heading,
+.solaris-store-pages,
+.solaris-store-cart-head,
+.solaris-store-cart-item footer,
+.solaris-store-total span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.solaris-store-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 11px;
+  min-height: 0;
+  overflow: auto;
+  padding: 2px 2px 8px;
+}
+
+.solaris-store-card {
+  display: grid;
+  grid-template-rows: auto 104px minmax(50px, auto) auto auto;
+  gap: 9px;
+  min-height: 292px;
+  max-height: 292px;
+  border-radius: 8px;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.solaris-store-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(124, 236, 255, 0.54);
+  box-shadow: 0 0 22px rgba(39, 217, 255, 0.18);
+}
+
+.solaris-store-card.locked {
+  border-color: rgba(255, 92, 108, 0.28);
+}
+
+.solaris-store-card.rarity-incomum {
+  border-color: rgba(53, 230, 169, 0.3);
+}
+
+.solaris-store-card.rarity-raro {
+  border-color: rgba(39, 217, 255, 0.38);
+}
+
+.solaris-store-card.rarity-epico {
+  border-color: rgba(155, 77, 255, 0.48);
+}
+
+.solaris-store-card.rarity-lendario {
+  border-color: rgba(242, 195, 91, 0.58);
+}
+
+.solaris-store-card header {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.solaris-store-card header strong {
+  color: #f3fbff;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.solaris-store-card-rarity,
+.solaris-store-badge {
+  width: fit-content;
+  border: 1px solid rgba(124, 236, 255, 0.22);
+  border-radius: 999px;
+  padding: 2px 7px;
+  color: #8defff;
+  background: rgba(39, 217, 255, 0.08);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+}
+
+.solaris-store-card-media {
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(124, 236, 255, 0.14);
+  border-radius: 6px;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(39, 217, 255, 0.09), rgba(155, 77, 255, 0.08)),
+    rgba(1, 8, 14, 0.8);
+}
+
+.solaris-store-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.solaris-store-card-media span {
+  color: var(--store-cyan);
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.solaris-store-card p {
+  min-height: 40px;
+  max-height: 50px;
+  overflow: hidden;
+  margin: 0;
+  color: #b7cad1;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.solaris-store-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-height: 24px;
+  overflow: hidden;
+}
+
+.solaris-store-card footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 7px;
+  align-items: center;
+}
+
+.solaris-store-card footer em {
+  color: #7f98a1;
+  font-size: 0.68rem;
+  font-style: normal;
+}
+
+.solaris-store-card footer strong {
+  color: var(--store-gold);
+}
+
+.solaris-store-card footer button,
+.solaris-store-actionbar button,
+.solaris-store-pages button,
+.solaris-store-master-carts button {
+  min-height: 30px;
+  border: 1px solid rgba(124, 236, 255, 0.22);
+  border-radius: 6px;
+  color: #dff9ff;
+  background: rgba(4, 20, 32, 0.84);
+}
+
+.solaris-store-card footer button:last-child,
+.solaris-store-actionbar button:nth-child(2) {
+  border-color: rgba(155, 77, 255, 0.62);
+  background: linear-gradient(135deg, rgba(155, 77, 255, 0.42), rgba(39, 217, 255, 0.14));
+}
+
+.solaris-store-cart {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto auto;
+  gap: 10px;
+  border-radius: 8px;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.solaris-store-cart-lines {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 0;
+  overflow: auto;
+}
+
+.solaris-store-cart-item {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(124, 236, 255, 0.14);
+  border-radius: 7px;
+  padding: 9px;
+  background: rgba(2, 10, 16, 0.68);
+}
+
+.solaris-store-total {
+  display: grid;
+  gap: 5px;
+  border-top: 1px solid rgba(124, 236, 255, 0.14);
+  padding-top: 9px;
+}
+
+.solaris-store-total strong.danger,
+.solaris-store-alert.danger {
+  color: var(--store-danger);
+}
+
+.solaris-store-alert {
+  border: 1px solid rgba(242, 195, 91, 0.22);
+  border-radius: 6px;
+  padding: 8px;
+  color: #d9c88d;
+  background: rgba(242, 195, 91, 0.06);
+  font-size: 0.76rem;
+}
+
+.solaris-store-alert.danger {
+  border-color: rgba(255, 92, 108, 0.34);
+  background: rgba(255, 92, 108, 0.07);
+}
+
+.solaris-store-actionbar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.solaris-store-master-carts {
+  display: grid;
+  gap: 7px;
+  max-height: 220px;
+  overflow: auto;
+  border-top: 1px solid rgba(124, 236, 255, 0.12);
+  padding-top: 8px;
+}
+
+.solaris-store-master-carts article,
+.solaris-store-master-line {
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(124, 236, 255, 0.12);
+  border-radius: 6px;
+  padding: 7px;
+}
+
+.solaris-store-master-line span,
+.solaris-store-master-carts footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.solaris-store-empty {
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  min-height: 180px;
+  border: 1px dashed rgba(124, 236, 255, 0.2);
+  border-radius: 8px;
+  color: #9ab3bc;
+  text-align: center;
+}
+
+.solaris-store-empty.small {
+  min-height: 100px;
+  padding: 10px;
+}
+
+.solaris-store-detail-body {
+  grid-template-columns: minmax(180px, 0.35fr) minmax(220px, 0.45fr) minmax(260px, 1fr);
+  max-height: min(68vh, 680px);
+  overflow: auto;
+}
+
+.solaris-store-detail-body section {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.solaris-store-detail-body h4,
+.solaris-store-detail-body p {
+  margin: 0;
+}
+
+@media (max-width: 1360px) {
+  .solaris-store-shell {
+    grid-template-columns: 150px minmax(0, 1fr);
+  }
+
+  .solaris-store-topbar {
+    grid-template-columns: minmax(140px, 0.8fr) minmax(180px, 1fr) minmax(110px, 0.5fr);
+  }
+
+  .solaris-store-balance {
+    grid-column: 1 / -1;
+  }
+
+  .solaris-store-filters {
+    grid-template-columns: repeat(4, minmax(110px, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .solaris-store-shell,
+  .solaris-store-content {
+    grid-template-columns: 1fr;
+  }
+
+  .solaris-store-sidebar nav {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    max-height: 180px;
+  }
+
+  .solaris-store-topbar,
+  .solaris-store-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .solaris-store-detail-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Fase 16 - Design system global do Solaris Tabletop */
+.solaris-shell,
+.solaris-panel,
+.solaris-card,
+.solaris-modal,
+.solaris-modal-large {
+  color: var(--solaris-text);
+}
+
+.solaris-shell {
+  --vtt-bg: var(--solaris-bg-main);
+  --vtt-panel: var(--solaris-bg-panel);
+  --vtt-line: var(--solaris-border);
+  --vtt-line-hot: var(--solaris-border-strong);
+  --vtt-cyan: var(--solaris-cyan);
+  --vtt-blue: var(--solaris-blue);
+  --vtt-purple: var(--solaris-purple);
+  --vtt-red: var(--solaris-red);
+  --vtt-green: var(--solaris-green);
+  --vtt-text: var(--solaris-text);
+  --vtt-muted: var(--solaris-text-secondary);
+  isolation: isolate;
+}
+
+.solaris-topbar,
+.solaris-sidebar,
+.solaris-panel,
+.solaris-card,
+.solaris-modal,
+.solaris-modal-large,
+.solaris-scroll-panel,
+.solaris-bottom-bar,
+.vtt-panel,
+.vtt-session,
+.vtt-map-panel,
+.vtt-bottom,
+.vtt-quickbar,
+.vtt-campaign-card,
+.vtt-campaign-home-aside article,
+.vtt-gm-card,
+.vtt-gm-list article,
+.vtt-gm-shield article,
+.vtt-monster-sheet-modal section,
+.vtt-loot-list article,
+.vtt-approval-list article,
+.vtt-objectives article,
+.vtt-roll-history article,
+.vtt-combatant-card,
+.vtt-shop-card,
+.solaris-store-card {
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+
+.solaris-topbar,
+.vtt-topbar,
+.vtt-campaign-home-hero {
+  min-height: var(--solaris-topbar-height);
+  border: 1px solid rgba(57, 216, 255, 0.26);
+  background:
+    linear-gradient(90deg, rgba(6, 23, 40, 0.98), rgba(3, 12, 23, 0.92) 48%, rgba(7, 20, 31, 0.98)),
+    radial-gradient(circle at 82% 0%, rgba(155, 77, 255, 0.16), transparent 36%);
+  box-shadow: var(--solaris-shadow-panel);
+}
+
+.vtt-shell.solaris-shell {
+  grid-template-columns: minmax(250px, var(--solaris-sidebar-width)) minmax(560px, 1fr) minmax(286px, 340px);
+  grid-template-rows: var(--solaris-topbar-height) minmax(0, 1fr) 58px;
+  gap: var(--solaris-gap-sm);
+  min-height: calc(100vh - 18px);
+  border-color: rgba(57, 216, 255, 0.42);
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(57, 216, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 216, 255, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 12% 8%, rgba(57, 216, 255, 0.16), transparent 28%),
+    radial-gradient(circle at 78% 12%, rgba(155, 77, 255, 0.13), transparent 30%),
+    linear-gradient(135deg, #020711 0%, #061421 50%, #02070e 100%);
+  background-size: 40px 40px, 40px 40px, auto, auto, auto;
+}
+
+.vtt-shell.solaris-shell::after {
+  inset: 7px;
+  border-color: rgba(124, 236, 255, 0.18);
+}
+
+.vtt-brand-mark {
+  flex: 0 0 42px;
+  background:
+    repeating-conic-gradient(from 0deg, rgba(57, 216, 255, 0.92) 0deg 7deg, transparent 7deg 16deg),
+    radial-gradient(circle, rgba(57, 216, 255, 0.96) 0 10%, rgba(23, 135, 255, 0.26) 11% 35%, transparent 36%);
+}
+
+.vtt-brand strong,
+.vtt-campaign-home h3,
+.vtt-panel-heading h3,
+.vtt-session-copy h2,
+.vtt-gm-card h3,
+.vtt-shield-console h3 {
+  letter-spacing: 0.04em;
+}
+
+.vtt-top-actions button,
+.vtt-campaign-home-actions button,
+.vtt-chat-form button,
+.vtt-quick-actions button,
+.vtt-sheet-actions button,
+.vtt-combat-actions button,
+.vtt-combatant-actions button,
+.vtt-gm-card button,
+.vtt-gm-list button,
+.vtt-gm-toolbar button,
+.vtt-campaign-home button,
+.vtt-form-modal button,
+.vtt-encounter-generator button,
+.vtt-shield-console button,
+.vtt-editor-sidebar button,
+.vtt-editor-lists button,
+.vtt-editor-header-actions button,
+.vtt-modal button,
+.solaris-button {
+  border-radius: var(--solaris-radius-sm);
+  font-size: 0.76rem;
+  font-weight: 780;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.solaris-button-primary,
+.vtt-top-actions button[data-vtt-action="create-room"],
+.vtt-campaign-home-actions button[data-vtt-action="new-campaign"],
+.solaris-store-actionbar button:nth-child(2) {
+  border-color: rgba(57, 216, 255, 0.58);
+  background: linear-gradient(135deg, rgba(23, 135, 255, 0.42), rgba(57, 216, 255, 0.14));
+  box-shadow: var(--solaris-glow-cyan), inset 0 0 18px rgba(57, 216, 255, 0.08);
+}
+
+.solaris-button-secondary,
+.solaris-input,
+.solaris-select,
+.vtt-modal input,
+.vtt-modal select,
+.vtt-modal textarea,
+.vtt-grid-controls input,
+.vtt-grid-controls select,
+.vtt-dedicated-form input,
+.vtt-dedicated-form select,
+.vtt-dedicated-form textarea,
+.vtt-generator-filters input,
+.vtt-generator-filters select,
+.vtt-shield-console input,
+.solaris-store-search input,
+.solaris-store-filter input,
+.solaris-store-filter select {
+  border-radius: var(--solaris-radius-sm);
+  border-color: rgba(124, 236, 255, 0.22);
+  background: rgba(1, 8, 15, 0.88);
+  box-shadow: inset 0 0 18px rgba(57, 216, 255, 0.035);
+}
+
+.solaris-button-danger,
+.vtt-combatant-actions .danger,
+.vtt-gm-list button.danger,
+.vtt-gm-card button.danger,
+.vtt-campaign-home button.danger,
+.vtt-form-modal button.danger {
+  border-color: rgba(255, 83, 104, 0.5);
+  background: linear-gradient(135deg, rgba(255, 83, 104, 0.22), rgba(30, 6, 15, 0.86));
+  box-shadow: var(--solaris-glow-red);
+}
+
+.solaris-button-success {
+  border-color: rgba(34, 229, 139, 0.48);
+  background: linear-gradient(135deg, rgba(34, 229, 139, 0.18), rgba(3, 22, 16, 0.88));
+  box-shadow: var(--solaris-glow-green);
+}
+
+.solaris-button-ghost {
+  background: rgba(3, 14, 24, 0.56);
+}
+
+.vtt-left,
+.vtt-right,
+.solaris-sidebar {
+  min-height: 0;
+}
+
+.vtt-main.solaris-main-stage {
+  grid-template-rows: auto minmax(640px, auto) minmax(620px, auto) auto;
+  grid-auto-rows: auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-gutter: stable;
+}
+
+.vtt-main.solaris-main-stage > .vtt-session,
+.vtt-main.solaris-main-stage > .vtt-map-panel,
+.vtt-main.solaris-main-stage > .solaris-store-shell,
+.vtt-main.solaris-main-stage > .vtt-bottom {
+  min-width: 0;
+  flex: 0 0 auto;
+}
+
+.vtt-main.solaris-main-stage > .vtt-session {
+  min-height: 138px;
+}
+
+.vtt-main.solaris-main-stage > .vtt-map-panel {
+  min-height: 640px;
+}
+
+.vtt-main.solaris-main-stage > .solaris-store-shell {
+  min-height: 620px;
+}
+
+.vtt-main.solaris-main-stage > .vtt-bottom {
+  margin-top: 12px;
+}
+
+.vtt-left .vtt-panel,
+.vtt-right .vtt-panel,
+.vtt-panel,
+.vtt-session,
+.vtt-map-panel,
+.vtt-bottom,
+.vtt-quickbar,
+.solaris-panel {
+  border-color: rgba(79, 207, 255, 0.22);
+  background:
+    linear-gradient(135deg, rgba(9, 33, 52, 0.78), rgba(2, 10, 19, 0.9)),
+    radial-gradient(circle at 0% 0%, rgba(57, 216, 255, 0.08), transparent 36%);
+  box-shadow: var(--solaris-shadow-panel);
+}
+
+.vtt-panel-heading,
+.vtt-chat-form,
+.vtt-combat-actions,
+.vtt-shop-controls,
+.vtt-shop-footer,
+.vtt-map-toolbar,
+.vtt-map-footer,
+.vtt-grid-controls,
+.vtt-editor-header-actions,
+.solaris-toolbar {
+  border-color: rgba(124, 236, 255, 0.14);
+}
+
+.vtt-panel-heading h3,
+.solaris-section-title {
+  font-size: var(--solaris-title-panel);
+  font-weight: 860;
+  text-transform: uppercase;
+}
+
+.solaris-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(124, 236, 255, 0.36), transparent);
+}
+
+.solaris-badge,
+.solaris-badge-tier,
+.solaris-badge-rarity,
+.vtt-panel-heading span,
+.vtt-combatant-conditions button,
+.solaris-store-badge,
+.solaris-store-card-rarity {
+  border-radius: 999px;
+  font-size: var(--solaris-badge);
+  letter-spacing: 0.04em;
+}
+
+.vtt-player-list,
+.vtt-chat-log,
+.vtt-roll-history,
+.vtt-objectives,
+.vtt-approval-list,
+.vtt-loot-list,
+.vtt-combat-log,
+.vtt-combat-initiative,
+.vtt-monster-picker > div,
+.vtt-campaign-list,
+.vtt-autosave-list,
+.vtt-gm-list,
+.vtt-gm-shield,
+.vtt-generator-results,
+.vtt-editor-scroll,
+.vtt-editor-lists,
+.vtt-report-markdown,
+.solaris-scroll-panel {
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.vtt-player,
+.vtt-chat-log article,
+.vtt-objectives article,
+.vtt-roll-history article,
+.vtt-approval-list article,
+.vtt-loot-list article,
+.vtt-gm-list article,
+.vtt-gm-shield article,
+.vtt-generator-results article,
+.vtt-editor-lists article,
+.solaris-card {
+  border-color: rgba(124, 236, 255, 0.15);
+  background:
+    linear-gradient(135deg, rgba(7, 27, 43, 0.78), rgba(2, 9, 16, 0.84));
+}
+
+.vtt-player.selected,
+.vtt-campaign-card.active,
+.vtt-gm-list article.active,
+.vtt-gm-list article.important,
+.solaris-card-selected {
+  border-color: rgba(57, 216, 255, 0.66);
+  box-shadow: var(--solaris-glow-cyan), inset 0 0 24px rgba(57, 216, 255, 0.07);
+}
+
+.vtt-map-panel {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(320px, 1fr) auto auto;
+}
+
+.vtt-map-grid {
+  min-height: clamp(360px, 46vh, 620px);
+  border-color: rgba(57, 216, 255, 0.34);
+  background-color: rgba(1, 8, 15, 0.88);
+  box-shadow: inset 0 0 42px rgba(57, 216, 255, 0.08), 0 0 28px rgba(57, 216, 255, 0.08);
+}
+
+.vtt-map-token,
+.solaris-token {
+  border-radius: 50%;
+}
+
+.vtt-bottom {
+  grid-template-columns: minmax(260px, 0.95fr) minmax(180px, 0.42fr) minmax(170px, 0.34fr);
+  align-items: stretch;
+  min-height: 150px;
+}
+
+.vtt-selected,
+.vtt-active-items,
+.vtt-gear-summary,
+.vtt-sheet-actions {
+  min-width: 0;
+}
+
+.vtt-resource-input,
+.vtt-combatant-stats span,
+.vtt-gm-metrics span,
+.solaris-meter,
+.solaris-progress {
+  border-color: rgba(124, 236, 255, 0.14);
+  background: rgba(2, 10, 18, 0.7);
+}
+
+.vtt-quickbar.solaris-bottom-bar {
+  align-items: center;
+  padding: 8px 14px;
+  background:
+    linear-gradient(90deg, rgba(4, 16, 29, 0.96), rgba(2, 9, 17, 0.96)),
+    radial-gradient(circle at 25% 0%, rgba(57, 216, 255, 0.14), transparent 38%);
+}
+
+.vtt-quick-slot {
+  min-width: 112px;
+  border-radius: var(--solaris-radius-sm);
+}
+
+.vtt-modal-backdrop {
+  backdrop-filter: blur(10px);
+}
+
+.vtt-modal.solaris-modal,
+.vtt-modal.solaris-modal-large,
+.vtt-modal,
+.solaris-modal,
+.solaris-modal-large {
+  border-color: rgba(124, 236, 255, 0.3);
+  background:
+    linear-gradient(135deg, rgba(5, 24, 40, 0.98), rgba(2, 9, 17, 0.98)),
+    radial-gradient(circle at 10% 0%, rgba(57, 216, 255, 0.12), transparent 36%);
+  box-shadow: var(--solaris-shadow-modal);
+}
+
+.vtt-modal.solaris-modal-large,
+.solaris-modal-large {
+  width: min(1480px, calc(100vw - 28px));
+  max-height: calc(100vh - 28px);
+}
+
+.vtt-modal > header,
+.vtt-visual-editor-modal > header,
+.vtt-report-preview-modal > header {
+  min-height: 62px;
+  border-bottom-color: rgba(124, 236, 255, 0.18);
+}
+
+.vtt-monster-sheet-modal {
+  width: min(1380px, calc(100vw - 28px));
+}
+
+.vtt-monster-sheet-grid {
+  max-height: min(72vh, 760px);
+  overflow: auto;
+}
+
+.vtt-gm-modal,
+.vtt-visual-editor-modal,
+.vtt-report-preview-modal {
+  width: min(1520px, calc(100vw - 28px));
+}
+
+.vtt-gm-body,
+.vtt-visual-editor,
+.vtt-report-preview-layout {
+  min-height: 0;
+}
+
+.vtt-gm-grid,
+.vtt-visual-editor,
+.vtt-report-preview-layout {
+  max-height: min(74vh, 820px);
+}
+
+.vtt-gm-card,
+.vtt-editor-sidebar,
+.vtt-editor-canvas,
+.vtt-editor-properties,
+.vtt-report-options,
+.vtt-report-markdown {
+  min-height: 0;
+}
+
+.vtt-campaign-home.solaris-shell {
+  grid-template-columns: 1fr;
+  grid-template-rows: var(--solaris-topbar-height) minmax(0, 1fr);
+  grid-template-areas:
+    "top"
+    "main";
+  padding: 12px;
+}
+
+.vtt-campaign-home-hero {
+  grid-area: top;
+}
+
+.vtt-campaign-home-main {
+  grid-area: main;
+  min-height: 0;
+}
+
+.vtt-campaign-card-grid {
+  max-height: calc(100vh - 190px);
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.vtt-campaign-card {
+  min-height: 240px;
+}
+
+.solaris-empty-state,
+.vtt-empty-campaigns,
+.solaris-store-empty {
+  border-color: rgba(124, 236, 255, 0.22);
+  background:
+    linear-gradient(135deg, rgba(57, 216, 255, 0.06), rgba(155, 77, 255, 0.04)),
+    rgba(2, 10, 18, 0.66);
+}
+
+.solaris-toast {
+  border: 1px solid rgba(124, 236, 255, 0.3);
+  border-radius: var(--solaris-radius-md);
+  background: rgba(3, 15, 25, 0.94);
+  box-shadow: var(--solaris-shadow-panel);
+}
+
+@media (max-width: 1600px) {
+  .vtt-shell.solaris-shell {
+    grid-template-columns: minmax(230px, 260px) minmax(500px, 1fr) minmax(270px, 306px);
+  }
+
+  .vtt-top-actions {
+    gap: 6px;
+  }
+
+  .vtt-top-actions button {
+    padding-inline: 10px;
+  }
+}
+
+@media (max-width: 1366px) {
+  .vtt-shell.solaris-shell {
+    grid-template-columns: minmax(220px, 248px) minmax(460px, 1fr) minmax(250px, 290px);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+
+  .vtt-topbar {
+    grid-template-columns: minmax(210px, 0.72fr) minmax(170px, 0.7fr) auto;
+  }
+
+  .vtt-connection {
+    justify-self: end;
+  }
+
+  .vtt-top-actions {
+    grid-column: 1 / -1;
+    justify-content: start;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .vtt-map-grid {
+    min-height: 340px;
+  }
+
+  .vtt-bottom {
+    grid-template-columns: 1fr;
+    max-height: 250px;
+    overflow: auto;
+  }
+}
+
+@media (max-width: 980px) {
+  .vtt-shell.solaris-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+      "top"
+      "main"
+      "right"
+      "quick";
+    overflow: auto;
+  }
+
+  .vtt-left {
+    grid-area: main;
+    display: none;
+  }
+
+  .vtt-main {
+    grid-area: main;
+  }
+
+  .vtt-right {
+    grid-area: right;
+    padding: 0 10px 10px;
+  }
+
+  .vtt-topbar,
+  .vtt-campaign-home-hero {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .vtt-room-strip {
+    border-left: 0;
+    padding: 0;
+  }
+
+  .vtt-quickbar {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .vtt-shell.solaris-shell {
+    margin: 0;
+    min-height: 100vh;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .vtt-modal.solaris-modal-large,
+  .vtt-modal.solaris-modal,
+  .vtt-modal {
+    width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
+  }
+
+  .vtt-gm-grid,
+  .vtt-visual-editor,
+  .vtt-report-preview-layout,
+  .vtt-monster-sheet-grid {
+    grid-template-columns: 1fr;
+    max-height: none;
   }
 }

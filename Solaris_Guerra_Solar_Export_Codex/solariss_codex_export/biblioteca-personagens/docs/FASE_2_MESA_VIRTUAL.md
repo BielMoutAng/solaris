@@ -669,3 +669,76 @@ Documentacao:
 ```txt
 docs/FASE_11_CONSOLIDACAO_MESTRE.md
 ```
+
+## Fase 12 - Editores visuais e polimento
+
+Implementada no cache `20260620j`.
+
+- Editor Visual de Cena.
+- Editor Visual de Encontro.
+- Preview de relatorio antes de exportar.
+- Relatorios salvos em sessao/campanha.
+- Balanceamento alfa de encontros.
+- Posicoes iniciais de monstros em encontros preparados.
+- Rolagem interna reforcada em paineis e modais.
+- Tabletop Alpha em `0.6.0-alpha.5`.
+
+Documentacao:
+
+```txt
+docs/FASE_12_EDITORES_POLIMENTO_USABILIDADE.md
+```
+
+## Fase 14 - Editor avancado de cenas
+
+Implementada no cache `20260621c`.
+
+- Selecionar token, zona, area ou objetivo direto no preview da cena.
+- Arrastar elementos dentro do editor para reposicionar por celula.
+- Formulario contextual para editar cada tipo de elemento.
+- Criacao de areas de efeito pelo editor.
+- Persistencia das edicoes em cena ativa, `sceneList`, snapshots e export/import.
+- Tabletop Alpha em `0.6.0-alpha.6`.
+
+Documentacao:
+
+```txt
+docs/FASE_14_EDITOR_CENAS_AVANCADO.md
+```
+
+## Fase 15 - Loja visual avancada
+
+Implementada no cache `20260621d`.
+
+- Loja Solaris com sidebar de categorias, topbar, busca, filtros e carrinho lateral.
+- Modos Biblioteca, Sessao e Mestre.
+- Filtros por categoria, tier, raridade, preco, estoque e compatibilidade.
+- Cards padronizados com raridade, badges, preco, fonte e acoes.
+- Modal de detalhe com compatibilidade, politica da sessao e acoes.
+- Carrinho com destino por item.
+- Aprovacao individual de item dentro de carrinho.
+- Compra aprovada respeita destino de cada linha.
+- Mestre pode converter carrinho em loot.
+- Tabletop Alpha em `0.6.0-alpha.7`.
+
+Documentacao:
+
+```txt
+docs/FASE_15_LOJA_VISUAL_AVANCADA.md
+```
+
+## Fase 16 - Padronizacao visual global
+
+Implementada no cache `20260621e`.
+
+- Tokens globais `--solaris-*` para identidade visual do Tabletop.
+- Classes reutilizaveis para shell, topbar, sidebars, paineis, cards, botoes, inputs, badges, medidores, modais, scroll panels e barra inferior.
+- Mesa Virtual, Loja, Minhas Campanhas, Painel do Mestre, Escudo, editores, ficha de monstro, loot e aprovacoes foram alinhados ao mesmo visual sci-fi neon.
+- Responsividade reforcada para 1600px, 1366px e janelas menores do Electron.
+- Tabletop Alpha em `0.6.0-alpha.8`.
+
+Documentacao:
+
+```txt
+docs/FASE_16_PADRONIZACAO_VISUAL_GLOBAL.md
+```

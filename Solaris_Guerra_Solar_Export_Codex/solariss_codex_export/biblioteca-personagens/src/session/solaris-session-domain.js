@@ -454,6 +454,7 @@ function normalizeCartLine(line = {}) {
   const item = normalizeInventoryItem(line.item || line.itemSnapshot || line);
   const quantity = Math.max(1, Math.floor(numeric(line.quantity ?? item.quantity, 1)));
   const price = Math.max(0, numeric(line.price ?? item.price, 0));
+  const destination = line.destination || line.location || item.location || { kind: "unassigned" };
   return {
     id: String(line.id || item.uid || item.id || createId("cart-line")),
     item,
@@ -461,6 +462,10 @@ function normalizeCartLine(line = {}) {
     quantity,
     price,
     total: price * quantity,
+    destination: normalizeInventoryItem({ location: destination }).location,
+    status: String(line.status || "pending"),
+    approvalRequired: line.approvalRequired !== false,
+    warnings: arrayOf(line.warnings).map((entry) => String(entry || "")).filter(Boolean),
   };
 }
 
@@ -478,11 +483,48 @@ function normalizeShopState(value = {}) {
   ]));
   return {
     catalogVersion: String(value.catalogVersion || "book5-session-alpha"),
+    mode: String(value.mode || "session"),
     approvalRequired: value.approvalRequired !== false,
+    taxRate: Math.max(0, numeric(value.taxRate, 0)),
+    policies: value.policies && typeof value.policies === "object" ? clone(value.policies) : {
+      approvalMode: "session",
+      allowUnassignedDestination: true,
+      transactionFeePercent: 0,
+    },
     carts: normalizedCarts,
     filters: value.filters && typeof value.filters === "object" ? clone(value.filters) : {},
     updatedAt: value.updatedAt || nowIso(),
   };
+}
+
+function cartLineMatches(line = {}, lineId = "") {
+  const id = String(lineId || "");
+  if (!id) return false;
+  return [line.id, line.itemId, line.item?.id, line.item?.uid, line.item?.itemId, line.item?.definitionId]
+    .some((value) => String(value || "") === id);
+}
+
+function cartLineIdFromPayload(payload = {}) {
+  return String(payload.shopLineId || payload.cartLineId || payload.lineId || payload.itemLineId || "");
+}
+
+function cartLinesAllResolved(lines = []) {
+  const normalized = arrayOf(lines).map(normalizeCartLine);
+  return normalized.length > 0 && normalized.every((line) => ["approved", "rejected"].includes(line.status));
+}
+
+function markCartLineStatus(lines = [], lineId = "", status = "pending", actorId = "", message = "") {
+  return arrayOf(lines).map((line) => {
+    const normalized = normalizeCartLine(line);
+    if (!cartLineMatches(normalized, lineId)) return normalized;
+    return {
+      ...normalized,
+      status,
+      resolvedAt: nowIso(),
+      resolvedBy: String(actorId || ""),
+      resolutionMessage: String(message || ""),
+    };
+  });
 }
 
 function normalizeTransactionEntry(value = {}) {
@@ -857,6 +899,7 @@ function generateSessionReport(room, options = {}) {
 function inventoryInstancesFromCart(items = [], destination = null) {
   return arrayOf(items).flatMap((line) => {
     const normalized = normalizeCartLine(line);
+    const resolvedDestination = destination || normalized.destination || normalized.item.location || { kind: "unassigned" };
     return Array.from({ length: normalized.quantity }, (_, index) => normalizeInventoryItem({
       ...normalized.item,
       id: normalized.quantity === 1 && (normalized.item.id || normalized.item.uid) ? normalized.item.id : createId("item"),
@@ -864,7 +907,7 @@ function inventoryInstancesFromCart(items = [], destination = null) {
       sourceItemId: normalized.itemId || normalized.item.id,
       quantity: 1,
       price: normalized.price,
-      location: destination || normalized.item.location || { kind: "unassigned" },
+      location: resolvedDestination,
       metadata: {
         ...(normalized.item.metadata || {}),
         shopLineId: normalized.id,
@@ -3288,7 +3331,18 @@ export class GameRoom {
     const approval = this.getApproval(payload.id || payload.approvalId);
     if (!approval) throw new Error("Pedido de aprovacao nao encontrado.");
     if (approval.status !== APPROVAL_STATUSES.PENDING) return approval;
+    const partialCartLineId = approval.type === "purchase-cart" ? cartLineIdFromPayload(payload) : "";
     if (type === GAME_EVENT_TYPES.APPROVAL_REJECT) {
+      if (partialCartLineId) {
+        approval.payload.items = markCartLineStatus(approval.payload.items, partialCartLineId, "rejected", actor?.id || "", payload.message || "");
+        if (cartLinesAllResolved(approval.payload.items)) approval.reject(actor?.id || "", payload.message || approval.message);
+        this.addChatMessage({
+          playerId: actor?.id || "",
+          authorName: "Sistema Solaris",
+          message: `${actor?.name || "Mestre"} rejeitou item do carrinho: ${approval.message}`,
+        });
+        return approval;
+      }
       approval.reject(actor?.id || "", payload.message || "");
       this.addChatMessage({
         playerId: actor?.id || "",
@@ -3297,33 +3351,52 @@ export class GameRoom {
       });
       return approval;
     }
-    const result = this.executeApprovedRequest(approval, actor);
-    approval.approve(actor?.id || "");
+    const result = this.executeApprovedRequest(approval, actor, payload);
+    if (!partialCartLineId || cartLinesAllResolved(approval.payload.items)) approval.approve(actor?.id || "");
     this.addChatMessage({
       playerId: actor?.id || "",
       authorName: "Sistema Solaris",
-      message: `${actor?.name || "Mestre"} aprovou: ${approval.message}`,
+      message: partialCartLineId
+        ? `${actor?.name || "Mestre"} aprovou item do carrinho: ${approval.message}`
+        : `${actor?.name || "Mestre"} aprovou: ${approval.message}`,
     });
     return result || approval;
   }
 
-  executeApprovedRequest(approval, actor = null) {
+  executeApprovedRequest(approval, actor = null, actionPayload = {}) {
     const payload = clone(approval.payload) || {};
     const character = this.getCharacter(approval.characterId || payload.characterId);
     if (!character) throw new Error("Personagem da aprovacao nao encontrado.");
     const type = approval.type;
     if (type === "purchase-item" || type === "purchase-cart") {
-      const items = type === "purchase-cart"
+      const selectedLineId = type === "purchase-cart" ? cartLineIdFromPayload(actionPayload) : "";
+      const allItems = type === "purchase-cart"
         ? arrayOf(payload.items).map(normalizeCartLine)
         : [normalizeCartLine({ item: payload.item || { name: payload.itemName || "Item comprado" }, quantity: payload.quantity || 1, price: payload.price })];
-      const instances = inventoryInstancesFromCart(items, payload.destination || payload.location || { kind: "unassigned" });
-      const price = Math.max(0, numeric(payload.price ?? payload.total, items.reduce((sum, line) => sum + line.total, 0)));
+      const items = type === "purchase-cart"
+        ? (selectedLineId
+          ? allItems.filter((line) => cartLineMatches(line, selectedLineId))
+          : allItems.filter((line) => !["approved", "rejected"].includes(line.status)))
+        : allItems;
+      if (!items.length) throw new Error("Nenhum item pendente encontrado neste carrinho.");
+      const batchDestination = selectedLineId ? null : (payload.destination || payload.location || { kind: "unassigned" });
+      const instances = inventoryInstancesFromCart(items, batchDestination);
+      const price = Math.max(0, numeric(
+        selectedLineId ? undefined : (payload.price ?? payload.total),
+        items.reduce((sum, line) => sum + line.total, 0)
+      ));
       const snapshot = normalizeSheetSnapshot(character.snapshot);
       const currentMoney = numeric(snapshot.currency ?? snapshot.luzentis, 0);
       if (currentMoney < price) throw new Error("Luzentis insuficientes para aprovar a compra.");
       updateCurrency(snapshot, -price);
       snapshot.inventory = uniqueById([...snapshot.inventory, ...instances]);
       character.update(snapshot, { full: true });
+      if (type === "purchase-cart") {
+        const approvedIds = new Set(items.map((line) => line.id));
+        approval.payload.items = allItems.map((line) => approvedIds.has(line.id)
+          ? { ...line, status: "approved", resolvedAt: nowIso(), resolvedBy: actor?.id || "" }
+          : line);
+      }
       this.syncCombatants();
       this.addTransaction({
         type: "purchase",

@@ -4,11 +4,11 @@ import {
   Scene,
   SESSION_ROLES,
   estimateEncounterBalance,
-} from "./solaris-session-domain.js?v=20260620j";
+} from "./solaris-session-domain.js?v=20260621e";
 import {
   SESSION_SOCKET_EVENTS,
   SolarisSessionClient,
-} from "./solaris-session-client.js?v=20260620j";
+} from "./solaris-session-client.js?v=20260621e";
 import {
   ACTIVE_CAMPAIGN_STORAGE_KEY,
   CAMPAIGN_STORAGE_KEY,
@@ -23,11 +23,11 @@ import {
   parseSessionExportBundle,
   serializeCampaignList,
   upsertCampaignSession,
-} from "./solaris-session-persistence.js?v=20260620j";
+} from "./solaris-session-persistence.js?v=20260621e";
 
 const SESSION_SAVE_KEY = "solaris.virtual.table.session.v1";
 const PLAYER_SESSION_KEY = "solaris.virtual.table.playerId";
-const TABLETOP_APP_VERSION = "0.6.0-alpha.5";
+const TABLETOP_APP_VERSION = "0.6.0-alpha.8";
 const DEFAULT_REPORT_OPTIONS = Object.freeze({
   includeFullChat: false,
   includeSecretNotes: false,
@@ -109,10 +109,12 @@ function normalizeScene(scene = {}, currentCharacter = {}) {
     id: scene.id || "local-scene",
     name: scene.name || "Corredor de Manutencao - Nivel 2",
     notes: scene.notes || "Mapa tatico com grid, tokens e zonas da cena.",
+    description: scene.description || scene.notes || "",
     mapImage: scene.mapImage || "",
     gridSize: Number(scene.gridSize || 64),
     gridVisible: scene.gridVisible !== false,
     gridOpacity: Number(scene.gridOpacity ?? 0.38),
+    gridColor: scene.gridColor || "#1aa8ff",
     snapToGrid: scene.snapToGrid !== false,
     metersPerCell: Number(scene.metersPerCell || 1.5),
     columns,
@@ -239,6 +241,8 @@ function destinationLabel(kind = "unassigned") {
   const labels = {
     unassigned: "Sem local definido",
     active: "Ativo",
+    inventory: "Inventario",
+    equip: "Equipar apos compra",
     backpack: "Mochila",
     cube: "Cubo",
     holster: "Coldre",
@@ -297,6 +301,7 @@ export function paginateItems(items = [], page = 1, pageSize = 20) {
 
 const SHOP_CATEGORY_LABELS = {
   all: "Todos",
+  featured: "Destaque",
   common: "Itens comuns",
   weapon: "Armas",
   armor: "Armaduras",
@@ -307,9 +312,33 @@ const SHOP_CATEGORY_LABELS = {
   hook: "Ganchos",
   chip: "Chips modificadores",
   spell: "Magias cosmicas",
+  consumable: "Consumiveis",
   utility: "Utilitarios",
   material: "Materiais",
   service: "Servicos",
+};
+
+const SHOP_MODE_LABELS = {
+  library: "Biblioteca",
+  session: "Sessao",
+  master: "Mestre",
+};
+
+const SHOP_RARITY_LABELS = {
+  all: "Todas as raridades",
+  comum: "Comum",
+  incomum: "Incomum",
+  raro: "Raro",
+  epico: "Epico",
+  lendario: "Lendario",
+};
+
+const SHOP_RARITY_RANK = {
+  comum: 1,
+  incomum: 2,
+  raro: 3,
+  epico: 4,
+  lendario: 5,
 };
 
 function normalizeSearch(value = "") {
@@ -448,14 +477,52 @@ function inferShopCategory(item = {}, fallback = "common") {
   if (text.includes("gancho")) return "hook";
   if (item.category === "chip" || text.includes("chip")) return "chip";
   if (item.category === "cosmos" || text.includes("magia")) return "spell";
+  if (item.consumable || text.includes("consumivel") || text.includes("uso unico")) return "consumable";
   if (text.includes("material")) return "material";
   if (text.includes("servico") || text.includes("serviço")) return "service";
   if (text.includes("utilitario") || text.includes("utilitario")) return "utility";
   return fallback;
 }
 
+function inferShopRarity(item = {}) {
+  const raw = normalizeSearch(item.rarity || item.raridade || item.quality || item.rank || item.tier || "");
+  if (raw.includes("lend")) return "lendario";
+  if (raw.includes("epic") || raw.includes("epico")) return "epico";
+  if (raw.includes("raro") || raw.includes("rare")) return "raro";
+  if (raw.includes("incom")) return "incomum";
+  return "comum";
+}
+
+function formatLuzentis(value = 0) {
+  return `${Math.max(0, Number(value || 0)).toLocaleString("pt-BR")} ℓ`;
+}
+
+function encodeDestination(destination = {}) {
+  const kind = String(destination.kind || "unassigned");
+  const id = String(destination.id || destination.containerId || "");
+  return id ? `${kind}:${id}` : kind;
+}
+
+function decodeDestination(value = "unassigned") {
+  const [kind = "unassigned", ...rest] = String(value || "unassigned").split(":");
+  const id = rest.join(":");
+  return id ? { kind, id, containerId: id } : { kind };
+}
+
+function storageKindForItem(item = {}) {
+  const text = normalizeSearch([item.category, item.type, item.name, item.itemId, item.sessionCategory, ...(item.tags || [])].join(" "));
+  if (text.includes("cubo")) return "cube";
+  if (text.includes("mochila")) return "backpack";
+  if (text.includes("coldre")) return "holster";
+  if (text.includes("bandoleira")) return "bandolier";
+  if (text.includes("gancho")) return "hook";
+  return "";
+}
+
 function normalizeShopCatalogItem(item = {}, fallbackCategory = "common") {
   const category = inferShopCategory(item, fallbackCategory);
+  const rarity = inferShopRarity(item);
+  const tags = Array.isArray(item.tags) ? item.tags.map(String) : String(item.tags || "").split(",").map((entry) => entry.trim()).filter(Boolean);
   const price = Math.max(0, numberFromPrice(item.price ?? item.cost ?? item.officialData?.["Preco em Lz"] ?? item.officialData?.["Preço em Lz"]));
   return {
     ...item,
@@ -464,11 +531,16 @@ function normalizeShopCatalogItem(item = {}, fallbackCategory = "common") {
     sessionCategory: category,
     categoryLabel: SHOP_CATEGORY_LABELS[category] || "Item",
     tier: String(item.tier || item.rank || item.cost || ""),
+    rarity,
+    rarityLabel: SHOP_RARITY_LABELS[rarity] || "Comum",
+    tags,
     price,
+    stock: item.stock ?? item.estoque ?? item.quantityAvailable ?? "",
     weight: item.weight || item.peso || "",
     summary: item.summary || item.effect || item.description || "",
     source: item.source || "Catalogo Solaris",
     type: item.type || item.category || category,
+    requiresApproval: item.requiresApproval ?? item.requerAprovacao ?? false,
   };
 }
 
@@ -1020,11 +1092,18 @@ class SolarisSessionUI {
     this.purchaseDestination = "unassigned";
     this.selectedShopItemId = "";
     this.shopQuery = "";
+    this.shopMode = "session";
     this.shopCategory = "all";
     this.shopTier = "all";
+    this.shopRarity = "all";
+    this.shopMinPrice = "";
+    this.shopMaxPrice = "";
+    this.shopCompatibility = "all";
+    this.shopOnlyInStock = false;
     this.shopSort = "name";
     this.shopPage = 1;
     this.shopCart = [];
+    this.shopTargetCharacterId = "";
     this.lootPanelOpen = true;
     this.lootModalOpen = false;
     this.editingLootPackId = "";
@@ -1033,6 +1112,7 @@ class SolarisSessionUI {
     this.screen = options.initialScreen || (activeRouteView() === "campaigns" ? "campaigns" : "table");
     this.gmForm = null;
     this.sceneEditor = null;
+    this.sceneEditorDrag = null;
     this.encounterEditor = null;
     this.reportPreviewOpen = false;
     this.campaignForm = null;
@@ -1672,12 +1752,12 @@ class SolarisSessionUI {
     });
   }
 
-  approveRequest(approvalId = "") {
-    if (this.client.isConnected) this.client.approveApproval(approvalId);
+  approveRequest(approvalId = "", extra = {}) {
+    if (this.client.isConnected) this.client.approveApproval(approvalId, extra);
   }
 
-  rejectRequest(approvalId = "") {
-    if (this.client.isConnected) this.client.rejectApproval(approvalId);
+  rejectRequest(approvalId = "", extra = {}) {
+    if (this.client.isConnected) this.client.rejectApproval(approvalId, extra.message || "", extra);
   }
 
   shopCatalog() {
@@ -1686,19 +1766,81 @@ class SolarisSessionUI {
       .map((item) => normalizeShopCatalogItem(item, item.sessionCategory || item.category || "common"));
   }
 
+  currentShopCharacter(room = this.room, fallback = this.currentSheetSnapshot()) {
+    const characters = Array.isArray(room.characters) ? room.characters : [];
+    const targetId = this.shopTargetCharacterId || fallback.characterId || fallback.id || this.currentSheetId();
+    const sessionCharacter = characters.find((character) => character.id === targetId || character.characterId === targetId);
+    if (sessionCharacter) return characterSnapshot({ ...(sessionCharacter.snapshot || {}), id: sessionCharacter.id, characterId: sessionCharacter.id, name: sessionCharacter.name });
+    return fallback;
+  }
+
+  shopItemCompatibility(item = {}, character = this.currentSheetSnapshot()) {
+    const inventory = Array.isArray(character.inventory) ? character.inventory : [];
+    const hasStorage = (kind) => inventory.some((entry) => storageKindForItem(entry) === kind);
+    const category = item.sessionCategory || item.category;
+    if (["weapon", "armor", "chip", "spell"].includes(category)) return { status: "compatible", label: "Compativel" };
+    if (category === "cube") return { status: "compatible", label: "Armazenador" };
+    if (category === "consumable" || item.consumable) return { status: hasStorage("backpack") || hasStorage("cube") ? "compatible" : "warning", label: hasStorage("backpack") || hasStorage("cube") ? "Tem destino" : "Sem destino ideal" };
+    return { status: "compatible", label: "Sem requisito" };
+  }
+
+  availableShopDestinations(character = this.currentSheetSnapshot(), item = {}) {
+    const inventory = Array.isArray(character.inventory) ? character.inventory : [];
+    const options = [
+      { kind: "unassigned", label: "Sem local definido" },
+      { kind: "inventory", label: "Inventario solto" },
+      { kind: "active", label: "Ativo" },
+    ];
+    if (["weapon", "armor"].includes(item.sessionCategory)) {
+      options.push({ kind: "equip", label: "Equipar apos compra" });
+    }
+    for (const entry of inventory) {
+      const kind = storageKindForItem(entry);
+      if (!kind) continue;
+      const label = `${destinationLabel(kind)} - ${entry.name || entry.itemId || entry.id}`;
+      options.push({ kind, id: entry.uid || entry.id || entry.itemId, label });
+    }
+    for (const kind of ["backpack", "cube", "holster", "bandolier", "hook"]) {
+      if (!options.some((option) => option.kind === kind)) options.push({ kind, label: destinationLabel(kind) });
+    }
+    return options;
+  }
+
+  defaultDestinationForItem(item = {}) {
+    const destination = decodeDestination(this.purchaseDestination || "unassigned");
+    if (destination.kind && destination.kind !== "unassigned") return destination;
+    if (["weapon", "armor"].includes(item.sessionCategory)) return { kind: "equip" };
+    if (item.sessionCategory === "consumable") return { kind: "active" };
+    return { kind: "unassigned" };
+  }
+
   filteredShopCatalog() {
     const query = normalizeSearch(this.shopQuery);
     const tier = String(this.shopTier || "all");
+    const rarity = String(this.shopRarity || "all");
+    const minPrice = this.shopMinPrice === "" ? null : Math.max(0, Number(this.shopMinPrice || 0));
+    const maxPrice = this.shopMaxPrice === "" ? null : Math.max(0, Number(this.shopMaxPrice || 0));
+    const current = this.currentShopCharacter();
     const items = this.shopCatalog().filter((item) => {
-      const haystack = normalizeSearch([item.name, item.type, item.summary, item.source, item.tier].join(" "));
-      const categoryMatch = this.shopCategory === "all" || item.sessionCategory === this.shopCategory;
+      const haystack = normalizeSearch([item.name, item.type, item.categoryLabel, item.summary, item.effect, item.description, item.source, item.tier, item.rarity, ...(item.tags || [])].join(" "));
+      const categoryMatch = this.shopCategory === "all"
+        || item.sessionCategory === this.shopCategory
+        || (this.shopCategory === "featured" && (item.featured || SHOP_RARITY_RANK[item.rarity] >= 3 || item.price >= 500));
       const tierMatch = tier === "all" || String(item.tier || "").toLowerCase() === tier.toLowerCase();
-      return categoryMatch && tierMatch && (!query || haystack.includes(query));
+      const rarityMatch = rarity === "all" || item.rarity === rarity;
+      const priceMatch = (minPrice === null || item.price >= minPrice) && (maxPrice === null || item.price <= maxPrice);
+      const stockMatch = !this.shopOnlyInStock || item.stock === "" || Number(item.stock) > 0;
+      const compatibility = this.shopItemCompatibility(item, current);
+      const compatibilityMatch = this.shopCompatibility === "all"
+        || compatibility.status === this.shopCompatibility
+        || (this.shopCompatibility === "buyable" && item.price <= Number(current.currency || current.luzentis || 0));
+      return categoryMatch && tierMatch && rarityMatch && priceMatch && stockMatch && compatibilityMatch && (!query || haystack.includes(query));
     });
     return items.sort((a, b) => {
       if (this.shopSort === "price-asc") return a.price - b.price || a.name.localeCompare(b.name);
       if (this.shopSort === "price-desc") return b.price - a.price || a.name.localeCompare(b.name);
       if (this.shopSort === "tier") return String(a.tier || "Z").localeCompare(String(b.tier || "Z")) || a.name.localeCompare(b.name);
+      if (this.shopSort === "rarity") return (SHOP_RARITY_RANK[b.rarity] || 0) - (SHOP_RARITY_RANK[a.rarity] || 0) || a.name.localeCompare(b.name);
       if (this.shopSort === "category") return String(a.categoryLabel).localeCompare(String(b.categoryLabel)) || a.name.localeCompare(b.name);
       return a.name.localeCompare(b.name);
     });
@@ -1709,8 +1851,16 @@ class SolarisSessionUI {
     if (!item) return;
     const existing = this.shopCart.find((line) => line.item.id === item.id);
     if (existing) existing.quantity += 1;
-    else this.shopCart.push({ id: createId("cart-line"), item, quantity: 1, price: item.price });
-    if (this.client.isConnected) this.client.updateShopCart(this.currentSheetId(), this.shopCart);
+    else this.shopCart.push({
+      id: createId("cart-line"),
+      item,
+      quantity: 1,
+      price: item.price,
+      destination: this.defaultDestinationForItem(item),
+      status: "draft",
+      approvalRequired: this.shopMode === "session" && this.client.isConnected,
+    });
+    this.syncShopCartState();
     this.options.notify(`${item.name} entrou no carrinho.`);
     this.render();
   }
@@ -1726,16 +1876,49 @@ class SolarisSessionUI {
     this.render();
   }
 
+  compareShopItem(itemId = "") {
+    const item = this.shopCatalog().find((entry) => entry.id === itemId);
+    if (!item) return;
+    const current = this.currentSheetSnapshot();
+    const equipped = item.sessionCategory === "weapon"
+      ? (current.equipment?.weapons?.[0] || current.weapon || current.mainWeapon)
+      : item.sessionCategory === "armor"
+        ? (current.equipment?.armor || current.armor)
+        : null;
+    const equippedName = typeof equipped === "string" ? equipped : equipped?.name;
+    this.options.notify(equippedName ? `${item.name} comparado com ${equippedName}.` : `${item.name}: nenhum equipamento equivalente equipado.`);
+  }
+
+  sendShopItemToChat(itemId = "") {
+    const item = this.shopCatalog().find((entry) => entry.id === itemId);
+    if (!item) return;
+    this.sendChat(`${item.name} (${item.categoryLabel}, ${item.rarityLabel || "Comum"}) - ${formatLuzentis(item.price)}. ${item.summary || item.description || "Item da Loja Solaris."}`);
+  }
+
   removeShopCartLine(lineId = "") {
     this.shopCart = this.shopCart.filter((line) => line.id !== lineId);
-    if (this.client.isConnected) this.client.updateShopCart(this.currentSheetId(), this.shopCart);
+    this.syncShopCartState();
     this.render();
   }
 
   clearShopCart() {
     this.shopCart = [];
-    if (this.client.isConnected) this.client.updateShopCart(this.currentSheetId(), []);
+    this.syncShopCartState();
     this.render();
+  }
+
+  updateShopCartLine(lineId = "", patch = {}) {
+    this.shopCart = this.shopCart.map((line) => line.id === lineId ? { ...line, ...patch } : line);
+    this.syncShopCartState();
+    this.render();
+  }
+
+  syncShopCartState() {
+    if (!this.client.isConnected) return false;
+    return this.client.updateShopCart(this.currentShopCharacter(this.client.room || this.room).id || this.currentSheetId(), this.shopCart, {
+      mode: this.shopMode,
+      destination: decodeDestination(this.purchaseDestination || "unassigned"),
+    });
   }
 
   monsterById(monsterId = "") {
@@ -1822,13 +2005,33 @@ class SolarisSessionUI {
     this.render();
   }
 
-  requestShopCartPurchase({ direct = false } = {}) {
+  requestShopCartPurchase({ direct = false, asLoot = false } = {}) {
     if (!this.shopCart.length) {
       this.options.notify("Carrinho vazio.");
       return;
     }
     const total = this.shopCart.reduce((sum, line) => sum + cartLineTotal(line), 0);
-    const current = this.currentSheetSnapshot();
+    const room = this.client.isConnected && this.client.room ? normalizeServerRoom(this.client.room, this.options.getCurrentCharacter()) : this.room;
+    const current = this.currentShopCharacter(room, this.currentSheetSnapshot());
+    if (asLoot) {
+      const pack = {
+        id: createId("loot"),
+        status: "pending",
+        name: `Carrinho convertido em loot - ${current.name || "Personagem"}`,
+        source: "Loja Solaris",
+        items: this.shopCart,
+        luzentis: 0,
+        assignedTo: current.id || current.characterId,
+        notes: `Criado a partir de carrinho no modo ${SHOP_MODE_LABELS[this.shopMode] || this.shopMode}.`,
+      };
+      if (this.client.isConnected) this.client.createLootPack(pack);
+      else {
+        this.room.lootPacks = [pack, ...(this.room.lootPacks || [])];
+      }
+      this.options.notify("Carrinho convertido em pacote de loot.");
+      this.clearShopCart();
+      return;
+    }
     if (Number(current.currency || current.luzentis || 0) < total) {
       this.options.notify("Luzentis insuficientes para essa compra.", "tech-error");
       return;
@@ -1838,10 +2041,11 @@ class SolarisSessionUI {
       this.clearShopCart();
       return;
     }
-    this.client.requestShopPurchase(this.currentSheetId(), this.shopCart, {
+    this.client.requestShopPurchase(current.id || current.characterId || this.currentSheetId(), this.shopCart, {
       total,
-      direct,
-      destination: { kind: this.purchaseDestination || "unassigned" },
+      direct: direct || this.shopMode === "master",
+      mode: this.shopMode,
+      destination: decodeDestination(this.purchaseDestination || "unassigned"),
     });
     this.options.notify(direct ? "Compra enviada como acao direta do mestre." : "Pedido de compra enviado ao mestre.");
     this.clearShopCart();
@@ -1856,7 +2060,7 @@ class SolarisSessionUI {
       itemId: line.item.id,
       sourceItemId: line.item.id,
       price: line.price,
-      location: { kind: this.purchaseDestination || "unassigned" },
+      location: line.destination || decodeDestination(this.purchaseDestination || "unassigned"),
     })));
     this.options.onRemoteCharacterUpdate({
       ...current,
@@ -3080,6 +3284,259 @@ class SolarisSessionUI {
     `;
   }
 
+  renderSessionShop(room, current) {
+    const filtered = this.filteredShopCatalog();
+    const catalog = this.shopCatalog();
+    const tiers = [...new Set(catalog.map((item) => item.tier).filter(Boolean))].slice(0, 16);
+    const paginated = paginateItems(filtered, this.shopPage, 20);
+    const localPlayer = this.localPlayer(room);
+    const isGm = localPlayer?.role === SESSION_ROLES.GM || localPlayer?.isGM;
+    if (!isGm && this.shopMode === "master") this.shopMode = "session";
+    const buyer = this.currentShopCharacter(room, current);
+    const balance = Number(buyer.currency || buyer.luzentis || 0);
+    const cartTotal = this.shopCart.reduce((sum, line) => sum + cartLineTotal(line), 0);
+    const taxRate = Number(room.shopState?.taxRate || room.shopState?.policies?.transactionFeePercent || 0);
+    const tax = Math.round(cartTotal * (taxRate / 100));
+    const grandTotal = cartTotal + tax;
+    const characters = Array.isArray(room.characters) ? room.characters : [];
+    const modeNote = this.shopMode === "library"
+      ? "Compra local na ficha, sem depender da sala."
+      : this.shopMode === "master"
+        ? "Mestre entrega, compra ou converte em loot."
+        : "Compra de sessao pode exigir aprovacao do mestre.";
+    const categoryCount = (value) => value === "all"
+      ? catalog.length
+      : catalog.filter((item) => value === "featured"
+        ? (item.featured || SHOP_RARITY_RANK[item.rarity] >= 3 || item.price >= 500)
+        : item.sessionCategory === value).length;
+    return `
+      <section class="vtt-panel vtt-shop-panel solaris-store-shell" aria-label="Loja Solaris">
+        <aside class="solaris-store-sidebar">
+          <div class="solaris-store-brand">
+            <span>MERCADO</span>
+            <strong>SOLARIS</strong>
+          </div>
+          <nav aria-label="Categorias da Loja Solaris">
+            ${Object.entries(SHOP_CATEGORY_LABELS).map(([value, label]) => `
+              <button type="button" class="solaris-store-category ${this.shopCategory === value ? "active" : ""}" data-vtt-shop-category-button="${escapeHtml(value)}">
+                <span>${escapeHtml(label)}</span>
+                <small>${escapeHtml(categoryCount(value))}</small>
+              </button>
+            `).join("")}
+          </nav>
+        </aside>
+        <div class="solaris-store-main">
+          <header class="solaris-store-topbar">
+            <div>
+              <h3>Loja Solaris</h3>
+              <span>${escapeHtml(modeNote)}</span>
+            </div>
+            <label class="solaris-store-search">
+              <span>Buscar</span>
+              <input type="search" value="${escapeHtml(this.shopQuery)}" placeholder="Buscar item ou palavra-chave..." data-vtt-shop-query />
+            </label>
+            <label class="solaris-store-filter compact">
+              <span>Modo</span>
+              <select data-vtt-shop-mode>
+                ${Object.entries(SHOP_MODE_LABELS).filter(([mode]) => isGm || mode !== "master").map(([mode, label]) => `
+                  <option value="${escapeHtml(mode)}" ${this.shopMode === mode ? "selected" : ""}>${escapeHtml(label)}</option>
+                `).join("")}
+              </select>
+            </label>
+            <div class="solaris-store-balance">
+              <small>Luzentis</small>
+              <strong>${formatLuzentis(balance)}</strong>
+            </div>
+          </header>
+          <div class="solaris-store-filters">
+            <label class="solaris-store-filter">
+              <span>Tier</span>
+              <select data-vtt-shop-tier>
+                <option value="all">Todos os tiers</option>
+                ${tiers.map((tier) => `<option value="${escapeHtml(tier)}" ${this.shopTier === tier ? "selected" : ""}>Tier ${escapeHtml(tier)}</option>`).join("")}
+              </select>
+            </label>
+            <label class="solaris-store-filter">
+              <span>Raridade</span>
+              <select data-vtt-shop-rarity>
+                ${Object.entries(SHOP_RARITY_LABELS).map(([value, label]) => `<option value="${escapeHtml(value)}" ${this.shopRarity === value ? "selected" : ""}>${escapeHtml(label)}</option>`).join("")}
+              </select>
+            </label>
+            <label class="solaris-store-filter">
+              <span>Preco min.</span>
+              <input type="number" min="0" value="${escapeHtml(this.shopMinPrice)}" data-vtt-shop-min-price />
+            </label>
+            <label class="solaris-store-filter">
+              <span>Preco max.</span>
+              <input type="number" min="0" value="${escapeHtml(this.shopMaxPrice)}" data-vtt-shop-max-price />
+            </label>
+            <label class="solaris-store-filter">
+              <span>Ordenar</span>
+              <select data-vtt-shop-sort>
+                <option value="name" ${this.shopSort === "name" ? "selected" : ""}>Nome A-Z</option>
+                <option value="price-asc" ${this.shopSort === "price-asc" ? "selected" : ""}>Preco menor</option>
+                <option value="price-desc" ${this.shopSort === "price-desc" ? "selected" : ""}>Preco maior</option>
+                <option value="tier" ${this.shopSort === "tier" ? "selected" : ""}>Tier</option>
+                <option value="rarity" ${this.shopSort === "rarity" ? "selected" : ""}>Raridade</option>
+                <option value="category" ${this.shopSort === "category" ? "selected" : ""}>Categoria</option>
+              </select>
+            </label>
+            <label class="solaris-store-check">
+              <input type="checkbox" ${this.shopOnlyInStock ? "checked" : ""} data-vtt-shop-in-stock />
+              <span>Em estoque</span>
+            </label>
+            <label class="solaris-store-filter">
+              <span>Compat.</span>
+              <select data-vtt-shop-compatibility>
+                <option value="all" ${this.shopCompatibility === "all" ? "selected" : ""}>Todos</option>
+                <option value="compatible" ${this.shopCompatibility === "compatible" ? "selected" : ""}>Compativeis</option>
+                <option value="warning" ${this.shopCompatibility === "warning" ? "selected" : ""}>Com alerta</option>
+                <option value="buyable" ${this.shopCompatibility === "buyable" ? "selected" : ""}>Compraveis</option>
+              </select>
+            </label>
+          </div>
+          <div class="solaris-store-content">
+            <div class="solaris-store-results">
+              <div class="solaris-store-result-heading">
+                <span>${paginated.totalItems} item(ns) encontrados</span>
+                <small>Pagina ${paginated.page} de ${paginated.totalPages}</small>
+              </div>
+              <div class="solaris-store-grid">
+                ${paginated.items.map((item) => this.renderShopCard(item, buyer)).join("") || `
+                  <div class="solaris-store-empty">
+                    <strong>Nenhum item encontrado.</strong>
+                    <span>Ajuste busca, filtros ou categoria.</span>
+                  </div>
+                `}
+              </div>
+              <nav class="vtt-shop-pages solaris-store-pages" aria-label="Paginas da loja">
+                <button type="button" data-vtt-shop-page="${paginated.page - 1}" ${paginated.hasPrevious ? "" : "disabled"}>Anterior</button>
+                <span>${paginated.page} / ${paginated.totalPages}</span>
+                <button type="button" data-vtt-shop-page="${paginated.page + 1}" ${paginated.hasNext ? "" : "disabled"}>Proxima</button>
+              </nav>
+            </div>
+            <aside class="solaris-store-cart">
+              <div class="solaris-store-cart-head">
+                <div>
+                  <strong>Carrinho</strong>
+                  <small>${escapeHtml(SHOP_MODE_LABELS[this.shopMode] || this.shopMode)} - ${escapeHtml(buyer.name || "Personagem")}</small>
+                </div>
+                <span>${this.shopCart.length}/10</span>
+              </div>
+              ${isGm && characters.length ? `
+                <label class="solaris-store-filter">
+                  <span>Personagem</span>
+                  <select data-vtt-shop-target-character>
+                    ${characters.map((character) => `<option value="${escapeHtml(character.id)}" ${(this.shopTargetCharacterId || buyer.id) === character.id ? "selected" : ""}>${escapeHtml(character.name || character.id)}</option>`).join("")}
+                  </select>
+                </label>
+              ` : ""}
+              <div class="solaris-store-cart-lines">
+                ${this.shopCart.length ? this.shopCart.map((line) => {
+                  const destinations = this.availableShopDestinations(buyer, line.item);
+                  const selectedDestination = encodeDestination(line.destination || this.defaultDestinationForItem(line.item));
+                  return `
+                    <article class="solaris-store-cart-item">
+                      <div>
+                        <strong>${escapeHtml(line.item.name)}</strong>
+                        <small>${escapeHtml(line.item.categoryLabel || line.item.type)} - ${formatLuzentis(line.price)}</small>
+                      </div>
+                      <label>
+                        <span>Qtd.</span>
+                        <input type="number" min="1" max="99" value="${escapeHtml(line.quantity)}" data-vtt-cart-qty="${escapeHtml(line.id)}" />
+                      </label>
+                      <label>
+                        <span>Destino</span>
+                        <select data-vtt-cart-destination="${escapeHtml(line.id)}">
+                          ${destinations.map((destination) => {
+                            const value = encodeDestination(destination);
+                            return `<option value="${escapeHtml(value)}" ${selectedDestination === value ? "selected" : ""}>${escapeHtml(destination.label)}</option>`;
+                          }).join("")}
+                        </select>
+                      </label>
+                      <footer>
+                        <span>${formatLuzentis(cartLineTotal(line))}</span>
+                        <button type="button" data-vtt-cart-remove="${escapeHtml(line.id)}">Remover</button>
+                      </footer>
+                    </article>
+                  `;
+                }).join("") : `
+                  <div class="solaris-store-empty small">
+                    <strong>Carrinho vazio</strong>
+                    <span>Adicione itens para comprar ou enviar ao mestre.</span>
+                  </div>
+                `}
+              </div>
+              <div class="solaris-store-total">
+                <span><small>Subtotal</small><strong>${formatLuzentis(cartTotal)}</strong></span>
+                <span><small>Taxa</small><strong>${formatLuzentis(tax)}</strong></span>
+                <span><small>Total</small><strong>${formatLuzentis(grandTotal)}</strong></span>
+                <span><small>Restante</small><strong class="${balance - grandTotal < 0 ? "danger" : ""}">${formatLuzentis(balance - grandTotal)}</strong></span>
+              </div>
+              <div class="solaris-store-alert ${balance - grandTotal < 0 ? "danger" : ""}">
+                ${balance - grandTotal < 0 ? "Luzentis insuficientes." : "Destino sem local definido continua apenas como aviso visual."}
+              </div>
+              <footer class="solaris-store-actionbar">
+                <button type="button" data-vtt-shop-action="clear-cart" ${this.shopCart.length ? "" : "disabled"}>Limpar</button>
+                <button type="button" data-vtt-shop-action="request-purchase" ${this.shopCart.length ? "" : "disabled"}>${this.client.isConnected && !isGm && this.shopMode !== "library" ? "Solicitar compra" : "Comprar"}</button>
+                ${isGm ? `<button type="button" data-vtt-shop-action="direct-purchase" ${this.shopCart.length ? "" : "disabled"}>Compra mestre</button>` : ""}
+                ${isGm ? `<button type="button" data-vtt-shop-action="cart-to-loot" ${this.shopCart.length ? "" : "disabled"}>Virar loot</button>` : ""}
+              </footer>
+              ${isGm ? this.renderMasterCarts(room) : ""}
+            </aside>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  renderShopCard(item, current = this.currentSheetSnapshot()) {
+    const compatibility = this.shopItemCompatibility(item, current);
+    const hasMoney = Number(current.currency || current.luzentis || 0) >= Number(item.price || 0);
+    const detail = [
+      item.damage ? `Dano ${item.damage}` : "",
+      item.attack ? `Ataque ${item.attack}` : "",
+      item.range ? `Alcance ${item.range}` : "",
+      item.ca ? `CA ${item.ca}` : "",
+      item.capacity ? `Cap. ${item.capacity}` : "",
+      item.weight ? `Peso ${item.weight}` : "",
+    ].filter(Boolean).join(" - ");
+    const badges = [
+      item.source ? "Oficial Livro 5" : "",
+      item.requiresApproval || this.shopMode === "session" ? "Requer aprovacao" : "",
+      compatibility.label,
+      item.stock !== "" ? "Em estoque" : "",
+      item.consumable || item.sessionCategory === "consumable" ? "Consumivel" : "",
+      item.sessionCategory === "weapon" ? "Arma" : "",
+      item.sessionCategory === "armor" ? "Armadura" : "",
+      item.sessionCategory === "cube" ? "Cubo" : "",
+      !hasMoney ? "Luzentis insuficientes" : "",
+    ].filter(Boolean).slice(0, 5);
+    return `
+      <article class="vtt-shop-card solaris-store-card rarity-${escapeHtml(item.rarity || "comum")} ${hasMoney ? "" : "locked"}" data-vtt-shop-card="${escapeHtml(item.id)}">
+        <header>
+          <span class="solaris-store-card-rarity">${escapeHtml(item.rarityLabel || "Comum")}</span>
+          <strong>${escapeHtml(item.name)}</strong>
+          <small>${escapeHtml([item.tier ? `Tier ${item.tier}` : "", item.categoryLabel, item.type].filter(Boolean).join(" - "))}</small>
+        </header>
+        <div class="solaris-store-card-media">
+          ${item.image || item.imageDataUrl ? `<img src="${escapeHtml(item.image || item.imageDataUrl)}" alt="" />` : `<span>${escapeHtml(tokenInitial(item))}</span>`}
+        </div>
+        <p>${escapeHtml(detail || item.summary || "Item oficial da biblioteca Solaris.")}</p>
+        <div class="solaris-store-badges">
+          ${badges.map((badge) => `<span class="solaris-store-badge">${escapeHtml(badge)}</span>`).join("")}
+        </div>
+        <footer>
+          <em>${escapeHtml(item.source || "Livro 5")}</em>
+          <strong>${formatLuzentis(item.price || 0)}</strong>
+          <button type="button" data-vtt-shop-details="${escapeHtml(item.id)}">Detalhes</button>
+          <button type="button" data-vtt-shop-compare="${escapeHtml(item.id)}">Comparar</button>
+          <button type="button" data-vtt-shop-add="${escapeHtml(item.id)}">Adicionar</button>
+        </footer>
+      </article>
+    `;
+  }
+
   renderMasterCarts(room) {
     const carts = Object.entries(room.shopState?.carts || {});
     if (!carts.length) {
@@ -3093,6 +3550,49 @@ class SolarisSessionUI {
           const total = (cart.items || []).reduce((sum, line) => sum + cartLineTotal(line), 0);
           return `<small>${escapeHtml(player?.name || playerId)}: ${escapeHtml(cart.items?.length || 0)} item(ns), ${total.toLocaleString("pt-BR")} â„“</small>`;
         }).join("")}
+      </div>
+    `;
+  }
+
+  renderMasterCarts(room) {
+    const carts = Object.entries(room.shopState?.carts || {});
+    const approvals = (room.approvals || []).filter((approval) => approval.status === "pending" && approval.type === "purchase-cart");
+    return `
+      <div class="vtt-master-carts solaris-store-master-carts">
+        <strong>Carrinhos da mesa</strong>
+        ${carts.length ? carts.slice(0, 5).map(([playerId, cart]) => {
+          const player = (room.players || []).find((entry) => entry.id === playerId);
+          const total = (cart.items || []).reduce((sum, line) => sum + cartLineTotal(line), 0);
+          return `<small>${escapeHtml(player?.name || playerId)}: ${escapeHtml(cart.items?.length || 0)} item(ns), ${formatLuzentis(total)}</small>`;
+        }).join("") : "<small>Nenhum carrinho enviado em tempo real.</small>"}
+        <strong>Pedidos pendentes</strong>
+        ${approvals.length ? approvals.slice(0, 4).map((approval) => {
+          const requester = (room.players || []).find((entry) => entry.id === approval.requestedBy);
+          const lines = Array.isArray(approval.payload?.items) ? approval.payload.items : [];
+          return `
+            <article>
+              <div>
+                <span>${escapeHtml(requester?.name || "Jogador")}</span>
+                <small>${escapeHtml(approval.message || "Pedido de compra")}</small>
+              </div>
+              ${lines.slice(0, 4).map((line) => `
+                <div class="solaris-store-master-line">
+                  <small>${escapeHtml(line.item?.name || line.itemId || "Item")} - ${formatLuzentis(cartLineTotal(line))} - ${escapeHtml(line.status || "pending")}</small>
+                  ${line.status === "approved" || line.status === "rejected" ? "" : `
+                    <span>
+                      <button type="button" data-vtt-approval-approve-line="${escapeHtml(approval.id)}" data-line-id="${escapeHtml(line.id)}">Aprovar item</button>
+                      <button type="button" data-vtt-approval-reject-line="${escapeHtml(approval.id)}" data-line-id="${escapeHtml(line.id)}">Rejeitar</button>
+                    </span>
+                  `}
+                </div>
+              `).join("")}
+              <footer>
+                <button type="button" data-vtt-approval-approve="${escapeHtml(approval.id)}">Aprovar carrinho</button>
+                <button type="button" data-vtt-approval-reject="${escapeHtml(approval.id)}">Rejeitar carrinho</button>
+              </footer>
+            </article>
+          `;
+        }).join("") : "<small>Nenhuma compra aguardando aprovacao.</small>"}
       </div>
     `;
   }
@@ -3179,6 +3679,69 @@ class SolarisSessionUI {
     `;
   }
 
+  renderItemDetailModal() {
+    const item = this.selectedShopItemId ? this.shopCatalog().find((entry) => entry.id === this.selectedShopItemId) : null;
+    if (!item) return "";
+    const room = this.client.isConnected && this.client.room ? normalizeServerRoom(this.client.room, this.options.getCurrentCharacter()) : this.room;
+    const current = this.currentShopCharacter(room, this.currentSheetSnapshot());
+    const compatibility = this.shopItemCompatibility(item, current);
+    const hasMoney = Number(current.currency || current.luzentis || 0) >= Number(item.price || 0);
+    const rows = [
+      ["Categoria", item.categoryLabel],
+      ["Tipo", item.type || item.categoryLabel],
+      ["Tier", item.tier || "-"],
+      ["Raridade", item.rarityLabel || "Comum"],
+      ["Preco", formatLuzentis(item.price || 0)],
+      ["Estoque", item.stock === "" ? "Indefinido" : item.stock],
+      ["Peso", item.weight || item.peso || "-"],
+      ["Fonte", item.source || "Livro 5"],
+      ["Dano", item.damage || item.dano || ""],
+      ["Alcance", item.range || item.alcance || ""],
+      ["CA", item.ca || item.CA || ""],
+      ["Slots", item.slots || item.modSlots || ""],
+      ["Capacidade", item.capacity || item.capacidade || ""],
+      ["Custo", item.cost || item.custo || ""],
+      ["Acao", item.action || item.acao || ""],
+      ["Duracao", item.duration || item.duracao || ""],
+    ].filter(([, value]) => value !== undefined && value !== null && value !== "");
+    const description = item.description || item.summary || item.effect || item.effects || "Item oficial da biblioteca Solaris. Use os campos acima como referencia rapida de mesa.";
+    return `
+      <div class="vtt-modal-backdrop" data-vtt-modal-close="item">
+        <section class="vtt-modal vtt-item-detail-modal solaris-store-modal" role="dialog" aria-modal="true">
+          <header>
+            <div>
+              <span>${escapeHtml(item.categoryLabel)} / ${escapeHtml(item.rarityLabel || "Comum")}</span>
+              <h3>${escapeHtml(item.name)}</h3>
+            </div>
+            <button type="button" data-vtt-modal-close="item">Fechar</button>
+          </header>
+          <div class="vtt-item-detail-body solaris-store-detail-body">
+            <div class="vtt-item-detail-icon">${item.image || item.imageDataUrl ? `<img src="${escapeHtml(item.image || item.imageDataUrl)}" alt="" />` : `<span>${escapeHtml(tokenInitial(item))}</span>`}</div>
+            <dl>
+              ${rows.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}
+            </dl>
+            <section>
+              <h4>Descricao e uso em mesa</h4>
+              <p>${escapeHtml(description)}</p>
+              ${item.requirements ? `<p><strong>Requisitos:</strong> ${escapeHtml(item.requirements)}</p>` : ""}
+              <p><strong>Compatibilidade:</strong> ${escapeHtml(compatibility.label)}.</p>
+              <p><strong>Politica da sessao:</strong> ${this.shopMode === "session" ? "Pode exigir aprovacao do mestre." : this.shopMode === "master" ? "Mestre pode entregar sem custo ou converter em loot." : "Compra local imediata."}</p>
+              ${hasMoney ? "" : `<p class="solaris-store-alert danger">Luzentis insuficientes para ${escapeHtml(current.name || "personagem")}.</p>`}
+              ${item.tags?.length ? `<p><strong>Tags:</strong> ${item.tags.map(escapeHtml).join(", ")}</p>` : ""}
+            </section>
+          </div>
+          <footer>
+            <button type="button" data-vtt-shop-add="${escapeHtml(item.id)}">Adicionar ao Carrinho</button>
+            <button type="button" data-vtt-shop-buy-now="${escapeHtml(item.id)}">${this.client.isConnected && this.shopMode === "session" ? "Solicitar Compra" : "Comprar Agora"}</button>
+            <button type="button" data-vtt-shop-compare="${escapeHtml(item.id)}">Comparar</button>
+            <button type="button" data-vtt-shop-send-chat="${escapeHtml(item.id)}">Enviar ao Chat</button>
+            <button type="button" data-vtt-modal-close="item">Fechar</button>
+          </footer>
+        </section>
+      </div>
+    `;
+  }
+
   renderLootModal(room) {
     if (!this.lootModalOpen) return "";
     const pack = this.editingLootPackId ? (room.lootPacks || []).find((entry) => entry.id === this.editingLootPackId) : null;
@@ -3186,7 +3749,7 @@ class SolarisSessionUI {
     const catalog = this.shopCatalog().slice(0, 160);
     return `
       <div class="vtt-modal-backdrop" data-vtt-modal-close="loot">
-        <section class="vtt-modal vtt-loot-modal" role="dialog" aria-modal="true">
+        <section class="vtt-modal vtt-loot-modal solaris-modal" role="dialog" aria-modal="true">
           <header>
             <div>
               <span>Distribuicao de Loot</span>
@@ -3235,7 +3798,7 @@ class SolarisSessionUI {
     const abilities = Array.isArray(snapshot.abilities) ? snapshot.abilities : [];
     return `
       <div class="vtt-modal-backdrop" data-vtt-modal-close="monster">
-        <section class="vtt-modal vtt-monster-sheet-modal" role="dialog" aria-modal="true">
+        <section class="vtt-modal vtt-monster-sheet-modal solaris-modal-large" role="dialog" aria-modal="true">
           <header>
             <div>
               <span>${escapeHtml([snapshot.tier ? `Tier ${snapshot.tier}` : "", snapshot.role || snapshot.type || ""].filter(Boolean).join(" - "))}</span>
@@ -3287,7 +3850,7 @@ class SolarisSessionUI {
     if (!this.recoveryNotice) return "";
     return `
       <div class="vtt-modal-backdrop vtt-recovery-backdrop">
-        <section class="vtt-modal vtt-recovery-modal" role="dialog" aria-modal="true">
+        <section class="vtt-modal vtt-recovery-modal solaris-modal" role="dialog" aria-modal="true">
           <header>
             <div>
               <span>recuperacao</span>
@@ -3725,10 +4288,19 @@ class SolarisSessionUI {
     return scenes.find((scene) => scene.id === sceneId) || room.scene || scenes[0] || {};
   }
 
+  sceneEditorSelection(scene = this.sceneEditorScene()) {
+    const selection = this.sceneEditor?.selection || {};
+    const kind = selection.kind || "";
+    const id = selection.id || "";
+    const key = { token: "tokens", zone: "zones", area: "areas", objective: "objectives" }[kind];
+    const entry = key ? (scene[key] || []).find((item) => item.id === id) : null;
+    return entry ? { kind, id, entry, key } : { kind: "", id: "", entry: null, key: "" };
+  }
+
   openSceneEditor(sceneId = "") {
     const room = this.activeRoomSnapshot();
     const target = sceneId || room.activeSceneId || room.scene?.id || room.sceneList?.[0]?.id || "";
-    this.sceneEditor = { sceneId: target };
+    this.sceneEditor = { sceneId: target, selection: null };
     this.gmPanelOpen = false;
     this.render();
   }
@@ -3739,7 +4311,16 @@ class SolarisSessionUI {
   }
 
   selectSceneEditorScene(sceneId = "") {
-    this.sceneEditor = { sceneId };
+    this.sceneEditor = { sceneId, selection: null };
+    this.render();
+  }
+
+  selectSceneEditorEntry(kind = "", id = "") {
+    if (!this.sceneEditor) return;
+    this.sceneEditor = {
+      ...this.sceneEditor,
+      selection: kind && id ? { kind, id } : null,
+    };
     this.render();
   }
 
@@ -3757,7 +4338,7 @@ class SolarisSessionUI {
       gridColor: room.scene?.gridColor || "#1aa8ff",
     }).toJSON();
     this.dispatchGmEvent(GAME_EVENT_TYPES.GM_SCENE_CREATE, { scene: next });
-    this.sceneEditor = { sceneId: next.id };
+    this.sceneEditor = { sceneId: next.id, selection: null };
   }
 
   duplicateSceneEditorScene() {
@@ -3775,7 +4356,7 @@ class SolarisSessionUI {
       measurements: [],
     }).toJSON();
     this.dispatchGmEvent(GAME_EVENT_TYPES.GM_SCENE_CREATE, { scene: copy });
-    this.sceneEditor = { sceneId: copy.id };
+    this.sceneEditor = { sceneId: copy.id, selection: null };
   }
 
   exportSceneEditorScene() {
@@ -3812,20 +4393,122 @@ class SolarisSessionUI {
     this.dispatchGmEvent(exists ? GAME_EVENT_TYPES.GM_SCENE_UPDATE : GAME_EVENT_TYPES.GM_SCENE_CREATE, exists
       ? { sceneId: id, patch: scene }
       : { scene });
-    this.sceneEditor = { sceneId: id };
+    this.sceneEditor = { sceneId: id, selection: this.sceneEditor?.selection || null };
     this.options.notify("Cena salva no editor visual.");
+  }
+
+  updateSceneEditorEntry(kind = "", id = "", patch = {}) {
+    const scene = this.sceneEditorScene();
+    const key = { token: "tokens", zone: "zones", area: "areas", objective: "objectives" }[kind];
+    if (!scene?.id || !key || !id) return false;
+    const nextEntries = (scene[key] || []).map((entry) => entry.id === id ? { ...entry, ...patch, id } : entry);
+    const nextScene = new Scene({ ...scene, [key]: nextEntries }).toJSON();
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_SCENE_UPDATE, { sceneId: scene.id, patch: nextScene });
+    this.sceneEditor = { sceneId: scene.id, selection: { kind, id } };
+    return true;
+  }
+
+  moveSceneEditorEntry(kind = "", id = "", point = {}) {
+    const scene = this.sceneEditorScene();
+    const maxX = Math.max(1, Number(scene.columns || 12));
+    const maxY = Math.max(1, Number(scene.rows || 8));
+    const patch = {
+      x: clamp(Number(point.x || 1), 1, maxX),
+      y: clamp(Number(point.y || 1), 1, maxY),
+    };
+    if (this.updateSceneEditorEntry(kind, id, patch)) {
+      this.options.notify(`Elemento movido para ${gridLabel(patch.x, patch.y)}.`);
+    }
+  }
+
+  saveSceneEditorEntry(form) {
+    const data = new FormData(form);
+    const kind = String(data.get("kind") || "");
+    const id = String(data.get("id") || "");
+    const bool = (name) => data.get(name) === "on";
+    const num = (name, fallback = 0) => Number(data.get(name) || fallback);
+    const patchByKind = {
+      objective: {
+        title: String(data.get("title") || "Objetivo"),
+        label: String(data.get("title") || "Objetivo"),
+        description: String(data.get("description") || ""),
+        progressCurrent: num("progressCurrent", 0),
+        progressMax: Math.max(1, num("progressMax", 1)),
+        x: num("x", 1),
+        y: num("y", 1),
+        color: String(data.get("color") || "#f2c35b"),
+        icon: String(data.get("icon") || ""),
+        reward: String(data.get("reward") || ""),
+        gmNotes: String(data.get("gmNotes") || ""),
+        completed: bool("completed"),
+        hidden: bool("hidden"),
+        visibleToPlayers: bool("visibleToPlayers") && !bool("hidden"),
+      },
+      zone: {
+        label: String(data.get("label") || "Zona"),
+        type: String(data.get("type") || "danger"),
+        x: num("x", 1),
+        y: num("y", 1),
+        width: Math.max(1, num("width", 1)),
+        height: Math.max(1, num("height", 1)),
+        shape: String(data.get("shape") || "rectangle"),
+        direction: String(data.get("direction") || ""),
+        opacity: Math.max(0, Math.min(1, num("opacity", 0.32))),
+        color: String(data.get("color") || ""),
+        description: String(data.get("description") || ""),
+        notes: String(data.get("description") || ""),
+        mechanicalEffect: String(data.get("mechanicalEffect") || ""),
+        duration: String(data.get("duration") || ""),
+        hidden: bool("hidden"),
+        visibleToPlayers: bool("visibleToPlayers") && !bool("hidden"),
+      },
+      area: {
+        label: String(data.get("label") || "Area"),
+        type: String(data.get("type") || "circle"),
+        x: num("x", 1),
+        y: num("y", 1),
+        radius: Math.max(0, num("radius", 2)),
+        length: Math.max(1, num("length", 4)),
+        width: Math.max(1, num("width", 1)),
+        direction: String(data.get("direction") || "east"),
+        color: String(data.get("color") || ""),
+        source: String(data.get("source") || ""),
+        hidden: bool("hidden"),
+        visibleToPlayers: bool("visibleToPlayers") && !bool("hidden"),
+      },
+      token: {
+        name: String(data.get("name") || "Token"),
+        entityType: String(data.get("entityType") || "object"),
+        entityId: String(data.get("entityId") || ""),
+        x: num("x", 1),
+        y: num("y", 1),
+        size: Math.max(1, num("size", 1)),
+        image: String(data.get("image") || ""),
+        color: String(data.get("color") || ""),
+        hidden: bool("hidden"),
+        locked: bool("locked"),
+        metadata: {
+          movement: num("movement", 0),
+          notes: String(data.get("notes") || ""),
+        },
+      },
+    };
+    if (!patchByKind[kind]) return;
+    this.updateSceneEditorEntry(kind, id, patchByKind[kind]);
+    this.options.notify("Elemento da cena salvo.");
   }
 
   addSceneEditorObjective() {
     const room = this.activeRoomSnapshot();
     const scene = this.sceneEditorScene(room);
     if (!scene?.id) return;
+    const objectiveId = createId("objective");
     const nextScene = new Scene({
       ...scene,
       objectives: [
         ...(scene.objectives || []),
         {
-          id: createId("objective"),
+          id: objectiveId,
           title: "Novo objetivo",
           description: "Objetivo criado no editor visual.",
           progressCurrent: 0,
@@ -3837,6 +4520,7 @@ class SolarisSessionUI {
         },
       ],
     }).toJSON();
+    this.sceneEditor = { sceneId: scene.id, selection: { kind: "objective", id: objectiveId } };
     this.dispatchGmEvent(GAME_EVENT_TYPES.GM_SCENE_UPDATE, { sceneId: scene.id, patch: nextScene });
   }
 
@@ -3844,12 +4528,13 @@ class SolarisSessionUI {
     const room = this.activeRoomSnapshot();
     const scene = this.sceneEditorScene(room);
     if (!scene?.id) return;
+    const zoneId = createId("zone");
     const nextScene = new Scene({
       ...scene,
       zones: [
         ...(scene.zones || []),
         {
-          id: createId("zone"),
+          id: zoneId,
           label: type === "cover" ? "Cobertura" : "Zona de perigo",
           type,
           x: 2,
@@ -3863,6 +4548,35 @@ class SolarisSessionUI {
         },
       ],
     }).toJSON();
+    this.sceneEditor = { sceneId: scene.id, selection: { kind: "zone", id: zoneId } };
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_SCENE_UPDATE, { sceneId: scene.id, patch: nextScene });
+  }
+
+  addSceneEditorArea(type = "circle") {
+    const room = this.activeRoomSnapshot();
+    const scene = this.sceneEditorScene(room);
+    if (!scene?.id) return;
+    const areaId = createId("area");
+    const nextScene = new Scene({
+      ...scene,
+      areas: [
+        ...(scene.areas || []),
+        {
+          id: areaId,
+          label: type === "line" ? "Linha de efeito" : type === "cone" ? "Cone de efeito" : "Area de efeito",
+          type,
+          x: Math.max(1, Math.ceil((scene.columns || 12) / 2)),
+          y: Math.max(1, Math.ceil((scene.rows || 8) / 2)),
+          radius: type === "circle" ? 2 : 0,
+          length: type === "circle" ? 1 : 4,
+          width: type === "line" ? 1 : 3,
+          direction: "east",
+          color: "#9b4dff",
+          visibleToPlayers: true,
+        },
+      ],
+    }).toJSON();
+    this.sceneEditor = { sceneId: scene.id, selection: { kind: "area", id: areaId } };
     this.dispatchGmEvent(GAME_EVENT_TYPES.GM_SCENE_UPDATE, { sceneId: scene.id, patch: nextScene });
   }
 
@@ -3884,6 +4598,7 @@ class SolarisSessionUI {
       locked: false,
     };
     const nextScene = new Scene({ ...scene, tokens: [...(scene.tokens || []), token] }).toJSON();
+    this.sceneEditor = { sceneId: scene.id, selection: { kind: "token", id: token.id } };
     this.dispatchGmEvent(GAME_EVENT_TYPES.GM_SCENE_UPDATE, { sceneId: scene.id, patch: nextScene });
   }
 
@@ -3897,6 +4612,11 @@ class SolarisSessionUI {
       [key]: (scene[key] || []).filter((entry) => entry.id !== id),
     }).toJSON();
     this.dispatchGmEvent(GAME_EVENT_TYPES.GM_SCENE_UPDATE, { sceneId: scene.id, patch: nextScene });
+    const selected = this.sceneEditor?.selection;
+    this.sceneEditor = {
+      sceneId: scene.id,
+      selection: selected?.kind === kind && selected?.id === id ? null : selected || null,
+    };
   }
 
   openEncounterEditor(encounterId = "") {
@@ -4080,34 +4800,39 @@ class SolarisSessionUI {
     const areas = normalized.areas || [];
     const objectives = normalized.objectives || [];
     const tokens = normalized.tokens || [];
+    const selection = this.sceneEditorSelection(scene);
     return `
       <div
         class="vtt-editor-map-preview vtt-map-grid ${normalized.gridVisible ? "" : "grid-hidden"}"
+        data-vtt-scene-editor-grid
         style="--map-columns:${escapeHtml(normalized.columns)};--map-rows:${escapeHtml(normalized.rows)};--grid-opacity:${escapeHtml(normalized.gridOpacity)};--grid-color:${escapeHtml(normalized.gridColor || "#1aa8ff")};${normalized.mapImage ? `--map-image:url('${escapeHtml(normalized.mapImage)}');` : ""}"
       >
         <div class="vtt-map-glow"></div>
         <div class="vtt-grid-coordinate top-left">A1</div>
         <div class="vtt-grid-coordinate bottom-right">${escapeHtml(gridLabel(normalized.columns, normalized.rows))}</div>
         ${zones.map((zone) => `
-          <span class="vtt-map-zone ${escapeHtml(zone.type || "danger")}" style="${zoneGridStyle(zone, normalized)}">
+          <span class="vtt-map-zone ${escapeHtml(zone.type || "danger")} ${selection.kind === "zone" && selection.id === zone.id ? "editor-selected" : ""}" style="${zoneGridStyle(zone, normalized)}" draggable="true" data-vtt-scene-editor-entry="zone" data-entry-id="${escapeHtml(zone.id)}" title="${escapeHtml(`${zone.label || "Zona"} em ${gridLabel(zone.x, zone.y)}`)}">
             ${escapeHtml(zone.label || "Zona")}
           </span>
         `).join("")}
         ${areas.map((area) => `
-          <span class="vtt-map-area ${escapeHtml(area.type || "circle")}" style="${areaGridStyle(area, normalized)}">
+          <span class="vtt-map-area ${escapeHtml(area.type || "circle")} ${selection.kind === "area" && selection.id === area.id ? "editor-selected" : ""}" style="${areaGridStyle(area, normalized)}" draggable="true" data-vtt-scene-editor-entry="area" data-entry-id="${escapeHtml(area.id)}" title="${escapeHtml(`${area.label || "Area"} em ${gridLabel(area.x, area.y)}`)}">
             ${escapeHtml(area.label || "Area")}
           </span>
         `).join("")}
         ${objectives.filter((objective) => objective.x && objective.y).map((objective) => `
-          <span class="vtt-map-objective ${objective.completed ? "completed" : ""}" style="${tokenGridStyle({ x: objective.x, y: objective.y, color: objective.color || "#f2c35b" }, normalized)}">
+          <span class="vtt-map-objective ${objective.completed ? "completed" : ""} ${selection.kind === "objective" && selection.id === objective.id ? "editor-selected" : ""}" style="${tokenGridStyle({ x: objective.x, y: objective.y, color: objective.color || "#f2c35b" }, normalized)}" draggable="true" data-vtt-scene-editor-entry="objective" data-entry-id="${escapeHtml(objective.id)}" title="${escapeHtml(`${objective.title || objective.label || "Objetivo"} em ${gridLabel(objective.x, objective.y)}`)}">
             ${escapeHtml(objective.progressCurrent ?? 0)}/${escapeHtml(objective.progressMax ?? 1)}
           </span>
         `).join("")}
         ${tokens.map((token) => `
           <span
-            class="vtt-map-token ${tokenKindClass(token)} ${token.hidden ? "hidden" : ""} ${token.locked ? "locked" : ""}"
+            class="vtt-map-token ${tokenKindClass(token)} ${token.hidden ? "hidden" : ""} ${token.locked ? "locked" : ""} ${selection.kind === "token" && selection.id === token.id ? "editor-selected" : ""}"
             style="${tokenGridStyle(token, normalized)}"
-            title="${escapeHtml(token.name)}"
+            title="${escapeHtml(`${token.name} em ${gridLabel(token.x, token.y)}`)}"
+            draggable="true"
+            data-vtt-scene-editor-entry="token"
+            data-entry-id="${escapeHtml(token.id)}"
           >
             ${token.image ? `<img src="${escapeHtml(token.image)}" alt="" />` : `<span>${escapeHtml(tokenInitial(token))}</span>`}
           </span>
@@ -4120,16 +4845,108 @@ class SolarisSessionUI {
     `;
   }
 
+  renderSceneEditorElementForm(scene = {}) {
+    const selection = this.sceneEditorSelection(scene);
+    if (!selection.entry) {
+      return `
+        <section class="vtt-editor-element-empty">
+          <strong>Elemento da cena</strong>
+          <p>Clique em um token, zona, area ou objetivo no preview para editar. Arraste no mapa para reposicionar.</p>
+        </section>
+      `;
+    }
+    const { kind, entry } = selection;
+    const commonHidden = `
+      <input type="hidden" name="kind" value="${escapeHtml(kind)}" />
+      <input type="hidden" name="id" value="${escapeHtml(entry.id)}" />
+    `;
+    const positionFields = `
+      <label>X<input name="x" type="number" min="1" max="${escapeHtml(scene.columns || 60)}" value="${escapeHtml(entry.x || 1)}" /></label>
+      <label>Y<input name="y" type="number" min="1" max="${escapeHtml(scene.rows || 60)}" value="${escapeHtml(entry.y || 1)}" /></label>
+    `;
+    const visibilityFields = `
+      <label class="check"><input type="checkbox" name="visibleToPlayers" ${entry.visibleToPlayers !== false && !entry.hidden ? "checked" : ""} /> Visivel para jogadores</label>
+      <label class="check"><input type="checkbox" name="hidden" ${entry.hidden ? "checked" : ""} /> Oculto</label>
+    `;
+    const formByKind = {
+      objective: `
+        <label class="wide">Titulo<input name="title" required value="${escapeHtml(entry.title || entry.label || "Objetivo")}" /></label>
+        ${positionFields}
+        <label>Progresso atual<input name="progressCurrent" type="number" min="0" value="${escapeHtml(entry.progressCurrent ?? 0)}" /></label>
+        <label>Progresso max.<input name="progressMax" type="number" min="1" value="${escapeHtml(entry.progressMax ?? 1)}" /></label>
+        <label>Cor<input name="color" type="color" value="${escapeHtml(entry.color || "#f2c35b")}" /></label>
+        <label>Icone<input name="icon" value="${escapeHtml(entry.icon || "")}" /></label>
+        ${visibilityFields}
+        <label class="check"><input type="checkbox" name="completed" ${entry.completed ? "checked" : ""} /> Concluido</label>
+        <label class="wide">Descricao<textarea name="description" rows="3">${escapeHtml(entry.description || "")}</textarea></label>
+        <label class="wide">Recompensa<textarea name="reward" rows="2">${escapeHtml(entry.reward || "")}</textarea></label>
+        <label class="wide">Notas do mestre<textarea name="gmNotes" rows="3">${escapeHtml(entry.gmNotes || "")}</textarea></label>
+      `,
+      zone: `
+        <label class="wide">Nome<input name="label" required value="${escapeHtml(entry.label || "Zona")}" /></label>
+        <label>Tipo<select name="type">${["danger", "cover", "hazard", "objective", "neutral"].map((value) => `<option value="${value}" ${entry.type === value ? "selected" : ""}>${escapeHtml(value)}</option>`).join("")}</select></label>
+        <label>Formato<select name="shape">${["rectangle", "circle", "line", "cone"].map((value) => `<option value="${value}" ${entry.shape === value ? "selected" : ""}>${escapeHtml(value)}</option>`).join("")}</select></label>
+        ${positionFields}
+        <label>Largura<input name="width" type="number" min="1" max="${escapeHtml(scene.columns || 60)}" value="${escapeHtml(entry.width || 1)}" /></label>
+        <label>Altura<input name="height" type="number" min="1" max="${escapeHtml(scene.rows || 60)}" value="${escapeHtml(entry.height || 1)}" /></label>
+        <label>Direcao<select name="direction">${["", "east", "west", "north", "south"].map((value) => `<option value="${value}" ${entry.direction === value ? "selected" : ""}>${escapeHtml(value || "livre")}</option>`).join("")}</select></label>
+        <label>Opacidade<input name="opacity" type="range" min="0" max="1" step="0.05" value="${escapeHtml(entry.opacity ?? 0.32)}" /></label>
+        <label>Cor<input name="color" type="color" value="${escapeHtml(entry.color || (entry.type === "cover" ? "#35d4ff" : "#ff4d63"))}" /></label>
+        <label>Duracao<input name="duration" value="${escapeHtml(entry.duration || "")}" /></label>
+        ${visibilityFields}
+        <label class="wide">Descricao<textarea name="description" rows="3">${escapeHtml(entry.description || entry.notes || "")}</textarea></label>
+        <label class="wide">Efeito mecanico<textarea name="mechanicalEffect" rows="3">${escapeHtml(entry.mechanicalEffect || "")}</textarea></label>
+      `,
+      area: `
+        <label class="wide">Nome<input name="label" required value="${escapeHtml(entry.label || "Area")}" /></label>
+        <label>Tipo<select name="type">${["circle", "cone", "line"].map((value) => `<option value="${value}" ${entry.type === value ? "selected" : ""}>${escapeHtml(value)}</option>`).join("")}</select></label>
+        ${positionFields}
+        <label>Raio<input name="radius" type="number" min="0" value="${escapeHtml(entry.radius ?? 2)}" /></label>
+        <label>Comprimento<input name="length" type="number" min="1" value="${escapeHtml(entry.length || 4)}" /></label>
+        <label>Largura<input name="width" type="number" min="1" value="${escapeHtml(entry.width || 1)}" /></label>
+        <label>Direcao<select name="direction">${["east", "west", "north", "south"].map((value) => `<option value="${value}" ${entry.direction === value ? "selected" : ""}>${escapeHtml(value)}</option>`).join("")}</select></label>
+        <label>Cor<input name="color" type="color" value="${escapeHtml(entry.color || "#9b4dff")}" /></label>
+        <label>Origem<input name="source" value="${escapeHtml(entry.source || "")}" /></label>
+        ${visibilityFields}
+      `,
+      token: `
+        <label class="wide">Nome<input name="name" required value="${escapeHtml(entry.name || "Token")}" /></label>
+        <label>Tipo<select name="entityType">${["character", "monster", "object", "npc", "marker"].map((value) => `<option value="${value}" ${entry.entityType === value ? "selected" : ""}>${escapeHtml(value)}</option>`).join("")}</select></label>
+        <label>ID vinculado<input name="entityId" value="${escapeHtml(entry.entityId || "")}" /></label>
+        ${positionFields}
+        <label>Tamanho<input name="size" type="number" min="1" max="6" value="${escapeHtml(entry.size || 1)}" /></label>
+        <label>Movimento<input name="movement" type="number" min="0" value="${escapeHtml(entry.metadata?.movement || 0)}" /></label>
+        <label>Cor<input name="color" type="color" value="${escapeHtml(entry.color || "#39cfff")}" /></label>
+        <label class="wide">Imagem<input name="image" value="${escapeHtml(entry.image || "")}" /></label>
+        <label class="check"><input type="checkbox" name="hidden" ${entry.hidden ? "checked" : ""} /> Oculto</label>
+        <label class="check"><input type="checkbox" name="locked" ${entry.locked ? "checked" : ""} /> Travado</label>
+        <label class="wide">Notas<textarea name="notes" rows="3">${escapeHtml(entry.metadata?.notes || "")}</textarea></label>
+      `,
+    };
+    const title = { objective: "Objetivo", zone: "Zona", area: "Area", token: "Token" }[kind] || "Elemento";
+    return `
+      <form class="vtt-editor-entry-form" data-vtt-scene-editor-entry-form>
+        ${commonHidden}
+        <h4>${escapeHtml(title)} selecionado</h4>
+        ${formByKind[kind] || ""}
+        <footer>
+          <button type="submit">Salvar elemento</button>
+          <button type="button" class="danger" data-vtt-scene-editor-remove="${escapeHtml(kind)}" data-entry-id="${escapeHtml(entry.id)}">Remover</button>
+        </footer>
+      </form>
+    `;
+  }
+
   renderSceneEditorModal(room = this.activeRoomSnapshot()) {
     if (!this.sceneEditor) return "";
     const scenes = room.sceneList?.length ? room.sceneList : [room.scene || {}];
     const scene = this.sceneEditorScene(room);
     return `
       <div class="vtt-modal-backdrop vtt-editor-backdrop" data-vtt-modal-close="scene-editor">
-        <section class="vtt-modal vtt-visual-editor-modal" role="dialog" aria-modal="true" aria-label="Editor visual de cena">
+        <section class="vtt-modal vtt-visual-editor-modal solaris-modal-large" role="dialog" aria-modal="true" aria-label="Editor visual de cena">
           <header>
             <div>
-              <span>fase 12</span>
+              <span>fase 14</span>
               <h2>Editor Visual de Cena</h2>
             </div>
             <div class="vtt-editor-header-actions">
@@ -4157,6 +4974,7 @@ class SolarisSessionUI {
                 <button type="button" data-vtt-scene-editor-action="add-objective">Adicionar objetivo</button>
                 <button type="button" data-vtt-scene-editor-action="add-danger">Zona de perigo</button>
                 <button type="button" data-vtt-scene-editor-action="add-cover">Cobertura</button>
+                <button type="button" data-vtt-scene-editor-action="add-area">Area de efeito</button>
                 <button type="button" data-vtt-scene-editor-action="add-token">Adicionar token</button>
                 <button type="button" data-vtt-scene-editor-action="switch" ${scene?.id ? "" : "disabled"}>Tornar ativa</button>
               </div>
@@ -4167,6 +4985,7 @@ class SolarisSessionUI {
                     <div>
                       <span>${escapeHtml(objective.title || objective.label || "Objetivo")}</span>
                       <small>${escapeHtml(objective.progressCurrent ?? 0)}/${escapeHtml(objective.progressMax ?? 1)}</small>
+                      <button type="button" data-vtt-scene-editor-select-entry="objective" data-entry-id="${escapeHtml(objective.id)}">Editar</button>
                       <button type="button" data-vtt-scene-editor-remove="objective" data-entry-id="${escapeHtml(objective.id)}">Remover</button>
                     </div>
                   `).join("") || "<small>Nenhum objetivo.</small>"}
@@ -4177,9 +4996,21 @@ class SolarisSessionUI {
                     <div>
                       <span>${escapeHtml(zone.label || "Zona")}</span>
                       <small>${escapeHtml(zone.type || "zona")} ${escapeHtml(zone.width || 1)}x${escapeHtml(zone.height || 1)}</small>
+                      <button type="button" data-vtt-scene-editor-select-entry="zone" data-entry-id="${escapeHtml(zone.id)}">Editar</button>
                       <button type="button" data-vtt-scene-editor-remove="zone" data-entry-id="${escapeHtml(zone.id)}">Remover</button>
                     </div>
                   `).join("") || "<small>Nenhuma zona.</small>"}
+                </article>
+                <article>
+                  <strong>Areas</strong>
+                  ${(scene.areas || []).map((area) => `
+                    <div>
+                      <span>${escapeHtml(area.label || "Area")}</span>
+                      <small>${escapeHtml(area.type || "area")} ${escapeHtml(gridLabel(area.x, area.y))}</small>
+                      <button type="button" data-vtt-scene-editor-select-entry="area" data-entry-id="${escapeHtml(area.id)}">Editar</button>
+                      <button type="button" data-vtt-scene-editor-remove="area" data-entry-id="${escapeHtml(area.id)}">Remover</button>
+                    </div>
+                  `).join("") || "<small>Nenhuma area.</small>"}
                 </article>
                 <article>
                   <strong>Tokens</strong>
@@ -4187,6 +5018,7 @@ class SolarisSessionUI {
                     <div>
                       <span>${escapeHtml(token.name || "Token")}</span>
                       <small>${escapeHtml(gridLabel(token.x, token.y))}</small>
+                      <button type="button" data-vtt-scene-editor-select-entry="token" data-entry-id="${escapeHtml(token.id)}">Editar</button>
                       <button type="button" data-vtt-scene-editor-remove="token" data-entry-id="${escapeHtml(token.id)}">Remover</button>
                     </div>
                   `).join("") || "<small>Nenhum token.</small>"}
@@ -4215,6 +5047,7 @@ class SolarisSessionUI {
                   <button type="button" data-vtt-scene-editor-action="switch" ${scene?.id ? "" : "disabled"}>Ativar</button>
                 </footer>
               </form>
+              ${this.renderSceneEditorElementForm(scene)}
             </aside>
           </div>
         </section>
@@ -4236,7 +5069,7 @@ class SolarisSessionUI {
     });
     return `
       <div class="vtt-modal-backdrop vtt-editor-backdrop" data-vtt-modal-close="encounter-editor">
-        <section class="vtt-modal vtt-visual-editor-modal" role="dialog" aria-modal="true" aria-label="Editor de encontro">
+        <section class="vtt-modal vtt-visual-editor-modal solaris-modal-large" role="dialog" aria-modal="true" aria-label="Editor de encontro">
           <header>
             <div>
               <span>fase 12</span>
@@ -4352,7 +5185,7 @@ class SolarisSessionUI {
     const markdown = this.buildGmReport(room, combat, this.reportOptions);
     return `
       <div class="vtt-modal-backdrop vtt-editor-backdrop" data-vtt-modal-close="report-preview">
-        <section class="vtt-modal vtt-report-preview-modal" role="dialog" aria-modal="true" aria-label="Previa do relatorio">
+        <section class="vtt-modal vtt-report-preview-modal solaris-modal-large" role="dialog" aria-modal="true" aria-label="Previa do relatorio">
           <header>
             <div>
               <span>relatorio de sessao</span>
@@ -4392,8 +5225,8 @@ class SolarisSessionUI {
   renderCampaignsHome() {
     const active = this.activeCampaign();
     return `
-      <section class="vtt-shell vtt-campaign-home" aria-label="Minhas Campanhas Solaris">
-        <header class="vtt-campaign-home-hero">
+      <section class="vtt-shell vtt-campaign-home solaris-shell solaris-screen-campaigns" aria-label="Minhas Campanhas Solaris">
+        <header class="vtt-campaign-home-hero solaris-topbar">
           <div class="vtt-brand">
             <span class="vtt-brand-mark" aria-hidden="true"></span>
             <div>
@@ -4407,8 +5240,8 @@ class SolarisSessionUI {
             <button type="button" data-vtt-action="go-table" ${active ? "" : "disabled"}>Voltar para Mesa</button>
           </div>
         </header>
-        <main class="vtt-campaign-home-main">
-          <section class="vtt-campaign-home-list">
+        <main class="vtt-campaign-home-main solaris-main-stage">
+          <section class="vtt-campaign-home-list solaris-panel">
             <div class="vtt-panel-heading">
               <h3>Campanhas salvas</h3>
               <span>${this.campaigns.length}</span>
@@ -4455,7 +5288,7 @@ class SolarisSessionUI {
               `}
             </div>
           </section>
-          <aside class="vtt-campaign-home-aside">
+          <aside class="vtt-campaign-home-aside solaris-sidebar">
             <article>
               <h3>Entrada do VTT</h3>
               <p>Use esta tela para preparar campanha antes de abrir a mesa. A ficha online continua separada em Solaris Biblioteca.</p>
@@ -4483,7 +5316,7 @@ class SolarisSessionUI {
       : null;
     return `
       <div class="vtt-modal-backdrop">
-        <section class="vtt-modal vtt-form-modal" role="dialog" aria-modal="true">
+        <section class="vtt-modal vtt-form-modal solaris-modal" role="dialog" aria-modal="true">
           <header>
             <div>
               <span>campanha</span>
@@ -4584,7 +5417,7 @@ class SolarisSessionUI {
     }[kind] || "";
     return `
       <div class="vtt-modal-backdrop">
-        <section class="vtt-modal vtt-form-modal" role="dialog" aria-modal="true">
+        <section class="vtt-modal vtt-form-modal solaris-modal" role="dialog" aria-modal="true">
           <header>
             <div>
               <span>painel do mestre</span>
@@ -4622,7 +5455,7 @@ class SolarisSessionUI {
     const tab = this.gmPanelTab || "overview";
     return `
       <div class="vtt-modal-backdrop" data-vtt-modal-close="gm">
-        <section class="vtt-modal vtt-gm-modal" role="dialog" aria-modal="true">
+        <section class="vtt-modal vtt-gm-modal solaris-modal-large" role="dialog" aria-modal="true">
           <header>
             <div>
               <small>Controle privado da sessao</small>
@@ -4961,7 +5794,7 @@ class SolarisSessionUI {
     const autosaves = active?.autosaves || [];
     return `
       <div class="vtt-modal-backdrop" data-vtt-modal-close="campaigns">
-        <section class="vtt-modal vtt-campaign-modal" role="dialog" aria-modal="true">
+        <section class="vtt-modal vtt-campaign-modal solaris-modal-large" role="dialog" aria-modal="true">
           <header>
             <div>
               <span>persistencia de campanha</span>
@@ -5048,8 +5881,8 @@ class SolarisSessionUI {
       : "Ficha local";
 
     this.root.innerHTML = `
-      <section class="vtt-shell" aria-label="Mesa Virtual Solaris">
-        <header class="vtt-topbar">
+      <section class="vtt-shell solaris-shell solaris-screen-tabletop" aria-label="Mesa Virtual Solaris">
+        <header class="vtt-topbar solaris-topbar">
           <div class="vtt-brand">
             <span class="vtt-brand-mark" aria-hidden="true"></span>
             <div>
@@ -5077,7 +5910,7 @@ class SolarisSessionUI {
           </div>
         </header>
 
-        <aside class="vtt-left">
+        <aside class="vtt-left solaris-sidebar">
           <section class="vtt-panel vtt-players">
             <div class="vtt-panel-heading">
               <h3>Jogadores</h3>
@@ -5108,7 +5941,7 @@ class SolarisSessionUI {
           </section>
         </aside>
 
-        <main class="vtt-main">
+        <main class="vtt-main solaris-main-stage">
           <section class="vtt-panel vtt-session">
             <div class="vtt-session-copy">
               <p>Resumo da cena atual</p>
@@ -5137,7 +5970,7 @@ class SolarisSessionUI {
           </section>
         </main>
 
-        <aside class="vtt-right">
+        <aside class="vtt-right solaris-sidebar solaris-sidebar-right">
           ${this.renderCombatPanel(combat)}
           ${this.renderApprovalPanel(room, pendingApprovals)}
           ${this.renderLootPanel(room)}
@@ -5172,7 +6005,7 @@ class SolarisSessionUI {
           </section>
         </aside>
 
-        <footer class="vtt-quickbar">
+        <footer class="vtt-quickbar solaris-bottom-bar">
           ${this.renderQuickSlot("Cubo", "3")}
           ${this.renderQuickSlot("Arma", "1")}
           ${this.renderQuickSlot("Armadura", "1")}
@@ -5496,6 +6329,10 @@ class SolarisSessionUI {
       event.preventDefault();
       this.saveSceneEditor(event.currentTarget);
     });
+    this.root.querySelector("[data-vtt-scene-editor-entry-form]")?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      this.saveSceneEditorEntry(event.currentTarget);
+    });
     this.root.querySelector("[data-vtt-encounter-editor-form]")?.addEventListener("submit", (event) => {
       event.preventDefault();
       this.saveEncounterEditor(event.currentTarget);
@@ -5521,12 +6358,44 @@ class SolarisSessionUI {
         if (action === "add-objective") this.addSceneEditorObjective();
         if (action === "add-danger") this.addSceneEditorZone("danger");
         if (action === "add-cover") this.addSceneEditorZone("cover");
+        if (action === "add-area") this.addSceneEditorArea("circle");
         if (action === "add-token") this.addSceneEditorToken();
         if (action === "switch") this.switchGmScene(this.sceneEditorScene().id);
       });
     });
+    this.root.querySelectorAll("[data-vtt-scene-editor-select-entry]").forEach((button) => {
+      button.addEventListener("click", () => this.selectSceneEditorEntry(button.dataset.vttSceneEditorSelectEntry, button.dataset.entryId));
+    });
     this.root.querySelectorAll("[data-vtt-scene-editor-remove]").forEach((button) => {
       button.addEventListener("click", () => this.removeSceneEditorEntry(button.dataset.vttSceneEditorRemove, button.dataset.entryId));
+    });
+    this.root.querySelectorAll("[data-vtt-scene-editor-entry]").forEach((entry) => {
+      entry.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this.selectSceneEditorEntry(entry.dataset.vttSceneEditorEntry, entry.dataset.entryId);
+      });
+      entry.addEventListener("dragstart", (event) => {
+        const kind = entry.dataset.vttSceneEditorEntry || "";
+        const id = entry.dataset.entryId || "";
+        this.sceneEditorDrag = { kind, id };
+        event.dataTransfer?.setData("text/plain", `${kind}:${id}`);
+      });
+    });
+    this.root.querySelectorAll("[data-vtt-scene-editor-grid]").forEach((grid) => {
+      grid.addEventListener("dragover", (event) => event.preventDefault());
+      grid.addEventListener("drop", (event) => {
+        event.preventDefault();
+        const raw = event.dataTransfer?.getData("text/plain") || "";
+        const [rawKind, rawId] = raw.split(":");
+        const kind = rawKind || this.sceneEditorDrag?.kind || "";
+        const id = rawId || this.sceneEditorDrag?.id || "";
+        if (!kind || !id) return;
+        const scene = this.sceneEditorScene();
+        const point = this.mapPointFromEvent(event, normalizeScene(scene, this.options.getCurrentCharacter()));
+        this.moveSceneEditorEntry(kind, id, point);
+        this.sceneEditorDrag = null;
+      });
     });
     this.root.querySelectorAll("[data-vtt-encounter-editor-select]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -5681,6 +6550,12 @@ class SolarisSessionUI {
     this.root.querySelectorAll("[data-vtt-approval-reject]").forEach((button) => {
       button.addEventListener("click", () => this.rejectRequest(button.dataset.vttApprovalReject));
     });
+    this.root.querySelectorAll("[data-vtt-approval-approve-line]").forEach((button) => {
+      button.addEventListener("click", () => this.approveRequest(button.dataset.vttApprovalApproveLine, { shopLineId: button.dataset.lineId }));
+    });
+    this.root.querySelectorAll("[data-vtt-approval-reject-line]").forEach((button) => {
+      button.addEventListener("click", () => this.rejectRequest(button.dataset.vttApprovalRejectLine, { shopLineId: button.dataset.lineId, message: "Item rejeitado pelo mestre." }));
+    });
     this.root.querySelectorAll("[data-vtt-load-campaign]").forEach((button) => {
       button.addEventListener("click", () => this.loadCampaign(button.dataset.vttLoadCampaign, button.dataset.vttLoadSession));
     });
@@ -5711,6 +6586,21 @@ class SolarisSessionUI {
       this.shopPage = 1;
       this.render();
     });
+    this.root.querySelector("[data-vtt-shop-query]")?.addEventListener("input", (event) => {
+      this.shopQuery = event.currentTarget.value;
+      this.shopPage = 1;
+    });
+    this.root.querySelectorAll("[data-vtt-shop-category-button]").forEach((button) => {
+      button.addEventListener("click", () => {
+        this.shopCategory = button.dataset.vttShopCategoryButton || "all";
+        this.shopPage = 1;
+        this.render();
+      });
+    });
+    this.root.querySelector("[data-vtt-shop-mode]")?.addEventListener("change", (event) => {
+      this.shopMode = event.currentTarget.value || "session";
+      this.render();
+    });
     this.root.querySelector("[data-vtt-shop-category]")?.addEventListener("change", (event) => {
       this.shopCategory = event.currentTarget.value;
       this.shopPage = 1;
@@ -5721,6 +6611,31 @@ class SolarisSessionUI {
       this.shopPage = 1;
       this.render();
     });
+    this.root.querySelector("[data-vtt-shop-rarity]")?.addEventListener("change", (event) => {
+      this.shopRarity = event.currentTarget.value || "all";
+      this.shopPage = 1;
+      this.render();
+    });
+    this.root.querySelector("[data-vtt-shop-min-price]")?.addEventListener("change", (event) => {
+      this.shopMinPrice = event.currentTarget.value;
+      this.shopPage = 1;
+      this.render();
+    });
+    this.root.querySelector("[data-vtt-shop-max-price]")?.addEventListener("change", (event) => {
+      this.shopMaxPrice = event.currentTarget.value;
+      this.shopPage = 1;
+      this.render();
+    });
+    this.root.querySelector("[data-vtt-shop-in-stock]")?.addEventListener("change", (event) => {
+      this.shopOnlyInStock = event.currentTarget.checked;
+      this.shopPage = 1;
+      this.render();
+    });
+    this.root.querySelector("[data-vtt-shop-compatibility]")?.addEventListener("change", (event) => {
+      this.shopCompatibility = event.currentTarget.value || "all";
+      this.shopPage = 1;
+      this.render();
+    });
     this.root.querySelector("[data-vtt-shop-sort]")?.addEventListener("change", (event) => {
       this.shopSort = event.currentTarget.value;
       this.shopPage = 1;
@@ -5728,6 +6643,11 @@ class SolarisSessionUI {
     });
     this.root.querySelector("[data-vtt-shop-destination]")?.addEventListener("change", (event) => {
       this.purchaseDestination = event.currentTarget.value || "unassigned";
+      this.render();
+    });
+    this.root.querySelector("[data-vtt-shop-target-character]")?.addEventListener("change", (event) => {
+      this.shopTargetCharacterId = event.currentTarget.value || "";
+      this.syncShopCartState();
       this.render();
     });
     this.root.querySelectorAll("[data-vtt-shop-page]").forEach((button) => {
@@ -5746,6 +6666,12 @@ class SolarisSessionUI {
         this.openShopItemDetails(button.dataset.vttShopDetails);
       });
     });
+    this.root.querySelectorAll("[data-vtt-shop-compare]").forEach((button) => {
+      button.addEventListener("click", () => this.compareShopItem(button.dataset.vttShopCompare));
+    });
+    this.root.querySelectorAll("[data-vtt-shop-send-chat]").forEach((button) => {
+      button.addEventListener("click", () => this.sendShopItemToChat(button.dataset.vttShopSendChat));
+    });
     this.root.querySelectorAll("[data-vtt-shop-card]").forEach((card) => {
       card.addEventListener("dblclick", () => this.openShopItemDetails(card.dataset.vttShopCard));
     });
@@ -5758,12 +6684,19 @@ class SolarisSessionUI {
     this.root.querySelectorAll("[data-vtt-cart-remove]").forEach((button) => {
       button.addEventListener("click", () => this.removeShopCartLine(button.dataset.vttCartRemove));
     });
+    this.root.querySelectorAll("[data-vtt-cart-qty]").forEach((input) => {
+      input.addEventListener("change", () => this.updateShopCartLine(input.dataset.vttCartQty, { quantity: Math.max(1, Number(input.value || 1)) }));
+    });
+    this.root.querySelectorAll("[data-vtt-cart-destination]").forEach((select) => {
+      select.addEventListener("change", () => this.updateShopCartLine(select.dataset.vttCartDestination, { destination: decodeDestination(select.value || "unassigned") }));
+    });
     this.root.querySelectorAll("[data-vtt-shop-action]").forEach((button) => {
       button.addEventListener("click", () => {
         const action = button.dataset.vttShopAction;
         if (action === "clear-cart") this.clearShopCart();
         if (action === "request-purchase") this.requestShopCartPurchase();
         if (action === "direct-purchase") this.requestShopCartPurchase({ direct: true });
+        if (action === "cart-to-loot") this.requestShopCartPurchase({ asLoot: true });
       });
     });
     this.root.querySelectorAll("[data-vtt-loot-action]").forEach((button) => {

@@ -196,3 +196,7 @@ node --check electron-main.cjs
 - Edicao detalhada de cada objetivo, zona, area e token.
 - Importar/exportar cenas e encontros como pacotes reutilizaveis.
 - Relatorio visual com identidade Guerra Solar em PDF/HTML estilizado.
+
+Continuacao relacionada: a Fase 15 aplica o mesmo principio de polimento e rolagem interna na **Loja Solaris**, com cards padronizados, filtros compactos, carrinho lateral e modal de detalhes com scroll controlado.
+
+Continuacao visual: a Fase 16 (`20260621e`) cria o design system `solaris-*` e reforca modais, editores, paineis e scroll interno para reduzir sobreposicoes em janelas menores.

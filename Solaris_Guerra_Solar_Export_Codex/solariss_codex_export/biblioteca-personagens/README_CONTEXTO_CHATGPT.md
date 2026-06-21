@@ -574,6 +574,61 @@ Documentacao:
 docs/FASE_12_EDITORES_POLIMENTO_USABILIDADE.md
 ```
 
+### Passo 14 - Editor avancado de cenas
+
+Status: primeira versao alfa implementada em `20260621c`.
+
+- Editor Visual de Cena agora permite selecionar elementos no preview.
+- Tokens, zonas, areas e objetivos podem ser arrastados dentro do mapa do editor.
+- Painel contextual edita objetivo, zona, area ou token selecionado.
+- Areas de efeito podem ser criadas diretamente no editor.
+- Elemento selecionado recebe destaque visual.
+- Edicoes granulares persistem em `sceneList`, cena ativa, snapshots e export/import.
+- Versao do Solaris Tabletop Alpha: `0.6.0-alpha.6`.
+
+Documentacao:
+
+```txt
+docs/FASE_14_EDITOR_CENAS_AVANCADO.md
+```
+
+### Passo 15 - Loja visual avancada
+
+Status: primeira versao alfa implementada em `20260621d`.
+
+- Loja Solaris ganhou shell visual dedicado com sidebar de categorias, topbar, filtros e carrinho lateral.
+- Modos de loja: Biblioteca, Sessao e Mestre.
+- Filtros por categoria, tier, raridade, preco, estoque, compatibilidade e ordenacao.
+- Cards padronizados com raridade, badges, preco, fonte, resumo, detalhes, comparar e adicionar.
+- Carrinho possui destino por item: inventario, ativo, equipar, mochila, cubo, coldre, bandoleira, gancho ou sem local definido.
+- Mestre ve carrinhos e pedidos pendentes na loja.
+- Aprovacao de compra em carrinho pode ser feita por item individual usando `shopLineId`.
+- Compra aprovada respeita destino individual de cada linha.
+- Mestre pode converter carrinho em loot.
+- Versao do Solaris Tabletop Alpha: `0.6.0-alpha.7`.
+
+Documentacao:
+
+```txt
+docs/FASE_15_LOJA_VISUAL_AVANCADA.md
+```
+
+### Passo 16 - Padronizacao visual global
+
+Status: primeira versao alfa implementada em `20260621e`.
+
+- Tokens globais `--solaris-*` para cores, brilho, sombras, espacamento, bordas e tipografia.
+- Classes globais como `solaris-shell`, `solaris-topbar`, `solaris-sidebar`, `solaris-panel`, `solaris-card`, `solaris-modal`, `solaris-modal-large`, `solaris-scroll-panel` e `solaris-bottom-bar`.
+- Mesa Virtual, Minhas Campanhas, Painel do Mestre, Escudo, editores, ficha de monstro, loot, aprovacoes e loja passam a seguir uma linguagem visual mais consistente.
+- Scroll interno e responsividade foram reforcados para reduzir sobreposicoes em janelas menores do Electron.
+- Versao do Solaris Tabletop Alpha: `0.6.0-alpha.8`.
+
+Documentacao:
+
+```txt
+docs/FASE_16_PADRONIZACAO_VISUAL_GLOBAL.md
+```
+
 Comparar cada tela com as imagens de referencia:
 
 - criador;

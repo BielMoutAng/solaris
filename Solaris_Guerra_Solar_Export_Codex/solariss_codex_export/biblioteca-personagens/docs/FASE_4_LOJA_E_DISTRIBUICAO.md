@@ -80,3 +80,20 @@ Adicionar uma camada de economia compartilhada na Mesa Virtual sem quebrar o mod
 - Permitir carrinho por jogador visivel ao mestre em tempo real.
 - Integrar loot automatico de monstro derrotado diretamente aos pacotes pendentes.
 - Adicionar compra em lote com selecao de destino: inventario, mochila, cubo, coldre, bandoleira ou gancho.
+
+## Continuacao na Fase 15
+
+A Fase 15 (`20260621d`) evoluiu esta loja para a **Loja Solaris** visual avancada:
+
+- modos Biblioteca, Sessao e Mestre;
+- sidebar de categorias e filtros por tier, raridade, preco, estoque e compatibilidade;
+- cards visuais padronizados;
+- carrinho lateral com destino por item;
+- aprovacao por item individual do carrinho;
+- conversao de carrinho em loot pelo mestre.
+
+Documentacao:
+
+```txt
+docs/FASE_15_LOJA_VISUAL_AVANCADA.md
+```

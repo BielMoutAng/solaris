@@ -18,7 +18,7 @@ Ela possui modo offline/simulado quando nao ha servidor e modo multiplayer quand
 
 O Solaris Tabletop Alpha abre pela tela **Minhas Campanhas**. Ali voce pode criar campanha, continuar sessao salva, editar detalhes, duplicar, excluir com confirmacao forte, exportar/importar JSON e restaurar autosaves. Dentro da mesa, o botao **Minhas Campanhas** volta para essa entrada e o botao **Painel do Mestre** abre as ferramentas privadas do mestre.
 
-A versao `0.6.0-alpha.5` adiciona editores visuais para preparar cenas e encontros, balanceamento alfa de encontros, relatorios salvos na campanha e rolagem interna nos quadros para evitar sobreposicao quando houver muito conteudo.
+A versao `0.6.0-alpha.8` adiciona a **Padronizacao Visual Global** do Tabletop, com tokens `solaris-*`, topo, sidebars, paineis, modais, barra inferior, scroll interno e responsividade alinhados ao visual sci-fi neon da referencia. A loja visual avancada da versao anterior continua preservada.
 
 Rotas uteis no navegador:
 
