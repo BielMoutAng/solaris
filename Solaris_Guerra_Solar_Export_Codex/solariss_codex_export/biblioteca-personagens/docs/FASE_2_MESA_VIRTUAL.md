@@ -742,3 +742,39 @@ Documentacao:
 ```txt
 docs/FASE_16_PADRONIZACAO_VISUAL_GLOBAL.md
 ```
+
+## Fase 17 - Estrutura visual por telas
+
+Implementada no cache `20260621f`.
+
+- O centro da Mesa Virtual agora possui navegacao principal por telas: `Mesa`, `Loja`, `Ficha` e `Mestre`.
+- A tela `Mesa` concentra mapa tatico, laterais, chat, combate e uma faixa inferior compacta do personagem.
+- A tela `Loja` usa largura ampla e remove laterais durante a compra para reduzir competicao visual.
+- A tela `Ficha` apresenta resumo sincronizado do personagem em uma estrutura propria.
+- A tela `Mestre` organiza comandos, cena atual, objetivos, notas, monstros, mapas e contadores em paineis dedicados.
+- Conteudos longos passam a rolar dentro do proprio box, reduzindo sobreposicoes quando uma acao adiciona mais dados na tela.
+- Tabletop Alpha em `0.6.0-alpha.9`.
+
+Documentacao:
+
+```txt
+docs/FASE_17_ESTRUTURA_VISUAL_TABLETOP.md
+```
+
+## Fase 17B - Desktop-first do Tabletop
+
+Implementada no cache `20260622f`.
+
+- O layout do Tabletop foi ajustado para PC/Windows como prioridade.
+- A tela `Mesa` passa a favorecer o mapa/palco central, mantendo jogadores/chat e painel de combate como docks laterais.
+- Topbar, toolbar de mapa, barra inferior e slots rapidos foram compactados para liberar area vertical.
+- Paineis laterais usam alturas controladas e rolagem interna para impedir sobreposicoes em sessoes longas.
+- A Loja e a Ficha continuam em modo amplo, escondendo laterais quando isso melhora a leitura.
+- O comportamento mobile/iPhone permanece preservado por media queries abaixo de 760px.
+- Tabletop Alpha em `0.6.0-alpha.13`.
+
+Documentacao:
+
+```txt
+docs/FASE_17B_DESKTOP_FIRST_TABLETOP.md
+```

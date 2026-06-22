@@ -4,11 +4,11 @@ import {
   Scene,
   SESSION_ROLES,
   estimateEncounterBalance,
-} from "./solaris-session-domain.js?v=20260621e";
+} from "./solaris-session-domain.js?v=20260622f";
 import {
   SESSION_SOCKET_EVENTS,
   SolarisSessionClient,
-} from "./solaris-session-client.js?v=20260621e";
+} from "./solaris-session-client.js?v=20260622f";
 import {
   ACTIVE_CAMPAIGN_STORAGE_KEY,
   CAMPAIGN_STORAGE_KEY,
@@ -23,11 +23,11 @@ import {
   parseSessionExportBundle,
   serializeCampaignList,
   upsertCampaignSession,
-} from "./solaris-session-persistence.js?v=20260621e";
+} from "./solaris-session-persistence.js?v=20260622f";
 
 const SESSION_SAVE_KEY = "solaris.virtual.table.session.v1";
 const PLAYER_SESSION_KEY = "solaris.virtual.table.playerId";
-const TABLETOP_APP_VERSION = "0.6.0-alpha.8";
+const TABLETOP_APP_VERSION = "0.6.0-alpha.13";
 const DEFAULT_REPORT_OPTIONS = Object.freeze({
   includeFullChat: false,
   includeSecretNotes: false,
@@ -1110,6 +1110,7 @@ class SolarisSessionUI {
     this.gmPanelOpen = false;
     this.gmPanelTab = "overview";
     this.screen = options.initialScreen || (activeRouteView() === "campaigns" ? "campaigns" : "table");
+    this.tableView = options.initialTableView || "table";
     this.gmForm = null;
     this.sceneEditor = null;
     this.sceneEditorDrag = null;
@@ -5860,6 +5861,248 @@ class SolarisSessionUI {
     `;
   }
 
+  renderTableViewNav(room, current, combat, pendingApprovals = []) {
+    const view = ["table", "shop", "sheet", "gm"].includes(this.tableView) ? this.tableView : "table";
+    const cartCount = this.shopCart.reduce((sum, line) => sum + Number(line.quantity || 1), 0);
+    const sceneCount = (room.sceneList || []).length;
+    const activeCombatants = (combat.combatants || []).filter((entry) => !entry.isDefeated).length;
+    const tabs = [
+      { id: "table", label: "Mesa", meta: `${activeCombatants || 0} ativos` },
+      { id: "shop", label: "Loja", meta: cartCount ? `${cartCount} no carrinho` : "biblioteca" },
+      { id: "sheet", label: "Ficha", meta: current.name || "personagem" },
+      { id: "gm", label: "Mestre", meta: pendingApprovals.length ? `${pendingApprovals.length} pedidos` : `${sceneCount} cenas` },
+    ];
+    return `
+      <nav class="vtt-view-tabs" aria-label="Telas da Mesa Virtual">
+        ${tabs.map((tab) => `
+          <button type="button" class="${view === tab.id ? "active" : ""}" data-vtt-table-view="${escapeHtml(tab.id)}">
+            <strong>${escapeHtml(tab.label)}</strong>
+            <span>${escapeHtml(tab.meta)}</span>
+          </button>
+        `).join("")}
+      </nav>
+    `;
+  }
+
+  renderCurrentTableView(view, room, current, combat) {
+    if (view === "shop") return this.renderSessionShop(room, current);
+    if (view === "sheet") return this.renderSheetWorkspace(room, current, combat);
+    if (view === "gm") return this.renderGmWorkspace(room, current, combat);
+    return `
+      ${this.renderTacticalMap(room, current, combat)}
+      ${this.renderTableBottom(current)}
+    `;
+  }
+
+  renderTableBottom(character) {
+    const inventory = Array.isArray(character.inventory) ? character.inventory : [];
+    const active = inventory.filter((item) => item.location?.kind === "active" || item.active).slice(0, 3);
+    return `
+      <section class="vtt-bottom vtt-table-bottom">
+        <article class="vtt-table-character-card">
+          <span class="vtt-table-portrait">
+            ${character.portrait ? `<img src="${escapeHtml(character.portrait)}" alt="" />` : `<i>${escapeHtml(character.name.slice(0, 1) || "S")}</i>`}
+          </span>
+          <div>
+            <h3>${escapeHtml(character.name)}</h3>
+            <small>${escapeHtml(character.race)} - ${escapeHtml(character.profession)} - Nivel ${escapeHtml(character.level)}</small>
+            <div class="vtt-table-resources">
+              ${this.renderResourceInput("pv", "PV", character.currentPV, character.maxPV)}
+              ${this.renderResourceInput("cosmos", "Cosmos", character.cosmosCurrent, character.cosmosMax)}
+              ${this.renderResourceInput("stress", "Estresse", character.stress, character.stressMax)}
+            </div>
+          </div>
+        </article>
+        <article class="vtt-table-mini-panel">
+          <h3>Equipamento</h3>
+          <span><small>Arma equipada</small><strong>${escapeHtml(character.weapon)}</strong></span>
+          <span><small>Armadura</small><strong>${escapeHtml(character.armor)}</strong></span>
+          <span><small>CA / MOV</small><strong>${escapeHtml(character.ca)} / ${escapeHtml(character.movement)} m</strong></span>
+        </article>
+        <article class="vtt-table-mini-panel">
+          <h3>Itens ativos</h3>
+          ${active.length ? active.map((item) => `<span><small>${escapeHtml(item.type || "item")}</small><strong>${escapeHtml(item.name || item.itemId || "Item")}</strong></span>`).join("") : "<span><small>sessao</small><strong>Nenhum item ativo</strong></span>"}
+        </article>
+        <article class="vtt-table-actions">
+          <h3>Acoes rapidas</h3>
+          <div>
+            <button type="button" data-vtt-roll="Teste rapido" data-count="3" data-sides="6">Rolar</button>
+            <button type="button" data-vtt-roll="Ataque" data-count="1" data-sides="20">Atacar</button>
+            <button type="button" data-vtt-action="use-item">Usar item</button>
+            <button type="button" data-vtt-action="open-sheet">Ver ficha</button>
+          </div>
+        </article>
+      </section>
+    `;
+  }
+
+  renderSheetHero(character) {
+    return `
+      <div class="vtt-sheet-profile">
+        <span class="vtt-sheet-profile-portrait">
+          ${character.portrait ? `<img src="${escapeHtml(character.portrait)}" alt="" />` : `<i>${escapeHtml(character.name.slice(0, 1) || "S")}</i>`}
+        </span>
+        <div class="vtt-sheet-profile-copy">
+          <h2>${escapeHtml(character.name)}</h2>
+          <small>${escapeHtml(character.race)} - ${escapeHtml(character.profession)} - Nivel ${escapeHtml(character.level)}</small>
+          <div class="vtt-sheet-profile-resources">
+            ${this.renderResourceInput("pv", "PV", character.currentPV, character.maxPV)}
+            ${this.renderResourceInput("cosmos", "Cosmos", character.cosmosCurrent, character.cosmosMax)}
+            ${this.renderResourceInput("stress", "Estresse", character.stress, character.stressMax)}
+          </div>
+        </div>
+        <div class="vtt-sheet-profile-stats">
+          <span><small>CA</small><strong>${escapeHtml(character.ca)}</strong></span>
+          <span><small>MOV.</small><strong>${escapeHtml(character.movement)} m</strong></span>
+          <span><small>Arma</small><strong>${escapeHtml(character.weapon)}</strong></span>
+          <span><small>Armadura</small><strong>${escapeHtml(character.armor)}</strong></span>
+        </div>
+      </div>
+    `;
+  }
+
+  renderSheetWorkspace(room, current, combat) {
+    const conditions = Array.isArray(current.conditions) ? current.conditions : [];
+    const inventory = Array.isArray(current.inventory) ? current.inventory : [];
+    const activeItems = inventory.filter((item) => item.location?.kind === "active" || item.active).slice(0, 5);
+    const equipped = inventory.filter((item) => item.equipped || item.location?.kind === "equipped").slice(0, 5);
+    const rollCount = (room.diceRolls || []).length;
+    return `
+      <section class="vtt-sheet-workspace" aria-label="Ficha sincronizada">
+        <article class="vtt-sheet-hero">
+          ${this.renderSheetHero(current)}
+        </article>
+        <article class="vtt-sheet-module vtt-sheet-module-stats">
+          <header>
+            <h3>Estado da ficha</h3>
+            <span>sync</span>
+          </header>
+          <div class="vtt-sheet-stat-grid">
+            <span><small>PV</small><strong>${escapeHtml(current.currentPV)} / ${escapeHtml(current.maxPV)}</strong></span>
+            <span><small>Cosmos</small><strong>${escapeHtml(current.cosmosCurrent)} / ${escapeHtml(current.cosmosMax)}</strong></span>
+            <span><small>Estresse</small><strong>${escapeHtml(current.stress)} / ${escapeHtml(current.stressMax)}</strong></span>
+            <span><small>CA</small><strong>${escapeHtml(current.ca)}</strong></span>
+            <span><small>Movimento</small><strong>${escapeHtml(current.movement)} m</strong></span>
+            <span><small>Rolagens</small><strong>${escapeHtml(rollCount)}</strong></span>
+          </div>
+        </article>
+        <article class="vtt-sheet-module">
+          <header>
+            <h3>Equipamentos</h3>
+            <span>${equipped.length}</span>
+          </header>
+          <div class="vtt-sheet-list">
+            ${equipped.length ? equipped.map((item) => `
+              <span><strong>${escapeHtml(item.name || item.itemId || "Item")}</strong><small>${escapeHtml(destinationLabel(item.location?.kind || "equipped"))}</small></span>
+            `).join("") : "<small>Nenhum equipamento marcado como equipado.</small>"}
+          </div>
+        </article>
+        <article class="vtt-sheet-module">
+          <header>
+            <h3>Itens ativos</h3>
+            <span>${activeItems.length}</span>
+          </header>
+          <div class="vtt-sheet-list">
+            ${activeItems.length ? activeItems.map((item) => `
+              <span><strong>${escapeHtml(item.name || item.itemId || "Item")}</strong><small>${escapeHtml(item.type || item.category || "ativo")}</small></span>
+            `).join("") : "<small>Nenhum item ativo.</small>"}
+          </div>
+        </article>
+        <article class="vtt-sheet-module vtt-sheet-module-actions">
+          <header>
+            <h3>Rolagens rapidas</h3>
+            <span>${conditions.length} cond.</span>
+          </header>
+          <div class="vtt-action-tile-grid">
+            <button type="button" data-vtt-roll="Teste de atributo" data-count="3" data-sides="6">Teste de atributo</button>
+            <button type="button" data-vtt-roll="Teste de pericia" data-count="3" data-sides="6">Teste de pericia</button>
+            <button type="button" data-vtt-roll="Ataque" data-count="1" data-sides="20">Ataque</button>
+            <button type="button" data-vtt-roll="Defesa" data-count="3" data-sides="6">Defesa</button>
+            <button type="button" data-vtt-action="use-item">Usar item</button>
+            <button type="button" data-vtt-action="open-inventory">Inventario</button>
+          </div>
+        </article>
+      </section>
+    `;
+  }
+
+  renderGmWorkspace(room, current, combat) {
+    const scene = room.scene || {};
+    const objectives = scene.objectives || room.objectives || [];
+    const scenes = (room.sceneList || []).slice(0, 5);
+    const notes = (room.gmNotes || []).slice(0, 5);
+    const counters = (room.gmCounters || []).slice(0, 4);
+    const monsters = (room.monsters || []).slice(0, 5);
+    return `
+      <section class="vtt-gm-workspace" aria-label="Pagina do Mestre">
+        <header class="vtt-gm-workspace-title">
+          <div>
+            <span>controle total da sessao</span>
+            <h2>Pagina do Mestre</h2>
+          </div>
+          <button type="button" data-vtt-action="open-gm-panel">Abrir escudo completo</button>
+        </header>
+        <div class="vtt-gm-command-grid">
+          <button type="button" class="danger" data-vtt-combat-action="start">Iniciar combate</button>
+          <button type="button" data-vtt-gm-action="open-scene-editor">Revelar cena</button>
+          <button type="button" data-vtt-gm-action="create-environment">Aplicar condicao</button>
+          <button type="button" data-vtt-combat-action="toggle-monsters">Adicionar monstro</button>
+          <button type="button" data-vtt-loot-action="create">Distribuir item</button>
+          <button type="button" data-vtt-action="save-session">Salvar sessao</button>
+        </div>
+        <article class="vtt-gm-scene-summary">
+          <div class="vtt-gm-scene-image">
+            ${scene.mapImage ? `<img src="${escapeHtml(scene.mapImage)}" alt="" />` : "<span>SEM MAPA</span>"}
+          </div>
+          <div>
+            <span>Resumo da cena atual</span>
+            <h3>${escapeHtml(scene.name || "Cena sem nome")}</h3>
+            <p>${escapeHtml(scene.notes || "Use o editor visual para preparar mapas, objetivos e areas.")}</p>
+            <footer>
+              <small>Iluminacao: ${escapeHtml(scene.lighting || "normal")}</small>
+              <small>Perigo: ${escapeHtml(scene.danger || "baixo")}</small>
+              <small>Rodada: ${escapeHtml(combat.round || 1)}</small>
+            </footer>
+          </div>
+        </article>
+        <div class="vtt-gm-dashboard-grid">
+          <article class="vtt-sheet-module wide">
+            <header><h3>Objetivos ativos</h3><span>${objectives.length}</span></header>
+            <div class="vtt-sheet-list">
+              ${objectives.length ? objectives.slice(0, 4).map((objective) => `
+                <span><strong>${escapeHtml(objective.title || objective.label)}</strong><small>${escapeHtml(objective.progress || `${objective.progressCurrent ?? 0}/${objective.progressMax ?? 1}`)}</small></span>
+              `).join("") : "<small>Nenhum objetivo ativo.</small>"}
+            </div>
+          </article>
+          <article class="vtt-sheet-module">
+            <header><h3>Mapas e cenas</h3><span>${scenes.length}</span></header>
+            <div class="vtt-sheet-list">
+              ${scenes.length ? scenes.map((entry) => `<span><strong>${escapeHtml(entry.name || "Cena")}</strong><small>${entry.id === room.activeSceneId ? "Atual" : "Preparada"}</small></span>`).join("") : "<small>Nenhuma cena preparada.</small>"}
+            </div>
+          </article>
+          <article class="vtt-sheet-module">
+            <header><h3>Notas secretas</h3><span>${notes.length}</span></header>
+            <div class="vtt-sheet-list">
+              ${notes.length ? notes.map((note) => `<span><strong>${escapeHtml(note.title || note.name || "Nota")}</strong><small>${escapeHtml(note.status || (note.revealed ? "revelada" : "secreta"))}</small></span>`).join("") : "<small>Nenhuma nota do mestre.</small>"}
+            </div>
+          </article>
+          <article class="vtt-sheet-module">
+            <header><h3>Monstros e NPCs</h3><span>${monsters.length}</span></header>
+            <div class="vtt-sheet-list">
+              ${monsters.length ? monsters.map((monster) => `<span><strong>${escapeHtml(monster.name)}</strong><small>PV ${escapeHtml(monster.snapshot?.currentPV ?? "-")} / CA ${escapeHtml(monster.snapshot?.ca ?? "-")}</small></span>`).join("") : "<small>Nenhum monstro em cena.</small>"}
+            </div>
+          </article>
+          <article class="vtt-sheet-module">
+            <header><h3>Contadores</h3><span>${counters.length}</span></header>
+            <div class="vtt-sheet-list">
+              ${counters.length ? counters.map((counter) => `<span><strong>${escapeHtml(counter.name)}</strong><small>${escapeHtml(counter.current ?? 0)} / ${escapeHtml(counter.max ?? 1)}</small></span>`).join("") : "<small>Nenhum contador ativo.</small>"}
+            </div>
+          </article>
+        </div>
+      </section>
+    `;
+  }
+
   render() {
     if (!this.root) return;
     if (this.screen === "campaigns") {
@@ -5879,9 +6122,10 @@ class SolarisSessionUI {
     const syncLabel = this.client.isConnected
       ? (remoteCharacter ? `Ficha sync r${escapeHtml(remoteCharacter.revision || remoteCharacter.snapshot?.revision || 0)}` : "Ficha ainda nao enviada")
       : "Ficha local";
+    const tableView = ["table", "shop", "sheet", "gm"].includes(this.tableView) ? this.tableView : "table";
 
     this.root.innerHTML = `
-      <section class="vtt-shell solaris-shell solaris-screen-tabletop" aria-label="Mesa Virtual Solaris">
+      <section class="vtt-shell solaris-shell solaris-screen-tabletop solaris-table-view-${escapeHtml(tableView)}" aria-label="Mesa Virtual Solaris">
         <header class="vtt-topbar solaris-topbar">
           <div class="vtt-brand">
             <span class="vtt-brand-mark" aria-hidden="true"></span>
@@ -5941,7 +6185,7 @@ class SolarisSessionUI {
           </section>
         </aside>
 
-        <main class="vtt-main solaris-main-stage">
+        <main class="vtt-main solaris-main-stage" data-vtt-active-view="${escapeHtml(tableView)}">
           <section class="vtt-panel vtt-session">
             <div class="vtt-session-copy">
               <p>Resumo da cena atual</p>
@@ -5955,18 +6199,9 @@ class SolarisSessionUI {
             </div>
           </section>
 
-          ${this.renderTacticalMap(room, current, combat)}
-          ${this.renderSessionShop(room, current)}
-
-          <section class="vtt-bottom">
-            ${this.renderSelectedCharacter(current)}
-            ${this.renderActiveItems(current)}
-            <div class="vtt-sheet-actions">
-              <button type="button" data-vtt-action="open-inventory">Abrir Inventario</button>
-              <button type="button" data-vtt-action="open-sheet">Ver Ficha</button>
-              <button type="button" data-vtt-action="sync-sheet">Sincronizar</button>
-              <button type="button" data-vtt-action="request-sync">Pedir sync</button>
-            </div>
+          ${this.renderTableViewNav(room, current, combat, pendingApprovals)}
+          <section class="vtt-view-stage vtt-view-${escapeHtml(tableView)}">
+            ${this.renderCurrentTableView(tableView, room, current, combat)}
           </section>
         </main>
 
@@ -6251,6 +6486,13 @@ class SolarisSessionUI {
   }
 
   bindDom() {
+    this.root.querySelectorAll("[data-vtt-table-view]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const view = button.dataset.vttTableView || "table";
+        this.tableView = ["table", "shop", "sheet", "gm"].includes(view) ? view : "table";
+        this.render();
+      });
+    });
     this.root.querySelectorAll("[data-vtt-action]").forEach((button) => {
       button.addEventListener("click", () => {
         const action = button.dataset.vttAction;

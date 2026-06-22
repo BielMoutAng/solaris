@@ -11,14 +11,14 @@ Abra `index.html` no navegador.
 A Mesa Virtual fica disponivel pela tela `Mesa virtual` do app e tambem pode abrir direto com:
 
 ```txt
-http://localhost:3000/?view=campaigns&check=20260620j
+http://localhost:3000/?view=campaigns&check=20260622f
 ```
 
 Ela possui modo offline/simulado quando nao ha servidor e modo multiplayer quando `npm run server:vtt` esta ativo. A fase atual inclui sala, jogadores, chat, rolagens, ficha sincronizada, combate, monstros, loja, loot, mapa tatico, selecao de alvo, dano automatico no alvo ou em areas, previa visual de tokens atingidos por areas, persistencia local de campanhas/sessoes e Painel do Mestre com notas, contadores, cenas, encontros, gerador de encontros, editores visuais de cena/encontro, escudo rapido conectado ao compendio quando houver dados estruturados e relatorio com preview antes de salvar/exportar.
 
 O Solaris Tabletop Alpha abre pela tela **Minhas Campanhas**. Ali voce pode criar campanha, continuar sessao salva, editar detalhes, duplicar, excluir com confirmacao forte, exportar/importar JSON e restaurar autosaves. Dentro da mesa, o botao **Minhas Campanhas** volta para essa entrada e o botao **Painel do Mestre** abre as ferramentas privadas do mestre.
 
-A versao `0.6.0-alpha.8` adiciona a **Padronizacao Visual Global** do Tabletop, com tokens `solaris-*`, topo, sidebars, paineis, modais, barra inferior, scroll interno e responsividade alinhados ao visual sci-fi neon da referencia. A loja visual avancada da versao anterior continua preservada.
+A versao `0.6.0-alpha.13` adiciona o refinamento **Desktop-first** do Tabletop. No PC/Windows, a mesa prioriza o palco/mapa central, controles de grade como sobreposicao, laterais como docks independentes, topo mais compacto, barra inferior mais baixa e paineis com rolagem interna. A estrutura responsiva para iPhone/PWA continua preservada.
 
 Rotas uteis no navegador:
 

@@ -10948,3 +10948,1322 @@ body .vital-hud-modal #hud-humanis .hvh-segment {
     max-height: none;
   }
 }
+
+/* Fase 17 - Estrutura visual por telas do Solaris Tabletop */
+.vtt-shell.solaris-shell {
+  --solaris-left-column: clamp(240px, 16.4vw, 300px);
+  --solaris-right-column: clamp(282px, 18.2vw, 350px);
+  grid-template-columns: var(--solaris-left-column) minmax(0, 1fr) var(--solaris-right-column);
+  grid-template-rows: minmax(62px, auto) minmax(0, 1fr) 58px;
+  height: calc(100vh - 18px);
+  min-height: 720px;
+  overflow: hidden;
+}
+
+.vtt-main.solaris-main-stage {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 10px;
+  min-height: 0;
+  overflow: hidden;
+  padding-right: 0;
+}
+
+.vtt-main.solaris-main-stage > .vtt-session {
+  display: none;
+}
+
+.vtt-session {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.68fr);
+  align-items: stretch;
+  gap: 10px;
+  min-height: 0;
+  padding: 12px;
+}
+
+.vtt-session-copy,
+.vtt-offline-banner {
+  min-width: 0;
+}
+
+.vtt-session-copy h2 {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vtt-view-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  min-height: 54px;
+}
+
+.vtt-view-tabs button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(124, 236, 255, 0.2);
+  border-radius: 7px;
+  padding: 9px 12px;
+  color: var(--solaris-text);
+  background:
+    linear-gradient(135deg, rgba(7, 25, 42, 0.88), rgba(2, 8, 16, 0.92)),
+    radial-gradient(circle at 0% 0%, rgba(57, 216, 255, 0.08), transparent 34%);
+  box-shadow: inset 0 0 18px rgba(57, 216, 255, 0.04);
+  cursor: pointer;
+}
+
+.vtt-view-tabs button.active {
+  border-color: rgba(57, 216, 255, 0.72);
+  background:
+    linear-gradient(135deg, rgba(23, 135, 255, 0.42), rgba(5, 17, 28, 0.94)),
+    radial-gradient(circle at 12% 0%, rgba(57, 216, 255, 0.24), transparent 44%);
+  box-shadow: var(--solaris-glow-cyan), inset 0 0 28px rgba(57, 216, 255, 0.08);
+}
+
+.vtt-view-tabs strong {
+  overflow: hidden;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vtt-view-tabs span {
+  color: var(--solaris-text-secondary);
+  font-size: 0.68rem;
+  white-space: nowrap;
+}
+
+.vtt-view-stage {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.vtt-view-stage.vtt-view-table {
+  display: grid;
+  grid-template-rows: minmax(340px, 1fr) minmax(132px, auto);
+  gap: 10px;
+}
+
+.vtt-view-stage.vtt-view-shop,
+.vtt-view-stage.vtt-view-sheet,
+.vtt-view-stage.vtt-view-gm {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.vtt-view-stage > .vtt-map-panel,
+.vtt-view-stage > .solaris-store-shell,
+.vtt-view-stage > .vtt-sheet-workspace,
+.vtt-view-stage > .vtt-gm-workspace,
+.vtt-view-stage > .vtt-bottom {
+  min-width: 0;
+  min-height: 0;
+}
+
+.vtt-view-stage > .vtt-map-panel {
+  height: auto;
+}
+
+.vtt-view-stage .vtt-map-panel {
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  overflow: hidden;
+}
+
+.vtt-view-stage .vtt-map-grid {
+  min-height: 300px;
+  height: 100%;
+}
+
+.vtt-view-stage > .vtt-bottom {
+  display: grid;
+  grid-template-columns: minmax(280px, 1.2fr) minmax(170px, 0.62fr) minmax(170px, 0.62fr) minmax(190px, 0.74fr);
+  gap: 10px;
+  min-height: 132px;
+  max-height: 178px;
+  overflow: hidden;
+}
+
+.vtt-table-bottom {
+  padding: 10px;
+}
+
+.vtt-table-character-card,
+.vtt-table-mini-panel,
+.vtt-table-actions {
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid rgba(124, 236, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(2, 10, 18, 0.68);
+  box-shadow: inset 0 0 22px rgba(57, 216, 255, 0.035);
+}
+
+.vtt-table-character-card {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px;
+}
+
+.vtt-table-portrait {
+  display: grid;
+  place-items: center;
+  min-height: 112px;
+  border: 1px solid rgba(57, 216, 255, 0.26);
+  border-radius: 8px;
+  overflow: hidden;
+  color: var(--solaris-cyan);
+  background:
+    radial-gradient(circle, rgba(57, 216, 255, 0.24), transparent 58%),
+    rgba(2, 10, 18, 0.88);
+}
+
+.vtt-table-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vtt-table-portrait i {
+  font-style: normal;
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.vtt-table-character-card h3,
+.vtt-table-mini-panel h3,
+.vtt-table-actions h3 {
+  margin: 0 0 6px;
+  overflow: hidden;
+  color: var(--solaris-text);
+  font-size: 0.92rem;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.vtt-table-character-card small {
+  display: block;
+  overflow: hidden;
+  color: var(--solaris-text-secondary);
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vtt-table-resources {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.vtt-table-resources .vtt-resource-input {
+  min-height: 56px;
+  padding: 7px 8px;
+}
+
+.vtt-table-resources .vtt-resource-input input {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.vtt-table-mini-panel,
+.vtt-table-actions {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  padding: 10px;
+  overflow: hidden;
+}
+
+.vtt-table-mini-panel span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  border-top: 1px solid rgba(124, 236, 255, 0.1);
+  padding-top: 6px;
+}
+
+.vtt-table-mini-panel small {
+  color: var(--solaris-text-secondary);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+}
+
+.vtt-table-mini-panel strong {
+  overflow: hidden;
+  color: var(--solaris-text);
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vtt-table-actions div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.vtt-table-actions button {
+  min-height: 38px;
+  border: 1px solid rgba(124, 236, 255, 0.22);
+  border-radius: 7px;
+  color: var(--solaris-text);
+  font-weight: 800;
+  background: linear-gradient(135deg, rgba(23, 135, 255, 0.22), rgba(4, 18, 31, 0.92));
+}
+
+.vtt-left,
+.vtt-right {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.vtt-left {
+  grid-template-rows: minmax(230px, 0.95fr) minmax(250px, 1fr);
+}
+
+.vtt-players,
+.vtt-chat {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.vtt-chat {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.vtt-player-list,
+.vtt-chat-log {
+  min-height: 0;
+}
+
+.vtt-right {
+  grid-template-rows:
+    minmax(168px, 1.1fr)
+    minmax(104px, 0.5fr)
+    minmax(130px, 0.72fr)
+    minmax(102px, 0.5fr)
+    minmax(96px, 0.46fr);
+}
+
+.vtt-right .vtt-panel {
+  min-height: 0;
+}
+
+.vtt-combat-initiative,
+.vtt-approval-list,
+.vtt-loot-list,
+.vtt-objectives,
+.vtt-roll-history {
+  min-height: 0;
+  overflow: auto;
+}
+
+.vtt-shell.solaris-table-view-shop .vtt-left,
+.vtt-shell.solaris-table-view-shop .vtt-right,
+.vtt-shell.solaris-table-view-sheet .vtt-left,
+.vtt-shell.solaris-table-view-sheet .vtt-right {
+  display: none;
+}
+
+.vtt-shell.solaris-table-view-shop .vtt-main,
+.vtt-shell.solaris-table-view-sheet .vtt-main {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  padding-inline: 10px;
+}
+
+.vtt-shell.solaris-table-view-shop .vtt-view-tabs,
+.vtt-shell.solaris-table-view-sheet .vtt-view-tabs {
+  max-width: min(860px, 100%);
+}
+
+.vtt-view-shop .solaris-store-shell {
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+  margin-top: 0;
+  padding: 0;
+  grid-template-columns: minmax(190px, 0.18fr) minmax(0, 1fr);
+}
+
+.vtt-view-shop .solaris-store-main,
+.vtt-view-shop .solaris-store-content,
+.vtt-view-shop .solaris-store-results,
+.vtt-view-shop .solaris-store-grid,
+.vtt-view-shop .solaris-store-cart {
+  min-height: 0;
+}
+
+.vtt-view-shop .solaris-store-grid {
+  grid-template-columns: repeat(auto-fill, minmax(224px, 1fr));
+  align-content: start;
+}
+
+.vtt-view-shop .solaris-store-card {
+  min-height: 282px;
+  max-height: 282px;
+}
+
+.vtt-view-shop .solaris-store-sidebar nav {
+  max-height: none;
+}
+
+.vtt-sheet-workspace,
+.vtt-gm-workspace {
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.vtt-sheet-workspace {
+  display: grid;
+  grid-template-columns: minmax(360px, 1.2fr) minmax(280px, 0.9fr) minmax(280px, 0.9fr);
+  grid-auto-rows: minmax(154px, auto);
+  gap: 10px;
+  padding-right: 4px;
+}
+
+.vtt-sheet-hero {
+  grid-row: span 2;
+}
+
+.vtt-sheet-hero,
+.vtt-sheet-module,
+.vtt-gm-workspace-title,
+.vtt-gm-scene-summary {
+  border: 1px solid rgba(79, 207, 255, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(9, 33, 52, 0.78), rgba(2, 10, 19, 0.9)),
+    radial-gradient(circle at 0% 0%, rgba(57, 216, 255, 0.08), transparent 36%);
+  box-shadow: var(--solaris-shadow-panel);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+
+.vtt-sheet-hero {
+  padding: 10px;
+}
+
+.vtt-sheet-profile {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+  height: 100%;
+  min-height: 0;
+}
+
+.vtt-sheet-profile-portrait {
+  display: grid;
+  place-items: center;
+  min-height: 148px;
+  border: 1px solid rgba(57, 216, 255, 0.28);
+  border-radius: 8px;
+  overflow: hidden;
+  color: var(--solaris-cyan);
+  background:
+    radial-gradient(circle, rgba(57, 216, 255, 0.25), transparent 60%),
+    rgba(2, 10, 18, 0.86);
+}
+
+.vtt-sheet-profile-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vtt-sheet-profile-portrait i {
+  font-style: normal;
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.vtt-sheet-profile-copy {
+  min-width: 0;
+}
+
+.vtt-sheet-profile-copy h2 {
+  margin: 0;
+  overflow: hidden;
+  color: var(--solaris-text);
+  font-size: 1.25rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vtt-sheet-profile-copy small {
+  display: block;
+  overflow: hidden;
+  color: var(--solaris-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vtt-sheet-profile-resources,
+.vtt-sheet-profile-stats {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.vtt-sheet-profile-resources {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.vtt-sheet-profile-stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.vtt-sheet-profile-resources .vtt-resource-input,
+.vtt-sheet-profile-stats span {
+  min-height: 64px;
+  border: 1px solid rgba(124, 236, 255, 0.15);
+  border-radius: 7px;
+  background: rgba(2, 10, 18, 0.72);
+}
+
+.vtt-sheet-profile-resources .vtt-resource-input {
+  padding: 8px;
+}
+
+.vtt-sheet-profile-resources .vtt-resource-input input {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.vtt-sheet-profile-stats span {
+  display: grid;
+  align-content: space-between;
+  gap: 6px;
+  padding: 9px;
+}
+
+.vtt-sheet-profile-stats small {
+  color: var(--solaris-text-secondary);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+}
+
+.vtt-sheet-profile-stats strong {
+  overflow: hidden;
+  color: var(--solaris-text);
+  font-size: 0.86rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vtt-sheet-module {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 10px;
+  min-height: 0;
+  padding: 12px;
+}
+
+.vtt-sheet-module header,
+.vtt-gm-workspace-title,
+.vtt-gm-scene-summary footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.vtt-sheet-module h3,
+.vtt-gm-workspace-title h2,
+.vtt-gm-scene-summary h3 {
+  margin: 0;
+  color: var(--solaris-text);
+  text-transform: uppercase;
+}
+
+.vtt-sheet-module header span,
+.vtt-gm-workspace-title span,
+.vtt-gm-scene-summary span {
+  color: var(--solaris-cyan);
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.vtt-sheet-stat-grid,
+.vtt-action-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.vtt-sheet-stat-grid span,
+.vtt-action-tile-grid button,
+.vtt-sheet-list span {
+  border: 1px solid rgba(124, 236, 255, 0.15);
+  border-radius: 7px;
+  background: rgba(2, 10, 18, 0.72);
+}
+
+.vtt-sheet-stat-grid span {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+}
+
+.vtt-sheet-stat-grid small,
+.vtt-sheet-list small {
+  color: var(--solaris-text-secondary);
+  font-size: 0.68rem;
+}
+
+.vtt-sheet-stat-grid strong {
+  color: var(--solaris-text);
+  font-size: 1.02rem;
+}
+
+.vtt-sheet-list {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 0;
+  overflow: auto;
+}
+
+.vtt-sheet-list span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 10px;
+}
+
+.vtt-sheet-list strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vtt-action-tile-grid button {
+  min-height: 56px;
+  color: var(--solaris-text);
+  font-weight: 780;
+  background:
+    linear-gradient(135deg, rgba(155, 77, 255, 0.18), rgba(4, 20, 32, 0.88));
+}
+
+.vtt-gm-workspace {
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  gap: 10px;
+}
+
+.vtt-gm-workspace-title,
+.vtt-gm-scene-summary {
+  padding: 12px;
+}
+
+.vtt-gm-workspace-title button,
+.vtt-gm-command-grid button {
+  min-height: 42px;
+  border: 1px solid rgba(124, 236, 255, 0.24);
+  border-radius: 7px;
+  color: var(--solaris-text);
+  background: linear-gradient(135deg, rgba(23, 135, 255, 0.22), rgba(4, 18, 31, 0.9));
+}
+
+.vtt-gm-command-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(110px, 1fr));
+  gap: 10px;
+}
+
+.vtt-gm-command-grid button.danger {
+  border-color: rgba(255, 83, 104, 0.52);
+  background: linear-gradient(135deg, rgba(255, 83, 104, 0.22), rgba(30, 6, 15, 0.9));
+}
+
+.vtt-gm-scene-summary {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.48fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.vtt-gm-scene-image {
+  min-height: 112px;
+  border: 1px solid rgba(124, 236, 255, 0.16);
+  border-radius: 7px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(57, 216, 255, 0.16), transparent 48%),
+    rgba(2, 9, 16, 0.82);
+}
+
+.vtt-gm-scene-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vtt-gm-scene-image span {
+  display: grid;
+  height: 100%;
+  place-items: center;
+  color: var(--solaris-text-secondary);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+}
+
+.vtt-gm-scene-summary p {
+  margin: 8px 0;
+  color: var(--solaris-text-secondary);
+}
+
+.vtt-gm-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  min-height: 0;
+}
+
+.vtt-gm-dashboard-grid .wide {
+  grid-column: span 2;
+}
+
+@media (max-width: 1500px) {
+  .vtt-shell.solaris-shell {
+    --solaris-left-column: 248px;
+    --solaris-right-column: 300px;
+  }
+
+  .vtt-session {
+    grid-template-columns: 1fr;
+  }
+
+  .vtt-gm-command-grid {
+    grid-template-columns: repeat(3, minmax(120px, 1fr));
+  }
+}
+
+@media (max-width: 1180px) {
+  .vtt-shell.solaris-shell {
+    min-height: 100vh;
+  }
+
+  .vtt-view-stage.vtt-view-table {
+    overflow: auto;
+  }
+
+  .vtt-view-stage > .vtt-bottom,
+  .vtt-sheet-workspace,
+  .vtt-gm-dashboard-grid,
+  .vtt-gm-scene-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .vtt-sheet-hero,
+  .vtt-gm-dashboard-grid .wide {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .vtt-view-shop .solaris-store-shell,
+  .vtt-view-shop .solaris-store-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Fase 18A - Desktop-first inspirado em VTTs como Foundry e Roll20 */
+@media (min-width: 1281px) {
+  .vtt-shell.solaris-shell {
+    --solaris-left-column: clamp(264px, 15vw, 316px);
+    --solaris-right-column: clamp(304px, 17vw, 372px);
+    --solaris-desktop-gap: 8px;
+    width: 100vw;
+    height: 100vh;
+    min-height: 0;
+    margin: 0;
+    padding: 10px;
+    gap: var(--solaris-desktop-gap);
+    grid-template-columns: var(--solaris-left-column) minmax(0, 1fr) var(--solaris-right-column);
+    grid-template-rows: 64px minmax(0, 1fr) 52px;
+  }
+
+  .vtt-topbar.solaris-topbar {
+    min-height: 0;
+    padding: 8px 10px;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .vtt-brand {
+    min-width: 250px;
+  }
+
+  .vtt-brand-mark {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .vtt-brand strong {
+    font-size: 0.98rem;
+    line-height: 1.05;
+  }
+
+  .vtt-brand small,
+  .vtt-room-strip span,
+  .vtt-connection small {
+    font-size: 0.66rem;
+  }
+
+  .vtt-room-strip {
+    min-width: 180px;
+    max-width: 260px;
+    padding: 8px 12px;
+    overflow: hidden;
+  }
+
+  .vtt-room-strip strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .vtt-connection {
+    min-width: 190px;
+    padding: 7px 10px;
+  }
+
+  .vtt-top-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 7px;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .vtt-top-actions button {
+    flex: 0 0 auto;
+    min-height: 38px;
+    padding: 7px 11px;
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+
+  .vtt-left,
+  .vtt-right {
+    gap: var(--solaris-desktop-gap);
+    overflow: hidden;
+  }
+
+  .vtt-left {
+    grid-template-rows: minmax(190px, 0.88fr) minmax(250px, 1.12fr);
+  }
+
+  .vtt-right {
+    grid-template-rows:
+      minmax(160px, 1.02fr)
+      minmax(92px, 0.48fr)
+      minmax(114px, 0.62fr)
+      minmax(92px, 0.48fr)
+      minmax(86px, 0.44fr);
+  }
+
+  .vtt-left .vtt-panel,
+  .vtt-right .vtt-panel {
+    padding: 10px;
+    overflow: hidden;
+  }
+
+  .vtt-panel-heading {
+    min-height: 28px;
+  }
+
+  .vtt-panel-heading h3 {
+    font-size: 0.82rem;
+  }
+
+  .vtt-player {
+    grid-template-columns: 46px minmax(0, 1fr);
+    min-height: 54px;
+    padding: 7px;
+  }
+
+  .vtt-player img,
+  .vtt-player-avatar {
+    width: 42px;
+    height: 42px;
+  }
+
+  .vtt-chat-log article {
+    padding: 9px 10px;
+  }
+
+  .vtt-chat-form {
+    gap: 8px;
+    padding-top: 8px;
+  }
+
+  .vtt-chat-form input {
+    min-height: 38px;
+  }
+
+  .vtt-chat-form button {
+    min-height: 38px;
+    padding-inline: 12px;
+  }
+
+  .vtt-main.solaris-main-stage {
+    grid-template-rows: 66px minmax(0, 1fr);
+    gap: var(--solaris-desktop-gap);
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .vtt-view-tabs {
+    min-height: 0;
+    gap: var(--solaris-desktop-gap);
+  }
+
+  .vtt-view-tabs button {
+    min-height: 58px;
+    padding: 10px 14px;
+  }
+
+  .vtt-view-tabs strong {
+    font-size: 0.84rem;
+  }
+
+  .vtt-view-stage.vtt-view-table {
+    grid-template-rows: minmax(0, 1fr) minmax(96px, 0.2fr);
+    gap: var(--solaris-desktop-gap);
+    overflow: hidden;
+  }
+
+  .vtt-view-stage .vtt-map-panel {
+    position: relative;
+    grid-template-rows: auto minmax(300px, 1fr);
+    gap: 8px;
+    padding: 10px;
+    overflow: hidden;
+  }
+
+  .vtt-view-stage .vtt-map-panel::before {
+    content: "";
+    position: absolute;
+    inset: 9px;
+    border: 1px solid rgba(57, 216, 255, 0.08);
+    pointer-events: none;
+  }
+
+  .vtt-view-stage .vtt-map-toolbar {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    padding-bottom: 7px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    scrollbar-width: thin;
+  }
+
+  .vtt-view-stage .vtt-map-toolbar div {
+    flex: 1 0 150px;
+    min-width: 150px;
+    margin-right: 4px;
+  }
+
+  .vtt-view-stage .vtt-map-toolbar strong {
+    font-size: 0.82rem;
+  }
+
+  .vtt-view-stage .vtt-map-toolbar span {
+    font-size: 0.68rem;
+  }
+
+  .vtt-view-stage .vtt-map-toolbar button {
+    min-height: 32px;
+    padding: 6px 9px;
+    border-radius: 6px;
+    font-size: 0.68rem;
+  }
+
+  .vtt-view-stage .vtt-grid-controls {
+    position: absolute;
+    top: 58px;
+    left: 12px;
+    right: 12px;
+    z-index: 8;
+    grid-template-columns: repeat(6, minmax(76px, 1fr));
+    align-items: end;
+    gap: 6px;
+    min-height: 40px;
+    max-height: 46px;
+    overflow: hidden;
+    padding: 6px;
+    border: 1px solid rgba(57, 216, 255, 0.18);
+    border-radius: 8px;
+    background: rgba(2, 12, 23, 0.92);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.38), 0 0 22px rgba(0, 174, 255, 0.1);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+
+  .vtt-view-stage .vtt-map-panel:hover .vtt-grid-controls,
+  .vtt-view-stage .vtt-grid-controls:focus-within {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .vtt-view-stage .vtt-grid-controls label {
+    font-size: 0.58rem;
+    gap: 2px;
+    min-height: 0;
+  }
+
+  .vtt-view-stage .vtt-grid-controls input,
+  .vtt-view-stage .vtt-grid-controls select {
+    min-height: 28px;
+    font-size: 0.72rem;
+  }
+
+  .vtt-view-stage .vtt-map-grid {
+    min-height: 0;
+    height: 100%;
+    border-radius: 6px;
+  }
+
+  .vtt-view-stage .vtt-map-footer {
+    position: absolute;
+    top: 64px;
+    right: 16px;
+    z-index: 5;
+    max-width: calc(100% - 32px);
+    min-height: 0;
+    padding: 5px 8px;
+    border: 1px solid rgba(57, 216, 255, 0.14);
+    border-radius: 999px;
+    background: rgba(2, 12, 23, 0.72);
+    opacity: 0.82;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .vtt-view-stage .vtt-map-panel > .vtt-quick-actions {
+    display: none;
+  }
+
+  .vtt-view-stage .vtt-map-footer span {
+    font-size: 0.66rem;
+  }
+
+  .vtt-map-caption {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    padding: 7px 9px;
+  }
+
+  .vtt-view-stage > .vtt-bottom {
+    grid-template-columns: minmax(300px, 1.25fr) minmax(180px, 0.54fr) minmax(178px, 0.54fr) minmax(194px, 0.62fr);
+    gap: var(--solaris-desktop-gap);
+    min-height: 96px;
+    max-height: 126px;
+    padding: 8px;
+  }
+
+  .vtt-table-character-card,
+  .vtt-table-mini-panel,
+  .vtt-table-actions {
+    padding: 8px;
+  }
+
+  .vtt-table-character-card {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+
+  .vtt-table-portrait {
+    min-height: 88px;
+  }
+
+  .vtt-table-resources {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+    margin-top: 7px;
+  }
+
+  .vtt-table-resources .vtt-resource-input {
+    min-height: 48px;
+    padding: 6px;
+  }
+
+  .vtt-table-character-card h3,
+  .vtt-table-mini-panel h3,
+  .vtt-table-actions h3 {
+    margin-bottom: 4px;
+    font-size: 0.78rem;
+  }
+
+  .vtt-table-mini-panel {
+    gap: 5px;
+  }
+
+  .vtt-table-mini-panel span {
+    padding-top: 5px;
+  }
+
+  .vtt-table-actions div {
+    gap: 6px;
+  }
+
+  .vtt-table-actions button {
+    min-height: 32px;
+    padding: 5px 7px;
+    font-size: 0.72rem;
+  }
+
+  .vtt-quickbar.solaris-bottom-bar {
+    grid-column: 1 / -1;
+    min-height: 0;
+    padding: 7px 10px;
+    gap: 8px;
+    overflow-x: auto;
+  }
+
+  .vtt-quick-slot {
+    min-width: 104px;
+    min-height: 36px;
+  }
+
+  .vtt-shell.solaris-table-view-shop .vtt-main,
+  .vtt-shell.solaris-table-view-sheet .vtt-main {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    padding-inline: 0;
+  }
+
+  .vtt-shell.solaris-table-view-shop .vtt-view-tabs,
+  .vtt-shell.solaris-table-view-sheet .vtt-view-tabs {
+    max-width: min(980px, 100%);
+  }
+
+  .vtt-view-shop .solaris-store-shell {
+    grid-template-columns: minmax(220px, 0.19fr) minmax(0, 1fr);
+  }
+
+  .vtt-view-shop .solaris-store-grid {
+    grid-template-columns: repeat(auto-fill, minmax(238px, 1fr));
+  }
+
+  .vtt-view-shop .solaris-store-card {
+    min-height: 270px;
+    max-height: 270px;
+  }
+
+  .vtt-sheet-workspace {
+    grid-template-columns: minmax(340px, 1.05fr) minmax(280px, 0.8fr) minmax(280px, 0.8fr);
+    grid-auto-rows: minmax(148px, 1fr);
+    gap: var(--solaris-desktop-gap);
+    overflow: hidden;
+  }
+
+  .vtt-gm-workspace {
+    gap: var(--solaris-desktop-gap);
+    overflow: hidden;
+  }
+
+  .vtt-gm-dashboard-grid {
+    gap: var(--solaris-desktop-gap);
+    overflow: hidden;
+  }
+}
+
+@media (min-width: 1760px) {
+  .vtt-shell.solaris-shell {
+    --solaris-left-column: clamp(292px, 14.6vw, 340px);
+    --solaris-right-column: clamp(336px, 16.6vw, 396px);
+    grid-template-rows: 68px minmax(0, 1fr) 56px;
+    padding: 12px;
+  }
+
+  .vtt-main.solaris-main-stage {
+    grid-template-rows: 70px minmax(0, 1fr);
+  }
+
+  .vtt-view-stage.vtt-view-table {
+    grid-template-rows: minmax(0, 1fr) minmax(116px, 0.22fr);
+  }
+
+  .vtt-view-stage .vtt-map-toolbar {
+    grid-template-columns: minmax(190px, 1fr) repeat(12, max-content);
+  }
+
+  .vtt-table-character-card {
+    grid-template-columns: 88px minmax(0, 1fr);
+  }
+
+  .vtt-table-portrait {
+    min-height: 98px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .vtt-shell.solaris-shell {
+    height: auto;
+    min-height: 100vh;
+    overflow: auto;
+  }
+
+  .vtt-topbar.solaris-topbar,
+  .vtt-top-actions {
+    overflow-x: auto;
+  }
+
+  .vtt-main.solaris-main-stage {
+    overflow: visible;
+  }
+
+  .vtt-view-stage {
+    overflow: visible;
+  }
+
+  .vtt-view-stage.vtt-view-table {
+    grid-template-rows: auto auto;
+  }
+
+  .vtt-view-stage .vtt-map-panel,
+  .vtt-view-stage .vtt-map-grid {
+    height: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  .vtt-shell.solaris-shell {
+    width: calc(100vw - 16px);
+    max-width: calc(100vw - 16px);
+    padding: 8px;
+    gap: 8px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto auto;
+    overflow-x: hidden;
+  }
+
+  .vtt-topbar.solaris-topbar {
+    grid-column: 1;
+    grid-row: auto;
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 12px;
+  }
+
+  .vtt-brand,
+  .vtt-room-strip,
+  .vtt-connection,
+  .vtt-top-actions {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .vtt-brand {
+    align-items: center;
+  }
+
+  .vtt-room-strip {
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0;
+    border-left: 0;
+  }
+
+  .vtt-connection {
+    justify-content: flex-start;
+  }
+
+  .vtt-top-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    overflow: visible;
+    justify-content: stretch;
+  }
+
+  .vtt-top-actions button {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 8px;
+    white-space: normal;
+    line-height: 1.15;
+  }
+
+  .vtt-left,
+  .vtt-right,
+  .vtt-main.solaris-main-stage,
+  .vtt-quickbar.solaris-bottom-bar {
+    grid-column: 1;
+    grid-row: auto;
+    min-width: 0;
+  }
+
+  .vtt-left,
+  .vtt-right {
+    display: grid;
+    grid-template-rows: none;
+    overflow: visible;
+  }
+
+  .vtt-panel,
+  .vtt-card,
+  .vtt-map-panel,
+  .vtt-view-stage,
+  .vtt-main.solaris-main-stage {
+    min-width: 0;
+  }
+
+  .vtt-chat-form {
+    grid-template-columns: minmax(0, 1fr) minmax(78px, auto);
+  }
+
+  .vtt-chat-form input {
+    min-width: 0;
+  }
+
+  .vtt-view-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .vtt-view-tabs button {
+    grid-template-columns: 1fr;
+    min-height: 54px;
+  }
+
+  .vtt-view-tabs span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .vtt-view-stage > .vtt-bottom {
+    max-height: none;
+  }
+}

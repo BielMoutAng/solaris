@@ -629,6 +629,42 @@ Documentacao:
 docs/FASE_16_PADRONIZACAO_VISUAL_GLOBAL.md
 ```
 
+### Passo 17 - Estrutura visual por telas
+
+Status: primeira versao alfa implementada em `20260621f`.
+
+- A Mesa Virtual passa a organizar o centro do app em telas principais: `Mesa`, `Loja`, `Ficha` e `Mestre`.
+- A tela `Mesa` preserva mapa tatico, painéis laterais, chat e uma faixa inferior compacta do personagem.
+- A tela `Loja` abre o Mercado Solaris em tela ampla, escondendo laterais que competiam por espaco.
+- A tela `Ficha` abre um resumo sincronizado de personagem em layout proprio, sem disputar area com o mapa.
+- A tela `Mestre` mostra comandos, resumo de cena, objetivos, notas, monstros, mapas e contadores em cards organizados.
+- Paineis densos passam a usar altura controlada e scroll interno para evitar que quadros fiquem uns por cima dos outros.
+- Versao do Solaris Tabletop Alpha: `0.6.0-alpha.9`.
+
+Documentacao:
+
+```txt
+docs/FASE_17_ESTRUTURA_VISUAL_TABLETOP.md
+```
+
+### Passo 17B - Desktop-first do Tabletop
+
+Status: primeira versao alfa implementada em `20260622f`.
+
+- Layout do VTT foi refinado pensando primeiro em PC/Windows, com comportamento semelhante a mesas virtuais como Foundry e Roll20.
+- O mapa/palco central fica dominante na tela `Mesa`.
+- Topbar, toolbar de mapa, laterais e barra inferior foram compactadas para liberar mais area util.
+- Jogadores, chat, combate, aprovacoes, loot, objetivos e historico funcionam como docks com rolagem interna.
+- A Loja e a Ficha continuam abrindo em modo amplo, sem laterais competindo por espaco.
+- O fallback responsivo para iPhone/PWA foi mantido com colunas empilhadas e abas em duas colunas.
+- Versao do Solaris Tabletop Alpha: `0.6.0-alpha.13`.
+
+Documentacao:
+
+```txt
+docs/FASE_17B_DESKTOP_FIRST_TABLETOP.md
+```
+
 Comparar cada tela com as imagens de referencia:
 
 - criador;
