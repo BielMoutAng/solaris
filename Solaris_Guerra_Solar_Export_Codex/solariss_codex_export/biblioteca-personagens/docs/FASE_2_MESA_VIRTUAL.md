@@ -553,6 +553,26 @@ Documentacao da loja alfa:
 ```txt
 docs/FASE_4_LOJA_E_DISTRIBUICAO.md
 ```
+
+## Fase 19 - Reconciliacao oficial de dados
+
+Implementada no cache `20260622g`.
+
+- `official-books-data.js`, `official-book5-catalog.js` e `official-rulebook-compendium.js` receberam metadados de governanca.
+- Os cinco livros oficiais atuais foram registrados como fontes canonicas.
+- Fontes antigas foram preservadas apenas como historico.
+- Dados duvidosos agora devem usar `needsReview` e `reviewReason`.
+- Foi criado `scripts/audit-official-sources.mjs`.
+- Foi criado `tests/official-data-reconciliation.test.mjs`.
+- Tabletop Alpha em `0.6.0-alpha.14`.
+
+Documentacao:
+
+```txt
+docs/FASE_19_RECONCILIACAO_OFICIAL_DADOS.md
+docs/RELATORIO_DIVERGENCIAS_DADOS_OFICIAIS.md
+docs/MAPA_FONTES_OFICIAIS.md
+```
 ## Fase 5 - Polimento funcional
 
 Implementada no cache `20260620d`.

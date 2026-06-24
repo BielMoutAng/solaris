@@ -1,12 +1,22 @@
 /* Gerado automaticamente a partir dos cinco livros finais de Solaris. */
 globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "sourceStatus": "current-source-needs-review",
+  "sourceLastReconciledAt": "2026-06-23",
+  "dataStability": "provisional",
+  "needsReview": true,
+  "reviewReason": "Compendio textual preserva trechos dos livros; metadados de fontes foram atualizados, mas textos brutos ainda exigem revisao manual antes de virarem regras automatizadas.",
   "sources": [
     {
       "id": "book1",
       "label": "Livro 1",
       "title": "Livro Básico do Jogador",
-      "file": "Livro_1_Basico_do_Jogador_punhos_corrigido.docx",
+      "file": "Livro 1 base do jogador.docx",
+      "filePrevious": "Livro_1_Basico_do_Jogador_punhos_corrigido.docx",
+      "sourceStatus": "current-source-needs-review",
+      "sourceLastReconciledAt": "2026-06-23",
+      "needsReview": true,
+      "reviewReason": "Fonte atual reconciliada; contagens e secoes do compendio ainda precisam conferencia manual contra o Livro 1 atual.",
       "sections": 798,
       "paragraphs": 5256,
       "tables": 209,
@@ -17,6 +27,10 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "label": "Livro 2",
       "title": "Guia do Mestre",
       "file": "Livro_2_Guia_do_Mestre_rifles_corrigido.docx",
+      "sourceStatus": "current-source-needs-review",
+      "sourceLastReconciledAt": "2026-06-23",
+      "needsReview": true,
+      "reviewReason": "Fonte atual confirmada; dados textuais seguem marcados para conferencia manual.",
       "sections": 1050,
       "paragraphs": 10499,
       "tables": 235,
@@ -27,6 +41,10 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "label": "Livro 3",
       "title": "Bestiário",
       "file": "Livro_3_Bestiario_Guerra_Solar_revisado_coerencia_fichas.docx",
+      "sourceStatus": "current-source-needs-review",
+      "sourceLastReconciledAt": "2026-06-23",
+      "needsReview": true,
+      "reviewReason": "Fonte atual confirmada; campos de monstros e loot ainda precisam conferencia manual completa.",
       "sections": 166,
       "paragraphs": 2695,
       "tables": 17,
@@ -37,6 +55,10 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "label": "Livro 4",
       "title": "Cenários e História",
       "file": "Livro_4_Cenarios_e_Historia_Guerra_Solar_formatado_revisado.docx",
+      "sourceStatus": "current-source-needs-review",
+      "sourceLastReconciledAt": "2026-06-23",
+      "needsReview": true,
+      "reviewReason": "Fonte atual confirmada; compendio de lore ainda nao virou banco navegavel completo.",
       "sections": 148,
       "paragraphs": 1275,
       "tables": 34,
@@ -46,7 +68,12 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
       "id": "book5",
       "label": "Livro 5",
       "title": "Itens, Equipamentos e Habilidades",
-      "file": "Livro_5_Itens_Equipamentos_Habilidades_CA_armaduras_corrigida.docx",
+      "file": "Livro_5_Itens_Equipamentos_Habilidades_punhos_corrigido.docx",
+      "filePrevious": "Livro_5_Itens_Equipamentos_Habilidades_CA_armaduras_corrigida.docx",
+      "sourceStatus": "current-source-needs-review",
+      "sourceLastReconciledAt": "2026-06-23",
+      "needsReview": true,
+      "reviewReason": "Fonte atual reconciliada; catalogos mecanicos do Livro 5 precisam conferencia manual por tabela.",
       "sections": 391,
       "paragraphs": 4088,
       "tables": 254,
@@ -197573,3 +197600,31 @@ globalThis.SOLARIS_RULEBOOK_COMPENDIUM = {
     }
   ]
 };
+
+
+(function reconcileSolarisRulebookCompendiumGovernance() {
+  const data = globalThis.SOLARIS_RULEBOOK_COMPENDIUM;
+  if (!data || data.__phase19Reconciled) return;
+
+  const reconciledAt = "2026-06-23";
+  const sourceByBook = Object.fromEntries((data.sources || []).map((source) => [source.id, source]));
+
+  function applySectionGovernance(section) {
+    if (!section || typeof section !== "object") return;
+    const source = sourceByBook[section.bookId] || {};
+    if (!section.officialId && section.id) section.officialId = section.id;
+    if (!section.sourceFileCurrent && source.file) section.sourceFileCurrent = source.file;
+    if (!section.sourceStatus) section.sourceStatus = "current-source-needs-review";
+    if (!section.sourceLastReconciledAt) section.sourceLastReconciledAt = reconciledAt;
+    if (!section.dataStability) section.dataStability = "provisional";
+    if (!section.sourceChapter && Array.isArray(section.breadcrumb) && section.breadcrumb.length) {
+      section.sourceChapter = section.breadcrumb[0];
+    }
+    if (section.needsReview && !section.reviewReason) {
+      section.reviewReason = "Trecho textual marcado para revisao manual durante a reconciliacao oficial.";
+    }
+  }
+
+  (data.sections || []).forEach(applySectionGovernance);
+  data.__phase19Reconciled = true;
+})();

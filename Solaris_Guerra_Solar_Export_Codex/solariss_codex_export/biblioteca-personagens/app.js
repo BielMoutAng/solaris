@@ -25,8 +25,8 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260621b";
-import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260622f";
+} from "./src/domain/solaris-domain-architecture.js?v=20260622g";
+import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260622g";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -2437,7 +2437,7 @@ function currentSessionCharacterSnapshot() {
     luzentis: numberValue(state.current.currency, STARTING_CURRENCY),
     metadata: {
       schemaVersion: 1,
-      appCache: "20260622f",
+      appCache: "20260622g",
       source: "solaris-local-character",
       updatedAt: state.current.updatedAt || new Date().toISOString(),
     },

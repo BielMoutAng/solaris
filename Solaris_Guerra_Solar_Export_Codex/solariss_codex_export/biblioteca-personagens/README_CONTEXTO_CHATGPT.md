@@ -665,6 +665,60 @@ Documentacao:
 docs/FASE_17B_DESKTOP_FIRST_TABLETOP.md
 ```
 
+### Passo 18 - Auditoria Funcional Recorrente das Regras Oficiais
+
+Status: auditoria documental criada em `20260622f`, sem alteracao de runtime.
+
+- A Fase 18 compara o estado atual do app com os Livros 1 a 5 oficiais.
+- Foram criados tres documentos: auditoria geral, matriz funcional e registro de regras mutaveis.
+- A auditoria classifica cada area como implementada, parcial, provisoria, ausente, divergente ou instavel.
+- Nenhum cache, service worker, versao Electron ou codigo de regra foi alterado nesta fase.
+- O Solaris Biblioteca, o PWA/iPhone, o modo offline e o Solaris Tabletop Alpha devem permanecer exatamente como estavam.
+- Principais P0/P1 detectados: reconciliar fontes oficiais atuais, revisar racas/pericia extra, revisar Livro 5 contra catalogos, completar criacao/progressao, completar combate oficial e padronizar condicoes.
+- A auditoria deve ser refeita sempre que algum livro oficial for renomeado, corrigido ou recompilado.
+
+Documentacao:
+
+```txt
+docs/FASE_18_AUDITORIA_FUNCIONAL_RECORRENTE.md
+docs/MATRIZ_FUNCIONAL_REGRAS_GUERRA_SOLAR.md
+docs/REGISTRO_DE_REGRAS_MUTAVEIS.md
+```
+
+### Passo 19 - Reconciliacao Oficial de Dados
+
+Status: implementada em `20260622g`.
+
+- Runtime alterado de forma leve nos arquivos `official-*`.
+- Versao do Solaris Tabletop Alpha: `0.6.0-alpha.14`.
+- Os cinco livros oficiais atuais foram registrados como fonte canonica:
+  - `Livro 1 base do jogador.docx`;
+  - `Livro_2_Guia_do_Mestre_rifles_corrigido.docx`;
+  - `Livro_3_Bestiario_Guerra_Solar_revisado_coerencia_fichas.docx`;
+  - `Livro_4_Cenarios_e_Historia_Guerra_Solar_formatado_revisado.docx`;
+  - `Livro_5_Itens_Equipamentos_Habilidades_punhos_corrigido.docx`.
+- `official-books-data.js` passou para schema `2` e ganhou `sourceGovernance`.
+- `official-book5-catalog.js` passou para schema `3`, fonte atual do Livro 5 e metadados por entrada.
+- `official-rulebook-compendium.js` passou para schema `2`, fontes atuais e marcacao de revisao manual.
+- Foi criado `scripts/audit-official-sources.mjs` para diagnosticar livros e arquivos oficiais.
+- Foi criado `tests/official-data-reconciliation.test.mjs`.
+- Fontes antigas ficam apenas em campos historicos como `sourceFilePrevious`.
+- Dados duvidosos devem usar `needsReview` e `reviewReason`.
+
+Documentacao:
+
+```txt
+docs/FASE_19_RECONCILIACAO_OFICIAL_DADOS.md
+docs/RELATORIO_DIVERGENCIAS_DADOS_OFICIAIS.md
+docs/MAPA_FONTES_OFICIAIS.md
+```
+
+Politica nova do usuario:
+
+```txt
+A partir da Fase 19, alteracoes relevantes devem gerar release no GitHub para teste/download.
+```
+
 Comparar cada tela com as imagens de referencia:
 
 - criador;

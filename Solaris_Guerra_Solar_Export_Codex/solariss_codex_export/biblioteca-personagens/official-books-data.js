@@ -1,18 +1,39 @@
 /* Gerado a partir das versões finais dos Livros 1, 2, 3 e 5. */
 globalThis.SOLARIS_OFFICIAL_BOOKS = {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "sources": {
-    "book1": "C:\\Users\\Gabriel\\Desktop\\Solaris\\livros de regras\\versão final\\livro 1 base para jogadores.docx",
-    "book2": "C:\\Users\\Gabriel\\Desktop\\Solaris\\livros de regras\\versão final\\Livro_2_Guia_do_Mestre_Guerra_Solar_formatado_enumerado.docx",
-    "book3": "Livro_3_Bestiario_Guerra_Solar_Edicao_Visual.docx",
-    "book5": "Livro_5_Guerra_Solar_COMPILADO_COMPLETO_FINAL.docx"
+    "book1": "Livro 1 base do jogador.docx",
+    "book2": "Livro_2_Guia_do_Mestre_rifles_corrigido.docx",
+    "book3": "Livro_3_Bestiario_Guerra_Solar_revisado_coerencia_fichas.docx",
+    "book4": "Livro_4_Cenarios_e_Historia_Guerra_Solar_formatado_revisado.docx",
+    "book5": "Livro_5_Itens_Equipamentos_Habilidades_punhos_corrigido.docx"
+  },
+  "sourceGovernance": {
+    "sourceStatus": "current-source-needs-review",
+    "sourceLastReconciledAt": "2026-06-23",
+    "dataStability": "provisional",
+    "needsReview": true,
+    "reviewReason": "Metadados de fonte reconciliados para os cinco livros oficiais atuais; conteudo legado ainda precisa conferencia manual por livro e tabela.",
+    "sourceFilesCurrent": {
+      "book1": "Livro 1 base do jogador.docx",
+      "book2": "Livro_2_Guia_do_Mestre_rifles_corrigido.docx",
+      "book3": "Livro_3_Bestiario_Guerra_Solar_revisado_coerencia_fichas.docx",
+      "book4": "Livro_4_Cenarios_e_Historia_Guerra_Solar_formatado_revisado.docx",
+      "book5": "Livro_5_Itens_Equipamentos_Habilidades_punhos_corrigido.docx"
+    },
+    "sourceFilesPrevious": {
+      "book1": "livro 1 base para jogadores.docx",
+      "book2": "Livro_2_Guia_do_Mestre_Guerra_Solar_formatado_enumerado.docx",
+      "book3": "Livro_3_Bestiario_Guerra_Solar_Edicao_Visual.docx",
+      "book5": "Livro_5_Guerra_Solar_COMPILADO_COMPLETO_FINAL.docx"
+    }
   },
   "templates": [
     {
       "id": "equipment",
       "label": "Equipamento geral",
       "source": "Livro 5, Tabela 212",
-      "schemaVersion": 1,
+      "schemaVersion": 2,
       "fields": [
         {
           "id": "nome-do-equipamento",
@@ -12592,3 +12613,40 @@ globalThis.SOLARIS_OFFICIAL_BOOKS = {
     }
   ]
 };
+
+
+(function reconcileSolarisOfficialBooksData() {
+  const data = globalThis.SOLARIS_OFFICIAL_BOOKS;
+  if (!data || data.__phase19Reconciled) return;
+
+  const reconciledAt = "2026-06-23";
+  const currentSources = data.sourceGovernance && data.sourceGovernance.sourceFilesCurrent
+    ? data.sourceGovernance.sourceFilesCurrent
+    : {};
+
+  function applyGovernance(entry, bookId, section) {
+    if (!entry || typeof entry !== "object") return;
+    if (!entry.officialId && entry.id) entry.officialId = entry.id;
+    if (!entry.bookId && bookId) entry.bookId = bookId;
+    if (!entry.bookTitle && bookId === "book5") entry.bookTitle = "Livro 5 - Itens, Equipamentos e Habilidades";
+    if (!entry.bookTitle && bookId === "book3") entry.bookTitle = "Livro 3 - Bestiario";
+    if (!entry.sourceFileCurrent && bookId && currentSources[bookId]) entry.sourceFileCurrent = currentSources[bookId];
+    if (!entry.sourceStatus) entry.sourceStatus = "current-source-needs-review";
+    if (!entry.sourceLastReconciledAt) entry.sourceLastReconciledAt = reconciledAt;
+    if (!entry.dataStability) entry.dataStability = bookId === "book5" ? "provisional" : "unstable";
+    if (!entry.sourceSection && entry.source) entry.sourceSection = entry.source;
+    if (!entry.reconciliationSection && section) entry.reconciliationSection = section;
+    if (entry.needsReview && !entry.reviewReason) {
+      entry.reviewReason = "Entrada marcada para revisao manual durante a reconciliacao oficial de dados.";
+    }
+  }
+
+  (data.templates || []).forEach((entry) => applyGovernance(entry, "book5", "templates"));
+  Object.entries(data.catalog || {}).forEach(([section, entries]) => {
+    (entries || []).forEach((entry) => applyGovernance(entry, "book5", section));
+  });
+  (data.bestiary || []).forEach((entry) => applyGovernance(entry, "book3", "bestiary"));
+  (data.rules || []).forEach((entry) => applyGovernance(entry, "book5", "rules"));
+
+  data.__phase19Reconciled = true;
+})();

@@ -1,8 +1,18 @@
 /* Gerado automaticamente a partir das tabelas oficiais do Livro 5. */
 globalThis.SOLARIS_OFFICIAL_BOOK5 = {
-  "schemaVersion": 2,
-  "source": "Livro_5_Itens_Equipamentos_Habilidades_CA_armaduras_corrigida.docx",
+  "schemaVersion": 3,
+  "source": "Livro_5_Itens_Equipamentos_Habilidades_punhos_corrigido.docx",
   "sourceLabel": "Livro 5 - Tabelas oficiais",
+  "sourceFileCurrent": "Livro_5_Itens_Equipamentos_Habilidades_punhos_corrigido.docx",
+  "sourceFilePrevious": "Livro_5_Itens_Equipamentos_Habilidades_CA_armaduras_corrigida.docx",
+  "sourceStatus": "current-source-needs-review",
+  "sourceLastReconciledAt": "2026-06-23",
+  "sourceNeedsReview": true,
+  "needsReview": true,
+  "reviewReason": "Fonte oficial atualizada para o Livro 5 vigente; valores mecanicos e descricoes extensas ainda exigem conferencia manual contra o documento atual.",
+  "dataStability": "provisional",
+  "bookId": "book5",
+  "bookTitle": "Livro 5 - Itens, Equipamentos e Habilidades",
   "cubeWeightKg": 1,
   "templates": [
     {
@@ -14221,3 +14231,46 @@ globalThis.SOLARIS_OFFICIAL_BOOK5 = {
     ]
   }
 };
+
+
+(function reconcileSolarisBook5CatalogGovernance() {
+  const data = globalThis.SOLARIS_OFFICIAL_BOOK5;
+  if (!data || data.__phase19Reconciled) return;
+
+  const reconciledAt = "2026-06-23";
+  const sourceFileCurrent = data.sourceFileCurrent || data.source;
+
+  function normalizeWeaponType(entry) {
+    if (!entry || typeof entry !== "object") return;
+    const type = String(entry.type || entry.category || "").trim().toLowerCase();
+    if (type === "sniper") entry.type = "rifle de precisao";
+    if (Array.isArray(entry.tags)) {
+      entry.tags = entry.tags.map((tag) => String(tag).toLowerCase() === "sniper" ? "rifle de precisao" : tag);
+    }
+  }
+
+  function applyGovernance(entry, section) {
+    if (!entry || typeof entry !== "object") return;
+    if (!entry.officialId && entry.id) entry.officialId = entry.id;
+    if (!entry.bookId) entry.bookId = "book5";
+    if (!entry.bookTitle) entry.bookTitle = data.bookTitle;
+    if (!entry.sourceFileCurrent) entry.sourceFileCurrent = sourceFileCurrent;
+    if (!entry.sourceStatus) entry.sourceStatus = "current-source-needs-review";
+    if (!entry.sourceLastReconciledAt) entry.sourceLastReconciledAt = reconciledAt;
+    if (!entry.dataStability) entry.dataStability = "provisional";
+    if (!entry.sourceChapter) entry.sourceChapter = "Livro 5 - Itens, Equipamentos e Habilidades";
+    if (!entry.sourceSection && entry.source) entry.sourceSection = entry.source;
+    if (!entry.reconciliationCategory && section) entry.reconciliationCategory = section;
+    if (entry.needsReview && !entry.reviewReason) {
+      entry.reviewReason = "Entrada marcada para revisao manual durante a reconciliacao oficial do Livro 5.";
+    }
+    normalizeWeaponType(entry);
+  }
+
+  (data.templates || []).forEach((entry) => applyGovernance(entry, "templates"));
+  Object.entries(data.catalog || {}).forEach(([section, entries]) => {
+    (entries || []).forEach((entry) => applyGovernance(entry, section));
+  });
+
+  data.__phase19Reconciled = true;
+})();

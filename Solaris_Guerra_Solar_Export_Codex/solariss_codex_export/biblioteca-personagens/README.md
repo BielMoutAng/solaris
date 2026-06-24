@@ -11,14 +11,44 @@ Abra `index.html` no navegador.
 A Mesa Virtual fica disponivel pela tela `Mesa virtual` do app e tambem pode abrir direto com:
 
 ```txt
-http://localhost:3000/?view=campaigns&check=20260622f
+http://localhost:3000/?view=campaigns&check=20260622g
 ```
 
 Ela possui modo offline/simulado quando nao ha servidor e modo multiplayer quando `npm run server:vtt` esta ativo. A fase atual inclui sala, jogadores, chat, rolagens, ficha sincronizada, combate, monstros, loja, loot, mapa tatico, selecao de alvo, dano automatico no alvo ou em areas, previa visual de tokens atingidos por areas, persistencia local de campanhas/sessoes e Painel do Mestre com notas, contadores, cenas, encontros, gerador de encontros, editores visuais de cena/encontro, escudo rapido conectado ao compendio quando houver dados estruturados e relatorio com preview antes de salvar/exportar.
 
 O Solaris Tabletop Alpha abre pela tela **Minhas Campanhas**. Ali voce pode criar campanha, continuar sessao salva, editar detalhes, duplicar, excluir com confirmacao forte, exportar/importar JSON e restaurar autosaves. Dentro da mesa, o botao **Minhas Campanhas** volta para essa entrada e o botao **Painel do Mestre** abre as ferramentas privadas do mestre.
 
-A versao `0.6.0-alpha.13` adiciona o refinamento **Desktop-first** do Tabletop. No PC/Windows, a mesa prioriza o palco/mapa central, controles de grade como sobreposicao, laterais como docks independentes, topo mais compacto, barra inferior mais baixa e paineis com rolagem interna. A estrutura responsiva para iPhone/PWA continua preservada.
+A versao `0.6.0-alpha.14` adiciona a **Fase 19 - Reconciliacao Oficial de Dados**. Os arquivos `official-*` agora registram os cinco livros oficiais atuais, preservam fontes antigas como historico, marcam dados duvidosos com `needsReview` e incluem um script/teste de auditoria para evitar regressao. O refinamento desktop-first do Tabletop e a estrutura responsiva para iPhone/PWA continuam preservados.
+
+## Auditoria funcional recorrente
+
+A Fase 18 criou uma auditoria funcional recorrente das regras oficiais contra o app atual, sem alterar runtime, cache ou versao. Ela registra o que ja esta implementado, parcial, divergente, ausente ou ainda instavel nos Livros 1 a 5.
+
+Documentos principais:
+
+- `docs/FASE_18_AUDITORIA_FUNCIONAL_RECORRENTE.md`
+- `docs/MATRIZ_FUNCIONAL_REGRAS_GUERRA_SOLAR.md`
+- `docs/REGISTRO_DE_REGRAS_MUTAVEIS.md`
+
+Essa auditoria deve ser refeita sempre que os livros oficiais forem corrigidos ou recompilados, principalmente Livro 1 e Livro 5.
+
+## Reconciliacao oficial de dados
+
+A Fase 19 criou a primeira camada de governanca de dados oficiais.
+
+Documentos principais:
+
+- `docs/FASE_19_RECONCILIACAO_OFICIAL_DADOS.md`
+- `docs/RELATORIO_DIVERGENCIAS_DADOS_OFICIAIS.md`
+- `docs/MAPA_FONTES_OFICIAIS.md`
+
+Script de diagnostico:
+
+```bash
+node scripts/audit-official-sources.mjs
+```
+
+Politica atual: quando uma alteracao relevante mudar runtime, dados oficiais, app desktop ou PWA, criar uma nova release no GitHub para facilitar teste e download.
 
 Rotas uteis no navegador:
 
@@ -89,7 +119,7 @@ Na biblioteca de raças, clique em qualquer card para abrir uma página interna 
 
 As bibliotecas de armas, armaduras e itens permitem comprar com os Luzentis (ℓ) da ficha. A compra debita o valor e coloca o equipamento no inventário do personagem, onde armas e armaduras podem ser equipadas e itens podem ser guardados no cubo. As bibliotecas também têm busca, filtro por tier/rank/custo/categoria conforme o tipo de conteúdo, e ordenação por tier, preço ou ordem alfabética.
 
-A biblioteca de armas, armaduras, itens, materiais, cubos, chips e mods é carregada de `official-book5-catalog.js`, gerado diretamente do documento oficial `livro 5 tabelas.docx`.
+A biblioteca de armas, armaduras, itens, materiais, cubos, chips e mods é carregada de `official-book5-catalog.js`, reconciliado na Fase 19 com o documento atual `Livro_5_Itens_Equipamentos_Habilidades_punhos_corrigido.docx`. O catalogo esta utilizavel, mas valores mecanicos detalhados seguem marcados como provisoriamente reconciliados ate a validacao tabela por tabela.
 
 Itens podem ser organizados em cubos, ganchos, coldres e bandoleiras. Na tela de equipamentos, arraste um item compatível até um suporte com espaço livre. Consumíveis recebem uma etiqueta própria e são removidos automaticamente do inventário ao serem usados.
 
