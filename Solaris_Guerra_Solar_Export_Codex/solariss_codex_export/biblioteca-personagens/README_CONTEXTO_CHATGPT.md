@@ -93,6 +93,7 @@ server/solaris-server.js
 tests/solaris-domain-architecture.test.mjs
 tests/solaris-session-domain.test.mjs
 docs/FASE_2_MESA_VIRTUAL.md
+docs/FASE_20_TELA_INICIAL_LAUNCHER_TABLETOP.md
 ```
 
 ## Estado atual do app antes da Fase 2
@@ -131,6 +132,10 @@ Mudanca recente:
 
 - O antigo bloqueio que impedia rolagens quando havia item sem local definido foi cancelado.
 - Agora item sem local definido apenas mostra aviso visual, sem bloquear dados, iniciativa, ataques, dano de monstro ou testes.
+- O Solaris Tabletop Alpha agora abre em um launcher proprio pela rota `?view=launcher` ou `?view=home`.
+- O Electron VTT usa `?view=launcher&tabletop=1&check=20260624a` como entrada.
+- O cache atual do runtime da Fase 20 e `20260624a`.
+- A versao local do Tabletop passou para `0.6.0-alpha.15`.
 
 ## Nova Fase 2 - Mesa Virtual
 
@@ -158,6 +163,38 @@ A direcao visual e:
 - grids e containers com bordas finas;
 - visual de terminal/mesa holografica;
 - tudo legivel e funcional.
+
+## Fase 20 - Tela Inicial / Launcher
+
+A Fase 20 criou a tela inicial real do Solaris Tabletop Alpha.
+
+Rotas preservadas:
+
+```txt
+?view=campaigns
+?view=mesaVirtual
+?view=ficha
+```
+
+Novas rotas:
+
+```txt
+?view=launcher
+?view=home
+```
+
+O launcher inclui:
+
+- fundo dark sci-fi com planeta/mundo Solaris/Tarantus em CSS;
+- estrelas, pulso cosmico e grid holografico leves;
+- logo grande SOLARIS e subtitulo GUERRA SOLAR;
+- painel de campanha recente;
+- painel de status do Tabletop;
+- menu com Continuar Campanha, Criar Sala Offline, Criar Sala Multijogador Local, Entrar em Sala Local, Minhas Campanhas, Criador de Personagem, Biblioteca/Ficha, Bestiario, Escudo do Mestre e Configuracoes.
+
+O botao `Criar Sala Offline` abre a mesa local/simulada sem servidor. O botao `Criar Sala Multijogador Local` usa o fluxo existente de sala com WebSocket quando `npm run server:vtt` esta ativo. O botao `Entrar em Sala Local` pede o endereco do mestre, por exemplo `http://192.168.0.10:3000`.
+
+Nao foram adicionadas dependencias novas. A animacao respeita `prefers-reduced-motion` e tambem pode ser reduzida no modal de configuracoes do launcher.
 
 ## Requisito critico
 

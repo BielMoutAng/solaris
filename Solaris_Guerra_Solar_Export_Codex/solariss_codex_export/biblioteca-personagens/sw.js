@@ -1,20 +1,20 @@
-const STATIC_CACHE = "solaris-biblioteca-static-20260622g";
-const RUNTIME_CACHE = "solaris-biblioteca-runtime-20260622g";
+const STATIC_CACHE = "solaris-biblioteca-static-20260624a";
+const RUNTIME_CACHE = "solaris-biblioteca-runtime-20260624a";
 
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css?v=20260622g",
-  "./official-books-data.js?v=20260622g",
-  "./official-book5-catalog.js?v=20260622g",
-  "./official-rulebook-compendium.js?v=20260622g",
+  "./styles.css?v=20260624a",
+  "./official-books-data.js?v=20260624a",
+  "./official-book5-catalog.js?v=20260624a",
+  "./official-rulebook-compendium.js?v=20260624a",
   "./HumanisVitalHUD.js?v=20260606e",
-  "./app.js?v=20260622g",
-  "./src/domain/solaris-domain-architecture.js?v=20260622g",
-  "./src/session/solaris-session-domain.js?v=20260622g",
-  "./src/session/solaris-session-client.js?v=20260622g",
-  "./src/session/solaris-session-ui.js?v=20260622g",
-  "./src/session/solaris-session-persistence.js?v=20260622g",
+  "./app.js?v=20260624a",
+  "./src/domain/solaris-domain-architecture.js?v=20260624a",
+  "./src/session/solaris-session-domain.js?v=20260624a",
+  "./src/session/solaris-session-client.js?v=20260624a",
+  "./src/session/solaris-session-ui.js?v=20260624a",
+  "./src/session/solaris-session-persistence.js?v=20260624a",
   "./manifest.webmanifest",
   "./assets/icons/solaris-icon.svg",
   "./assets/icons/apple-touch-icon.png",

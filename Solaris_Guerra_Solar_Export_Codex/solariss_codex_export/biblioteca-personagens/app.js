@@ -25,8 +25,8 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260622g";
-import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260622g";
+} from "./src/domain/solaris-domain-architecture.js?v=20260624a";
+import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260624a";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -1630,7 +1630,7 @@ function initialViewFromUrl() {
   const view = params.get("view") || params.get("start") || "";
   const hashView = (window.location.hash || "").replace(/^#\/?/, "");
   const requested = view || hashView;
-  if (requested === "mesaVirtual" || requested === "vtt" || requested === "tabletop" || requested === "campaigns") return "mesaVirtual";
+  if (requested === "mesaVirtual" || requested === "vtt" || requested === "tabletop" || requested === "campaigns" || requested === "launcher" || requested === "home") return "mesaVirtual";
   if (requested === "ficha") return "personagens";
   return "inicio";
 }
@@ -2335,10 +2335,20 @@ function mountMesaVirtual() {
   if (!el.mesaVirtualRoot || mesaVirtualUi) return;
   const params = new URLSearchParams(window.location.search || "");
   const requestedView = params.get("view") || params.get("start") || "";
+  const initialScreen = requestedView === "campaigns"
+    ? "campaigns"
+    : requestedView === "launcher" || requestedView === "home"
+      ? "launcher"
+      : "table";
   mesaVirtualUi = mountSolarisSessionUI(el.mesaVirtualRoot, {
-    initialScreen: requestedView === "campaigns" ? "campaigns" : "table",
+    initialScreen,
     getCurrentCharacter: currentSessionCharacterSnapshot,
     onOpenCharacter: () => switchView("personagens"),
+    onOpenCreator: () => {
+      switchView("personagens");
+      switchCharacterPage("criar");
+    },
+    onOpenBestiary: () => switchView("monstros"),
     onOpenInventory: () => {
       switchView("personagens");
       switchCharacterPage("equipamentos");
@@ -2437,7 +2447,7 @@ function currentSessionCharacterSnapshot() {
     luzentis: numberValue(state.current.currency, STARTING_CURRENCY),
     metadata: {
       schemaVersion: 1,
-      appCache: "20260622g",
+      appCache: "20260624a",
       source: "solaris-local-character",
       updatedAt: state.current.updatedAt || new Date().toISOString(),
     },
@@ -2593,6 +2603,7 @@ function switchView(view) {
   setNavExpanded(false);
   state.activeView = view;
   state.activeRaceId = null;
+  document.title = view === "mesaVirtual" ? "Solaris Tabletop Alpha" : "Solaris - Biblioteca de Personagens";
   hideWorkspaceViews();
 
   const hubViews = {

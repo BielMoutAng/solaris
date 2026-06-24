@@ -10837,6 +10837,580 @@ body .vital-hud-modal #hud-humanis .hvh-segment {
   box-shadow: var(--solaris-shadow-panel);
 }
 
+/* Fase 20 - Launcher inicial do Solaris Tabletop Alpha */
+.solaris-launcher {
+  --launcher-cyan: #22d8ff;
+  --launcher-purple: #9a46ff;
+  --launcher-green: #27f2a4;
+  --launcher-text: #eaf9ff;
+  --launcher-muted: #9ec3d8;
+  position: relative;
+  min-height: calc(100vh - 20px);
+  height: calc(100vh - 20px);
+  overflow: hidden;
+  color: var(--launcher-text);
+  border: 1px solid rgba(34, 216, 255, 0.34);
+  background: #020714;
+  box-shadow: 0 0 0 1px rgba(3, 10, 22, 0.92), 0 0 44px rgba(34, 216, 255, 0.18);
+  isolation: isolate;
+}
+
+.solaris-launcher-bg,
+.solaris-launcher-bg > span {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.solaris-launcher-bg {
+  z-index: -2;
+  background:
+    radial-gradient(circle at 72% 44%, rgba(34, 216, 255, 0.22) 0 5%, rgba(154, 70, 255, 0.17) 10%, transparent 36%),
+    radial-gradient(circle at 78% 54%, rgba(34, 216, 255, 0.13), transparent 22%),
+    linear-gradient(135deg, #020714 0%, #06192c 52%, #170a2c 100%);
+}
+
+.solaris-launcher-grid {
+  background-image:
+    linear-gradient(rgba(34, 216, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 216, 255, 0.045) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.36));
+}
+
+.solaris-launcher-stars {
+  background:
+    radial-gradient(2px 2px at 12% 20%, #77ecff, transparent),
+    radial-gradient(2px 2px at 34% 18%, #9a46ff, transparent),
+    radial-gradient(1px 1px at 51% 23%, #eaf9ff, transparent),
+    radial-gradient(2px 2px at 66% 12%, #77ecff, transparent),
+    radial-gradient(1px 1px at 77% 31%, #9a46ff, transparent),
+    radial-gradient(2px 2px at 89% 19%, #77ecff, transparent),
+    radial-gradient(1px 1px at 15% 73%, #eaf9ff, transparent),
+    radial-gradient(2px 2px at 42% 84%, #77ecff, transparent),
+    radial-gradient(1px 1px at 71% 79%, #9a46ff, transparent),
+    radial-gradient(2px 2px at 92% 69%, #77ecff, transparent);
+  opacity: 0.82;
+  animation: solarisLauncherStars 6s ease-in-out infinite alternate;
+}
+
+.solaris-launcher-world {
+  left: auto;
+  right: clamp(30px, 7vw, 130px);
+  top: clamp(90px, 12vh, 150px);
+  width: clamp(420px, 42vw, 760px);
+  height: clamp(420px, 42vw, 760px);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(119, 236, 255, 0.45), transparent 10%),
+    radial-gradient(circle at 44% 45%, rgba(34, 216, 255, 0.34), transparent 28%),
+    radial-gradient(circle at 55% 55%, rgba(154, 70, 255, 0.22), transparent 42%),
+    radial-gradient(circle at 60% 62%, rgba(4, 10, 25, 0.96), rgba(1, 5, 12, 0.96) 55%, transparent 67%);
+  opacity: 0.94;
+  box-shadow: 0 0 120px rgba(34, 216, 255, 0.26), 0 0 240px rgba(154, 70, 255, 0.17);
+  animation: solarisLauncherPulse 8s ease-in-out infinite;
+}
+
+.solaris-launcher-orbit {
+  left: auto;
+  right: clamp(-40px, 2vw, 70px);
+  top: clamp(280px, 38vh, 430px);
+  width: clamp(540px, 52vw, 920px);
+  height: clamp(130px, 13vw, 220px);
+  border: 2px solid rgba(34, 216, 255, 0.25);
+  border-left-color: rgba(154, 70, 255, 0.22);
+  border-right-color: rgba(154, 70, 255, 0.22);
+  border-radius: 50%;
+  transform: rotate(-12deg);
+  filter: drop-shadow(0 0 14px rgba(34, 216, 255, 0.28));
+}
+
+.solaris-launcher-pulse {
+  background:
+    radial-gradient(circle at 18% 72%, rgba(34, 216, 255, 0.12), transparent 18%),
+    radial-gradient(circle at 67% 28%, rgba(154, 70, 255, 0.13), transparent 22%);
+  mix-blend-mode: screen;
+  animation: solarisLauncherAurora 10s ease-in-out infinite alternate;
+}
+
+.solaris-launcher-content {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(360px, 0.92fr) minmax(420px, 610px);
+  grid-template-rows: auto auto auto auto;
+  grid-template-areas:
+    "brand menu"
+    "hero menu"
+    "recent menu"
+    "status menu";
+  align-content: center;
+  gap: clamp(14px, 1.55vw, 22px);
+  height: 100%;
+  padding: clamp(20px, 2.8vw, 46px) clamp(28px, 5vw, 96px);
+}
+
+.solaris-launcher-brand,
+.solaris-launcher-menu,
+.solaris-launcher-recent,
+.solaris-launcher-status,
+.solaris-launcher-modal {
+  border: 1px solid rgba(34, 216, 255, 0.34);
+  background: rgba(2, 12, 25, 0.75);
+  box-shadow: inset 0 0 34px rgba(34, 216, 255, 0.045), 0 0 36px rgba(34, 216, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.solaris-launcher-brand {
+  grid-area: brand;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: min(520px, 100%);
+  min-height: 96px;
+  padding: 18px 28px;
+  clip-path: polygon(0 0, 88% 0, 100% 28%, 100% 100%, 0 100%);
+}
+
+.solaris-launcher-brand .vtt-brand-mark {
+  width: 54px;
+  height: 54px;
+}
+
+.solaris-launcher-brand strong {
+  display: block;
+  font-size: clamp(2.2rem, 4.4vw, 3.65rem);
+  font-weight: 950;
+  line-height: 0.82;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 22px rgba(34, 216, 255, 0.52);
+}
+
+.solaris-launcher-brand small {
+  display: block;
+  margin-top: 10px;
+  color: #7de9ff;
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.42em;
+}
+
+.solaris-launcher-hero {
+  grid-area: hero;
+  align-self: start;
+  max-width: 720px;
+}
+
+.solaris-launcher-hero span,
+.solaris-launcher-recent > div > span,
+.solaris-launcher-status header strong {
+  color: #67dfff;
+  font-size: clamp(0.78rem, 1.2vw, 1rem);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.solaris-launcher-hero h1 {
+  margin: 14px 0 0;
+  max-width: 720px;
+  font-size: clamp(1.8rem, 2.7vw, 2.65rem);
+  font-weight: 890;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.solaris-launcher-hero p {
+  max-width: 650px;
+  margin: 16px 0 0;
+  color: #bfe0f2;
+  font-size: clamp(0.96rem, 1.12vw, 1.12rem);
+  line-height: 1.42;
+}
+
+.solaris-launcher-menu {
+  grid-area: menu;
+  align-self: center;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 18px;
+  max-height: min(820px, calc(100vh - 86px));
+  padding: clamp(22px, 3vw, 42px);
+  border-radius: 20px;
+  background: rgba(2, 8, 18, 0.84);
+}
+
+.solaris-launcher-menu h2 {
+  margin: 0;
+  font-size: clamp(1.35rem, 1.9vw, 2rem);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.solaris-launcher-menu p {
+  margin: 8px 0 0;
+  color: #86b2ce;
+}
+
+.solaris-launcher-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.solaris-launcher-actions button {
+  display: grid;
+  gap: 4px;
+  min-height: 70px;
+  padding: 14px 16px;
+  border: 1px solid rgba(34, 216, 255, 0.42);
+  border-radius: 12px;
+  color: var(--launcher-text);
+  text-align: left;
+  background: linear-gradient(90deg, rgba(9, 45, 78, 0.9), rgba(7, 20, 38, 0.9));
+  box-shadow: inset 0 0 20px rgba(34, 216, 255, 0.09);
+  cursor: pointer;
+}
+
+.solaris-launcher-actions button:focus-visible,
+.solaris-launcher-modal button:focus-visible {
+  outline: 2px solid rgba(125, 233, 255, 0.92);
+  outline-offset: 3px;
+}
+
+.solaris-launcher-actions button:hover:not(:disabled) {
+  border-color: rgba(125, 233, 255, 0.74);
+  transform: translateY(-1px);
+  box-shadow: 0 0 24px rgba(34, 216, 255, 0.17), inset 0 0 24px rgba(34, 216, 255, 0.11);
+}
+
+.solaris-launcher-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.solaris-launcher-actions button.primary,
+.solaris-launcher-actions button.green,
+.solaris-launcher-actions button.purple,
+.solaris-launcher-actions button.blue {
+  grid-column: 1 / -1;
+}
+
+.solaris-launcher-actions button.green {
+  border-color: rgba(39, 242, 164, 0.56);
+  background: linear-gradient(90deg, rgba(11, 48, 36, 0.94), rgba(5, 18, 24, 0.9));
+}
+
+.solaris-launcher-actions button.purple {
+  border-color: rgba(154, 70, 255, 0.58);
+  background: linear-gradient(90deg, rgba(43, 16, 75, 0.94), rgba(11, 14, 32, 0.9));
+}
+
+.solaris-launcher-actions button.blue {
+  border-color: rgba(34, 216, 255, 0.56);
+}
+
+.solaris-launcher-actions strong {
+  font-size: clamp(0.94rem, 1.2vw, 1.18rem);
+  font-weight: 880;
+  line-height: 1.15;
+  white-space: normal;
+}
+
+.solaris-launcher-actions small {
+  overflow: hidden;
+  color: var(--launcher-muted);
+  font-size: 0.76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.solaris-launcher-menu footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.solaris-launcher-menu footer span,
+.solaris-launcher-status div span {
+  border: 1px solid rgba(34, 216, 255, 0.24);
+  border-radius: 10px;
+  padding: 8px 10px;
+  color: #dff6ff;
+  background: rgba(0, 0, 0, 0.22);
+  font-size: 0.74rem;
+  font-weight: 760;
+}
+
+.solaris-launcher-recent,
+.solaris-launcher-status {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 560px);
+  min-height: 0;
+  padding: 16px 20px;
+  border-radius: 16px;
+}
+
+.solaris-launcher-recent {
+  grid-area: recent;
+}
+
+.solaris-launcher-status {
+  grid-area: status;
+}
+
+.solaris-launcher-recent h2 {
+  margin: 10px 0 6px;
+  overflow: hidden;
+  font-size: clamp(1.25rem, 1.9vw, 1.9rem);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.solaris-launcher-recent p,
+.solaris-launcher-status p {
+  margin: 0;
+  color: var(--launcher-muted);
+  line-height: 1.38;
+}
+
+.solaris-launcher-recent dl,
+.solaris-launcher-home-summary div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.solaris-launcher-recent dl div,
+.solaris-launcher-status div {
+  min-width: 0;
+}
+
+.solaris-launcher-recent dt {
+  color: #67dfff;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+
+.solaris-launcher-recent dd {
+  margin: 3px 0 0;
+  overflow: hidden;
+  color: var(--launcher-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.solaris-launcher-status header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.solaris-launcher-status header span {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--launcher-green);
+  box-shadow: 0 0 16px rgba(39, 242, 164, 0.72);
+}
+
+.solaris-launcher-status header span.offline {
+  background: var(--launcher-cyan);
+  box-shadow: 0 0 16px rgba(34, 216, 255, 0.72);
+}
+
+.solaris-launcher-status code,
+.solaris-launcher-modal code {
+  color: #dff6ff;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.solaris-launcher-status div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.solaris-launcher-modal-backdrop {
+  display: grid;
+  place-items: center;
+}
+
+.solaris-launcher-modal {
+  display: grid;
+  gap: 14px;
+  width: min(560px, calc(100vw - 34px));
+  padding: 24px;
+  border-radius: 16px;
+}
+
+.solaris-launcher-modal h3 {
+  margin: 0;
+  font-size: 1.28rem;
+  text-transform: uppercase;
+}
+
+.solaris-launcher-modal p {
+  margin: 0;
+  color: var(--launcher-muted);
+  line-height: 1.45;
+}
+
+.solaris-launcher-modal dl {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.solaris-launcher-modal dl div {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(34, 216, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.solaris-launcher-modal dt {
+  color: #67dfff;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+
+.solaris-launcher-modal dd {
+  margin: 0;
+}
+
+.solaris-launcher-modal form,
+.solaris-launcher-modal label {
+  display: grid;
+  gap: 10px;
+}
+
+.solaris-launcher-modal input[type="url"] {
+  width: 100%;
+  border: 1px solid rgba(34, 216, 255, 0.28);
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: var(--launcher-text);
+  background: rgba(1, 8, 15, 0.88);
+}
+
+.solaris-launcher-toggle {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+}
+
+.solaris-launcher-modal footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.solaris-launcher-modal button {
+  min-height: 42px;
+  border: 1px solid rgba(34, 216, 255, 0.38);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--launcher-text);
+  background: rgba(7, 20, 35, 0.86);
+  cursor: pointer;
+}
+
+@keyframes solarisLauncherStars {
+  from { opacity: 0.52; }
+  to { opacity: 0.92; }
+}
+
+@keyframes solarisLauncherPulse {
+  0%, 100% { transform: scale(1); opacity: 0.88; }
+  50% { transform: scale(1.025); opacity: 1; }
+}
+
+@keyframes solarisLauncherAurora {
+  from { transform: translate3d(-1.5%, -1%, 0); opacity: 0.62; }
+  to { transform: translate3d(1.5%, 1%, 0); opacity: 0.95; }
+}
+
+.solaris-launcher.reduced-fx .solaris-launcher-stars,
+.solaris-launcher.reduced-fx .solaris-launcher-world,
+.solaris-launcher.reduced-fx .solaris-launcher-pulse {
+  animation: none;
+}
+
+.solaris-launcher.reduced-fx .solaris-launcher-bg {
+  filter: saturate(0.82) brightness(0.82);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .solaris-launcher-stars,
+  .solaris-launcher-world,
+  .solaris-launcher-pulse,
+  .solaris-launcher-actions button {
+    animation: none;
+    transition: none;
+  }
+
+  .solaris-launcher-actions button:hover:not(:disabled) {
+    transform: none;
+  }
+}
+
+@media (max-width: 1180px) {
+  .solaris-launcher {
+    height: auto;
+    min-height: calc(100vh - 20px);
+    overflow: auto;
+  }
+
+  .solaris-launcher-content {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+      "brand"
+      "hero"
+      "menu"
+      "recent"
+      "status";
+    min-height: 100%;
+  }
+
+  .solaris-launcher-menu {
+    align-self: stretch;
+    max-height: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .solaris-launcher-content {
+    padding: 18px;
+  }
+
+  .solaris-launcher-brand {
+    min-height: 92px;
+    padding: 18px;
+  }
+
+  .solaris-launcher-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .solaris-launcher-actions button.primary,
+  .solaris-launcher-actions button.green,
+  .solaris-launcher-actions button.purple,
+  .solaris-launcher-actions button.blue {
+    grid-column: auto;
+  }
+
+  .solaris-launcher-recent dl {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 1600px) {
   .vtt-shell.solaris-shell {
     grid-template-columns: minmax(230px, 260px) minmax(500px, 1fr) minmax(270px, 306px);
@@ -12266,4 +12840,12 @@ body .vital-hud-modal #hud-humanis .hvh-segment {
   .vtt-view-stage > .vtt-bottom {
     max-height: none;
   }
+}
+
+.vtt-shell.vtt-campaign-home.solaris-shell {
+  grid-template-columns: 1fr;
+  grid-template-rows: var(--solaris-topbar-height) minmax(0, 1fr);
+  grid-template-areas:
+    "top"
+    "main";
 }

@@ -4,7 +4,7 @@ const { pathToFileURL } = require("node:url");
 
 app.setAppUserModelId("com.solaris.tabletop");
 
-const TABLETOP_QUERY = "view=campaigns&tabletop=1&check=20260620j";
+const TABLETOP_QUERY = "view=launcher&tabletop=1&check=20260624a";
 
 async function startEmbeddedTabletopServer() {
   try {
@@ -37,9 +37,14 @@ async function createWindow() {
     mainWindow.loadURL(`http://localhost:${process.env.PORT || 3000}/?${TABLETOP_QUERY}`);
   } else {
     mainWindow.loadFile(path.join(__dirname, "index.html"), {
-      query: { view: "campaigns", tabletop: "1", check: "20260620j" },
+      query: { view: "launcher", tabletop: "1", check: "20260624a" },
     });
   }
+
+  mainWindow.webContents.on("page-title-updated", (event) => {
+    event.preventDefault();
+    mainWindow.setTitle("Solaris Tabletop Alpha");
+  });
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);

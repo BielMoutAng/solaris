@@ -4,11 +4,11 @@ import {
   Scene,
   SESSION_ROLES,
   estimateEncounterBalance,
-} from "./solaris-session-domain.js?v=20260622g";
+} from "./solaris-session-domain.js?v=20260624a";
 import {
   SESSION_SOCKET_EVENTS,
   SolarisSessionClient,
-} from "./solaris-session-client.js?v=20260622g";
+} from "./solaris-session-client.js?v=20260624a";
 import {
   ACTIVE_CAMPAIGN_STORAGE_KEY,
   CAMPAIGN_STORAGE_KEY,
@@ -23,11 +23,11 @@ import {
   parseSessionExportBundle,
   serializeCampaignList,
   upsertCampaignSession,
-} from "./solaris-session-persistence.js?v=20260622g";
+} from "./solaris-session-persistence.js?v=20260624a";
 
 const SESSION_SAVE_KEY = "solaris.virtual.table.session.v1";
 const PLAYER_SESSION_KEY = "solaris.virtual.table.playerId";
-const TABLETOP_APP_VERSION = "0.6.0-alpha.14";
+const TABLETOP_APP_VERSION = "0.6.0-alpha.15";
 const DEFAULT_REPORT_OPTIONS = Object.freeze({
   includeFullChat: false,
   includeSecretNotes: false,
@@ -1109,7 +1109,8 @@ class SolarisSessionUI {
     this.editingLootPackId = "";
     this.gmPanelOpen = false;
     this.gmPanelTab = "overview";
-    this.screen = options.initialScreen || (activeRouteView() === "campaigns" ? "campaigns" : "table");
+    const routeView = activeRouteView();
+    this.screen = options.initialScreen || (routeView === "campaigns" ? "campaigns" : routeView === "launcher" || routeView === "home" ? "launcher" : "table");
     this.tableView = options.initialTableView || "table";
     this.gmForm = null;
     this.sceneEditor = null;
@@ -1117,6 +1118,9 @@ class SolarisSessionUI {
     this.encounterEditor = null;
     this.reportPreviewOpen = false;
     this.campaignForm = null;
+    this.launcherModal = null;
+    this.launcherJoinAddress = "http://localhost:3000";
+    this.launcherReducedFx = safeReadStorage("solaris.tabletop.launcher.reducedFx", "") === "1";
     this.shieldQuery = "";
     this.encounterFilters = {
       query: "",
@@ -2180,6 +2184,75 @@ class SolarisSessionUI {
     this.mode = "offline";
     this.room = demoRoomState(this.options.getCurrentCharacter());
     this.connectionMessage = "Saiu da sala. Modo simulado local.";
+    this.render();
+  }
+
+  continueLauncherCampaign() {
+    const active = this.activeCampaign();
+    const session = active?.sessions?.[0];
+    if (!active || !session) {
+      this.screen = "campaigns";
+      this.render();
+      return;
+    }
+    this.loadCampaign(active.id, session.roomId);
+  }
+
+  openLauncherModal(modal) {
+    this.launcherModal = modal;
+    this.render();
+  }
+
+  closeLauncherModal() {
+    this.launcherModal = null;
+    this.render();
+  }
+
+  launchOfflineRoom() {
+    this.launcherModal = null;
+    this.client.disconnect();
+    this.mode = "offline";
+    this.room = demoRoomState(this.options.getCurrentCharacter());
+    this.connectionMessage = "Sala offline local criada.";
+    this.screen = "table";
+    this.tableView = "table";
+    this.options.notify("Sala offline criada neste computador.");
+    this.render();
+  }
+
+  async launchMultiplayerRoom() {
+    this.launcherModal = null;
+    this.screen = "table";
+    this.tableView = "table";
+    await this.createRoom();
+    this.render();
+  }
+
+  joinLocalAddress(address = "") {
+    const raw = String(address || "").trim();
+    if (!raw) {
+      this.options.notify("Informe o endereço da sala local.", "tech-error");
+      return;
+    }
+    const normalized = /^https?:\/\//i.test(raw) ? raw : `http://${raw}`;
+    this.launcherJoinAddress = normalized;
+    const separator = normalized.includes("?") ? "&" : "?";
+    window.location.href = `${normalized}${separator}view=mesaVirtual&check=20260624a`;
+  }
+
+  async copyLauncherText(text = "") {
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error("clipboard-unavailable");
+      await navigator.clipboard.writeText(String(text || ""));
+      this.options.notify("Instruções copiadas.");
+    } catch {
+      this.options.notify("Não foi possível copiar automaticamente.", "tech-error");
+    }
+  }
+
+  setLauncherReducedFx(enabled) {
+    this.launcherReducedFx = Boolean(enabled);
+    safeWriteStorage("solaris.tabletop.launcher.reducedFx", this.launcherReducedFx ? "1" : "0");
     this.render();
   }
 
@@ -5310,6 +5383,166 @@ class SolarisSessionUI {
     `;
   }
 
+  renderLauncherHome() {
+    const active = this.activeCampaign();
+    const session = active?.sessions?.[0] || null;
+    const stats = active ? campaignStats(active) : null;
+    const updatedAt = active
+      ? new Date(active.updatedAt || active.createdAt || Date.now()).toLocaleString("pt-BR")
+      : "Nenhuma campanha recente";
+    const statusLabel = this.client.isConnected ? "Servidor local conectado" : "Offline / simulado pronto";
+    const statusClass = this.client.isConnected ? "online" : "offline";
+    const menuButtons = [
+      { action: "launcher-continue", label: "Continuar Campanha", tone: "primary", disabled: !active || !session, meta: active ? active.name : "Nenhuma campanha recente" },
+      { action: "launcher-offline", label: "Criar Sala Offline", tone: "green", meta: "Jogar ou preparar neste PC" },
+      { action: "launcher-multiplayer", label: "Criar Sala Multijogador Local", tone: "purple", meta: "LAN / Radmin / localhost" },
+      { action: "launcher-join", label: "Entrar em Sala Local", tone: "blue", meta: "Conectar ao IP do mestre" },
+      { action: "open-campaigns", label: "Minhas Campanhas", tone: "secondary", meta: "Autosaves, snapshots e JSON" },
+      { action: "launcher-creator", label: "Criador de Personagem", tone: "secondary", meta: "Ficha e criação" },
+      { action: "launcher-library", label: "Biblioteca / Ficha", tone: "secondary", meta: "Personagens e inventário" },
+      { action: "launcher-bestiary", label: "Bestiário", tone: "secondary", meta: "Criaturas e fichas" },
+      { action: "launcher-gm-shield", label: "Escudo do Mestre", tone: "secondary", meta: "Painel e regras rápidas" },
+      { action: "launcher-settings", label: "Configurações", tone: "secondary", meta: "Visual e preferências" },
+    ];
+
+    return `
+      <section class="solaris-launcher ${this.launcherReducedFx ? "reduced-fx" : ""}" aria-label="Launcher Solaris Tabletop Alpha">
+        <div class="solaris-launcher-bg" aria-hidden="true">
+          <span class="solaris-launcher-stars"></span>
+          <span class="solaris-launcher-world"></span>
+          <span class="solaris-launcher-orbit"></span>
+          <span class="solaris-launcher-pulse"></span>
+          <span class="solaris-launcher-grid"></span>
+        </div>
+        <main class="solaris-launcher-content">
+          <section class="solaris-launcher-brand" aria-label="Solaris Guerra Solar">
+            <span class="vtt-brand-mark" aria-hidden="true"></span>
+            <div>
+              <strong>SOLARIS</strong>
+              <small>GUERRA SOLAR</small>
+            </div>
+          </section>
+
+          <section class="solaris-launcher-hero">
+            <span>SOLARIS TABLETOP ALPHA</span>
+            <h1>Mesa virtual própria para sobreviver, explorar e lutar no sistema Guerra Solar.</h1>
+            <p>Prepare campanhas, jogue offline, conecte jogadores por rede local/Radmin e acesse fichas, bestiário, escudo do mestre e biblioteca oficial.</p>
+          </section>
+
+          <section class="solaris-launcher-recent" aria-label="Campanha recente">
+            <div>
+              <span>Campanha recente</span>
+              <h2>${escapeHtml(active?.name || "Nenhuma campanha criada")}</h2>
+              <p>${escapeHtml(active?.description || "Crie uma campanha ou abra uma sala offline para começar.")}</p>
+            </div>
+            <dl>
+              <div><dt>Última sessão</dt><dd>${escapeHtml(stats?.lastSession || session?.label || "-")}</dd></div>
+              <div><dt>Último save</dt><dd>${escapeHtml(updatedAt)}</dd></div>
+              <div><dt>Cenas</dt><dd>${escapeHtml(stats?.scenes ?? 0)}</dd></div>
+              <div><dt>Personagens</dt><dd>${escapeHtml(stats?.characters ?? 0)}</dd></div>
+            </dl>
+          </section>
+
+          <section class="solaris-launcher-status" aria-label="Status do Tabletop">
+            <header>
+              <span class="${statusClass}"></span>
+              <strong>${escapeHtml(statusLabel)}</strong>
+            </header>
+            <p>Jogadores entram por <code>http://IP-DO-MESTRE:3000</code> quando o servidor local estiver ativo.</p>
+            <div>
+              <span>${escapeHtml(TABLETOP_APP_VERSION)}</span>
+              <span>cache 20260624a</span>
+              <span>HTML/CSS/JS</span>
+            </div>
+          </section>
+
+          <aside class="solaris-launcher-menu" aria-label="Menu principal">
+            <header>
+              <h2>Menu Principal</h2>
+              <p>Escolha como iniciar sua sessão.</p>
+            </header>
+            <div class="solaris-launcher-actions">
+              ${menuButtons.map((button) => `
+                <button type="button" class="${escapeHtml(button.tone)}" data-vtt-action="${escapeHtml(button.action)}" ${button.disabled ? "disabled" : ""}>
+                  <strong>${escapeHtml(button.label)}</strong>
+                  <small>${escapeHtml(button.meta)}</small>
+                </button>
+              `).join("")}
+            </div>
+            <footer>
+              <span>Offline pronto</span>
+              <span>LAN/Radmin</span>
+              <span>Mestre + jogadores</span>
+            </footer>
+          </aside>
+        </main>
+        ${this.renderLauncherModal()}
+        <input type="file" accept="application/json,.json" data-vtt-session-import hidden />
+      </section>
+    `;
+  }
+
+  renderLauncherModal() {
+    if (!this.launcherModal) return "";
+    const modal = this.launcherModal;
+    const multiplayerInstructions = "Para jogar em multijogador local, rode npm run server:vtt no computador do mestre. Mestre: http://localhost:3000. Jogadores: http://IP-DO-MESTRE:3000.";
+    const modalBodies = {
+      offline: `
+        <h3>Criar Sala Offline</h3>
+        <p>Você está criando uma sala offline. Ela funciona neste computador, sem servidor, ideal para preparação, jogo presencial ou teste.</p>
+        <footer>
+          <button type="button" data-vtt-action="launcher-offline-confirm">Criar sala offline</button>
+          <button type="button" data-vtt-modal-close="launcher">Cancelar</button>
+        </footer>
+      `,
+      multiplayer: `
+        <h3>Criar Sala Multijogador Local</h3>
+        <p>Para jogar em multijogador local, rode o servidor do VTT no computador do mestre com <code>npm run server:vtt</code>.</p>
+        <dl>
+          <div><dt>Mestre</dt><dd>http://localhost:3000</dd></div>
+          <div><dt>Jogadores</dt><dd>http://IP-DO-MESTRE:3000</dd></div>
+        </dl>
+        <footer>
+          <button type="button" data-vtt-action="launcher-multiplayer-confirm">Abrir Mesa</button>
+          <button type="button" data-vtt-copy="${escapeHtml(multiplayerInstructions)}">Copiar instruções</button>
+          <button type="button" data-vtt-modal-close="launcher">Cancelar</button>
+        </footer>
+      `,
+      join: `
+        <h3>Entrar em Sala Local</h3>
+        <p>Digite o endereço do computador do mestre na rede local ou Radmin.</p>
+        <form data-vtt-launcher-join-form>
+          <label>Endereço da sala
+            <input name="address" type="url" value="${escapeHtml(this.launcherJoinAddress)}" placeholder="http://192.168.0.10:3000" required />
+          </label>
+          <footer>
+            <button type="submit">Entrar</button>
+            <button type="button" data-vtt-modal-close="launcher">Cancelar</button>
+          </footer>
+        </form>
+      `,
+      settings: `
+        <h3>Configurações rápidas</h3>
+        <p>Ajustes locais da tela inicial. O app respeita automaticamente <code>prefers-reduced-motion</code>.</p>
+        <label class="solaris-launcher-toggle">
+          <input type="checkbox" data-vtt-launcher-reduced-fx ${this.launcherReducedFx ? "checked" : ""} />
+          Reduzir brilho e animações do fundo
+        </label>
+        <footer>
+          <button type="button" data-vtt-action="launcher-clear-visual-cache">Limpar preferência visual</button>
+          <button type="button" data-vtt-modal-close="launcher">Voltar</button>
+        </footer>
+      `,
+    };
+    return `
+      <div class="vtt-modal-backdrop solaris-launcher-modal-backdrop" data-vtt-modal-close="launcher">
+        <section class="solaris-launcher-modal" role="dialog" aria-modal="true">
+          ${modalBodies[modal] || ""}
+        </section>
+      </div>
+    `;
+  }
+
   renderCampaignFormModal() {
     if (!this.campaignForm) return "";
     const campaign = this.campaignForm.mode === "edit"
@@ -6105,6 +6338,11 @@ class SolarisSessionUI {
 
   render() {
     if (!this.root) return;
+    if (this.screen === "launcher") {
+      this.root.innerHTML = this.renderLauncherHome();
+      this.bindDom();
+      return;
+    }
     if (this.screen === "campaigns") {
       this.root.innerHTML = this.renderCampaignsHome();
       this.bindDom();
@@ -6499,6 +6737,11 @@ class SolarisSessionUI {
         if (action === "create-room") this.createRoom();
         if (action === "join-room") this.joinRoom();
         if (action === "leave-room") this.leaveRoom();
+        if (action === "open-launcher") {
+          this.screen = "launcher";
+          this.launcherModal = null;
+          this.render();
+        }
         if (action === "open-campaigns") {
           this.screen = "campaigns";
           this.campaignPanelOpen = false;
@@ -6532,6 +6775,32 @@ class SolarisSessionUI {
         if (action === "request-purchase") this.requestPurchaseApproval();
         if (action === "request-sale") this.requestSaleApproval();
         if (action === "request-delete") this.requestDeleteApproval();
+        if (action === "launcher-continue") this.continueLauncherCampaign();
+        if (action === "launcher-offline") this.openLauncherModal("offline");
+        if (action === "launcher-multiplayer") this.openLauncherModal("multiplayer");
+        if (action === "launcher-join") this.openLauncherModal("join");
+        if (action === "launcher-settings") this.openLauncherModal("settings");
+        if (action === "launcher-offline-confirm") this.launchOfflineRoom();
+        if (action === "launcher-multiplayer-confirm") this.launchMultiplayerRoom();
+        if (action === "launcher-creator") {
+          this.options.onOpenCreator?.();
+          this.options.notify("Criador de personagem aberto.");
+        }
+        if (action === "launcher-library") this.options.onOpenCharacter?.();
+        if (action === "launcher-bestiary") {
+          this.options.onOpenBestiary?.();
+          this.options.notify("Bestiário aberto.");
+        }
+        if (action === "launcher-gm-shield") {
+          this.screen = "table";
+          this.tableView = "gm";
+          this.gmPanelOpen = true;
+          this.render();
+        }
+        if (action === "launcher-clear-visual-cache") {
+          this.setLauncherReducedFx(false);
+          this.options.notify("Preferência visual do launcher limpa.");
+        }
       });
     });
     this.root.querySelectorAll("[data-vtt-gm-tab]").forEach((button) => {
@@ -7036,6 +7305,19 @@ class SolarisSessionUI {
         this.draggingMapTokenId = "";
       });
     });
+    this.root.querySelectorAll("[data-vtt-copy]").forEach((button) => {
+      button.addEventListener("click", () => this.copyLauncherText(button.dataset.vttCopy || ""));
+    });
+    this.root.querySelectorAll("[data-vtt-launcher-reduced-fx]").forEach((input) => {
+      input.addEventListener("change", () => this.setLauncherReducedFx(input.checked));
+    });
+    this.root.querySelectorAll("[data-vtt-launcher-join-form]").forEach((form) => {
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        this.joinLocalAddress(data.get("address"));
+      });
+    });
     this.root.querySelectorAll("[data-vtt-modal-close]").forEach((button) => {
       button.addEventListener("click", (event) => {
         if (event.target !== button && button.classList.contains("vtt-modal-backdrop")) return;
@@ -7048,6 +7330,7 @@ class SolarisSessionUI {
           this.render();
         }
         if (modal === "campaign-form") this.closeCampaignForm();
+        if (modal === "launcher") this.closeLauncherModal();
         if (modal === "gm-form") this.closeGmForm();
         if (modal === "scene-editor") this.closeSceneEditor();
         if (modal === "encounter-editor") this.closeEncounterEditor();

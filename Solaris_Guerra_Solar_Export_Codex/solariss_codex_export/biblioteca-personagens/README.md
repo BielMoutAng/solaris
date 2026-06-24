@@ -11,14 +11,18 @@ Abra `index.html` no navegador.
 A Mesa Virtual fica disponivel pela tela `Mesa virtual` do app e tambem pode abrir direto com:
 
 ```txt
-http://localhost:3000/?view=campaigns&check=20260622g
+http://localhost:3000/?view=launcher&check=20260624a
 ```
 
 Ela possui modo offline/simulado quando nao ha servidor e modo multiplayer quando `npm run server:vtt` esta ativo. A fase atual inclui sala, jogadores, chat, rolagens, ficha sincronizada, combate, monstros, loja, loot, mapa tatico, selecao de alvo, dano automatico no alvo ou em areas, previa visual de tokens atingidos por areas, persistencia local de campanhas/sessoes e Painel do Mestre com notas, contadores, cenas, encontros, gerador de encontros, editores visuais de cena/encontro, escudo rapido conectado ao compendio quando houver dados estruturados e relatorio com preview antes de salvar/exportar.
 
-O Solaris Tabletop Alpha abre pela tela **Minhas Campanhas**. Ali voce pode criar campanha, continuar sessao salva, editar detalhes, duplicar, excluir com confirmacao forte, exportar/importar JSON e restaurar autosaves. Dentro da mesa, o botao **Minhas Campanhas** volta para essa entrada e o botao **Painel do Mestre** abre as ferramentas privadas do mestre.
+O Solaris Tabletop Alpha agora abre pela tela **Launcher** (`?view=launcher` ou `?view=home`). Ela traz o menu principal com Continuar Campanha, Criar Sala Offline, Criar Sala Multijogador Local, Entrar em Sala Local, Minhas Campanhas, Criador de Personagem, Biblioteca/Ficha, Bestiario, Escudo do Mestre e Configuracoes. O launcher usa fundo sci-fi em CSS puro, respeita reducao de movimento e preserva as rotas antigas.
 
-A versao `0.6.0-alpha.14` adiciona a **Fase 19 - Reconciliacao Oficial de Dados**. Os arquivos `official-*` agora registram os cinco livros oficiais atuais, preservam fontes antigas como historico, marcam dados duvidosos com `needsReview` e incluem um script/teste de auditoria para evitar regressao. O refinamento desktop-first do Tabletop e a estrutura responsiva para iPhone/PWA continuam preservados.
+O botao **Criar Sala Offline** abre a mesa em modo local/simulado, sem servidor. O botao **Criar Sala Multijogador Local** orienta o mestre a rodar `npm run server:vtt`; com o servidor ativo, jogadores entram pelo endereco `http://IP-DO-MESTRE:3000`. O botao **Entrar em Sala Local** permite digitar o endereco da mesa do mestre.
+
+A tela **Minhas Campanhas** continua disponivel em `?view=campaigns`. Ali voce pode criar campanha, continuar sessao salva, editar detalhes, duplicar, excluir com confirmacao forte, exportar/importar JSON e restaurar autosaves. Dentro da mesa, o botao **Minhas Campanhas** volta para essa entrada e o botao **Painel do Mestre** abre as ferramentas privadas do mestre.
+
+A versao `0.6.0-alpha.15` adiciona a **Fase 20 - Tela Inicial e Launcher do Tabletop**. A versao anterior `0.6.0-alpha.14` adicionou a **Fase 19 - Reconciliacao Oficial de Dados**. Os arquivos `official-*` registram os cinco livros oficiais atuais, preservam fontes antigas como historico, marcam dados duvidosos com `needsReview` e incluem um script/teste de auditoria para evitar regressao. O refinamento desktop-first do Tabletop e a estrutura responsiva para iPhone/PWA continuam preservados.
 
 ## Auditoria funcional recorrente
 
@@ -52,6 +56,7 @@ Politica atual: quando uma alteracao relevante mudar runtime, dados oficiais, ap
 
 Rotas uteis no navegador:
 
+- `?view=launcher` ou `?view=home`: abre o launcher do Solaris Tabletop Alpha.
 - `?view=ficha`: abre a ficha/biblioteca.
 - `?view=mesaVirtual`: abre diretamente a mesa.
 - `?view=campaigns`: abre a tela Minhas Campanhas do Tabletop.
