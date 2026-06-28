@@ -25,8 +25,19 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260624a";
-import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260624a";
+} from "./src/domain/solaris-domain-architecture.js?v=20260624c";
+import {
+  CHARACTER_CREATION_CACHE_VERSION,
+  CHARACTER_CREATION_SCHEMA_VERSION,
+  OFFICIAL_CREATION_CHECKLIST,
+  OFFICIAL_CREATION_STAGES,
+  TABLETOP_ALPHA_VERSION,
+  applyInitialAttributeAssignments,
+  buildCreationChoicesSnapshot,
+  buildProgressionHistoryEntry,
+  createInitialAttributeRoll,
+} from "./src/domain/solaris-character-creation.js?v=20260624c";
+import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260624c";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -1260,68 +1271,7 @@ const actionData = [
   { name: "Manutenção", context: "Fora de combate", tags: ["equipamento"], summary: "Revise armas, armaduras, cubos, rachaduras e munição antes da próxima cena perigosa." },
 ];
 
-const characterCreationSteps = [
-  {
-    title: "Conceito",
-    summary: "Defina quem o personagem era, o que perdeu e por que aceita se arriscar.",
-    fields: "Nome, origem, notas e objetivo pessoal.",
-    tip: "Pense em função no grupo: protege, cura, hackeia, pilota, negocia, rastreia ou canaliza Cosmos.",
-  },
-  {
-    title: "Raça",
-    summary: "Escolha a origem jogável permitida pela campanha e leia cultura, traços, bônus e fraqueza.",
-    fields: "Raça e atributo racial.",
-    tip: "Raça influencia, mas não aprisiona. Use a cultura como ponto de partida, não como limite.",
-  },
-  {
-    title: "Traços raciais",
-    summary: "Anote bônus de atributo, visão, idioma, habilidade inicial, fraqueza e progressões raciais.",
-    fields: "Raça e chip, habilidades e notas.",
-    tip: "A ficha digital já soma bônus racial no atributo escolhido.",
-  },
-  {
-    title: "Atributos",
-    summary: "Role 7d6, descarte o menor dado e distribua os 6 restantes entre FOR, REF, CON, MEN, PRE e INT.",
-    fields: "Atributos base.",
-    tip: "Cada atributo começa em 7. Some o dado escolhido ao 7 para chegar ao valor final.",
-  },
-  {
-    title: "Distribuição",
-    summary: "Coloque os maiores dados nos atributos que combinam com o conceito.",
-    fields: "FOR, REF, CON, MEN, PRE e INT.",
-    tip: "Corpo a corpo usa FOR/CON; tiro e pilotagem usam REF; tecnologia e medicina usam INT; Cosmos usa MEN.",
-  },
-  {
-    title: "Modificadores",
-    summary: "Use o modificador do atributo nas rolagens, não o valor cheio.",
-    fields: "Modificadores calculados automaticamente.",
-    tip: "7 = -2, 8-9 = -1, 10-11 = 0, 12-13 = +1, 14-15 = +2, 16-17 = +3, 18-19 = +4, 20 = +5.",
-  },
-  {
-    title: "Chip de profissão",
-    summary: "Escolha o treinamento inicial: foco, talento, kit e penalidade.",
-    fields: "Chip de profissão, raça e chip.",
-    tip: "O chip não é classe fixa. Ele mostra o que o personagem sabia fazer antes da campanha.",
-  },
-  {
-    title: "Perícias e ignorâncias",
-    summary: "Escolha 2 perícias treinadas livres. Humanis escolhe 1 perícia treinada adicional. O chip concede um foco profissional. Cada ignorância marcada permite escolher mais 1 perícia treinada.",
-    fields: "Habilidades e notas.",
-    tip: "Perícia treinada pode dar vantagem; ignorância deve ser uma fraqueza real que aparece em jogo.",
-  },
-  {
-    title: "Derivados",
-    summary: "Confira PV, CA, Cosmos, movimento, iniciativa, proteção, carga, cubos e percepção passiva.",
-    fields: "Derivados, recursos e HUD vital.",
-    tip: "A ficha calcula os principais derivados quando raça, atributos, nível e equipamentos mudam.",
-  },
-  {
-    title: "Equipamento e história",
-    summary: "Escolha arma Tier F, armadura Tier F, kit de suprimento, kit da profissão, idiomas, objetivo pessoal e ligação com o grupo.",
-    fields: "Equipamentos, habilidades e notas.",
-    tip: "Comece simples. O personagem cresce por escolhas, cicatrizes, alianças, equipamentos e descobertas.",
-  },
-];
+const characterCreationSteps = OFFICIAL_CREATION_STAGES;
 
 const characterCreationFormulas = [
   ["Atributo", "7 + dado distribuído"],
@@ -1335,18 +1285,7 @@ const characterCreationFormulas = [
   ["Carga máxima", "Metade do peso corporal + (MOD FOR × 10 kg)"],
 ];
 
-const characterCreationChecklist = [
-  "Nome, conceito, origem e objetivo pessoal",
-  "Raça, atributo racial, idioma, habilidade e fraqueza",
-  "Atributos distribuídos e modificadores conferidos",
-  "Chip de profissão com foco, talento, kit e penalidade",
-  "Perícias treinadas e todas as ignorâncias escolhidas",
-  "PV atual/máximo, CA, Cosmos, movimento, cubos e iniciativa",
-  "Arma inicial Tier F e armadura inicial Tier F",
-  "Kit de suprimento, kit da profissão, Luzentis iniciais e anotações",
-  "Ligação com outro personagem ou com a missão inicial",
-  "Ficha salva e, se quiser compartilhar, exportada em JSON",
-];
+const characterCreationChecklist = OFFICIAL_CREATION_CHECKLIST;
 
 const libraryMap = {
   racas: { title: "Raças", kicker: "Povos de Tarantus", items: raceData },
@@ -1381,6 +1320,13 @@ const emptyCharacter = () => ({
   id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
   createdAt: new Date().toISOString(),
   updatedAt: null,
+  createdWithVersion: TABLETOP_ALPHA_VERSION,
+  characterSchemaVersion: CHARACTER_CREATION_SCHEMA_VERSION,
+  creationChoices: null,
+  progressionHistory: [],
+  appliedBonuses: [],
+  manualOverrides: {},
+  needsReviewFlags: [],
   name: "",
   player: "",
   race: "humanis",
@@ -2366,6 +2312,7 @@ function refreshMesaVirtual() {
 }
 
 function currentSessionCharacterSnapshot() {
+  syncCreationChoices("session-snapshot");
   const race = findRace(state.current.race);
   const profession = findProfession(state.current.profession);
   const attrs = totalAttributes();
@@ -2398,11 +2345,11 @@ function currentSessionCharacterSnapshot() {
     race: race.name,
     profession: profession.name,
     level: state.current.level,
-    xp: state.current.xp || 0,
+    xp: state.current.experience || state.current.xp || 0,
     attributes: attrs,
     modifiers,
     derived,
-    skills: structuredCloneSafe(state.current.skillStates || state.current.skills || {}),
+    skills: structuredCloneSafe(state.current.skillTraining || state.current.skillStates || state.current.skills || {}),
     protections: structuredCloneSafe(state.current.protectionStates || state.current.protections || {}),
     currentPV: state.current.pvCurrent,
     pvCurrent: state.current.pvCurrent,
@@ -2445,9 +2392,17 @@ function currentSessionCharacterSnapshot() {
     playerNotes: state.current.notes || "",
     currency: numberValue(state.current.currency, STARTING_CURRENCY),
     luzentis: numberValue(state.current.currency, STARTING_CURRENCY),
+    creationChoices: structuredCloneSafe(state.current.creationChoices || {}),
+    progressionHistory: structuredCloneSafe(state.current.progressionHistory || []),
+    evolutionHistory: structuredCloneSafe(state.current.evolutionHistory || []),
+    appliedBonuses: structuredCloneSafe(state.current.appliedBonuses || []),
+    manualOverrides: structuredCloneSafe(state.current.manualOverrides || {}),
+    needsReviewFlags: structuredCloneSafe(state.current.needsReviewFlags || []),
     metadata: {
-      schemaVersion: 1,
-      appCache: "20260624a",
+      schemaVersion: CHARACTER_CREATION_SCHEMA_VERSION,
+      characterSchemaVersion: state.current.characterSchemaVersion || CHARACTER_CREATION_SCHEMA_VERSION,
+      appVersion: TABLETOP_ALPHA_VERSION,
+      appCache: CHARACTER_CREATION_CACHE_VERSION,
       source: "solaris-local-character",
       updatedAt: state.current.updatedAt || new Date().toISOString(),
     },
@@ -2527,7 +2482,9 @@ function applySessionFullCharacterSnapshot(snapshot = {}) {
   if (snapshot.name !== undefined) state.current.name = String(snapshot.name || state.current.name);
   if (snapshot.player !== undefined) state.current.player = String(snapshot.player || state.current.player);
   if (snapshot.level !== undefined) state.current.level = clamp(numberValue(snapshot.level, state.current.level), 1, 10);
-  if (snapshot.xp !== undefined) state.current.xp = Math.max(0, numberValue(snapshot.xp, state.current.xp || 0));
+  if (snapshot.xp !== undefined || snapshot.experience !== undefined) {
+    state.current.experience = Math.max(0, numberValue(snapshot.experience ?? snapshot.xp, state.current.experience || 0));
+  }
   if (snapshot.currentPV !== undefined || snapshot.pvCurrent !== undefined) {
     state.current.pvCurrent = clamp(numberValue(snapshot.currentPV ?? snapshot.pvCurrent, state.current.pvCurrent), 0, derived.pvMax);
   }
@@ -2560,6 +2517,20 @@ function applySessionFullCharacterSnapshot(snapshot = {}) {
     ];
   }
   if (Array.isArray(snapshot.conditions)) state.current.conditions = structuredCloneSafe(snapshot.conditions);
+  if (snapshot.creationChoices && typeof snapshot.creationChoices === "object") {
+    state.current.creationChoices = structuredCloneSafe(snapshot.creationChoices);
+  }
+  if (Array.isArray(snapshot.progressionHistory)) state.current.progressionHistory = structuredCloneSafe(snapshot.progressionHistory);
+  if (Array.isArray(snapshot.evolutionHistory)) state.current.evolutionHistory = structuredCloneSafe(snapshot.evolutionHistory);
+  if (Array.isArray(snapshot.appliedBonuses)) state.current.appliedBonuses = structuredCloneSafe(snapshot.appliedBonuses);
+  if (snapshot.manualOverrides && typeof snapshot.manualOverrides === "object") state.current.manualOverrides = structuredCloneSafe(snapshot.manualOverrides);
+  if (Array.isArray(snapshot.needsReviewFlags)) state.current.needsReviewFlags = structuredCloneSafe(snapshot.needsReviewFlags);
+  if (snapshot.metadata?.characterSchemaVersion) {
+    state.current.characterSchemaVersion = Math.max(
+      CHARACTER_CREATION_SCHEMA_VERSION,
+      numberValue(snapshot.metadata.characterSchemaVersion, CHARACTER_CREATION_SCHEMA_VERSION)
+    );
+  }
   state.current.sessionRevision = incomingRevision || currentRevision;
   state.current.updatedAt = new Date().toISOString();
   renderForm();
@@ -2841,6 +2812,7 @@ function readForm() {
   state.current.abilities = form.get("abilities").trim();
   state.current.notes = form.get("notes").trim();
   readCosmicSlotInputs();
+  syncCreationChoices("form-read");
 }
 
 function readCosmicSlotInputs() {
@@ -2852,6 +2824,37 @@ function readCosmicSlotInputs() {
   if (grimoireInput instanceof HTMLInputElement) {
     state.current.cosmicGrimoireSlots = Math.max(0, numberValue(grimoireInput.value, 0));
   }
+}
+
+function syncCreationChoices(reason = "sync") {
+  const race = findRace(state.current.race);
+  const profession = findProfession(state.current.profession);
+  state.current.createdWithVersion = state.current.createdWithVersion || TABLETOP_ALPHA_VERSION;
+  state.current.characterSchemaVersion = Math.max(
+    CHARACTER_CREATION_SCHEMA_VERSION,
+    numberValue(state.current.characterSchemaVersion, CHARACTER_CREATION_SCHEMA_VERSION)
+  );
+  state.current.progressionHistory = Array.isArray(state.current.progressionHistory)
+    ? state.current.progressionHistory
+    : [];
+  state.current.appliedBonuses = Array.isArray(state.current.appliedBonuses)
+    ? state.current.appliedBonuses
+    : [];
+  state.current.manualOverrides = state.current.manualOverrides && typeof state.current.manualOverrides === "object"
+    ? state.current.manualOverrides
+    : {};
+  state.current.needsReviewFlags = Array.isArray(state.current.needsReviewFlags)
+    ? state.current.needsReviewFlags
+    : [];
+  state.current.creationChoices = buildCreationChoicesSnapshot(state.current, {
+    raceName: race.name,
+    professionName: profession.name,
+    professionFocus: profession.focus || profession.skill || "",
+    appVersion: TABLETOP_ALPHA_VERSION,
+    cacheVersion: CHARACTER_CREATION_CACHE_VERSION,
+    reason,
+  });
+  return state.current.creationChoices;
 }
 
 function renderForm() {
@@ -3242,9 +3245,9 @@ function renderCreationGuidePage(derived) {
     <div class="creation-guide-layout">
       <section class="guide-hero">
         <div>
-          <span class="ability-source">Solaris - criação em 10 passos</span>
+          <span class="ability-source">Solaris - 7 etapas guiadas / 10 passos oficiais</span>
           <h3>Crie um sobrevivente pronto para jogar</h3>
-          <p>Use este roteiro junto da ficha. A ficha digital calcula boa parte dos números, mas o guia mostra por que cada escolha existe.</p>
+          <p>Use este roteiro junto da ficha. As 7 etapas agrupam os 10 passos do Livro 1 para ficar mais rápido de seguir na tela.</p>
         </div>
         <div class="guide-current-card">
           <strong>${escapeHtml(state.current.name || "Personagem sem nome")}</strong>
@@ -3263,10 +3266,13 @@ function renderCreationGuidePage(derived) {
 
       ${renderInitialAttributeRoller()}
 
+      ${renderCreationOfficialSummary(derived, race, profession)}
+
       <section class="guide-step-grid">
         ${characterCreationSteps.map((step, index) => `
           <article class="guide-step-card">
             <span class="guide-step-number">${String(index + 1).padStart(2, "0")}</span>
+            <small class="ability-source">${escapeHtml(step.officialSteps || "")}</small>
             <h4>${escapeHtml(step.title)}</h4>
             <p>${escapeHtml(step.summary)}</p>
             <strong>${escapeHtml(step.fields)}</strong>
@@ -3327,6 +3333,36 @@ function renderCreationGuidePage(derived) {
   `;
 }
 
+function renderCreationOfficialSummary(derived, race, profession) {
+  const creation = syncCreationChoices("render-guide");
+  const trained = creation.trainedSkills.length ? creation.trainedSkills.join(", ") : "Nenhuma marcada";
+  const ignorant = creation.ignorantSkills.length ? creation.ignorantSkills.join(", ") : "Nenhuma marcada";
+  const professionReady = profession.id !== "escolha-profissao";
+  const missing = [
+    !state.current.name?.trim() ? "nome" : "",
+    !professionReady ? "chip de profissao" : "",
+    !state.current.origin?.trim() ? "origem/conceito" : "",
+  ].filter(Boolean);
+
+  return `
+    <section class="guide-panel creation-official-summary">
+      <div>
+        <span class="ability-source">Livro 1 - criacao oficial</span>
+        <h3>Resumo da ficha em criacao</h3>
+        <p>${missing.length ? `Ainda falta revisar: ${escapeHtml(missing.join(", "))}.` : "Base essencial preenchida para uma ficha nivel 1."}</p>
+      </div>
+      <div class="guide-formula-list">
+        ${renderDetailRow("Raca", `${race.name} - ${race.profile?.attributeBonus || race.summary}`)}
+        ${renderDetailRow("Chip", `${profession.name}${profession.focus ? ` - ${profession.focus}` : ""}`)}
+        ${renderDetailRow("Pericias treinadas", trained)}
+        ${renderDetailRow("Ignorancias", ignorant)}
+        ${renderDetailRow("Derivados", `PV ${state.current.pvCurrent}/${derived.pvMax} | CA ${derived.ca} | Cosmos ${state.current.cosmosCurrent}/${derived.cosmosMax} | Cubos ${derived.cubeSlots}`)}
+        ${renderDetailRow("Equipamento inicial", "2000 Luzentis, cubos simples, 1 arma Tier F, 1 armadura Tier F, kit de suprimento e kit da profissao")}
+      </div>
+    </section>
+  `;
+}
+
 function renderInitialAttributeRoller() {
   const rollState = state.current.initialAttributeRoll || { rolls: [], kept: [] };
   const rolls = Array.isArray(rollState.rolls) ? rollState.rolls : [];
@@ -3373,12 +3409,9 @@ function renderInitialAttributeRoller() {
 function rollInitialAttributePool() {
   if (!ensureDiceRollAllowed()) return;
   readForm();
-  const rolls = Array.from({ length: 7 }, () => Math.floor(Math.random() * 6) + 1);
-  const discardedIndex = rolls.reduce((lowestIndex, value, index) => (
-    value < rolls[lowestIndex] ? index : lowestIndex
-  ), 0);
-  const kept = rolls.filter((_, index) => index !== discardedIndex);
+  const { rolls, kept, discardedIndex } = createInitialAttributeRoll();
   state.current.initialAttributeRoll = { rolls, kept, discardedIndex };
+  syncCreationChoices("initial-attribute-roll");
   renderCharacterPages();
   showToast(`Atributos: ${rolls.join(", ")} | descartado ${rolls[discardedIndex]}`);
 }
@@ -3398,10 +3431,11 @@ function applyInitialAttributePool() {
     return;
   }
 
-  selects.forEach((select) => {
-    const attr = select.dataset.attributeAssignment;
-    state.current.attributes[attr] = ATTRIBUTE_BASE + kept[Number(select.value)];
-  });
+  state.current.attributes = applyInitialAttributeAssignments(
+    kept,
+    Object.fromEntries(selects.map((select) => [select.dataset.attributeAssignment, Number(select.value)]))
+  );
+  syncCreationChoices("initial-attributes-applied");
   renderForm();
   switchCharacterPage("ficha");
   showToast("Atributos iniciais aplicados na ficha.");
@@ -6731,6 +6765,7 @@ function createRandomLevel1Character() {
   const derived = derivedStats(totalAttributes(), findRace(character.race), findProfession(character.profession));
   state.current.pvCurrent = derived.pvMax;
   state.current.cosmosCurrent = derived.cosmosMax;
+  syncCreationChoices("random-level-one-created");
   persistCurrentCharacterSilently();
   renderForm();
   switchView("personagens");
@@ -6994,6 +7029,7 @@ function mergeCatalogByName(primary = [], fallback = []) {
 function saveCurrent() {
   readForm();
   syncDomainSnapshotFromLegacy();
+  syncCreationChoices("save");
   const now = new Date().toISOString();
   state.current.updatedAt = now;
   const index = state.saved.findIndex((character) => character.id === state.current.id);
@@ -7066,6 +7102,7 @@ function handleSavedAction(action, id) {
 function exportCurrent() {
   readForm();
   syncDomainSnapshotFromLegacy();
+  syncCreationChoices("export");
   const data = JSON.stringify(state.current, null, 2);
   const blob = new Blob([data], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -8548,6 +8585,7 @@ function syncDomainSnapshotFromLegacy({ autoSave = false } = {}) {
 
 function persistCurrentCharacterSilently() {
   state.current.updatedAt = new Date().toISOString();
+  syncCreationChoices("persist");
   const index = state.saved.findIndex((character) => character.id === state.current.id);
   const payload = structuredCloneSafe(state.current);
   if (index >= 0) state.saved[index] = payload;
@@ -8696,7 +8734,10 @@ function handleLevelUpSubmit(event) {
   }
 
   applyLevelUpBenefit(pending.benefit, choice);
-  state.current.currency = Math.max(0, numberValue(state.current.currency, 0) - cost);
+  const currencyBefore = numberValue(state.current.currency, 0);
+  const currencyAfter = Math.max(0, currencyBefore - cost);
+  const completedAt = new Date().toISOString();
+  state.current.currency = currencyAfter;
   state.current.level = pending.targetLevel;
   state.current.evolutionHistory = [
     ...(state.current.evolutionHistory || []),
@@ -8707,7 +8748,35 @@ function handleLevelUpSubmit(event) {
       choice,
       material: requirement.material,
       cost,
-      completedAt: new Date().toISOString(),
+      completedAt,
+    },
+  ];
+  state.current.progressionHistory = [
+    ...(state.current.progressionHistory || []),
+    buildProgressionHistoryEntry({
+      previousLevel: currentLevel,
+      targetLevel: pending.targetLevel,
+      roll: pending.roll,
+      benefit: pending.benefit,
+      choice,
+      requirement,
+      cost,
+      experience: state.current.experience,
+      currencyBefore,
+      currencyAfter,
+      completedAt,
+    }),
+  ];
+  state.current.appliedBonuses = [
+    ...(state.current.appliedBonuses || []),
+    {
+      id: `level-up-${pending.targetLevel}-${completedAt}`,
+      source: "level-up",
+      level: pending.targetLevel,
+      roll: pending.roll,
+      benefit: pending.benefit.name,
+      choice,
+      appliedAt: completedAt,
     },
   ];
   state.current.knownAbilities = [
@@ -10688,6 +10757,25 @@ function normalizeCharacter(character) {
     race: race.id,
     profession: profession.id,
     racialChoice: defaultRacialChoice(race, character.racialChoice),
+    createdWithVersion: character.createdWithVersion || TABLETOP_ALPHA_VERSION,
+    characterSchemaVersion: Math.max(
+      CHARACTER_CREATION_SCHEMA_VERSION,
+      numberValue(character.characterSchemaVersion, CHARACTER_CREATION_SCHEMA_VERSION)
+    ),
+    creationChoices: character.creationChoices && typeof character.creationChoices === "object"
+      ? character.creationChoices
+      : buildCreationChoicesSnapshot({ ...character, race: race.id, profession: profession.id, attributes }, {
+        raceName: race.name,
+        professionName: profession.name,
+        professionFocus: profession.focus || profession.skill || "",
+        appVersion: TABLETOP_ALPHA_VERSION,
+        cacheVersion: CHARACTER_CREATION_CACHE_VERSION,
+        reason: "normalize",
+      }),
+    progressionHistory: Array.isArray(character.progressionHistory) ? character.progressionHistory : [],
+    appliedBonuses: Array.isArray(character.appliedBonuses) ? character.appliedBonuses : [],
+    manualOverrides: character.manualOverrides && typeof character.manualOverrides === "object" ? character.manualOverrides : {},
+    needsReviewFlags: Array.isArray(character.needsReviewFlags) ? character.needsReviewFlags : [],
     attributes,
     level: numberValue(character.level, 1),
     experience: Math.max(0, numberValue(character.experience, 0)),

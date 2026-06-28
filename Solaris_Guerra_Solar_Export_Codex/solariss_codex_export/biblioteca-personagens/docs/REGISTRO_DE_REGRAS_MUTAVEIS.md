@@ -14,8 +14,13 @@ Este registro separa o que parece estavel do que ainda deve ser tratado como pro
 | Atributo base `7` | Implementado | `ATTRIBUTE_BASE` | Baixo | Se criacao mudar |
 | Limite de atributo ate `20` | Implementado | inputs/ficha | Baixo | Se Livro 1 alterar limite |
 | Modificador por `INT((valor - 10) / 2)` | Implementado | derivados/testes | Baixo | Se tabela de mods mudar |
+| Criacao oficial agrupada em 7 etapas / 10 passos do Livro 1 | Implementado | `solaris-character-creation.js`, aba Guia | Medio | Se Livro 1 alterar criacao |
+| CON sem pericias proprias | Implementado | `OFFICIAL_SKILLS_BY_ATTRIBUTE` | Baixo | Se Livro 1 alterar pericias |
+| Equipamento inicial basico | Implementado/parcial | aba Guia, personagem aleatorio | Medio | Se Livro 1/Livro 5 alterar kits |
 | Iniciativa `1d20 + MOD REF` | Implementado | ficha/VTT | Baixo | Se combate mudar |
 | Ataques com `1d20 + modificador` | Implementado/parcial | ficha/VTT | Medio | Se armas ou combate mudar |
+| Motor oficial de combate da Fase 22 | Implementado | `solaris-combat-rules.js`, `solaris-session-domain.js` | Medio | Se Livro 1/Livro 5 alterar combate, criticos ou dano |
+| Estado critico, Sangramento, Ferimentos Graves e Marcas de Morte | Implementado/parcial | dominio/VTT | Medio | Se Livro 1 alterar morte, estabilizacao ou condicoes |
 | Luzentis como dinheiro | Implementado | loja/inventario | Baixo | Se economia mudar nome/moeda |
 | Cubo pesa `1kg` | Implementado | `CUBE_WEIGHT_KG` | Medio | Se Livro 5 mudar carga/cubos |
 | Item sem local definido nao bloqueia rolagem | Implementado | inventario/dados | Baixo | Se regra de carga mudar |
@@ -33,12 +38,12 @@ Este registro separa o que parece estavel do que ainda deve ser tratado como pro
 | Perito/ignorante | Parcial | Usuario pediu ignorancias ilimitadas | Medio | Sincronizar e testar sem limite |
 | Racas e pericia extra | Divergente possivel | Humanis ja teve problema relatado | Alto | Validar todas as racas |
 | Chips de profissao | Parcial | Afeta pericias e passivos | Alto | Reconciliar com Livro 1/Livro 5 |
-| Progressao de nivel | Parcial | Requisitos, custos e escolhas ainda sensiveis | Alto | Wizard de evolucao |
+| Progressao de nivel | Parcial | Historico estruturado implementado; kits/materiais finais ainda sensiveis | Alto | Wizard de evolucao e reconciliacao Livro 5 |
 | Carga maxima | Parcial | Interage com peso, cubos e suportes | Medio | Testes de limite e sobrecarga |
 | Loja em sessao | Implementada/parcial | Compra/venda/exclusao dependem de aprovacao | Medio | Cobrir todos fluxos sensiveis |
-| Condicoes | Parcial | Falta efeito automatico completo | Alto | Modelo oficial por condicao |
-| Ferimentos, morte e estabilizacao | Parcial/ausente | Impacta combate e queda a 0 PV | Alto | Fase de combate oficial |
-| Criticos e erros criticos | Parcial | Pode gerar lesoes e consequencias | Alto | Tabelas/efeitos automatizados |
+| Condicoes | Implementada/parcial | Sangramento e duracao entraram no motor; catalogo visual ainda incompleto | Medio | Completar UI e lista oficial |
+| Ferimentos, morte e estabilizacao | Implementada/parcial | Motor existe; faltam paineis/acoes dedicadas na UI | Medio | Expor Marcas, Ferimentos e estabilizar na mesa |
+| Criticos e erros criticos | Implementada/parcial | Tabelas e consequencias existem; algumas dependem de decisao do mestre | Medio | Conectar todos efeitos ao fluxo visual de ataque |
 | Balanceamento de encontro | Provisorio | Formula de mesa depende de Livro 2 | Medio | Calibrar com XP/ameaça |
 | Loot por monstro | Parcial | Tabelas de Livro 3 precisam fechar | Medio | Testes por monstro |
 
@@ -103,6 +108,8 @@ Estas areas nao devem ser ajustadas "de cabeca" quando houver nova alteracao. De
 6. Criar testes para toda regra que tenha valor numerico oficial.
 7. Rodar validacao completa.
 8. So depois considerar cache, build, release ou push.
+9. Ao concluir uma etapa do projeto, publicar primeiro a versao Web/GitHub Pages para aprovacao beta pelo usuario.
+10. Gerar ou publicar executavel do VTT somente depois da aprovacao da versao Web.
 
 ## Politica Recomendada
 
@@ -112,6 +119,7 @@ Estas areas nao devem ser ajustadas "de cabeca" quando houver nova alteracao. De
 - Texto exibido ao jogador deve ser limpo, sem campos internos como `notes`.
 - Descricao detalhada deve explicar uso em jogo, nao apenas copiar trecho bruto.
 - Conteudo gerado manualmente deve guardar `source`, `category`, `type`, `tier/rank`, `version` e `migration`.
+- Fluxo de entrega atual: Web primeiro para aprovacao; executavel do VTT depois da aprovacao.
 
 ## Atualizacao da Fase 19
 

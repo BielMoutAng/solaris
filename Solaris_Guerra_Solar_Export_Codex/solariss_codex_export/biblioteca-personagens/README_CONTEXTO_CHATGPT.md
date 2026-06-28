@@ -133,9 +133,11 @@ Mudanca recente:
 - O antigo bloqueio que impedia rolagens quando havia item sem local definido foi cancelado.
 - Agora item sem local definido apenas mostra aviso visual, sem bloquear dados, iniciativa, ataques, dano de monstro ou testes.
 - O Solaris Tabletop Alpha agora abre em um launcher proprio pela rota `?view=launcher` ou `?view=home`.
-- O Electron VTT usa `?view=launcher&tabletop=1&check=20260624a` como entrada.
-- O cache atual do runtime da Fase 20 e `20260624a`.
-- A versao local do Tabletop passou para `0.6.0-alpha.15`.
+- O Electron VTT usa `?view=launcher&tabletop=1&check=20260624c` como entrada.
+- O cache atual do runtime da Fase 22 e `20260624c`.
+- A versao local do Tabletop passou para `0.6.0-alpha.17`.
+- A Fase 21 adicionou um modulo puro para criacao/progressao oficial de personagem, guia em 7 etapas guiadas que agrupam os 10 passos do Livro 1, snapshot persistente de escolhas de criacao, historico estruturado de progressao e testes dedicados.
+- A Fase 22 adicionou o modulo puro `src/domain/solaris-combat-rules.js`, testes de combate oficial, estado critico, Marcas de Morte, Sangramento, Ferimentos Graves, consequencias de critico/erro critico, dano com resistencia/vulnerabilidade/imunidade/reducao e integracao desses efeitos ao turno da Mesa Virtual.
 
 ## Nova Fase 2 - Mesa Virtual
 
@@ -753,7 +755,12 @@ docs/MAPA_FONTES_OFICIAIS.md
 Politica nova do usuario:
 
 ```txt
-A partir da Fase 19, alteracoes relevantes devem gerar release no GitHub para teste/download.
+A partir da Fase 21, ao terminar uma parte do projeto:
+1. publicar primeiro a versao Web/GitHub Pages para o usuario aprovar como beta;
+2. validar o link direto publicado;
+3. somente depois da aprovacao do usuario gerar/publicar o executavel do VTT.
+
+Ou seja: Web primeiro para aprovacao, EXE do VTT depois.
 ```
 
 Comparar cada tela com as imagens de referencia:
