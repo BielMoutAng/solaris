@@ -4,11 +4,11 @@ import {
   Scene,
   SESSION_ROLES,
   estimateEncounterBalance,
-} from "./solaris-session-domain.js?v=20260624c";
+} from "./solaris-session-domain.js?v=20260624d";
 import {
   SESSION_SOCKET_EVENTS,
   SolarisSessionClient,
-} from "./solaris-session-client.js?v=20260624c";
+} from "./solaris-session-client.js?v=20260624d";
 import {
   ACTIVE_CAMPAIGN_STORAGE_KEY,
   CAMPAIGN_STORAGE_KEY,
@@ -23,11 +23,11 @@ import {
   parseSessionExportBundle,
   serializeCampaignList,
   upsertCampaignSession,
-} from "./solaris-session-persistence.js?v=20260624c";
+} from "./solaris-session-persistence.js?v=20260624d";
 
 const SESSION_SAVE_KEY = "solaris.virtual.table.session.v1";
 const PLAYER_SESSION_KEY = "solaris.virtual.table.playerId";
-const TABLETOP_APP_VERSION = "0.6.0-alpha.17";
+const TABLETOP_APP_VERSION = "0.6.0-alpha.18";
 const DEFAULT_REPORT_OPTIONS = Object.freeze({
   includeFullChat: false,
   includeSecretNotes: false,
@@ -2237,7 +2237,7 @@ class SolarisSessionUI {
     const normalized = /^https?:\/\//i.test(raw) ? raw : `http://${raw}`;
     this.launcherJoinAddress = normalized;
     const separator = normalized.includes("?") ? "&" : "?";
-    window.location.href = `${normalized}${separator}view=mesaVirtual&check=20260624c`;
+    window.location.href = `${normalized}${separator}view=mesaVirtual&check=20260624d`;
   }
 
   async copyLauncherText(text = "") {
@@ -5451,7 +5451,7 @@ class SolarisSessionUI {
             <p>Jogadores entram por <code>http://IP-DO-MESTRE:3000</code> quando o servidor local estiver ativo.</p>
             <div>
               <span>${escapeHtml(TABLETOP_APP_VERSION)}</span>
-              <span>cache 20260624c</span>
+              <span>cache 20260624d</span>
               <span>HTML/CSS/JS</span>
             </div>
           </section>

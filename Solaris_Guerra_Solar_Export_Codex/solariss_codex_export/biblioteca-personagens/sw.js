@@ -1,22 +1,23 @@
-const STATIC_CACHE = "solaris-biblioteca-static-20260624c";
-const RUNTIME_CACHE = "solaris-biblioteca-runtime-20260624c";
+const STATIC_CACHE = "solaris-biblioteca-static-20260624d";
+const RUNTIME_CACHE = "solaris-biblioteca-runtime-20260624d";
 
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css?v=20260624c",
-  "./official-books-data.js?v=20260624c",
-  "./official-book5-catalog.js?v=20260624c",
-  "./official-rulebook-compendium.js?v=20260624c",
+  "./styles.css?v=20260624d",
+  "./official-books-data.js?v=20260624d",
+  "./official-book5-catalog.js?v=20260624d",
+  "./official-rulebook-compendium.js?v=20260624d",
   "./HumanisVitalHUD.js?v=20260606e",
-  "./app.js?v=20260624c",
-  "./src/domain/solaris-domain-architecture.js?v=20260624c",
-  "./src/domain/solaris-character-creation.js?v=20260624c",
-  "./src/domain/solaris-combat-rules.js",
-  "./src/session/solaris-session-domain.js?v=20260624c",
-  "./src/session/solaris-session-client.js?v=20260624c",
-  "./src/session/solaris-session-ui.js?v=20260624c",
-  "./src/session/solaris-session-persistence.js?v=20260624c",
+  "./app.js?v=20260624d",
+  "./src/domain/solaris-domain-architecture.js?v=20260624d",
+  "./src/domain/solaris-character-creation.js?v=20260624d",
+  "./src/domain/solaris-combat-rules.js?v=20260624d",
+  "./src/domain/solaris-equipment-rules.js?v=20260624d",
+  "./src/session/solaris-session-domain.js?v=20260624d",
+  "./src/session/solaris-session-client.js?v=20260624d",
+  "./src/session/solaris-session-ui.js?v=20260624d",
+  "./src/session/solaris-session-persistence.js?v=20260624d",
   "./manifest.webmanifest",
   "./assets/icons/solaris-icon.svg",
   "./assets/icons/apple-touch-icon.png",

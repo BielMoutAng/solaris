@@ -11,7 +11,7 @@ Abra `index.html` no navegador.
 A Mesa Virtual fica disponivel pela tela `Mesa virtual` do app e tambem pode abrir direto com:
 
 ```txt
-http://localhost:3000/?view=launcher&check=20260624c
+http://localhost:3000/?view=launcher&check=20260624d
 ```
 
 Ela possui modo offline/simulado quando nao ha servidor e modo multiplayer quando `npm run server:vtt` esta ativo. A fase atual inclui sala, jogadores, chat, rolagens, ficha sincronizada, combate, monstros, loja, loot, mapa tatico, selecao de alvo, dano automatico no alvo ou em areas, previa visual de tokens atingidos por areas, persistencia local de campanhas/sessoes e Painel do Mestre com notas, contadores, cenas, encontros, gerador de encontros, editores visuais de cena/encontro, escudo rapido conectado ao compendio quando houver dados estruturados e relatorio com preview antes de salvar/exportar.
@@ -22,7 +22,7 @@ O botao **Criar Sala Offline** abre a mesa em modo local/simulado, sem servidor.
 
 A tela **Minhas Campanhas** continua disponivel em `?view=campaigns`. Ali voce pode criar campanha, continuar sessao salva, editar detalhes, duplicar, excluir com confirmacao forte, exportar/importar JSON e restaurar autosaves. Dentro da mesa, o botao **Minhas Campanhas** volta para essa entrada e o botao **Painel do Mestre** abre as ferramentas privadas do mestre.
 
-A versao `0.6.0-alpha.17` adiciona a **Fase 22 - Combate Oficial Completo**. A versao anterior `0.6.0-alpha.16` adicionou a **Fase 21 - Criacao e Progressao Oficial de Personagem**. Os arquivos `official-*` registram os cinco livros oficiais atuais, preservam fontes antigas como historico, marcam dados duvidosos com `needsReview` e incluem um script/teste de auditoria para evitar regressao. O refinamento desktop-first do Tabletop e a estrutura responsiva para iPhone/PWA continuam preservados.
+A versao `0.6.0-alpha.18` adiciona a **Fase 23 - Livro 5 Equipamentos Completo**. Ela cria uma camada pura para armas, armaduras, rachaduras, Jammed, mods, armazenamento, cubos, compra/venda e crafting, preservando a Fase 22 de combate oficial e a Fase 21 de criacao/progressao. Os arquivos `official-*` registram os cinco livros oficiais atuais, preservam fontes antigas como historico, marcam dados duvidosos com `needsReview` e incluem um script/teste de auditoria para evitar regressao. O refinamento desktop-first do Tabletop e a estrutura responsiva para iPhone/PWA continuam preservados.
 
 ## Auditoria funcional recorrente
 
@@ -32,6 +32,7 @@ Documentos principais:
 
 - `docs/FASE_21_CRIACAO_PROGRESSAO_PERSONAGEM.md`
 - `docs/FASE_22_COMBATE_OFICIAL_COMPLETO.md`
+- `docs/FASE_23_LIVRO_5_EQUIPAMENTOS_COMPLETO.md`
 - `docs/FASE_18_AUDITORIA_FUNCIONAL_RECORRENTE.md`
 - `docs/MATRIZ_FUNCIONAL_REGRAS_GUERRA_SOLAR.md`
 - `docs/REGISTRO_DE_REGRAS_MUTAVEIS.md`

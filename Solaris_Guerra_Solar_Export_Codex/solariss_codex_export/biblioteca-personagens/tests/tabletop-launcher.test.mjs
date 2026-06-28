@@ -8,7 +8,7 @@ const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
 
 test("Electron VTT abre no launcher versionado", () => {
   const electronMain = read("electron-main-vtt.cjs");
-  assert.match(electronMain, /view=launcher&tabletop=1&check=20260624c/);
+  assert.match(electronMain, /view=launcher&tabletop=1&check=20260624d/);
   assert.match(electronMain, /Solaris Tabletop Alpha/);
 });
 
@@ -46,6 +46,6 @@ test("launcher usa cache novo e respeita reducao de movimento", () => {
   assert.match(styles, /solaris-launcher/);
   assert.match(styles, /prefers-reduced-motion/);
   assert.match(styles, /vtt-shell\.vtt-campaign-home\.solaris-shell/);
-  assert.match(index, /20260624c/);
-  assert.match(sw, /20260624c/);
+  assert.match(index, /20260624d/);
+  assert.match(sw, /20260624d/);
 });

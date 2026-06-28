@@ -25,7 +25,10 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260624c";
+} from "./src/domain/solaris-domain-architecture.js?v=20260624d";
+import {
+  EQUIPMENT_SCHEMA_VERSION,
+} from "./src/domain/solaris-equipment-rules.js?v=20260624d";
 import {
   CHARACTER_CREATION_CACHE_VERSION,
   CHARACTER_CREATION_SCHEMA_VERSION,
@@ -36,14 +39,15 @@ import {
   buildCreationChoicesSnapshot,
   buildProgressionHistoryEntry,
   createInitialAttributeRoll,
-} from "./src/domain/solaris-character-creation.js?v=20260624c";
-import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260624c";
+} from "./src/domain/solaris-character-creation.js?v=20260624d";
+import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260624d";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
 const ATTRIBUTE_BASE = 7;
 const ATTRIBUTE_MOD_BASE = 10;
 const STORAGE_KEY = "solaris.character.library.v1";
+const EQUIPMENT_RULES_SCHEMA_VERSION = EQUIPMENT_SCHEMA_VERSION;
 const MONSTER_STORAGE_KEY = "solaris.monster.library.v1";
 const MONSTER_SESSION_STORAGE_KEY = "solaris.monster.session.v1";
 const CUSTOM_LIBRARY_STORAGE_KEY = "solaris.custom.content.library.v1";
@@ -1322,6 +1326,7 @@ const emptyCharacter = () => ({
   updatedAt: null,
   createdWithVersion: TABLETOP_ALPHA_VERSION,
   characterSchemaVersion: CHARACTER_CREATION_SCHEMA_VERSION,
+  equipmentSchemaVersion: EQUIPMENT_RULES_SCHEMA_VERSION,
   creationChoices: null,
   progressionHistory: [],
   appliedBonuses: [],
