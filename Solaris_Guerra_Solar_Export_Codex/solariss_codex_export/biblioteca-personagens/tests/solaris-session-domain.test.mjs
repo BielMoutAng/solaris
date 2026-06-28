@@ -29,6 +29,7 @@ import {
   validateCampaign,
   validateSessionState,
 } from "../src/session/solaris-session-persistence.js";
+import { COMBAT_CONDITIONS } from "../src/domain/solaris-combat-rules.js";
 
 test("sala aceita mestre, jogador, chat e rolagem compartilhada", () => {
   const room = new GameRoom({ id: "sala-1", name: "Colonia Solaris-7" });
@@ -169,6 +170,120 @@ test("combate compartilhado sincroniza iniciativa, dano, cura e condicoes", () =
   room.dispatch(GAME_EVENT_TYPES.TURN_NEXT, {}, "gm");
   assert.equal(room.combat.round, 1);
   assert.ok(room.combat.log.length >= 4);
+});
+
+test("combate oficial aplica estado critico, ferimento grave e marcas de morte em personagens", () => {
+  const room = new GameRoom({
+    players: [
+      { id: "gm", name: "GM", role: SESSION_ROLES.GM },
+      { id: "p1", name: "Lyssara", role: SESSION_ROLES.PLAYER },
+    ],
+    characters: [
+      new SessionCharacter({
+        id: "char-1",
+        ownerPlayerId: "p1",
+        name: "Lyssara",
+        snapshot: { currentPV: 10, maxPV: 10, ca: 16 },
+      }),
+    ],
+  });
+
+  room.dispatch(GAME_EVENT_TYPES.COMBAT_START, {}, "gm");
+  room.dispatch(GAME_EVENT_TYPES.CHARACTER_DAMAGE, {
+    characterId: "char-1",
+    amount: 12,
+    isCritical: true,
+    severeWoundRoll: 5,
+    damageType: "perfurante",
+    sourceLabel: "Rifle de teste",
+  }, "p1");
+
+  const character = room.getCharacter("char-1");
+  assert.equal(character.snapshot.currentPV, 0);
+  assert.equal(character.snapshot.criticalState, "critical");
+  assert.equal(character.snapshot.deathMarks, 0);
+  assert.ok(character.snapshot.severeWounds.some((wound) => wound.roll === 5 && /profundo/i.test(wound.name)));
+  assert.ok(character.snapshot.conditions.some((condition) => condition.key === COMBAT_CONDITIONS.BLEEDING));
+
+  room.dispatch(GAME_EVENT_TYPES.CHARACTER_DAMAGE, {
+    characterId: "char-1",
+    amount: 2,
+    sourceLabel: "Dano em 0 PV",
+  }, "p1");
+  assert.equal(character.snapshot.deathMarks, 1);
+
+  room.dispatch(GAME_EVENT_TYPES.CHARACTER_HEAL, { characterId: "char-1", amount: 1 }, "gm");
+  assert.equal(character.snapshot.currentPV, 1);
+  assert.equal(character.snapshot.criticalState, "");
+  assert.equal(character.snapshot.deathMarks, 1);
+});
+
+test("inicio do turno aplica sangramento e duracao de condicoes sem bloquear a mesa", () => {
+  const room = new GameRoom({
+    players: [
+      { id: "gm", name: "GM", role: SESSION_ROLES.GM },
+      { id: "p1", name: "Lyssara", role: SESSION_ROLES.PLAYER },
+    ],
+    characters: [
+      new SessionCharacter({
+        id: "char-1",
+        ownerPlayerId: "p1",
+        name: "Lyssara",
+        snapshot: {
+          currentPV: 10,
+          maxPV: 10,
+          conditions: [
+            { id: COMBAT_CONDITIONS.BLEEDING, key: COMBAT_CONDITIONS.BLEEDING, label: "Sangrando" },
+            { id: "focus", key: "focus", label: "Foco", duration: 1, durationType: "turns" },
+          ],
+        },
+      }),
+    ],
+  });
+
+  room.dispatch(GAME_EVENT_TYPES.MONSTER_CREATE, {
+    id: "monster-1",
+    name: "Drone",
+    snapshot: { currentPV: 5, maxPV: 5 },
+  }, "gm");
+  room.dispatch(GAME_EVENT_TYPES.COMBAT_START, {
+    entries: [
+      { id: "i1", entityId: "monster-1", entityType: "monster", name: "Drone", initiative: 20 },
+      { id: "i2", entityId: "char-1", entityType: "character", name: "Lyssara", initiative: 10 },
+    ],
+  }, "gm");
+
+  room.dispatch(GAME_EVENT_TYPES.TURN_NEXT, {}, "gm");
+
+  const character = room.getCharacter("char-1");
+  assert.ok(character.snapshot.currentPV <= 9);
+  assert.ok(character.snapshot.currentPV >= 6);
+  assert.equal(character.snapshot.conditions.some((condition) => condition.id === "focus"), false);
+  assert.ok(room.combat.log.some((entry) => /Sangramento|expirou/.test(entry.message)));
+});
+
+test("monstro comum cai derrotado e monstro importante usa marcas de morte", () => {
+  const room = new GameRoom({
+    players: [{ id: "gm", name: "GM", role: SESSION_ROLES.GM }],
+  });
+  room.dispatch(GAME_EVENT_TYPES.MONSTER_CREATE, {
+    id: "common",
+    name: "Drone comum",
+    snapshot: { currentPV: 4, maxPV: 4 },
+  }, "gm");
+  room.dispatch(GAME_EVENT_TYPES.MONSTER_CREATE, {
+    id: "boss",
+    name: "Vanguarda importante",
+    snapshot: { currentPV: 4, maxPV: 4, usesDeathMarks: true },
+  }, "gm");
+
+  room.dispatch(GAME_EVENT_TYPES.MONSTER_DAMAGE, { monsterId: "common", amount: 5 }, "gm");
+  room.dispatch(GAME_EVENT_TYPES.MONSTER_DAMAGE, { monsterId: "boss", amount: 5 }, "gm");
+
+  assert.equal(room.getMonster("common").snapshot.criticalState, "defeated");
+  assert.equal(room.getMonster("common").snapshot.isDead, false);
+  assert.equal(room.getMonster("boss").snapshot.criticalState, "critical");
+  assert.equal(room.getMonster("boss").snapshot.deathMarks, 0);
 });
 
 test("tokens da cena podem ser movidos pelo dono ou pelo mestre", () => {

@@ -24,9 +24,9 @@ Prioridade:
 
 | Livro | Area | Regra/Função | Estabilidade | Status no app | Onde aparece | Offline | VTT | Sincronizacao | Testes | Gap principal | Prioridade | Fase sugerida |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Criacao | Criar ficha com nome, jogador, raca, profissao e nivel | Media | Parcial | `app.js` | Sim | Parcial | Parcial | Parcial | Wizard oficial incompleto | P1 | 20 |
-| 1 | Criacao | Guia passo a passo de personagem | Media | Parcial | Aba/guia de ficha e docs | Sim | Nao central | Nao | Nao | Deve sair da ficha e virar fluxo dedicado | P1 | 20 |
-| 1 | Criacao | Rolagem de atributos iniciais | Media | Implementada | `rollInitialAttributePool` | Sim | Parcial | Nao | Parcial | Falta validar texto oficial final | P1 | 20 |
+| 1 | Criacao | Criar ficha com nome, jogador, raca, profissao e nivel | Media | Implementada/Parcial | `app.js`, `solaris-character-creation.js` | Sim | Parcial | Parcial | Sim | Fluxo existe; UI dedicada ainda pode melhorar | P1 | 21 |
+| 1 | Criacao | Guia passo a passo de personagem | Media | Implementada/Parcial | Aba Guia e docs | Sim | Nao central | Parcial | Sim | 7 etapas agrupam 10 passos oficiais; fluxo dedicado futuro | P1 | 21 |
+| 1 | Criacao | Rolagem de atributos iniciais | Media | Implementada | `rollInitialAttributePool`, `createInitialAttributeRoll` | Sim | Parcial | Nao | Sim | Nenhum critico | P1 | 21 |
 | 1 | Criacao | Equipamento inicial por origem/profissao | Instavel | Parcial | Catalogos e loja | Sim | Parcial | Parcial | Parcial | Pacotes oficiais precisam reconciliacao | P1 | 20 |
 | 1 | Racas | Humanis, Zerak, Veyrkan, Kairi e bonus | Alta | Parcial/Divergente | `raceData` | Sim | Parcial | Parcial | Parcial | Revalidar bonus e pericia extra | P0 | 19/20 |
 | 1 | Racas | Pericia extra racial | Alta | Divergente | `raceData`, skills | Sim | Parcial | Parcial | Nao claro | Humanis ja teve erro relatado | P0 | 19/20 |
@@ -51,14 +51,14 @@ Prioridade:
 | 1 | Combate | Iniciativa `1d20 + REF` | Alta | Implementada | `rollInitiative` | Sim | Sim | Sim | Sim | Nenhum critico | P2 | 21 |
 | 1 | Combate | Ataque `1d20 + modificador` | Alta | Implementada/Parcial | ficha/VTT | Sim | Sim | Sim | Parcial | Escolha de modificador precisa UI completa | P1 | 21 |
 | 1 | Combate | Dano de arma | Alta | Implementada/Parcial | `rollWeaponDamage` | Sim | Sim | Sim | Parcial | Validar armas oficiais e mods passivos | P1 | 21/22 |
-| 1 | Combate | Lista de acoes | Media | Parcial | Biblioteca de acoes | Sim | Parcial | Nao | Nao | Completar combate/cena/timeskip/fora combate | P2 | 21 |
-| 1 | Combate | Ferimentos, morte, estabilizacao | Alta | Parcial/Ausente | regras/ficha | Parcial | Parcial | Parcial | Nao claro | Fluxo completo necessario | P0 | 21 |
-| 1 | Combate | Criticos, erros criticos e lesoes | Alta | Parcial | rolagens/regras | Parcial | Parcial | Parcial | Nao claro | Efeitos automaticos ausentes | P1 | 21 |
-| 1 | Condicoes | Condicoes oficiais | Alta | Parcial | ficha/VTT | Sim | Sim | Sim | Sim | Efeitos e fim precisam padrao | P1 | 21 |
+| 1 | Combate | Lista de acoes | Media | Implementada/Parcial | `solaris-combat-rules.js`, Biblioteca de acoes | Sim | Parcial | Sim | Sim | UI ainda pode separar combate/cena/timeskip/fora combate | P2 | 22 |
+| 1 | Combate | Ferimentos, morte, estabilizacao | Alta | Implementada/Parcial | `solaris-combat-rules.js`, VTT | Sim | Sim | Sim | Sim | Falta painel visual completo para Marcas/Ferimentos/Estabilizar | P0 | 22 |
+| 1 | Combate | Criticos, erros criticos e lesoes | Alta | Implementada/Parcial | `solaris-combat-rules.js`, rolagens/regras | Sim | Parcial | Sim | Sim | UI ainda nao aplica todos efeitos automaticamente | P1 | 22 |
+| 1 | Condicoes | Condicoes oficiais | Alta | Implementada/Parcial | ficha/VTT/`solaris-combat-rules.js` | Sim | Sim | Sim | Sim | Completar catalogo visual de efeitos oficiais | P1 | 22 |
 | 1 | Inventario | Luzentis | Alta | Implementada | compra/venda | Sim | Sim | Sim | Sim | Nenhum critico | P2 | 22 |
 | 1 | Inventario | Carga maxima | Media | Parcial | ficha/inventario | Sim | Parcial | Parcial | Parcial | Conferir formula final | P1 | 20/22 |
 | 1 | Inventario | Item sem local definido | Alta | Implementada | aviso visual | Sim | Sim | Sim | Sim | Deve permanecer sem bloquear rolagem | P2 | 22 |
-| 1 | Progressao | XP, custo, tempo e nivel | Instavel | Parcial | botao Evoluir | Sim | Parcial | Parcial | Parcial | Requisitos e escolhas precisam guia | P0 | 20 |
+| 1 | Progressao | XP, custo, tempo e nivel | Instavel | Implementada/Parcial | botao Evoluir, `progressionHistory` | Sim | Parcial | Parcial | Sim | Wizard de evolucao pode ficar mais guiado | P0 | 21 |
 | 2 | Mestre | Painel do mestre | Media | Implementada | Tabletop | Nao | Sim | Sim | Sim | Falta regras narrativas completas | P2 | 24 |
 | 2 | Mestre | Notas, logs e relatorios | Media | Implementada/Parcial | `solaris-session-persistence` | Nao | Sim | Sim | Sim | Exportacao final e filtros | P2 | 24 |
 | 2 | Encontros | Criacao e balanceamento | Instavel | Provisoria | `estimateEncounterBalance` | Nao | Sim | Sim | Sim | Formula oficial precisa calibragem | P1 | 24 |
@@ -109,6 +109,14 @@ Prioridade:
 | App | VTT | Mesa com servidor opcional | Alta | Implementada | `server`, `src/session` | Nao | Sim | Sim | Sim | Evoluir sem quebrar offline | P0 | Continua |
 | App | Persistencia | Campanhas e sessoes | Alta | Implementada | `solaris-session-persistence` | Nao | Sim | Sim | Sim | Backup/restore e migracoes | P1 | 24 |
 | App | Permissoes | Mestre/jogador/aprovacoes | Alta | Implementada/Parcial | sessao/servidor | Nao | Sim | Sim | Sim | Expandir a todos fluxos sensiveis | P1 | 24 |
+
+## Atualizacao da Fase 22
+
+Data: 2026-06-24.
+
+A Fase 22 adicionou um motor puro de combate oficial em `src/domain/solaris-combat-rules.js` e testes dedicados. O status de combate melhora porque dano, cura, Sangramento, Ferimentos Graves, Marcas de Morte, criticos, erros criticos, resistencias, vulnerabilidades, imunidades, reducoes, cobertura, alcance, Jammed e rachaduras agora possuem uma base serializavel e reaproveitavel pelo app offline e pela Mesa Virtual.
+
+Ainda nao significa que toda a UI esteja finalizada. A proxima fase recomendada e expor esses estados em paineis melhores e conectar propriedades oficiais de todas as armas, monstros, mods e equipamentos ao fluxo de ataque/dano.
 
 ## Diagnostico
 

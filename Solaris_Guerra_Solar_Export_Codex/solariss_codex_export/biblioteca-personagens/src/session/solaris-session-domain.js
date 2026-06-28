@@ -1,3 +1,13 @@
+import {
+  advanceConditionDurations,
+  applyConditionToCombatant,
+  applyDamageToCombatant,
+  applyHealingToCombatant,
+  createCombatantState,
+  removeConditionFromCombatant,
+  resetTurnActionState,
+} from "../domain/solaris-combat-rules.js";
+
 export const SESSION_ROLES = Object.freeze({
   GM: "gm",
   PLAYER: "player",
@@ -271,13 +281,29 @@ function normalizeRole(role) {
 }
 
 function normalizeConditions(value = []) {
-  return arrayOf(value).map((condition) => ({
-    id: String(condition.id || createId("condition")),
-    label: String(condition.label || condition.name || "Condicao"),
-    description: String(condition.description || ""),
-    active: condition.active !== false,
-    createdAt: condition.createdAt || nowIso(),
-  }));
+  return arrayOf(value).map((condition) => {
+    const duration = condition.duration === null || condition.duration === undefined
+      ? null
+      : Math.max(0, Math.floor(numeric(condition.duration, 0)));
+    return {
+      ...(clone(condition) || {}),
+      id: String(condition.id || condition.conditionId || condition.key || createId("condition")),
+      key: String(condition.key || condition.type || condition.id || condition.name || condition.label || "condition"),
+      label: String(condition.label || condition.name || "Condicao"),
+      name: String(condition.name || condition.label || "Condicao"),
+      description: String(condition.description || condition.effect || ""),
+      source: String(condition.source || ""),
+      duration,
+      durationType: String(condition.durationType || condition.unit || (duration === null ? "scene" : "turns")),
+      active: condition.active !== false,
+      automatic: Boolean(condition.automatic || condition.auto),
+      visibleToPlayer: condition.visibleToPlayer !== false,
+      removable: condition.removable !== false,
+      appliedAt: condition.appliedAt || condition.createdAt || nowIso(),
+      createdAt: condition.createdAt || condition.appliedAt || nowIso(),
+      updatedAt: condition.updatedAt || nowIso(),
+    };
+  });
 }
 
 function normalizeSheetSnapshot(value = {}) {
@@ -318,6 +344,23 @@ function normalizeSheetSnapshot(value = {}) {
     abilities: arrayOf(snapshot.abilities).map((item) => ({ ...clone(item) })),
     activeItems: arrayOf(snapshot.activeItems).map((item) => ({ ...clone(item) })),
     conditions,
+    combatState: clone(snapshot.combatState || {}) || {},
+    deathMarks: bounded(snapshot.deathMarks, 0, 2, 0),
+    isDead: Boolean(snapshot.isDead),
+    criticalState: String(snapshot.criticalState || ""),
+    stabilized: Boolean(snapshot.stabilized),
+    lastDeathCheck: String(snapshot.lastDeathCheck || ""),
+    deathNotes: String(snapshot.deathNotes || ""),
+    severeWounds: arrayOf(snapshot.severeWounds).map((item) => ({ ...clone(item) })),
+    injuries: arrayOf(snapshot.injuries).map((item) => ({ ...clone(item) })),
+    scars: arrayOf(snapshot.scars).map((item) => ({ ...clone(item) })),
+    woundHistory: arrayOf(snapshot.woundHistory).map((item) => ({ ...clone(item) })),
+    conditionDurations: clone(snapshot.conditionDurations || {}) || {},
+    combatActionState: clone(snapshot.combatActionState || {}) || {},
+    lastCombatEvents: arrayOf(snapshot.lastCombatEvents).map((item) => ({ ...clone(item) })),
+    equipmentCombatState: clone(snapshot.equipmentCombatState || {}) || {},
+    ammoCombatState: clone(snapshot.ammoCombatState || {}) || {},
+    usesDeathMarks: snapshot.usesDeathMarks !== false,
     playerNotes: String(snapshot.playerNotes || ""),
     metadata: {
       schemaVersion: 1,
@@ -931,6 +974,18 @@ function normalizeCombatant(value = {}) {
   ));
   const cosmosMax = Math.max(0, numeric(value.cosmosMax ?? snapshot.cosmosMax, 0));
   const stressMax = Math.max(0, numeric(value.stressMax ?? snapshot.stressMax, 7));
+  const combatState = createCombatantState({
+    ...snapshot,
+    ...clone(value),
+    id: String(value.id || entityId),
+    entityId,
+    entityType,
+    kind: entityType,
+    currentPV,
+    maxPV,
+    conditions: value.conditions || snapshot.conditions,
+    usesDeathMarks: value.usesDeathMarks ?? snapshot.usesDeathMarks ?? entityType === "character",
+  });
   return {
     id: String(value.id || entityId),
     entityId,
@@ -955,9 +1010,26 @@ function normalizeCombatant(value = {}) {
     role: String(value.role || snapshot.role || ""),
     attacks: clone(value.attacks ?? snapshot.attacks ?? []),
     abilities: clone(value.abilities ?? snapshot.abilities ?? []),
-    conditions: normalizeConditions(value.conditions || snapshot.conditions),
+    conditions: normalizeConditions(combatState.conditions),
     visible: value.visible !== false,
-    isDefeated: Boolean(value.isDefeated || currentPV <= 0),
+    isDefeated: Boolean(combatState.isDefeated),
+    deathMarks: combatState.deathMarks,
+    isDead: combatState.isDead,
+    criticalState: combatState.criticalState,
+    stabilized: combatState.stabilized,
+    usesDeathMarks: combatState.usesDeathMarks,
+    severeWounds: arrayOf(combatState.severeWounds).map((entry) => ({ ...clone(entry) })),
+    injuries: arrayOf(combatState.injuries).map((entry) => ({ ...clone(entry) })),
+    scars: arrayOf(combatState.scars).map((entry) => ({ ...clone(entry) })),
+    woundHistory: arrayOf(combatState.woundHistory).map((entry) => ({ ...clone(entry) })),
+    combatActionState: clone(combatState.combatActionState || {}) || {},
+    equipmentCombatState: clone(combatState.equipmentCombatState || {}) || {},
+    ammoCombatState: clone(combatState.ammoCombatState || {}) || {},
+    lastCombatEvents: arrayOf(combatState.lastCombatEvents).map((entry) => ({ ...clone(entry) })),
+    resistances: arrayOf(combatState.resistances),
+    vulnerabilities: arrayOf(combatState.vulnerabilities),
+    immunities: arrayOf(combatState.immunities),
+    reductions: clone(combatState.reductions || {}) || {},
     metadata: clone(value.metadata || snapshot.metadata || {}) || {},
   };
 }
@@ -1268,35 +1340,119 @@ export class SessionCharacter {
     return this;
   }
 
-  applyDamage(amount = 0) {
-    const current = Math.max(0, numeric(this.snapshot.currentPV ?? this.snapshot.pvAtual, 0));
-    this.snapshot.currentPV = Math.max(0, current - Math.max(0, numeric(amount, 0)));
-    this.snapshot.pvCurrent = this.snapshot.currentPV;
-    this.bumpRevision();
-    return this.snapshot.currentPV;
+  toCombatantState(extra = {}) {
+    return createCombatantState({
+      ...this.snapshot,
+      ...clone(extra),
+      id: this.id,
+      entityId: this.id,
+      entityType: "character",
+      ownerPlayerId: this.ownerPlayerId,
+      name: this.name,
+      currentPV: this.snapshot.currentPV ?? this.snapshot.pvCurrent ?? this.snapshot.pvAtual,
+      maxPV: this.snapshot.maxPV ?? this.snapshot.pvMax ?? this.snapshot.pvMaximo,
+      conditions: this.conditions,
+      usesDeathMarks: this.snapshot.usesDeathMarks !== false,
+    });
   }
 
-  heal(amount = 0) {
-    const current = Math.max(0, numeric(this.snapshot.currentPV ?? this.snapshot.pvAtual, 0));
-    const max = Math.max(current, numeric(this.snapshot.maxPV ?? this.snapshot.pvMaximo, current));
-    this.snapshot.currentPV = Math.min(max, current + Math.max(0, numeric(amount, 0)));
-    this.snapshot.pvCurrent = this.snapshot.currentPV;
+  applyCombatantState(combatant = {}) {
+    const state = createCombatantState({
+      ...combatant,
+      id: this.id,
+      entityId: this.id,
+      entityType: "character",
+      ownerPlayerId: this.ownerPlayerId,
+      name: this.name,
+      usesDeathMarks: combatant.usesDeathMarks ?? this.snapshot.usesDeathMarks ?? true,
+    });
+    this.snapshot = normalizeSheetSnapshot({
+      ...this.snapshot,
+      ...state,
+      id: this.id,
+      characterId: this.characterId,
+      ownerId: this.ownerPlayerId,
+      ownerPlayerId: this.ownerPlayerId,
+      name: this.name,
+      currentPV: state.currentPV,
+      pvCurrent: state.currentPV,
+      pvAtual: state.currentPV,
+      maxPV: state.maxPV,
+      pvMax: state.maxPV,
+      conditions: state.conditions,
+      deathMarks: state.deathMarks,
+      isDead: state.isDead,
+      criticalState: state.criticalState,
+      stabilized: state.stabilized,
+      severeWounds: state.severeWounds,
+      injuries: state.injuries,
+      scars: state.scars,
+      woundHistory: state.woundHistory,
+      combatActionState: state.combatActionState,
+      equipmentCombatState: state.equipmentCombatState,
+      ammoCombatState: state.ammoCombatState,
+      lastCombatEvents: state.lastCombatEvents,
+      usesDeathMarks: state.usesDeathMarks,
+    });
+    this.conditions = normalizeConditions(state.conditions);
+    return state;
+  }
+
+  applyDamage(amount = 0, options = {}) {
+    const result = applyDamageToCombatant({
+      combatant: this.toCombatantState(),
+      amount,
+      damageType: options.damageType || options.type || "",
+      source: options.source || options.sourceLabel || options.attackName || "",
+      isCritical: Boolean(options.isCritical || options.critical),
+      options,
+    });
+    this.applyCombatantState(result.combatant);
     this.bumpRevision();
-    return this.snapshot.currentPV;
+    return result;
+  }
+
+  heal(amount = 0, options = {}) {
+    const result = applyHealingToCombatant({
+      combatant: this.toCombatantState(),
+      amount,
+      source: options.source || options.sourceLabel || options.itemName || "",
+    });
+    this.applyCombatantState(result.combatant);
+    this.bumpRevision();
+    return result;
   }
 
   addCondition(condition = {}) {
-    const next = normalizeConditions([condition])[0];
-    this.conditions.push(next);
-    this.snapshot.conditions = this.conditions.map((entry) => ({ ...entry }));
+    const result = applyConditionToCombatant({
+      combatant: this.toCombatantState(),
+      condition,
+    });
+    this.applyCombatantState(result.combatant);
     this.bumpRevision();
-    return next;
+    return result.condition;
   }
 
   removeCondition(conditionId = "") {
-    this.conditions = this.conditions.filter((condition) => condition.id !== conditionId);
-    this.snapshot.conditions = this.conditions.map((entry) => ({ ...entry }));
+    const result = removeConditionFromCombatant({
+      combatant: this.toCombatantState(),
+      conditionId,
+    });
+    this.applyCombatantState(result.combatant);
     this.bumpRevision();
+    return result;
+  }
+
+  advanceCombatTurnStart(options = {}) {
+    const ready = resetTurnActionState(this.toCombatantState());
+    const result = advanceConditionDurations({
+      combatant: ready,
+      phase: "start",
+      bleedingRoll: options.bleedingRoll,
+    });
+    this.applyCombatantState(result.combatant);
+    this.bumpRevision();
+    return result;
   }
 
   toJSON() {
@@ -1348,33 +1504,115 @@ export class SharedMonster {
     return this;
   }
 
-  applyDamage(amount = 0) {
-    const current = Math.max(0, numeric(this.snapshot.currentPV, 0));
-    this.snapshot.currentPV = Math.max(0, current - Math.max(0, numeric(amount, 0)));
-    this.updatedAt = nowIso();
-    return this.snapshot.currentPV;
+  toCombatantState(extra = {}) {
+    return createCombatantState({
+      ...this.snapshot,
+      ...clone(extra),
+      id: this.id,
+      entityId: this.id,
+      entityType: "monster",
+      name: this.name,
+      currentPV: this.snapshot.currentPV ?? this.snapshot.pvCurrent ?? this.snapshot.pvAtual,
+      maxPV: this.snapshot.maxPV ?? this.snapshot.pvMax ?? this.snapshot.pvMaximo,
+      conditions: this.conditions,
+      usesDeathMarks: this.snapshot.usesDeathMarks === true,
+    });
   }
 
-  heal(amount = 0) {
-    const current = Math.max(0, numeric(this.snapshot.currentPV, 0));
-    const max = Math.max(current, numeric(this.snapshot.maxPV, current));
-    this.snapshot.currentPV = Math.min(max, current + Math.max(0, numeric(amount, 0)));
+  applyCombatantState(combatant = {}) {
+    const state = createCombatantState({
+      ...combatant,
+      id: this.id,
+      entityId: this.id,
+      entityType: "monster",
+      name: this.name,
+      usesDeathMarks: combatant.usesDeathMarks ?? this.snapshot.usesDeathMarks === true,
+    });
+    this.snapshot = {
+      ...this.snapshot,
+      ...state,
+      id: this.id,
+      currentPV: state.currentPV,
+      pvCurrent: state.currentPV,
+      pvAtual: state.currentPV,
+      maxPV: state.maxPV,
+      pvMax: state.maxPV,
+      conditions: normalizeConditions(state.conditions),
+      deathMarks: state.deathMarks,
+      isDead: state.isDead,
+      isDefeated: state.isDefeated,
+      criticalState: state.criticalState,
+      stabilized: state.stabilized,
+      severeWounds: arrayOf(state.severeWounds).map((entry) => ({ ...clone(entry) })),
+      injuries: arrayOf(state.injuries).map((entry) => ({ ...clone(entry) })),
+      scars: arrayOf(state.scars).map((entry) => ({ ...clone(entry) })),
+      woundHistory: arrayOf(state.woundHistory).map((entry) => ({ ...clone(entry) })),
+      combatActionState: clone(state.combatActionState || {}) || {},
+      equipmentCombatState: clone(state.equipmentCombatState || {}) || {},
+      ammoCombatState: clone(state.ammoCombatState || {}) || {},
+      lastCombatEvents: arrayOf(state.lastCombatEvents).map((entry) => ({ ...clone(entry) })),
+      usesDeathMarks: state.usesDeathMarks,
+    };
+    this.conditions = normalizeConditions(state.conditions);
     this.updatedAt = nowIso();
-    return this.snapshot.currentPV;
+    return state;
+  }
+
+  applyDamage(amount = 0, options = {}) {
+    const result = applyDamageToCombatant({
+      combatant: this.toCombatantState(),
+      amount,
+      damageType: options.damageType || options.type || "",
+      source: options.source || options.sourceLabel || options.attackName || "",
+      isCritical: Boolean(options.isCritical || options.critical),
+      options,
+    });
+    this.applyCombatantState(result.combatant);
+    this.updatedAt = nowIso();
+    return result;
+  }
+
+  heal(amount = 0, options = {}) {
+    const result = applyHealingToCombatant({
+      combatant: this.toCombatantState(),
+      amount,
+      source: options.source || options.sourceLabel || options.itemName || "",
+    });
+    this.applyCombatantState(result.combatant);
+    this.updatedAt = nowIso();
+    return result;
   }
 
   addCondition(condition = {}) {
-    const next = normalizeConditions([condition])[0];
-    this.conditions.push(next);
-    this.snapshot.conditions = this.conditions.map((entry) => ({ ...entry }));
+    const result = applyConditionToCombatant({
+      combatant: this.toCombatantState(),
+      condition,
+    });
+    this.applyCombatantState(result.combatant);
     this.updatedAt = nowIso();
-    return next;
+    return result.condition;
   }
 
   removeCondition(conditionId = "") {
-    this.conditions = this.conditions.filter((condition) => condition.id !== conditionId);
-    this.snapshot.conditions = this.conditions.map((entry) => ({ ...entry }));
+    const result = removeConditionFromCombatant({
+      combatant: this.toCombatantState(),
+      conditionId,
+    });
+    this.applyCombatantState(result.combatant);
     this.updatedAt = nowIso();
+    return result;
+  }
+
+  advanceCombatTurnStart(options = {}) {
+    const ready = resetTurnActionState(this.toCombatantState());
+    const result = advanceConditionDurations({
+      combatant: ready,
+      phase: "start",
+      bleedingRoll: options.bleedingRoll,
+    });
+    this.applyCombatantState(result.combatant);
+    this.updatedAt = nowIso();
+    return result;
   }
 
   toJSON() {
@@ -2023,41 +2261,32 @@ export class CombatTracker {
   applyDamage(entityId = "", amount = 0) {
     const combatant = this.getCombatant(entityId);
     if (!combatant) return null;
-    combatant.currentPV = Math.max(0, numeric(combatant.currentPV, 0) - Math.max(0, numeric(amount, 0)));
-    combatant.pvAtual = combatant.currentPV;
-    combatant.isDefeated = combatant.currentPV <= 0;
-    this.upsertCombatant(combatant);
-    return combatant;
+    const result = applyDamageToCombatant({ combatant, amount });
+    const next = this.upsertCombatant(result.combatant);
+    return { ...result, combatant: next };
   }
 
   heal(entityId = "", amount = 0) {
     const combatant = this.getCombatant(entityId);
     if (!combatant) return null;
-    combatant.currentPV = Math.min(
-      Math.max(combatant.currentPV, combatant.maxPV),
-      Math.max(0, numeric(combatant.currentPV, 0)) + Math.max(0, numeric(amount, 0))
-    );
-    combatant.pvAtual = combatant.currentPV;
-    combatant.isDefeated = combatant.currentPV <= 0;
-    this.upsertCombatant(combatant);
-    return combatant;
+    const result = applyHealingToCombatant({ combatant, amount });
+    const next = this.upsertCombatant(result.combatant);
+    return { ...result, combatant: next };
   }
 
   addCondition(entityId = "", condition = {}) {
     const combatant = this.getCombatant(entityId);
     if (!combatant) return null;
-    const next = normalizeConditions([condition])[0];
-    combatant.conditions = normalizeConditions([...combatant.conditions, next]);
-    this.upsertCombatant(combatant);
-    return next;
+    const result = applyConditionToCombatant({ combatant, condition });
+    this.upsertCombatant(result.combatant);
+    return result.condition;
   }
 
   removeCondition(entityId = "", conditionId = "") {
     const combatant = this.getCombatant(entityId);
     if (!combatant) return null;
-    combatant.conditions = combatant.conditions.filter((condition) => condition.id !== conditionId);
-    this.upsertCombatant(combatant);
-    return combatant;
+    const result = removeConditionFromCombatant({ combatant, conditionId });
+    return this.upsertCombatant(result.combatant);
   }
 
   addLog(entry = {}) {
@@ -2463,6 +2692,33 @@ export class GameRoom {
     return this.combat.combatants;
   }
 
+  addCombatRuleLogEvents(result = {}, actor = null, target = {}, skipTypes = []) {
+    const skipped = new Set(skipTypes);
+    for (const entry of arrayOf(result.logEvents)) {
+      if (!entry?.message || skipped.has(entry.type)) continue;
+      this.addCombatLog({
+        type: entry.type || "combat:rule",
+        actorId: actor?.id || "",
+        actorName: actor?.name || "Sistema Solaris",
+        targetId: target.id || target.entityId || "",
+        targetName: target.name || "",
+        message: entry.message,
+        data: clone(entry.data || {}) || {},
+      });
+    }
+  }
+
+  applyTurnStartEffects(entry = {}, actor = null) {
+    const target = entry.entityType === "monster"
+      ? this.getMonster(entry.entityId)
+      : this.getCharacter(entry.entityId);
+    if (!target?.advanceCombatTurnStart) return null;
+    const result = target.advanceCombatTurnStart();
+    this.syncCombatants();
+    this.addCombatRuleLogEvents(result, actor, target, []);
+    return result;
+  }
+
   buildSceneToken(entity, index = 0) {
     const isMonster = entity instanceof SharedMonster || entity.entityType === "monster";
     const snapshot = clone(entity.snapshot || {}) || {};
@@ -2625,6 +2881,7 @@ export class GameRoom {
   nextTurn(actor = null) {
     const entry = this.combat.nextTurn();
     if (entry) {
+      this.applyTurnStartEffects(entry, actor);
       this.addCombatLog({
         type: "turn:next",
         actorId: actor?.id || "",
@@ -3619,21 +3876,31 @@ export class GameRoom {
       return updated;
     }
     if (type === GAME_EVENT_TYPES.CHARACTER_DAMAGE) {
-      const current = character.applyDamage(payload.amount);
+      const result = character.applyDamage(payload.amount, payload);
+      const current = result.combatant.currentPV;
       this.syncCombatants();
-      const source = payload.sourceLabel || payload.attackName ? ` por ${payload.sourceLabel || payload.attackName}` : "";
+      const sourceLabel = payload.sourceLabel || payload.attackName || payload.source || "";
+      const source = sourceLabel ? ` por ${sourceLabel}` : "";
       this.addCombatLog({
         type: "damage",
         actorId: actor?.id || "",
         actorName: actor?.name || "Mesa",
         targetId: character.id,
         targetName: character.name,
-        message: `${character.name} sofreu ${Math.max(0, numeric(payload.amount, 0))} de dano${source}.`,
+        message: `${character.name} sofreu ${Math.max(0, numeric(result.damageApplied, 0))} de dano${source}.`,
+        data: {
+          rawAmount: Math.max(0, numeric(payload.amount, 0)),
+          damageApplied: result.damageApplied,
+          preventedDamage: result.preventedDamage,
+          damageType: payload.damageType || payload.type || "",
+        },
       });
+      this.addCombatRuleLogEvents(result, actor, character, ["damage"]);
       return current;
     }
     if (type === GAME_EVENT_TYPES.CHARACTER_HEAL) {
-      const current = character.heal(payload.amount);
+      const result = character.heal(payload.amount, payload);
+      const current = result.combatant.currentPV;
       this.syncCombatants();
       this.addCombatLog({
         type: "heal",
@@ -3641,8 +3908,10 @@ export class GameRoom {
         actorName: actor?.name || "Mesa",
         targetId: character.id,
         targetName: character.name,
-        message: `${character.name} recuperou ${Math.max(0, numeric(payload.amount, 0))} PV.`,
+        message: `${character.name} recuperou ${Math.max(0, numeric(result.healingApplied, 0))} PV.`,
+        data: { requestedHealing: Math.max(0, numeric(payload.amount, 0)), healingApplied: result.healingApplied },
       });
+      this.addCombatRuleLogEvents(result, actor, character, ["heal"]);
       return current;
     }
     if (type === GAME_EVENT_TYPES.CHARACTER_CONDITION_ADD) {
@@ -3705,22 +3974,32 @@ export class GameRoom {
       return monster;
     }
     if (type === GAME_EVENT_TYPES.MONSTER_DAMAGE) {
-      const current = monster.applyDamage(payload.amount);
+      const result = monster.applyDamage(payload.amount, payload);
+      const current = result.combatant.currentPV;
       this.syncCombatants();
-      const source = payload.sourceLabel || payload.attackName ? ` por ${payload.sourceLabel || payload.attackName}` : "";
+      const sourceLabel = payload.sourceLabel || payload.attackName || payload.source || "";
+      const source = sourceLabel ? ` por ${sourceLabel}` : "";
       this.addCombatLog({
         type: "damage",
         actorId: actor?.id || "",
         actorName: actor?.name || "Mestre",
         targetId: monster.id,
         targetName: monster.name,
-        message: `${monster.name} sofreu ${Math.max(0, numeric(payload.amount, 0))} de dano${source}.`,
+        message: `${monster.name} sofreu ${Math.max(0, numeric(result.damageApplied, 0))} de dano${source}.`,
+        data: {
+          rawAmount: Math.max(0, numeric(payload.amount, 0)),
+          damageApplied: result.damageApplied,
+          preventedDamage: result.preventedDamage,
+          damageType: payload.damageType || payload.type || "",
+        },
       });
+      this.addCombatRuleLogEvents(result, actor, monster, ["damage"]);
       if (current <= 0) this.createLootFromMonster(monster.id, actor);
       return current;
     }
     if (type === GAME_EVENT_TYPES.MONSTER_HEAL) {
-      const current = monster.heal(payload.amount);
+      const result = monster.heal(payload.amount, payload);
+      const current = result.combatant.currentPV;
       this.syncCombatants();
       this.addCombatLog({
         type: "heal",
@@ -3728,8 +4007,10 @@ export class GameRoom {
         actorName: actor?.name || "Mestre",
         targetId: monster.id,
         targetName: monster.name,
-        message: `${monster.name} recuperou ${Math.max(0, numeric(payload.amount, 0))} PV.`,
+        message: `${monster.name} recuperou ${Math.max(0, numeric(result.healingApplied, 0))} PV.`,
+        data: { requestedHealing: Math.max(0, numeric(payload.amount, 0)), healingApplied: result.healingApplied },
       });
+      this.addCombatRuleLogEvents(result, actor, monster, ["heal"]);
       return current;
     }
     if (type === GAME_EVENT_TYPES.MONSTER_CONDITION_ADD) {
