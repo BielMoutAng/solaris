@@ -12,6 +12,36 @@ import {
   createSessionMonsterFromBestiary,
   resolveMonsterLoot,
 } from "../domain/solaris-bestiary-rules.js";
+import {
+  GM_SCHEMA_VERSION,
+  advanceBaseProject,
+  advanceCampaignClock,
+  advanceHackingChallenge,
+  advanceMissionPhase,
+  applyMissionReward,
+  completeMissionObjective,
+  consumeResource,
+  createBaseState,
+  createCampaignClock,
+  createFactionState,
+  createGmEvent as createGmRuleEvent,
+  createHackingChallenge,
+  createMissionObjective,
+  createResourceTrack,
+  createTravelRoute,
+  failHackingChallenge,
+  failMissionObjective,
+  hydrateGmState,
+  normalizeMissionEntry,
+  resolveBaseEvent,
+  resolveCampaignClock,
+  resolveMissionComplication,
+  resolveTravelEvent,
+  restoreResource,
+  serializeGmState,
+  updateBaseResource,
+  updateFactionReputation,
+} from "../domain/solaris-gm-rules.js";
 
 export const SESSION_ROLES = Object.freeze({
   GM: "gm",
@@ -156,6 +186,38 @@ export const GAME_EVENT_TYPES = Object.freeze({
   GM_SHIELD_SEND_TO_CHAT: "gm:shield:send-to-chat",
   GM_REPORT_EXPORT: "gm:report:export",
   GM_REPORT_SAVE: "gm:report:save",
+  GM_MISSION_CREATE: "gm:mission:create",
+  GM_MISSION_UPDATE: "gm:mission:update",
+  GM_MISSION_DELETE: "gm:mission:delete",
+  GM_MISSION_ADVANCE: "gm:mission:advance",
+  GM_MISSION_OBJECTIVE_CREATE: "gm:mission:objective:create",
+  GM_MISSION_OBJECTIVE_COMPLETE: "gm:mission:objective:complete",
+  GM_MISSION_OBJECTIVE_FAIL: "gm:mission:objective:fail",
+  GM_MISSION_COMPLICATION: "gm:mission:complication",
+  GM_TRAVEL_ROUTE_CREATE: "gm:travel-route:create",
+  GM_TRAVEL_ROUTE_UPDATE: "gm:travel-route:update",
+  GM_TRAVEL_ROUTE_DELETE: "gm:travel-route:delete",
+  GM_TRAVEL_EVENT: "gm:travel:event",
+  GM_RESOURCE_CREATE: "gm:resource:create",
+  GM_RESOURCE_CONSUME: "gm:resource:consume",
+  GM_RESOURCE_RESTORE: "gm:resource:restore",
+  GM_FACTION_CREATE: "gm:faction:create",
+  GM_FACTION_UPDATE: "gm:faction:update",
+  GM_FACTION_REPUTATION: "gm:faction:reputation",
+  GM_CLOCK_CREATE: "gm:clock:create",
+  GM_CLOCK_ADVANCE: "gm:clock:advance",
+  GM_CLOCK_RESOLVE: "gm:clock:resolve",
+  GM_HACKING_CREATE: "gm:hacking:create",
+  GM_HACKING_ADVANCE: "gm:hacking:advance",
+  GM_HACKING_FAIL: "gm:hacking:fail",
+  GM_BASE_CREATE: "gm:base:create",
+  GM_BASE_UPDATE: "gm:base:update",
+  GM_BASE_RESOURCE_UPDATE: "gm:base:resource:update",
+  GM_BASE_PROJECT_ADVANCE: "gm:base:project:advance",
+  GM_BASE_EVENT: "gm:base:event",
+  GM_REWARD_CREATE: "gm:reward:create",
+  GM_REWARD_APPLY: "gm:reward:apply",
+  GM_EVENT_CREATE: "gm:event:create",
 });
 
 export const APPROVAL_STATUSES = Object.freeze({
@@ -250,6 +312,38 @@ export const GM_DASHBOARD_EVENTS = new Set([
   GAME_EVENT_TYPES.GM_SHIELD_SEND_TO_CHAT,
   GAME_EVENT_TYPES.GM_REPORT_EXPORT,
   GAME_EVENT_TYPES.GM_REPORT_SAVE,
+  GAME_EVENT_TYPES.GM_MISSION_CREATE,
+  GAME_EVENT_TYPES.GM_MISSION_UPDATE,
+  GAME_EVENT_TYPES.GM_MISSION_DELETE,
+  GAME_EVENT_TYPES.GM_MISSION_ADVANCE,
+  GAME_EVENT_TYPES.GM_MISSION_OBJECTIVE_CREATE,
+  GAME_EVENT_TYPES.GM_MISSION_OBJECTIVE_COMPLETE,
+  GAME_EVENT_TYPES.GM_MISSION_OBJECTIVE_FAIL,
+  GAME_EVENT_TYPES.GM_MISSION_COMPLICATION,
+  GAME_EVENT_TYPES.GM_TRAVEL_ROUTE_CREATE,
+  GAME_EVENT_TYPES.GM_TRAVEL_ROUTE_UPDATE,
+  GAME_EVENT_TYPES.GM_TRAVEL_ROUTE_DELETE,
+  GAME_EVENT_TYPES.GM_TRAVEL_EVENT,
+  GAME_EVENT_TYPES.GM_RESOURCE_CREATE,
+  GAME_EVENT_TYPES.GM_RESOURCE_CONSUME,
+  GAME_EVENT_TYPES.GM_RESOURCE_RESTORE,
+  GAME_EVENT_TYPES.GM_FACTION_CREATE,
+  GAME_EVENT_TYPES.GM_FACTION_UPDATE,
+  GAME_EVENT_TYPES.GM_FACTION_REPUTATION,
+  GAME_EVENT_TYPES.GM_CLOCK_CREATE,
+  GAME_EVENT_TYPES.GM_CLOCK_ADVANCE,
+  GAME_EVENT_TYPES.GM_CLOCK_RESOLVE,
+  GAME_EVENT_TYPES.GM_HACKING_CREATE,
+  GAME_EVENT_TYPES.GM_HACKING_ADVANCE,
+  GAME_EVENT_TYPES.GM_HACKING_FAIL,
+  GAME_EVENT_TYPES.GM_BASE_CREATE,
+  GAME_EVENT_TYPES.GM_BASE_UPDATE,
+  GAME_EVENT_TYPES.GM_BASE_RESOURCE_UPDATE,
+  GAME_EVENT_TYPES.GM_BASE_PROJECT_ADVANCE,
+  GAME_EVENT_TYPES.GM_BASE_EVENT,
+  GAME_EVENT_TYPES.GM_REWARD_CREATE,
+  GAME_EVENT_TYPES.GM_REWARD_APPLY,
+  GAME_EVENT_TYPES.GM_EVENT_CREATE,
 ]);
 
 function createId(prefix = "session") {
@@ -873,6 +967,7 @@ function generateSessionReport(room, options = {}) {
     includeTransactions: true,
     includeCombat: true,
     includeLoot: true,
+    includeGmCampaign: true,
     ...(clone(options) || {}),
   };
   const revealedNotes = (data.gmNotes || []).filter((note) => note.revealed || note.visibleToPlayers);
@@ -883,6 +978,13 @@ function generateSessionReport(room, options = {}) {
   const lootPacks = data.lootPacks || [];
   const scenes = data.sceneList || data.scenes || [];
   const encounters = data.preparedEncounters || [];
+  const missions = data.missions || data.gmState?.missions || [];
+  const resources = data.resourceTracks || data.gmState?.resourceTracks || [];
+  const factions = data.factionStates || data.gmState?.factionStates || [];
+  const routes = data.travelRoutes || data.gmState?.travelRoutes || [];
+  const clocks = data.campaignClocks || data.gmState?.campaignClocks || [];
+  const hacking = data.hackingChallenges || data.gmState?.hackingChallenges || [];
+  const bases = data.bases || data.gmState?.bases || [];
   const completedObjectives = arrayOf(data.scene?.objectives).filter((objective) =>
     objective.completed || numeric(objective.progressCurrent, 0) >= numeric(objective.progressMax, 1)
   );
@@ -910,6 +1012,17 @@ function generateSessionReport(room, options = {}) {
     "## Encontros",
     ...(encounters.length ? encounters.map((encounter) => `- ${encounter.name}: ${encounter.status || "preparado"} (${arrayOf(encounter.monsters).length} criatura(s))`) : ["- Nenhum encontro preparado."]),
     "",
+    ...(settings.includeGmCampaign ? [
+      "## Campanha do Mestre",
+      ...(missions.length ? missions.map((mission) => `- Missao: ${mission.name} (${mission.phase || mission.status || "ativa"})`) : ["- Nenhuma missao registrada."]),
+      ...(routes.length ? routes.map((route) => `- Viagem: ${route.name} (${route.origin || "?"} -> ${route.destination || "?"})`) : []),
+      ...(resources.length ? resources.map((resource) => `- Recurso: ${resource.name} ${resource.current}/${resource.max} (${resource.pressure || "estavel"})`) : []),
+      ...(factions.length ? factions.map((faction) => `- Faccao: ${faction.name} reputacao ${faction.reputation ?? 0} (${faction.relation || "neutro"})`) : []),
+      ...(clocks.length ? clocks.map((clock) => `- Contador: ${clock.name} ${clock.current}/${clock.max} (${clock.status || "ativo"})`) : []),
+      ...(hacking.length ? hacking.map((challenge) => `- Hacking: ${challenge.name} ${challenge.progress}/${challenge.nodes} nos, deteccao ${challenge.detection}/${challenge.detectionMax}`) : []),
+      ...(bases.length ? bases.map((base) => `- Base/Colonia: ${base.name} seguranca ${base.attributes?.security ?? 0}, suprimentos ${base.resources?.supplies ?? 0}`) : []),
+      "",
+    ] : []),
     "## Notas do mestre",
     ...(visibleNotes.length ? visibleNotes.map((note) => `- ${note.important ? "[!]" : "[ ]"} ${note.title}: ${note.body}`) : ["- Nenhuma nota revelada."]),
     "",
@@ -2449,6 +2562,20 @@ export class GameRoom {
     scenes = [],
     activeSceneId = "",
     gmDashboardSettings = {},
+    gmState = {},
+    gmSchemaVersion = GM_SCHEMA_VERSION,
+    activeMissionId = "",
+    missions = [],
+    travelRoutes = [],
+    resourceTracks = [],
+    factionStates = [],
+    reputationLog = [],
+    campaignClocks = [],
+    gmEvents = [],
+    rewards = [],
+    consequences = [],
+    hackingChallenges = [],
+    bases = [],
     events = [],
     sequence = 0,
     createdAt = nowIso(),
@@ -2479,6 +2606,35 @@ export class GameRoom {
     this.sceneList = normalizeSceneList(arrayOf(sceneList).length ? sceneList : scenes, this.scene.toJSON());
     this.activeSceneId = String(activeSceneId || this.scene.id || this.sceneList[0]?.id || "");
     this.gmDashboardSettings = normalizeGmDashboardSettings(gmDashboardSettings);
+    const hydratedGmState = hydrateGmState({
+      ...(clone(gmState) || {}),
+      gmSchemaVersion,
+      activeMissionId,
+      missions,
+      travelRoutes,
+      resourceTracks,
+      factionStates,
+      reputationLog,
+      campaignClocks,
+      gmEvents,
+      rewards,
+      consequences,
+      hackingChallenges,
+      bases,
+    });
+    this.gmSchemaVersion = hydratedGmState.gmSchemaVersion;
+    this.activeMissionId = hydratedGmState.activeMissionId;
+    this.missions = hydratedGmState.missions;
+    this.travelRoutes = hydratedGmState.travelRoutes;
+    this.resourceTracks = hydratedGmState.resourceTracks;
+    this.factionStates = hydratedGmState.factionStates;
+    this.reputationLog = hydratedGmState.reputationLog;
+    this.campaignClocks = hydratedGmState.campaignClocks;
+    this.gmEvents = hydratedGmState.gmEvents;
+    this.rewards = hydratedGmState.rewards;
+    this.consequences = hydratedGmState.consequences;
+    this.hackingChallenges = hydratedGmState.hackingChallenges;
+    this.bases = hydratedGmState.bases;
     this.events = arrayOf(events).map((event) => event instanceof GameEvent ? event : GameEvent.fromJSON(event));
     this.sequence = Math.max(0, Math.floor(numeric(sequence, 0)));
     this.createdAt = createdAt || nowIso();
@@ -2656,6 +2812,9 @@ export class GameRoom {
       case GAME_EVENT_TYPES.TOKEN_MOVE:
         return this.applyTokenMove(payload, actor);
       default:
+        if (GM_DASHBOARD_EVENTS.has(event.type)) {
+          return this.applyGmDashboardEvent(event.type, payload, actor);
+        }
         if (CHARACTER_SYNC_EVENTS.has(event.type)) {
           return this.applyCharacterSyncEvent(event.type, payload, actor);
         }
@@ -3048,6 +3207,22 @@ export class GameRoom {
     const visibleNote = (note) => note.visibleToPlayers || note.revealed;
     const visibleCounter = (counter) => counter.visibleToPlayers || counter.revealed;
     const visibleEffect = (effect) => effect.visibleToPlayers || effect.revealed;
+    const visibleEntry = (entry) => entry.visibleToPlayers || entry.revealed;
+    const gmState = serializeGmState({
+      gmSchemaVersion: this.gmSchemaVersion,
+      activeMissionId: this.activeMissionId,
+      missions: isGm ? this.missions : this.missions.filter(visibleEntry),
+      travelRoutes: isGm ? this.travelRoutes : this.travelRoutes.filter(visibleEntry),
+      resourceTracks: isGm ? this.resourceTracks : this.resourceTracks.filter((entry) => entry.shared || visibleEntry(entry)),
+      factionStates: isGm ? this.factionStates : this.factionStates.filter(visibleEntry),
+      reputationLog: isGm ? this.reputationLog : this.reputationLog.filter(visibleEntry),
+      campaignClocks: isGm ? this.campaignClocks : this.campaignClocks.filter(visibleEntry),
+      gmEvents: isGm ? this.gmEvents : this.gmEvents.filter(visibleEntry),
+      rewards: isGm ? this.rewards : this.rewards.filter(visibleEntry),
+      consequences: isGm ? this.consequences : this.consequences.filter(visibleEntry),
+      hackingChallenges: isGm ? this.hackingChallenges : [],
+      bases: isGm ? this.bases : this.bases.filter(visibleEntry),
+    });
     return {
       gmNotes: isGm ? this.gmNotes.map(clone) : this.gmNotes.filter(visibleNote).map(clone),
       revealedNotes: this.revealedNotes.map(clone),
@@ -3058,12 +3233,236 @@ export class GameRoom {
       sceneList: this.sceneList.map(clone),
       activeSceneId: this.activeSceneId,
       settings: isGm ? clone(this.gmDashboardSettings) : {},
+      gmState,
+      gmSchemaVersion: gmState.gmSchemaVersion,
+      activeMissionId: gmState.activeMissionId,
+      missions: gmState.missions,
+      travelRoutes: gmState.travelRoutes,
+      resourceTracks: gmState.resourceTracks,
+      factionStates: gmState.factionStates,
+      reputationLog: gmState.reputationLog,
+      campaignClocks: gmState.campaignClocks,
+      gmEvents: gmState.gmEvents,
+      rewards: gmState.rewards,
+      consequences: gmState.consequences,
+      hackingChallenges: gmState.hackingChallenges,
+      bases: gmState.bases,
     };
   }
 
   applyGmDashboardEvent(type, payload = {}, actor = null) {
     this.assertAllowed(actor, type);
     if (type === GAME_EVENT_TYPES.GM_DASHBOARD_STATE) return this.gmDashboardStateFor(actor);
+
+    const addGmRuleEvent = (entry = {}) => {
+      const gmEvent = createGmRuleEvent({
+        ...entry,
+        actorId: actor?.id || entry.actorId || "",
+        actorName: actor?.name || entry.actorName || "Mestre",
+      });
+      this.gmEvents = [gmEvent, ...this.gmEvents].slice(0, 160);
+      return gmEvent;
+    };
+    const findMission = (missionId = "") => {
+      const id = String(missionId || payload.missionId || payload.id || "");
+      return this.missions.find((entry) => entry.id === id) || this.missions.find((entry) => entry.id === this.activeMissionId) || null;
+    };
+    const upsertMission = (mission = {}) => {
+      const normalized = normalizeMissionEntry(mission);
+      this.missions = [normalized, ...this.missions.filter((entry) => entry.id !== normalized.id)].slice(0, 80);
+      if (!this.activeMissionId) this.activeMissionId = normalized.id;
+      return normalized;
+    };
+
+    if (type === GAME_EVENT_TYPES.GM_MISSION_CREATE) {
+      const mission = upsertMission({ ...payload.mission, ...payload });
+      addGmRuleEvent({ type: "mission", targetId: mission.id, targetName: mission.name, message: `Missao criada: ${mission.name}.`, visibleToPlayers: mission.visibleToPlayers });
+      return mission;
+    }
+    if (type === GAME_EVENT_TYPES.GM_MISSION_UPDATE) {
+      const current = findMission(payload.missionId || payload.id);
+      if (!current) throw new Error("Missao nao encontrada.");
+      const mission = upsertMission({ ...current, ...(payload.patch || payload), id: current.id, createdAt: current.createdAt, updatedAt: nowIso() });
+      return mission;
+    }
+    if (type === GAME_EVENT_TYPES.GM_MISSION_DELETE) {
+      const missionId = payload.missionId || payload.id;
+      const mission = findMission(missionId);
+      this.missions = this.missions.filter((entry) => entry.id !== missionId);
+      if (this.activeMissionId === missionId) this.activeMissionId = this.missions[0]?.id || "";
+      return mission || null;
+    }
+    if (type === GAME_EVENT_TYPES.GM_MISSION_ADVANCE) {
+      const current = findMission(payload.missionId || payload.id);
+      if (!current) throw new Error("Missao nao encontrada.");
+      const mission = upsertMission(advanceMissionPhase(current, payload.phase || payload.direction || "next"));
+      addGmRuleEvent({ type: "mission", targetId: mission.id, targetName: mission.name, message: `Missao avancou para ${mission.phase}.`, visibleToPlayers: mission.visibleToPlayers });
+      return mission;
+    }
+    if (type === GAME_EVENT_TYPES.GM_MISSION_OBJECTIVE_CREATE) {
+      const current = findMission(payload.missionId || payload.id);
+      if (!current) throw new Error("Missao nao encontrada.");
+      const objective = createMissionObjective(payload.objective || payload);
+      const mission = upsertMission({ ...current, objectives: [...arrayOf(current.objectives), objective], updatedAt: nowIso() });
+      return { mission, objective };
+    }
+    if (type === GAME_EVENT_TYPES.GM_MISSION_OBJECTIVE_COMPLETE || type === GAME_EVENT_TYPES.GM_MISSION_OBJECTIVE_FAIL) {
+      const current = findMission(payload.missionId || payload.id);
+      if (!current) throw new Error("Missao nao encontrada.");
+      const objectiveId = payload.objectiveId || payload.id || payload.title || "";
+      const mission = upsertMission(type === GAME_EVENT_TYPES.GM_MISSION_OBJECTIVE_COMPLETE
+        ? completeMissionObjective(current, objectiveId)
+        : failMissionObjective(current, objectiveId));
+      addGmRuleEvent({ type: "mission", targetId: mission.id, targetName: mission.name, message: `Objetivo ${type === GAME_EVENT_TYPES.GM_MISSION_OBJECTIVE_COMPLETE ? "concluido" : "falhou"} em ${mission.name}.`, visibleToPlayers: mission.visibleToPlayers });
+      return mission;
+    }
+    if (type === GAME_EVENT_TYPES.GM_MISSION_COMPLICATION) {
+      const current = findMission(payload.missionId || payload.id);
+      if (!current) throw new Error("Missao nao encontrada.");
+      const resolved = resolveMissionComplication(current, payload);
+      const mission = upsertMission(resolved.mission);
+      addGmRuleEvent({ type: "mission", targetId: mission.id, targetName: mission.name, roll: resolved.complication.roll, message: `Complicacao: ${resolved.complication.description}`, visibleToPlayers: mission.visibleToPlayers });
+      return { mission, complication: resolved.complication };
+    }
+
+    if (type === GAME_EVENT_TYPES.GM_TRAVEL_ROUTE_CREATE) {
+      const route = createTravelRoute({ ...payload.route, ...payload });
+      this.travelRoutes = [route, ...this.travelRoutes.filter((entry) => entry.id !== route.id)].slice(0, 80);
+      addGmRuleEvent({ type: "travel", targetId: route.id, targetName: route.name, message: `Rota criada: ${route.name}.`, visibleToPlayers: route.visibleToPlayers });
+      return route;
+    }
+    if (type === GAME_EVENT_TYPES.GM_TRAVEL_ROUTE_UPDATE) {
+      const routeId = payload.routeId || payload.id;
+      const current = this.travelRoutes.find((entry) => entry.id === routeId);
+      if (!current) throw new Error("Rota nao encontrada.");
+      const route = createTravelRoute({ ...current, ...(payload.patch || payload), id: current.id, createdAt: current.createdAt, updatedAt: nowIso() });
+      this.travelRoutes = [route, ...this.travelRoutes.filter((entry) => entry.id !== route.id)].slice(0, 80);
+      return route;
+    }
+    if (type === GAME_EVENT_TYPES.GM_TRAVEL_ROUTE_DELETE) {
+      const routeId = payload.routeId || payload.id;
+      const route = this.travelRoutes.find((entry) => entry.id === routeId);
+      this.travelRoutes = this.travelRoutes.filter((entry) => entry.id !== routeId);
+      return route || null;
+    }
+    if (type === GAME_EVENT_TYPES.GM_TRAVEL_EVENT) {
+      const routeId = payload.routeId || payload.id;
+      const current = this.travelRoutes.find((entry) => entry.id === routeId);
+      if (!current) throw new Error("Rota nao encontrada.");
+      const resolved = resolveTravelEvent(current, payload);
+      this.travelRoutes = [resolved.route, ...this.travelRoutes.filter((entry) => entry.id !== resolved.route.id)].slice(0, 80);
+      addGmRuleEvent({ ...resolved.event, visibleToPlayers: resolved.route.visibleToPlayers });
+      return resolved;
+    }
+
+    if (type === GAME_EVENT_TYPES.GM_RESOURCE_CREATE) {
+      const resource = createResourceTrack({ ...payload.resource, ...payload });
+      this.resourceTracks = [resource, ...this.resourceTracks.filter((entry) => entry.id !== resource.id)].slice(0, 80);
+      return resource;
+    }
+    if (type === GAME_EVENT_TYPES.GM_RESOURCE_CONSUME || type === GAME_EVENT_TYPES.GM_RESOURCE_RESTORE) {
+      const resourceId = payload.resourceId || payload.id;
+      const current = this.resourceTracks.find((entry) => entry.id === resourceId);
+      if (!current) throw new Error("Recurso nao encontrado.");
+      const resource = type === GAME_EVENT_TYPES.GM_RESOURCE_CONSUME
+        ? consumeResource(current, payload.amount ?? 1, payload.reason || payload.message || "")
+        : restoreResource(current, payload.amount ?? 1, payload.reason || payload.message || "");
+      this.resourceTracks = [resource, ...this.resourceTracks.filter((entry) => entry.id !== resource.id)].slice(0, 80);
+      addGmRuleEvent({ type: "resource", targetId: resource.id, targetName: resource.name, message: `${resource.name}: ${resource.current}/${resource.max}.`, visibleToPlayers: resource.shared });
+      return resource;
+    }
+
+    if (type === GAME_EVENT_TYPES.GM_FACTION_CREATE) {
+      const faction = createFactionState({ ...payload.faction, ...payload });
+      this.factionStates = [faction, ...this.factionStates.filter((entry) => entry.id !== faction.id)].slice(0, 80);
+      return faction;
+    }
+    if (type === GAME_EVENT_TYPES.GM_FACTION_UPDATE || type === GAME_EVENT_TYPES.GM_FACTION_REPUTATION) {
+      const factionId = payload.factionId || payload.id;
+      const current = this.factionStates.find((entry) => entry.id === factionId);
+      if (!current) throw new Error("Faccao nao encontrada.");
+      const faction = type === GAME_EVENT_TYPES.GM_FACTION_REPUTATION
+        ? updateFactionReputation(current, payload.delta ?? 0, payload.reason || payload.message || "")
+        : createFactionState({ ...current, ...(payload.patch || payload), id: current.id, createdAt: current.createdAt, updatedAt: nowIso() });
+      this.factionStates = [faction, ...this.factionStates.filter((entry) => entry.id !== faction.id)].slice(0, 80);
+      if (type === GAME_EVENT_TYPES.GM_FACTION_REPUTATION) {
+        const last = faction.history[0] || createGmRuleEvent({ type: "reputation", targetId: faction.id, targetName: faction.name, message: `Reputacao ${faction.reputation}.` });
+        this.reputationLog = [last, ...this.reputationLog].slice(0, 120);
+      }
+      return faction;
+    }
+
+    if (type === GAME_EVENT_TYPES.GM_CLOCK_CREATE) {
+      const clock = createCampaignClock({ ...payload.clock, ...payload });
+      this.campaignClocks = [clock, ...this.campaignClocks.filter((entry) => entry.id !== clock.id)].slice(0, 80);
+      return clock;
+    }
+    if (type === GAME_EVENT_TYPES.GM_CLOCK_ADVANCE || type === GAME_EVENT_TYPES.GM_CLOCK_RESOLVE) {
+      const clockId = payload.clockId || payload.id;
+      const current = this.campaignClocks.find((entry) => entry.id === clockId);
+      if (!current) throw new Error("Contador de campanha nao encontrado.");
+      const clock = type === GAME_EVENT_TYPES.GM_CLOCK_ADVANCE
+        ? advanceCampaignClock(current, payload.amount ?? 1)
+        : resolveCampaignClock(current, payload);
+      this.campaignClocks = [clock, ...this.campaignClocks.filter((entry) => entry.id !== clock.id)].slice(0, 80);
+      addGmRuleEvent({ type: "clock", targetId: clock.id, targetName: clock.name, message: `${clock.name}: ${clock.current}/${clock.max}.`, visibleToPlayers: clock.visibleToPlayers });
+      return clock;
+    }
+
+    if (type === GAME_EVENT_TYPES.GM_HACKING_CREATE) {
+      const challenge = createHackingChallenge({ ...payload.challenge, ...payload });
+      this.hackingChallenges = [challenge, ...this.hackingChallenges.filter((entry) => entry.id !== challenge.id)].slice(0, 60);
+      return challenge;
+    }
+    if (type === GAME_EVENT_TYPES.GM_HACKING_ADVANCE || type === GAME_EVENT_TYPES.GM_HACKING_FAIL) {
+      const challengeId = payload.challengeId || payload.id;
+      const current = this.hackingChallenges.find((entry) => entry.id === challengeId);
+      if (!current) throw new Error("Desafio de hacking nao encontrado.");
+      const challenge = type === GAME_EVENT_TYPES.GM_HACKING_ADVANCE
+        ? advanceHackingChallenge(current, payload)
+        : failHackingChallenge(current, payload.reason || payload.message || "");
+      this.hackingChallenges = [challenge, ...this.hackingChallenges.filter((entry) => entry.id !== challenge.id)].slice(0, 60);
+      return challenge;
+    }
+
+    if (type === GAME_EVENT_TYPES.GM_BASE_CREATE) {
+      const base = createBaseState({ ...payload.base, ...payload });
+      this.bases = [base, ...this.bases.filter((entry) => entry.id !== base.id)].slice(0, 40);
+      return base;
+    }
+    if (type === GAME_EVENT_TYPES.GM_BASE_UPDATE || type === GAME_EVENT_TYPES.GM_BASE_RESOURCE_UPDATE || type === GAME_EVENT_TYPES.GM_BASE_PROJECT_ADVANCE || type === GAME_EVENT_TYPES.GM_BASE_EVENT) {
+      const baseId = payload.baseId || payload.id;
+      const current = this.bases.find((entry) => entry.id === baseId);
+      if (!current) throw new Error("Base ou colonia nao encontrada.");
+      const result = type === GAME_EVENT_TYPES.GM_BASE_RESOURCE_UPDATE
+        ? updateBaseResource(current, payload.resource || payload.resourceKey || "", payload.delta ?? 0, payload.reason || "")
+        : type === GAME_EVENT_TYPES.GM_BASE_PROJECT_ADVANCE
+          ? advanceBaseProject(current, payload.projectId || payload.id || "", payload.amount ?? 1)
+          : type === GAME_EVENT_TYPES.GM_BASE_EVENT
+            ? resolveBaseEvent(current, payload)
+            : createBaseState({ ...current, ...(payload.patch || payload), id: current.id, createdAt: current.createdAt, updatedAt: nowIso() });
+      const base = result.base || result;
+      this.bases = [base, ...this.bases.filter((entry) => entry.id !== base.id)].slice(0, 40);
+      if (result.event) addGmRuleEvent(result.event);
+      return result;
+    }
+
+    if (type === GAME_EVENT_TYPES.GM_REWARD_CREATE) {
+      const applied = applyMissionReward({ rewards: this.rewards, gmEvents: this.gmEvents }, payload.reward || payload, payload.target || {});
+      this.rewards = [applied.reward, ...this.rewards.filter((entry) => entry.id !== applied.reward.id)].slice(0, 80);
+      return applied.reward;
+    }
+    if (type === GAME_EVENT_TYPES.GM_REWARD_APPLY) {
+      const rewardId = payload.rewardId || payload.id;
+      const reward = this.rewards.find((entry) => entry.id === rewardId) || payload.reward || payload;
+      const applied = applyMissionReward(this, reward, payload.target || {});
+      this.rewards = [applied.reward, ...this.rewards.filter((entry) => entry.id !== applied.reward.id)].slice(0, 80);
+      if (applied.state?.gmEvents) this.gmEvents = applied.state.gmEvents;
+      return applied;
+    }
+    if (type === GAME_EVENT_TYPES.GM_EVENT_CREATE) {
+      return addGmRuleEvent(payload.event || payload);
+    }
 
     if (type === GAME_EVENT_TYPES.GM_NOTE_CREATE) {
       const note = normalizeGmNote({ ...payload.note, ...payload });
@@ -4185,6 +4584,20 @@ export class GameRoom {
       scenes: this.sceneList.map((scene) => clone(scene)),
       activeSceneId: this.activeSceneId,
       gmDashboardSettings: clone(this.gmDashboardSettings),
+      gmSchemaVersion: this.gmSchemaVersion,
+      activeMissionId: this.activeMissionId,
+      missions: this.missions.map((mission) => clone(mission)),
+      travelRoutes: this.travelRoutes.map((route) => clone(route)),
+      resourceTracks: this.resourceTracks.map((resource) => clone(resource)),
+      factionStates: this.factionStates.map((faction) => clone(faction)),
+      reputationLog: this.reputationLog.map((entry) => clone(entry)),
+      campaignClocks: this.campaignClocks.map((clock) => clone(clock)),
+      gmEvents: this.gmEvents.map((entry) => clone(entry)),
+      rewards: this.rewards.map((reward) => clone(reward)),
+      consequences: this.consequences.map((consequence) => clone(consequence)),
+      hackingChallenges: this.hackingChallenges.map((challenge) => clone(challenge)),
+      bases: this.bases.map((base) => clone(base)),
+      gmState: serializeGmState(this),
       gmDashboard: this.gmDashboardStateFor({ isGM: true }),
       events: this.events.map((event) => event.toJSON()),
       sequence: this.sequence,

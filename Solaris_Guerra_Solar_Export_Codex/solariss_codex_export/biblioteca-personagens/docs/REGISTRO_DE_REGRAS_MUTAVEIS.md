@@ -28,6 +28,8 @@ Este registro separa o que parece estavel do que ainda deve ser tratado como pro
 | Separacao Biblioteca/Tabletop | Implementado | Electron/scripts | Baixo | A cada build de desktop |
 | Motor oficial de bestiario da Fase 24 | Implementado | `solaris-bestiary-rules.js`, VTT | Medio | Se Livro 3 alterar fichas, ataques, loot ou resistencias |
 | Ficha de monstro normalizada | Implementado | `normalizeMonsterEntry`, `createSessionMonsterFromBestiary` | Medio | Sempre que recompilar Livro 3 |
+| Modelos do Guia do Mestre da Fase 25 | Implementado | `solaris-gm-rules.js`, Painel do Mestre | Medio | Se Livro 2 alterar missoes, viagem, hacking, bases ou reputacao |
+| Persistencia de campanha GM | Implementado | `gmState`, sessoes/campanhas/autosaves | Baixo | A cada mudanca de schema de campanha |
 
 ## Regras Funcionais Provisorias
 
@@ -50,6 +52,9 @@ Este registro separa o que parece estavel do que ainda deve ser tratado como pro
 | Loot por monstro | Implementada/parcial | Motor existe, mas tabelas raras podem mudar | Medio | Testes por monstro e revisao de Livro 3 |
 | Variantes, templates, chefes, minions e enxames | Provisorio/parcial | Modelo existe, mas multiplicadores finais podem mudar | Medio | Reauditar quando Livro 3/Guia do Mestre fecharem balanceamento |
 | Moral, fuga e comportamento de criatura | Parcial | Estado e teste existem; gatilhos narrativos ainda dependem do mestre | Medio | Completar compendio tatico por criatura |
+| Recompensas narrativas de missao | Parcial | Motor registra recompensa, mas entrega automatica em ficha ainda precisa fase propria | Medio | Conectar a Luzentis, itens, XP e aprovacoes |
+| Viagem e recursos do Guia do Mestre | Implementada/parcial | Dominio existe; UI ainda usa prompts e listas compactas | Medio | Criar formularios dedicados e controles visuais |
+| Hacking e bases/colonias | Implementada/parcial | Motor existe; minissistema visual ainda nao esta completo | Medio | Criar telas dedicadas ou modais completos |
 
 ## Regras de Alto Risco de Mudanca
 
@@ -65,8 +70,8 @@ Este registro separa o que parece estavel do que ainda deve ser tratado como pro
 | Veiculos | Medio/alto | Podem exigir ficha propria | Fase dedicada |
 | Drones e torretas | Medio/alto | Podem agir como criaturas/equipamentos | Fase dedicada |
 | Robos e automatos | Medio/alto | Aparecem em Livro 5 e possivelmente Livro 3 | Modelo unificado |
-| Faccao e reputacao | Medio | Afeta campanha, recompensa e narrativa | Fase do Guia do Mestre |
-| Viagem e ambiente hostil | Medio | Exige recursos e eventos | Fase do Guia do Mestre |
+| Faccao e reputacao | Medio | Afeta campanha, recompensa e narrativa | Fase 25 criou modelo; refinar compendio e UI |
+| Viagem e ambiente hostil | Medio | Exige recursos e eventos | Fase 25 criou modelo; refinar formularios e automacoes |
 | Livro 4 de lore | Medio | Nao e so texto, precisa navegacao | Compendio por tags |
 
 ## Regras que Nao Devem Bloquear o Jogador
@@ -167,3 +172,19 @@ Regras de bestiario que agora estao ativas:
 | Chefes, elites, minions e enxames | Provisorio/parcial | `createBossMonster`, `createEliteMonster`, `createMinionMonster`, `createSwarmMonster` | Alto | Quando Livro 3/Guia do Mestre fecharem multiplicadores |
 | Tokens de monstro para VTT | Implementado | `createMonsterTokenDefaults`, `buildSceneToken` | Baixo | Se grade/tamanho mudar |
 | Ameaca de encontro | Provisorio/parcial | `estimateMonsterThreat`, `estimateEncounterThreat` | Alto | Quando XP/ameaca oficial for calibrada |
+
+## Atualizacao da Fase 25
+
+Data: 2026-06-24.
+
+Regras do Guia do Mestre que agora estao ativas:
+
+| Regra | Estado | Onde aparece | Risco | Quando reauditar |
+| --- | --- | --- | --- | --- |
+| Missoes, objetivos, fases e complicacoes | Implementado/parcial | `solaris-gm-rules.js`, aba Campanha | Medio | Quando Livro 2 mudar estrutura de missao |
+| Recompensas por risco | Provisorio/parcial | `computeMissionReward`, `applyMissionReward` | Alto | Quando economia/XP forem calibrados |
+| Viagem, terreno, ritmo e eventos | Implementado/parcial | `createTravelRoute`, `resolveTravelEvent` | Medio | Quando eventos oficiais mudarem |
+| Recursos e pressao logistica | Implementado/parcial | `createResourceTrack`, `computeResourcePressure` | Medio | Quando regras de carga/suprimentos mudarem |
+| Faccoes e reputacao | Implementado/parcial | `createFactionState`, `updateFactionReputation` | Medio | Quando Livro 4/Livro 2 consolidarem faccoes |
+| Hacking | Implementado/parcial | `createHackingChallenge`, `advanceHackingChallenge` | Alto | Quando SR, RAM, ICE ou ERROR 403 forem revisados |
+| Bases e colonias | Implementado/parcial | `createBaseState`, `advanceBaseProject` | Alto | Quando ciclos/projetos/oficinas forem fechados |
