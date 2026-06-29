@@ -9040,6 +9040,65 @@ body .vital-hud-modal #hud-humanis .hvh-segment {
   background: rgba(95, 18, 31, 0.56);
 }
 
+.vtt-lore-toolbar label {
+  min-width: min(220px, 100%);
+  display: grid;
+  gap: 5px;
+  color: var(--vtt-muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.vtt-lore-toolbar input,
+.vtt-lore-toolbar select {
+  min-height: 34px;
+  color: var(--vtt-text);
+  background: rgba(4, 14, 26, 0.74);
+  border: 1px solid rgba(57, 207, 255, 0.24);
+}
+
+.vtt-lore-grid {
+  grid-template-columns: minmax(220px, 0.8fr) minmax(300px, 1.2fr);
+  align-items: start;
+}
+
+.vtt-lore-list {
+  max-height: min(420px, calc(100vh - 330px));
+}
+
+.vtt-lore-list article {
+  border-left: 2px solid rgba(57, 207, 255, 0.34);
+}
+
+.vtt-lore-list footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.vtt-lore-list button {
+  min-height: 28px;
+  padding: 5px 8px;
+  font-size: 0.72rem;
+}
+
+.vtt-lore-detail p {
+  max-height: 170px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.vtt-lore-detail footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 8px;
+}
+
+.vtt-lore-relations {
+  grid-column: 1 / -1;
+}
+
 .vtt-gm-counter-bar {
   display: block;
   height: 7px;

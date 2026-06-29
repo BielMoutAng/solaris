@@ -75,10 +75,10 @@ Prioridade:
 | 3 | Bestiario | Loot automatico | Media | Implementada/Parcial | `resolveMonsterLoot`, VTT | Sim | Sim | Sim | Sim | Tabelas raras continuam dependentes de fechamento oficial | P1 | 24 |
 | 3 | Bestiario | Comportamento, taticas e ecologia | Media | Parcial | detalhes/metadata | Sim | Parcial | Parcial | Parcial | Texto narrativo ainda precisa virar compendio navegavel | P2 | 24 |
 | 3 | Bestiario | Variantes e templates | Media | Provisoria/Parcial | `applyMonsterVariant`, `createBossMonster` | Parcial | Parcial | Sim | Sim | Modelo existe, mas calibragem oficial ainda e sensivel | P2 | 24 |
-| 4 | Cenarios | Compendio de lore | Instavel | Parcial | livros/regras | Sim | Parcial | Nao | Nao | Nao e banco navegavel ainda | P2 | 25 |
-| 4 | Cenarios | Locais e cenas | Media | Parcial | cenas/VTT | Nao | Sim | Sim | Sim | Faltam links com lore oficial | P2 | 25 |
-| 4 | Cenarios | Faccao/NPC/linha do tempo | Media | Ausente/Parcial | notas | Parcial | Parcial | Nao | Nao | Precisa modelo dedicado | P2 | 25 |
-| 4 | Cenarios | Ganchos de campanha | Media | Parcial/Ausente | painel mestre | Nao | Parcial | Nao | Nao | Integrar a sessoes e cenas | P3 | 25 |
+| 4 | Cenarios | Compendio de lore | Media | Implementada/Parcial | `solaris-lore-rules.js`, Biblioteca Lore | Sim | Sim | Sim | Sim | Base inicial existe; falta granularidade completa por capitulo | P2 | 26 |
+| 4 | Cenarios | Locais e cenas | Media | Implementada/Parcial | cenas/VTT, aba Lore | Sim | Sim | Sim | Sim | Cenas podem nascer da lore; faltam mapas/imagens oficiais | P2 | 26 |
+| 4 | Cenarios | Faccao/NPC/linha do tempo | Media | Implementada/Parcial | Painel do Mestre, notas, faccoes | Sim | Sim | Sim | Sim | Modelo existe; conteudo completo ainda precisa expansao | P2 | 26 |
+| 4 | Cenarios | Ganchos de campanha | Media | Implementada/Parcial | Painel do Mestre, relatorio | Sim | Sim | Sim | Sim | Ganchos iniciais existem; falta catalogar todos do Livro 4 | P3 | 26 |
 | 5 | Catalogo | Fonte oficial de dados | Alta | Divergente/Instavel | `official-*` | Sim | Sim | Sim | Parcial | Nomes de fontes nao batem com livros atuais | P0 | 19 |
 | 5 | Itens | Itens comuns e consumiveis | Alta | Implementada/Parcial | loja/inventario | Sim | Sim | Sim | Sim | Validar lista final | P1 | 19/22 |
 | 5 | Itens | Detalhe por duplo clique | Alta | Implementada/Parcial | modal detalhes | Sim | Parcial | Nao | Nao | Padronizar guia de uso | P1 | 22 |

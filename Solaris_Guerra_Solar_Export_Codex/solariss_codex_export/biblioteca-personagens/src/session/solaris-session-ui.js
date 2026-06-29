@@ -4,11 +4,11 @@ import {
   Scene,
   SESSION_ROLES,
   estimateEncounterBalance,
-} from "./solaris-session-domain.js?v=20260624f";
+} from "./solaris-session-domain.js?v=20260624g";
 import {
   SESSION_SOCKET_EVENTS,
   SolarisSessionClient,
-} from "./solaris-session-client.js?v=20260624f";
+} from "./solaris-session-client.js?v=20260624g";
 import {
   ACTIVE_CAMPAIGN_STORAGE_KEY,
   CAMPAIGN_STORAGE_KEY,
@@ -23,7 +23,7 @@ import {
   parseSessionExportBundle,
   serializeCampaignList,
   upsertCampaignSession,
-} from "./solaris-session-persistence.js?v=20260624f";
+} from "./solaris-session-persistence.js?v=20260624g";
 import {
   createSessionMonsterFromBestiary,
   estimateEncounterThreat as estimateBestiaryEncounterThreat,
@@ -32,17 +32,26 @@ import {
   computeMonsterDamageProfile,
   normalizeMonsterEntry,
   resolveMonsterAttack,
-} from "../domain/solaris-bestiary-rules.js?v=20260624f";
+} from "../domain/solaris-bestiary-rules.js?v=20260624g";
 import {
   computeMissionRisk,
   computeTravelDifficulty,
   generateMissionSeed,
   generateTravelEventSeed,
-} from "../domain/solaris-gm-rules.js?v=20260624f";
+} from "../domain/solaris-gm-rules.js?v=20260624g";
+import {
+  LORE_ENTRY_TYPES,
+  LORE_IMPORTANCE_LEVELS,
+  LORE_SECRET_LEVELS,
+  filterLoreEntries,
+  hydrateLoreState,
+  rankLoreSearchResults,
+  searchLoreEntries,
+} from "../domain/solaris-lore-rules.js?v=20260624g";
 
 const SESSION_SAVE_KEY = "solaris.virtual.table.session.v1";
 const PLAYER_SESSION_KEY = "solaris.virtual.table.playerId";
-const TABLETOP_APP_VERSION = "0.6.0-alpha.20";
+const TABLETOP_APP_VERSION = "0.6.0-alpha.21";
 const DEFAULT_REPORT_OPTIONS = Object.freeze({
   includeFullChat: false,
   includeSecretNotes: false,
@@ -1002,6 +1011,7 @@ function demoRoomState(localCharacter) {
 
 function normalizeServerRoom(room = {}, localCharacter = {}) {
   const fallback = demoRoomState(localCharacter);
+  const loreState = hydrateLoreState(room.loreState || room.gmDashboard?.loreState || fallback.loreState || {});
   const players = Array.isArray(room.players) && room.players.length
     ? room.players.map((player) => {
       const character = (room.characters || []).find((entry) => entry.ownerPlayerId === player.id);
@@ -1059,6 +1069,20 @@ function normalizeServerRoom(room = {}, localCharacter = {}) {
     consequences: room.consequences || room.gmState?.consequences || room.gmDashboard?.consequences || [],
     hackingChallenges: room.hackingChallenges || room.gmState?.hackingChallenges || room.gmDashboard?.hackingChallenges || [],
     bases: room.bases || room.gmState?.bases || room.gmDashboard?.bases || [],
+    loreSchemaVersion: room.loreSchemaVersion || room.gmDashboard?.loreSchemaVersion || loreState.loreSchemaVersion,
+    loreState,
+    pinnedLoreEntries: room.pinnedLoreEntries || room.gmDashboard?.pinnedLoreEntries || loreState.pinnedLoreEntries || [],
+    discoveredLoreEntries: room.discoveredLoreEntries || room.gmDashboard?.discoveredLoreEntries || loreState.discoveredLoreEntries || [],
+    secretLoreEntries: room.secretLoreEntries || room.gmDashboard?.secretLoreEntries || loreState.secretLoreEntries || [],
+    loreNotes: room.loreNotes || room.gmDashboard?.loreNotes || loreState.loreNotes || [],
+    loreRelations: room.loreRelations || room.gmDashboard?.loreRelations || loreState.relations || [],
+    reportLoreEntries: room.reportLoreEntries || room.gmDashboard?.reportLoreEntries || loreState.reportLoreEntries || [],
+    missionLoreLinks: room.missionLoreLinks || room.gmDashboard?.missionLoreLinks || loreState.missionLoreLinks || [],
+    factionLoreLinks: room.factionLoreLinks || room.gmDashboard?.factionLoreLinks || loreState.factionLoreLinks || [],
+    locationLoreLinks: room.locationLoreLinks || room.gmDashboard?.locationLoreLinks || loreState.locationLoreLinks || [],
+    npcLoreLinks: room.npcLoreLinks || room.gmDashboard?.npcLoreLinks || loreState.npcLoreLinks || [],
+    monsterLoreLinks: room.monsterLoreLinks || room.gmDashboard?.monsterLoreLinks || loreState.monsterLoreLinks || [],
+    itemLoreLinks: room.itemLoreLinks || room.gmDashboard?.itemLoreLinks || loreState.itemLoreLinks || [],
     scene: normalizeScene(room.scene || fallback.scene, characterSnapshot(localCharacter)),
     objectives: room.scene?.objectives?.length ? room.scene.objectives : (room.objectives || fallback.objectives),
     initiative: room.combat?.entries?.length ? room.combat.entries : fallback.initiative,
@@ -1125,6 +1149,9 @@ class SolarisSessionUI {
     this.sceneEditorDrag = null;
     this.encounterEditor = null;
     this.reportPreviewOpen = false;
+    this.loreQuery = "";
+    this.loreTypeFilter = "all";
+    this.loreImportanceFilter = "all";
     this.campaignForm = null;
     this.launcherModal = null;
     this.launcherJoinAddress = "http://localhost:3000";
@@ -1243,6 +1270,20 @@ class SolarisSessionUI {
       chatMessages: room.chatMessages || room.chat || [],
       diceRolls: room.diceRolls || room.diceLog || [],
       combatState: room.combat || {},
+      loreSchemaVersion: room.loreSchemaVersion,
+      loreState: room.loreState,
+      pinnedLoreEntries: room.pinnedLoreEntries || room.loreState?.pinnedLoreEntries || [],
+      discoveredLoreEntries: room.discoveredLoreEntries || room.loreState?.discoveredLoreEntries || [],
+      secretLoreEntries: room.secretLoreEntries || room.loreState?.secretLoreEntries || [],
+      loreNotes: room.loreNotes || room.loreState?.loreNotes || [],
+      loreRelations: room.loreRelations || room.loreState?.relations || [],
+      reportLoreEntries: room.reportLoreEntries || room.loreState?.reportLoreEntries || [],
+      missionLoreLinks: room.missionLoreLinks || room.loreState?.missionLoreLinks || [],
+      factionLoreLinks: room.factionLoreLinks || room.loreState?.factionLoreLinks || [],
+      locationLoreLinks: room.locationLoreLinks || room.loreState?.locationLoreLinks || [],
+      npcLoreLinks: room.npcLoreLinks || room.loreState?.npcLoreLinks || [],
+      monsterLoreLinks: room.monsterLoreLinks || room.loreState?.monsterLoreLinks || [],
+      itemLoreLinks: room.itemLoreLinks || room.loreState?.itemLoreLinks || [],
       scene: room.scene || {},
       mapTokens: room.scene?.tokens || [],
       zones: room.scene?.zones || [],
@@ -1313,6 +1354,20 @@ class SolarisSessionUI {
       consequences: state.consequences,
       hackingChallenges: state.hackingChallenges,
       bases: state.bases,
+      loreSchemaVersion: state.loreSchemaVersion,
+      loreState: state.loreState,
+      pinnedLoreEntries: state.pinnedLoreEntries,
+      discoveredLoreEntries: state.discoveredLoreEntries,
+      secretLoreEntries: state.secretLoreEntries,
+      loreNotes: state.loreNotes,
+      loreRelations: state.loreRelations,
+      reportLoreEntries: state.reportLoreEntries,
+      missionLoreLinks: state.missionLoreLinks,
+      factionLoreLinks: state.factionLoreLinks,
+      locationLoreLinks: state.locationLoreLinks,
+      npcLoreLinks: state.npcLoreLinks,
+      monsterLoreLinks: state.monsterLoreLinks,
+      itemLoreLinks: state.itemLoreLinks,
       combat: state.combatState || state.combat,
       scene: {
         ...(state.scene || {}),
@@ -2264,7 +2319,7 @@ class SolarisSessionUI {
     const normalized = /^https?:\/\//i.test(raw) ? raw : `http://${raw}`;
     this.launcherJoinAddress = normalized;
     const separator = normalized.includes("?") ? "&" : "?";
-    window.location.href = `${normalized}${separator}view=mesaVirtual&check=20260624f`;
+    window.location.href = `${normalized}${separator}view=mesaVirtual&check=20260624g`;
   }
 
   async copyLauncherText(text = "") {
@@ -4037,6 +4092,20 @@ class SolarisSessionUI {
       consequences: room.consequences || room.gmState?.consequences || [],
       hackingChallenges: room.hackingChallenges || room.gmState?.hackingChallenges || [],
       bases: room.bases || room.gmState?.bases || [],
+      loreSchemaVersion: room.loreSchemaVersion || room.gmDashboard?.loreSchemaVersion,
+      loreState: room.loreState || room.gmDashboard?.loreState || {},
+      pinnedLoreEntries: room.pinnedLoreEntries || room.gmDashboard?.pinnedLoreEntries || [],
+      discoveredLoreEntries: room.discoveredLoreEntries || room.gmDashboard?.discoveredLoreEntries || [],
+      secretLoreEntries: room.secretLoreEntries || room.gmDashboard?.secretLoreEntries || [],
+      loreNotes: room.loreNotes || room.gmDashboard?.loreNotes || [],
+      loreRelations: room.loreRelations || room.gmDashboard?.loreRelations || [],
+      reportLoreEntries: room.reportLoreEntries || room.gmDashboard?.reportLoreEntries || [],
+      missionLoreLinks: room.missionLoreLinks || room.gmDashboard?.missionLoreLinks || [],
+      factionLoreLinks: room.factionLoreLinks || room.gmDashboard?.factionLoreLinks || [],
+      locationLoreLinks: room.locationLoreLinks || room.gmDashboard?.locationLoreLinks || [],
+      npcLoreLinks: room.npcLoreLinks || room.gmDashboard?.npcLoreLinks || [],
+      monsterLoreLinks: room.monsterLoreLinks || room.gmDashboard?.monsterLoreLinks || [],
+      itemLoreLinks: room.itemLoreLinks || room.gmDashboard?.itemLoreLinks || [],
       events: room.events || [],
       sequence: room.sequence || 0,
     });
@@ -4132,6 +4201,36 @@ class SolarisSessionUI {
     const name = this.promptGmValue("Nome da base/colonia", "Base Solaris");
     if (name === null) return;
     this.dispatchGmEvent(GAME_EVENT_TYPES.GM_BASE_CREATE, { base: { name, attributes: { security: 2, supplies: 2, morale: 2 } } });
+  }
+
+  updateLoreFilter(kind = "", value = "") {
+    if (kind === "query") this.loreQuery = String(value || "");
+    if (kind === "type") this.loreTypeFilter = String(value || "all");
+    if (kind === "importance") this.loreImportanceFilter = String(value || "all");
+    this.render();
+  }
+
+  runGmLoreAction(action = "", loreId = "") {
+    const events = {
+      pin: GAME_EVENT_TYPES.GM_LORE_PIN,
+      unpin: GAME_EVENT_TYPES.GM_LORE_PIN,
+      discover: GAME_EVENT_TYPES.GM_LORE_DISCOVER,
+      secret: GAME_EVENT_TYPES.GM_LORE_SECRET,
+      note: GAME_EVENT_TYPES.GM_LORE_NOTE,
+      report: GAME_EVENT_TYPES.GM_LORE_REPORT,
+      mission: GAME_EVENT_TYPES.GM_LORE_MISSION,
+      encounter: GAME_EVENT_TYPES.GM_LORE_ENCOUNTER,
+      npc: GAME_EVENT_TYPES.GM_LORE_NPC,
+      scene: GAME_EVENT_TYPES.GM_LORE_SCENE,
+      clock: GAME_EVENT_TYPES.GM_LORE_CLOCK,
+      faction: GAME_EVENT_TYPES.GM_LORE_FACTION,
+    };
+    const eventType = events[action];
+    if (!eventType || !loreId) return;
+    const payload = { loreId };
+    if (action === "unpin") payload.pinned = false;
+    if (action === "secret") payload.secretLevel = LORE_SECRET_LEVELS.SECRET;
+    this.dispatchGmEvent(eventType, payload);
   }
 
   advanceGmMission(missionId) {
@@ -5621,7 +5720,7 @@ class SolarisSessionUI {
             <p>Jogadores entram por <code>http://IP-DO-MESTRE:3000</code> quando o servidor local estiver ativo.</p>
             <div>
               <span>${escapeHtml(TABLETOP_APP_VERSION)}</span>
-              <span>cache 20260624f</span>
+              <span>cache 20260624g</span>
               <span>HTML/CSS/JS</span>
             </div>
           </section>
@@ -5849,6 +5948,7 @@ class SolarisSessionUI {
     const tabs = [
       ["overview", "Resumo"],
       ["campaign", "Campanha"],
+      ["lore", "Lore"],
       ["scenes", "Cenas"],
       ["encounters", "Encontros"],
       ["notes", "Notas"],
@@ -5875,6 +5975,7 @@ class SolarisSessionUI {
             <div class="vtt-gm-body">
               ${tab === "overview" ? this.renderGmOverview(room, current, combat) : ""}
               ${tab === "campaign" ? this.renderGmCampaignTools(room) : ""}
+              ${tab === "lore" ? this.renderGmLoreTools(room) : ""}
               ${tab === "scenes" ? this.renderGmScenes(room) : ""}
               ${tab === "encounters" ? this.renderGmEncounters(room) : ""}
               ${tab === "notes" ? this.renderGmNotes(room) : ""}
@@ -6115,6 +6216,108 @@ class SolarisSessionUI {
                 </div>
               </article>
             `).join("") || "<small>Nenhum evento de campanha registrado.</small>"}
+          </div>
+        </article>
+      </div>
+    `;
+  }
+
+  renderGmLoreTools(room) {
+    const loreState = hydrateLoreState(room.loreState || {});
+    const query = this.loreQuery || "";
+    const filters = {
+      type: this.loreTypeFilter === "all" ? "" : this.loreTypeFilter,
+      importance: this.loreImportanceFilter === "all" ? "" : this.loreImportanceFilter,
+    };
+    const filtered = query
+      ? searchLoreEntries(loreState, query, filters)
+      : rankLoreSearchResults(filterLoreEntries(loreState, filters), "");
+    const pinned = loreState.entries.filter((entry) => loreState.pinnedLoreEntries.includes(entry.id) || entry.pinned);
+    const relationCount = loreState.relations.length;
+    const typeOptions = ["all", ...Object.values(LORE_ENTRY_TYPES)];
+    const importanceOptions = ["all", ...Object.values(LORE_IMPORTANCE_LEVELS)];
+    const selected = filtered[0] || pinned[0] || loreState.entries[0] || null;
+    const selectedRelations = selected
+      ? loreState.relations.filter((relation) => relation.fromId === selected.id || relation.toId === selected.id)
+      : [];
+    const entryById = new Map(loreState.entries.map((entry) => [entry.id, entry]));
+    return `
+      <div class="vtt-gm-toolbar vtt-lore-toolbar">
+        <label>Buscar lore<input value="${escapeHtml(query)}" data-vtt-lore-filter="query" placeholder="Tarantus, faccao, Uryon..." /></label>
+        <label>Tipo<select data-vtt-lore-filter="type">${typeOptions.map((type) => `<option value="${escapeHtml(type)}" ${this.loreTypeFilter === type ? "selected" : ""}>${escapeHtml(type === "all" ? "Todos" : type)}</option>`).join("")}</select></label>
+        <label>Importancia<select data-vtt-lore-filter="importance">${importanceOptions.map((importance) => `<option value="${escapeHtml(importance)}" ${this.loreImportanceFilter === importance ? "selected" : ""}>${escapeHtml(importance === "all" ? "Todas" : importance)}</option>`).join("")}</select></label>
+      </div>
+      <div class="vtt-gm-grid vtt-lore-grid">
+        <article class="vtt-gm-card">
+          <header><h3>Pins de lore</h3><span>${pinned.length}</span></header>
+          <div class="vtt-gm-list compact">
+            ${pinned.slice(0, 8).map((entry) => `
+              <article>
+                <div>
+                  <strong>${escapeHtml(entry.title)}</strong>
+                  <small>${escapeHtml(entry.type)} - ${escapeHtml(entry.importance)}</small>
+                </div>
+                <footer>
+                  <button type="button" data-vtt-gm-lore-action="unpin" data-lore-id="${escapeHtml(entry.id)}">Desfixar</button>
+                </footer>
+              </article>
+            `).join("") || "<small>Nenhuma lore pinada.</small>"}
+          </div>
+        </article>
+
+        <article class="vtt-gm-card wide">
+          <header><h3>Compendio do Livro 4</h3><span>${filtered.length}/${loreState.entries.length}</span></header>
+          <div class="vtt-gm-list compact vtt-lore-list">
+            ${filtered.slice(0, 12).map((entry) => `
+              <article class="${entry.id === selected?.id ? "active" : ""}">
+                <div>
+                  <strong>${escapeHtml(entry.title)}</strong>
+                  <small>${escapeHtml(entry.summary || entry.description || "Sem resumo.")}</small>
+                  <em>${escapeHtml(entry.type)} - ${escapeHtml(entry.secretLevel)} - ${entry.needsReview ? "needsReview" : "fonte atual"}</em>
+                </div>
+                <footer>
+                  <button type="button" data-vtt-gm-lore-action="pin" data-lore-id="${escapeHtml(entry.id)}">Pinar</button>
+                  <button type="button" data-vtt-gm-lore-action="discover" data-lore-id="${escapeHtml(entry.id)}">Descoberto</button>
+                  <button type="button" data-vtt-gm-lore-action="secret" data-lore-id="${escapeHtml(entry.id)}">Segredo</button>
+                  <button type="button" data-vtt-gm-lore-action="note" data-lore-id="${escapeHtml(entry.id)}">Nota</button>
+                  <button type="button" data-vtt-gm-lore-action="report" data-lore-id="${escapeHtml(entry.id)}">Relatorio</button>
+                </footer>
+              </article>
+            `).join("") || "<small>Nenhuma entrada encontrada.</small>"}
+          </div>
+        </article>
+
+        <article class="vtt-gm-card wide">
+          <header><h3>${escapeHtml(selected?.title || "Entrada")}</h3><span>${escapeHtml(selected?.type || "lore")}</span></header>
+          ${selected ? `
+            <p>${escapeHtml(selected.longText || selected.description || selected.summary)}</p>
+            <div class="tag-row">${(selected.tags || []).slice(0, 8).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>
+            <div class="vtt-gm-actions">
+              <button type="button" data-vtt-gm-lore-action="mission" data-lore-id="${escapeHtml(selected.id)}">Criar missao</button>
+              <button type="button" data-vtt-gm-lore-action="scene" data-lore-id="${escapeHtml(selected.id)}">Criar cena</button>
+              <button type="button" data-vtt-gm-lore-action="encounter" data-lore-id="${escapeHtml(selected.id)}">Criar encontro</button>
+              <button type="button" data-vtt-gm-lore-action="clock" data-lore-id="${escapeHtml(selected.id)}">Criar contador</button>
+              <button type="button" data-vtt-gm-lore-action="faction" data-lore-id="${escapeHtml(selected.id)}">Virar faccao</button>
+              <button type="button" data-vtt-gm-lore-action="npc" data-lore-id="${escapeHtml(selected.id)}">Nota de NPC</button>
+            </div>
+          ` : "<small>Selecione uma entrada pelo filtro.</small>"}
+        </article>
+
+        <article class="vtt-gm-card">
+          <header><h3>Relacoes</h3><span>${relationCount}</span></header>
+          <div class="vtt-gm-list compact">
+            ${selectedRelations.slice(0, 8).map((relation) => {
+              const relatedId = relation.fromId === selected?.id ? relation.toId : relation.fromId;
+              const related = entryById.get(relatedId);
+              return `
+                <article>
+                  <div>
+                    <strong>${escapeHtml(related?.title || relatedId)}</strong>
+                    <small>${escapeHtml(relation.type)} ${relation.secret ? "- segredo" : ""}</small>
+                  </div>
+                </article>
+              `;
+            }).join("") || "<small>Sem relacoes para a entrada selecionada.</small>"}
           </div>
         </article>
       </div>
@@ -7290,6 +7493,13 @@ class SolarisSessionUI {
     });
     this.root.querySelectorAll("[data-vtt-encounter-filter]").forEach((input) => {
       input.addEventListener("change", () => this.updateEncounterFilter(input.dataset.vttEncounterFilter, input.value));
+    });
+    this.root.querySelectorAll("[data-vtt-lore-filter]").forEach((input) => {
+      const eventName = input.tagName === "INPUT" ? "input" : "change";
+      input.addEventListener(eventName, () => this.updateLoreFilter(input.dataset.vttLoreFilter, input.value));
+    });
+    this.root.querySelectorAll("[data-vtt-gm-lore-action]").forEach((button) => {
+      button.addEventListener("click", () => this.runGmLoreAction(button.dataset.vttGmLoreAction, button.dataset.loreId));
     });
     this.root.querySelectorAll("[data-vtt-report-option]").forEach((input) => {
       input.addEventListener("change", () => this.updateReportOption(input.dataset.vttReportOption, input.checked));
