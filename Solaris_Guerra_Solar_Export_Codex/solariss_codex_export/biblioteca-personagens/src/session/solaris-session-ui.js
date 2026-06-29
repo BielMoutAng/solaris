@@ -3,12 +3,13 @@ import {
   GameRoom,
   Scene,
   SESSION_ROLES,
+  SOLARIS_DEFAULT_SCENE,
   estimateEncounterBalance,
-} from "./solaris-session-domain.js?v=20260624g";
+} from "./solaris-session-domain.js?v=20260624h";
 import {
   SESSION_SOCKET_EVENTS,
   SolarisSessionClient,
-} from "./solaris-session-client.js?v=20260624g";
+} from "./solaris-session-client.js?v=20260624h";
 import {
   ACTIVE_CAMPAIGN_STORAGE_KEY,
   CAMPAIGN_STORAGE_KEY,
@@ -23,7 +24,7 @@ import {
   parseSessionExportBundle,
   serializeCampaignList,
   upsertCampaignSession,
-} from "./solaris-session-persistence.js?v=20260624g";
+} from "./solaris-session-persistence.js?v=20260624h";
 import {
   createSessionMonsterFromBestiary,
   estimateEncounterThreat as estimateBestiaryEncounterThreat,
@@ -32,13 +33,13 @@ import {
   computeMonsterDamageProfile,
   normalizeMonsterEntry,
   resolveMonsterAttack,
-} from "../domain/solaris-bestiary-rules.js?v=20260624g";
+} from "../domain/solaris-bestiary-rules.js?v=20260624h";
 import {
   computeMissionRisk,
   computeTravelDifficulty,
   generateMissionSeed,
   generateTravelEventSeed,
-} from "../domain/solaris-gm-rules.js?v=20260624g";
+} from "../domain/solaris-gm-rules.js?v=20260624h";
 import {
   LORE_ENTRY_TYPES,
   LORE_IMPORTANCE_LEVELS,
@@ -47,11 +48,11 @@ import {
   hydrateLoreState,
   rankLoreSearchResults,
   searchLoreEntries,
-} from "../domain/solaris-lore-rules.js?v=20260624g";
+} from "../domain/solaris-lore-rules.js?v=20260624h";
 
 const SESSION_SAVE_KEY = "solaris.virtual.table.session.v1";
 const PLAYER_SESSION_KEY = "solaris.virtual.table.playerId";
-const TABLETOP_APP_VERSION = "0.6.0-alpha.21";
+const TABLETOP_APP_VERSION = "0.6.0-alpha.22";
 const DEFAULT_REPORT_OPTIONS = Object.freeze({
   includeFullChat: false,
   includeSecretNotes: false,
@@ -966,32 +967,29 @@ function demoRoomState(localCharacter) {
       },
     ],
     scene: {
-      id: "offline-scene-corredor",
-      name: "Corredor de Manutencao - Nivel 2",
-      notes: "Mapa tatico local com cobertura, risco e tokens simulados.",
-      columns: 12,
-      rows: 8,
-      gridSize: 64,
+      ...SOLARIS_DEFAULT_SCENE,
+      id: "offline-scene-nave-caida",
+      notes: "Mapa tatico local da nave caida com cobertura, risco e tokens simulados.",
       tokens: [
         {
           id: `token-character-${character.id}`,
           entityType: "character",
           entityId: character.id,
           name: character.name,
-          x: 3,
-          y: 5,
+          x: 8,
+          y: 11,
           image: character.portrait,
           color: "#39cfff",
         },
-        { id: "token-character-demo-drax", entityType: "character", entityId: "demo-drax", name: "Drax Voren", x: 4, y: 6, color: "#39cfff" },
-        { id: `token-monster-${demoMonster.id}`, entityType: "monster", entityId: demoMonster.id, name: demoMonster.name, x: 9, y: 3, color: "#ff4e63" },
+        { id: "token-character-demo-drax", entityType: "character", entityId: "demo-drax", name: "Drax Voren", x: 10, y: 12, color: "#39cfff" },
+        { id: `token-monster-${demoMonster.id}`, entityType: "monster", entityId: demoMonster.id, name: demoMonster.name, x: 19, y: 6, color: "#ff4e63" },
       ],
       zones: [
-        { id: "zone-danger-reactor", label: "Descarga termica", type: "danger", x: 8, y: 2, width: 3, height: 3 },
-        { id: "zone-cover-crates", label: "Cobertura parcial", type: "cover", x: 5, y: 5, width: 2, height: 2 },
+        { id: "zone-danger-reactor", label: "Descarga termica", type: "danger", x: 16, y: 4, width: 4, height: 4 },
+        { id: "zone-cover-crates", label: "Cobertura parcial", type: "cover", x: 11, y: 9, width: 4, height: 3 },
       ],
       objectives: [
-        { id: "obj-console", label: "Console de manutencao", progress: "0/1 hack", x: 6, y: 2 },
+        { id: "obj-console", label: "Console de manutencao", progress: "0/1 hack", x: 13, y: 4 },
       ],
     },
     objectives: [
@@ -2319,7 +2317,7 @@ class SolarisSessionUI {
     const normalized = /^https?:\/\//i.test(raw) ? raw : `http://${raw}`;
     this.launcherJoinAddress = normalized;
     const separator = normalized.includes("?") ? "&" : "?";
-    window.location.href = `${normalized}${separator}view=mesaVirtual&check=20260624g`;
+    window.location.href = `${normalized}${separator}view=mesaVirtual&check=20260624h`;
   }
 
   async copyLauncherText(text = "") {
@@ -5720,7 +5718,7 @@ class SolarisSessionUI {
             <p>Jogadores entram por <code>http://IP-DO-MESTRE:3000</code> quando o servidor local estiver ativo.</p>
             <div>
               <span>${escapeHtml(TABLETOP_APP_VERSION)}</span>
-              <span>cache 20260624g</span>
+              <span>cache 20260624h</span>
               <span>HTML/CSS/JS</span>
             </div>
           </section>

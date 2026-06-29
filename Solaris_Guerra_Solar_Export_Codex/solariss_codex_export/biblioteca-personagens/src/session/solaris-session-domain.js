@@ -69,6 +69,34 @@ export const SESSION_ROLES = Object.freeze({
   OBSERVER: "observer",
 });
 
+export const SOLARIS_DEFAULT_MAPS = Object.freeze({
+  CRASHED_SHIP: "./assets/maps/nave-caida.png",
+});
+
+export const SOLARIS_DEFAULT_SCENE = Object.freeze({
+  id: "scene-nave-caida",
+  name: "Nave Caida - Destrocos",
+  description: "Mapa tatico de uma nave Solaris abatida, preparado para sessoes locais e online.",
+  notes: "Nave caida em terreno rochoso, com corredores danificados, salas abertas e areas de cobertura entre destrocos.",
+  publicNotes: "Nave caida com destrocos, corredores estreitos e varias coberturas.",
+  mapImage: SOLARIS_DEFAULT_MAPS.CRASHED_SHIP,
+  columns: 24,
+  rows: 16,
+  gridSize: 64,
+  gridVisible: true,
+  gridOpacity: 0.32,
+  gridColor: "#39cfff",
+  metersPerCell: 1.5,
+  lighting: "Penumbra",
+  climate: "Destrocos pressurizados",
+  danger: "Moderado",
+  metadata: {
+    source: "asset-local",
+    assetPath: SOLARIS_DEFAULT_MAPS.CRASHED_SHIP,
+    phase: "27A",
+  },
+});
+
 export const GAME_EVENT_TYPES = Object.freeze({
   PLAYER_JOIN: "player:join",
   PLAYER_LEAVE: "player:leave",
@@ -918,6 +946,16 @@ function normalizeSceneList(scenes = [], activeScene = {}) {
         updatedAt: scene.updatedAt || nowIso(),
       };
     });
+}
+
+function hasScenePayload(scene = {}) {
+  return Boolean(scene && typeof scene === "object" && Object.keys(scene).length);
+}
+
+function resolveInitialScenePayload(scene = {}, sceneList = [], scenes = []) {
+  if (scene instanceof Scene) return scene;
+  if (hasScenePayload(scene)) return scene;
+  return arrayOf(sceneList)[0] || arrayOf(scenes)[0] || SOLARIS_DEFAULT_SCENE;
 }
 
 const ENCOUNTER_TIER_POINTS = Object.freeze({
@@ -2676,7 +2714,8 @@ export class GameRoom {
     this.players = arrayOf(players).map((player) => player instanceof PlayerConnection ? player : PlayerConnection.fromJSON(player));
     this.characters = arrayOf(characters).map((character) => character instanceof SessionCharacter ? character : SessionCharacter.fromJSON(character));
     this.monsters = arrayOf(monsters).map((monster) => monster instanceof SharedMonster ? monster : SharedMonster.fromJSON(monster));
-    this.scene = scene instanceof Scene ? scene : Scene.fromJSON(scene);
+    const initialScene = resolveInitialScenePayload(scene, sceneList, scenes);
+    this.scene = initialScene instanceof Scene ? initialScene : Scene.fromJSON(initialScene);
     this.combat = combat instanceof CombatTracker ? combat : CombatTracker.fromJSON(combat);
     this.chat = arrayOf(chat).map((message) => message instanceof ChatMessage ? message : ChatMessage.fromJSON(message));
     this.diceLog = arrayOf(diceLog).map((roll) => roll instanceof DiceRollEvent ? roll : DiceRollEvent.fromJSON(roll));

@@ -1,6 +1,6 @@
 export const CHARACTER_CREATION_SCHEMA_VERSION = 2;
-export const CHARACTER_CREATION_CACHE_VERSION = "20260624g";
-export const TABLETOP_ALPHA_VERSION = "0.6.0-alpha.21";
+export const CHARACTER_CREATION_CACHE_VERSION = "20260624h";
+export const TABLETOP_ALPHA_VERSION = "0.6.0-alpha.22";
 
 export const CREATION_RULE_SOURCE = Object.freeze({
   book: "Livro 1 base do jogador.docx",

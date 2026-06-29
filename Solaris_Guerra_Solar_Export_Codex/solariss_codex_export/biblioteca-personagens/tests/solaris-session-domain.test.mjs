@@ -8,6 +8,7 @@ import {
   MapToken,
   PlayerConnection,
   SESSION_ROLES,
+  SOLARIS_DEFAULT_MAPS,
   Scene,
   SessionCharacter,
   estimateEncounterBalance,
@@ -51,6 +52,15 @@ test("sala aceita mestre, jogador, chat e rolagem compartilhada", () => {
   assert.equal(room.chat[1].message, "Teste de Reflexo: 3d6-2 = 11");
   assert.equal(room.diceLog[0].total, 11);
   assert.equal(room.events.length, 4);
+});
+
+test("sala nova usa o mapa padrao da nave caida", () => {
+  const room = new GameRoom({ id: "sala-mapa" });
+
+  assert.equal(room.scene.mapImage, SOLARIS_DEFAULT_MAPS.CRASHED_SHIP);
+  assert.equal(room.scene.columns, 24);
+  assert.equal(room.scene.rows, 16);
+  assert.equal(room.sceneList[0].mapImage, SOLARIS_DEFAULT_MAPS.CRASHED_SHIP);
 });
 
 test("jogador altera apenas a propria ficha e mestre altera qualquer ficha", () => {
