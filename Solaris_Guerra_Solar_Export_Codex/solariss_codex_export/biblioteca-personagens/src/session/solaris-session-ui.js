@@ -4,11 +4,11 @@ import {
   Scene,
   SESSION_ROLES,
   estimateEncounterBalance,
-} from "./solaris-session-domain.js?v=20260624e";
+} from "./solaris-session-domain.js?v=20260624f";
 import {
   SESSION_SOCKET_EVENTS,
   SolarisSessionClient,
-} from "./solaris-session-client.js?v=20260624e";
+} from "./solaris-session-client.js?v=20260624f";
 import {
   ACTIVE_CAMPAIGN_STORAGE_KEY,
   CAMPAIGN_STORAGE_KEY,
@@ -23,7 +23,7 @@ import {
   parseSessionExportBundle,
   serializeCampaignList,
   upsertCampaignSession,
-} from "./solaris-session-persistence.js?v=20260624e";
+} from "./solaris-session-persistence.js?v=20260624f";
 import {
   createSessionMonsterFromBestiary,
   estimateEncounterThreat as estimateBestiaryEncounterThreat,
@@ -32,11 +32,17 @@ import {
   computeMonsterDamageProfile,
   normalizeMonsterEntry,
   resolveMonsterAttack,
-} from "../domain/solaris-bestiary-rules.js?v=20260624e";
+} from "../domain/solaris-bestiary-rules.js?v=20260624f";
+import {
+  computeMissionRisk,
+  computeTravelDifficulty,
+  generateMissionSeed,
+  generateTravelEventSeed,
+} from "../domain/solaris-gm-rules.js?v=20260624f";
 
 const SESSION_SAVE_KEY = "solaris.virtual.table.session.v1";
 const PLAYER_SESSION_KEY = "solaris.virtual.table.playerId";
-const TABLETOP_APP_VERSION = "0.6.0-alpha.19";
+const TABLETOP_APP_VERSION = "0.6.0-alpha.20";
 const DEFAULT_REPORT_OPTIONS = Object.freeze({
   includeFullChat: false,
   includeSecretNotes: false,
@@ -50,6 +56,7 @@ const DEFAULT_REPORT_OPTIONS = Object.freeze({
   includeScenes: true,
   includeEncounters: true,
   includeObjectives: true,
+  includeGmCampaign: true,
 });
 const SHIELD_SECTION_LABELS = [
   "Testes",
@@ -1038,6 +1045,20 @@ function normalizeServerRoom(room = {}, localCharacter = {}) {
     sceneList: room.sceneList || room.scenes || room.gmDashboard?.sceneList || fallback.sceneList || [room.scene || fallback.scene],
     activeSceneId: room.activeSceneId || room.gmDashboard?.activeSceneId || room.scene?.id || fallback.scene?.id || "",
     gmDashboard: room.gmDashboard || {},
+    gmState: room.gmState || room.gmDashboard?.gmState || fallback.gmState || {},
+    gmSchemaVersion: room.gmSchemaVersion || room.gmState?.gmSchemaVersion || room.gmDashboard?.gmSchemaVersion || 1,
+    activeMissionId: room.activeMissionId || room.gmState?.activeMissionId || room.gmDashboard?.activeMissionId || "",
+    missions: room.missions || room.gmState?.missions || room.gmDashboard?.missions || [],
+    travelRoutes: room.travelRoutes || room.gmState?.travelRoutes || room.gmDashboard?.travelRoutes || [],
+    resourceTracks: room.resourceTracks || room.gmState?.resourceTracks || room.gmDashboard?.resourceTracks || [],
+    factionStates: room.factionStates || room.gmState?.factionStates || room.gmDashboard?.factionStates || [],
+    reputationLog: room.reputationLog || room.gmState?.reputationLog || room.gmDashboard?.reputationLog || [],
+    campaignClocks: room.campaignClocks || room.gmState?.campaignClocks || room.gmDashboard?.campaignClocks || [],
+    gmEvents: room.gmEvents || room.gmState?.gmEvents || room.gmDashboard?.gmEvents || [],
+    rewards: room.rewards || room.gmState?.rewards || room.gmDashboard?.rewards || [],
+    consequences: room.consequences || room.gmState?.consequences || room.gmDashboard?.consequences || [],
+    hackingChallenges: room.hackingChallenges || room.gmState?.hackingChallenges || room.gmDashboard?.hackingChallenges || [],
+    bases: room.bases || room.gmState?.bases || room.gmDashboard?.bases || [],
     scene: normalizeScene(room.scene || fallback.scene, characterSnapshot(localCharacter)),
     objectives: room.scene?.objectives?.length ? room.scene.objectives : (room.objectives || fallback.objectives),
     initiative: room.combat?.entries?.length ? room.combat.entries : fallback.initiative,
@@ -1279,6 +1300,19 @@ class SolarisSessionUI {
           ...(state.gmDashboardSettings?.reportSettings || {}),
         },
       },
+      gmSchemaVersion: state.gmSchemaVersion,
+      activeMissionId: state.activeMissionId,
+      missions: state.missions,
+      travelRoutes: state.travelRoutes,
+      resourceTracks: state.resourceTracks,
+      factionStates: state.factionStates,
+      reputationLog: state.reputationLog,
+      campaignClocks: state.campaignClocks,
+      gmEvents: state.gmEvents,
+      rewards: state.rewards,
+      consequences: state.consequences,
+      hackingChallenges: state.hackingChallenges,
+      bases: state.bases,
       combat: state.combatState || state.combat,
       scene: {
         ...(state.scene || {}),
@@ -2230,7 +2264,7 @@ class SolarisSessionUI {
     const normalized = /^https?:\/\//i.test(raw) ? raw : `http://${raw}`;
     this.launcherJoinAddress = normalized;
     const separator = normalized.includes("?") ? "&" : "?";
-    window.location.href = `${normalized}${separator}view=mesaVirtual&check=20260624e`;
+    window.location.href = `${normalized}${separator}view=mesaVirtual&check=20260624f`;
   }
 
   async copyLauncherText(text = "") {
@@ -3989,6 +4023,20 @@ class SolarisSessionUI {
       sceneList: room.sceneList || [room.scene || {}],
       activeSceneId: room.activeSceneId || room.scene?.id || "",
       gmDashboardSettings: room.gmDashboardSettings || room.gmDashboard?.settings || {},
+      gmState: room.gmState || room.gmDashboard?.gmState || {},
+      gmSchemaVersion: room.gmSchemaVersion || room.gmState?.gmSchemaVersion || 1,
+      activeMissionId: room.activeMissionId || room.gmState?.activeMissionId || "",
+      missions: room.missions || room.gmState?.missions || [],
+      travelRoutes: room.travelRoutes || room.gmState?.travelRoutes || [],
+      resourceTracks: room.resourceTracks || room.gmState?.resourceTracks || [],
+      factionStates: room.factionStates || room.gmState?.factionStates || [],
+      reputationLog: room.reputationLog || room.gmState?.reputationLog || [],
+      campaignClocks: room.campaignClocks || room.gmState?.campaignClocks || [],
+      gmEvents: room.gmEvents || room.gmState?.gmEvents || [],
+      rewards: room.rewards || room.gmState?.rewards || [],
+      consequences: room.consequences || room.gmState?.consequences || [],
+      hackingChallenges: room.hackingChallenges || room.gmState?.hackingChallenges || [],
+      bases: room.bases || room.gmState?.bases || [],
       events: room.events || [],
       sequence: room.sequence || 0,
     });
@@ -4015,6 +4063,119 @@ class SolarisSessionUI {
     gameRoom.dispatch(type, payload, actor?.id || "");
     this.applyOfflineRoom(gameRoom);
     return true;
+  }
+
+  promptGmValue(message, fallback = "") {
+    if (typeof window === "undefined" || typeof window.prompt !== "function") return fallback;
+    const value = window.prompt(message, fallback);
+    if (value === null) return null;
+    return String(value).trim() || fallback;
+  }
+
+  generateGmMission() {
+    const riskLevel = this.promptGmValue("Risco da missao (simples, perigosa, muito-perigosa, alta-ameaca, critica-ou-rara)", "perigosa");
+    if (riskLevel === null) return;
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_MISSION_CREATE, { mission: generateMissionSeed({ riskLevel }) });
+  }
+
+  createGmMission() {
+    const name = this.promptGmValue("Nome da missao", "Missao Solaris");
+    if (name === null) return;
+    const objective = this.promptGmValue("Objetivo principal", "Investigar a ameaca");
+    if (objective === null) return;
+    const riskLevel = this.promptGmValue("Risco", "perigosa");
+    if (riskLevel === null) return;
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_MISSION_CREATE, { mission: { name, objective, riskLevel, briefing: objective, visibleToPlayers: false } });
+  }
+
+  createGmTravelRoute() {
+    const name = this.promptGmValue("Nome da rota", "Rota Solaris");
+    if (name === null) return;
+    const origin = this.promptGmValue("Origem", "Colonia");
+    if (origin === null) return;
+    const destination = this.promptGmValue("Destino", "Ruinas");
+    if (destination === null) return;
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_TRAVEL_ROUTE_CREATE, { route: { name, origin, destination, terrain: "dificil", pace: "normal", resourcesRequired: ["agua", "suprimentos"] } });
+  }
+
+  createGmResource() {
+    const name = this.promptGmValue("Nome do recurso", "Suprimentos");
+    if (name === null) return;
+    const max = Number(this.promptGmValue("Maximo", "6") || 6);
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_RESOURCE_CREATE, { resource: { name, max, current: max, type: "supplies", unit: "carga(s)" } });
+  }
+
+  createGmFaction() {
+    const name = this.promptGmValue("Nome da faccao", "Faccao Solaris");
+    if (name === null) return;
+    const goal = this.promptGmValue("Objetivo da faccao", "Expandir influencia");
+    if (goal === null) return;
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_FACTION_CREATE, { faction: { name, goal, reputation: 0, visibleToPlayers: false } });
+  }
+
+  createGmClock() {
+    const name = this.promptGmValue("Nome do contador", "Alerta da ameaca");
+    if (name === null) return;
+    const max = Number(this.promptGmValue("Tamanho do contador", "6") || 6);
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_CLOCK_CREATE, { clock: { name, max, current: max, direction: "down", type: "threat" } });
+  }
+
+  createGmHacking() {
+    const name = this.promptGmValue("Nome da rede", "Sistema bloqueado");
+    if (name === null) return;
+    const sr = Number(this.promptGmValue("SR", "12") || 12);
+    const nodes = Number(this.promptGmValue("Nos", "3") || 3);
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_HACKING_CREATE, { challenge: { name, sr, nodes, detectionMax: 4 } });
+  }
+
+  createGmBase() {
+    const name = this.promptGmValue("Nome da base/colonia", "Base Solaris");
+    if (name === null) return;
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_BASE_CREATE, { base: { name, attributes: { security: 2, supplies: 2, morale: 2 } } });
+  }
+
+  advanceGmMission(missionId) {
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_MISSION_ADVANCE, { missionId, direction: "next" });
+  }
+
+  addGmMissionObjective(missionId) {
+    const title = this.promptGmValue("Novo objetivo", "Objetivo secundario");
+    if (title === null) return;
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_MISSION_OBJECTIVE_CREATE, { missionId, objective: { title, type: "secundario" } });
+  }
+
+  resolveGmMissionComplication(missionId) {
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_MISSION_COMPLICATION, { missionId });
+  }
+
+  resolveGmTravelEvent(routeId) {
+    const seed = generateTravelEventSeed();
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_TRAVEL_EVENT, { routeId, roll: seed.roll, event: seed.message });
+  }
+
+  changeGmResource(resourceId, delta = -1) {
+    const type = delta < 0 ? GAME_EVENT_TYPES.GM_RESOURCE_CONSUME : GAME_EVENT_TYPES.GM_RESOURCE_RESTORE;
+    this.dispatchGmEvent(type, { resourceId, amount: Math.abs(delta), reason: delta < 0 ? "Consumo registrado pelo mestre." : "Recurso recuperado pelo mestre." });
+  }
+
+  changeGmFactionReputation(factionId, delta = 0) {
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_FACTION_REPUTATION, { factionId, delta, reason: "Ajuste de reputacao em sessao." });
+  }
+
+  advanceGmCampaignClock(clockId) {
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_CLOCK_ADVANCE, { clockId, amount: 1 });
+  }
+
+  advanceGmHacking(challengeId) {
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_HACKING_ADVANCE, { challengeId, success: true });
+  }
+
+  failGmHacking(challengeId) {
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_HACKING_FAIL, { challengeId, reason: "Falha registrada pelo mestre." });
+  }
+
+  resolveGmBaseEvent(baseId) {
+    this.dispatchGmEvent(GAME_EVENT_TYPES.GM_BASE_EVENT, { baseId });
   }
 
   openGmForm(kind = "", id = "") {
@@ -5460,7 +5621,7 @@ class SolarisSessionUI {
             <p>Jogadores entram por <code>http://IP-DO-MESTRE:3000</code> quando o servidor local estiver ativo.</p>
             <div>
               <span>${escapeHtml(TABLETOP_APP_VERSION)}</span>
-              <span>cache 20260624e</span>
+              <span>cache 20260624f</span>
               <span>HTML/CSS/JS</span>
             </div>
           </section>
@@ -5687,6 +5848,7 @@ class SolarisSessionUI {
     const isGm = this.isLocalGm(room);
     const tabs = [
       ["overview", "Resumo"],
+      ["campaign", "Campanha"],
       ["scenes", "Cenas"],
       ["encounters", "Encontros"],
       ["notes", "Notas"],
@@ -5712,6 +5874,7 @@ class SolarisSessionUI {
             </nav>
             <div class="vtt-gm-body">
               ${tab === "overview" ? this.renderGmOverview(room, current, combat) : ""}
+              ${tab === "campaign" ? this.renderGmCampaignTools(room) : ""}
               ${tab === "scenes" ? this.renderGmScenes(room) : ""}
               ${tab === "encounters" ? this.renderGmEncounters(room) : ""}
               ${tab === "notes" ? this.renderGmNotes(room) : ""}
@@ -5781,6 +5944,177 @@ class SolarisSessionUI {
             <button type="button" data-vtt-combat-action="next">Proximo turno</button>
             <button type="button" data-vtt-map-action="sync-tokens">Sincronizar tokens</button>
             <button type="button" data-vtt-loot-action="create">Criar loot</button>
+          </div>
+        </article>
+      </div>
+    `;
+  }
+
+  renderGmCampaignTools(room) {
+    const missions = room.missions || room.gmState?.missions || [];
+    const activeMission = missions.find((mission) => mission.id === room.activeMissionId) || missions[0] || null;
+    const resources = room.resourceTracks || room.gmState?.resourceTracks || [];
+    const factions = room.factionStates || room.gmState?.factionStates || [];
+    const routes = room.travelRoutes || room.gmState?.travelRoutes || [];
+    const clocks = room.campaignClocks || room.gmState?.campaignClocks || [];
+    const hacking = room.hackingChallenges || room.gmState?.hackingChallenges || [];
+    const bases = room.bases || room.gmState?.bases || [];
+    const recentEvents = room.gmEvents || room.gmState?.gmEvents || [];
+    const missionRisk = activeMission ? computeMissionRisk(activeMission) : null;
+    return `
+      <div class="vtt-gm-toolbar">
+        <button type="button" data-vtt-gm-action="gm-generate-mission">Gerar missao</button>
+        <button type="button" data-vtt-gm-action="gm-create-mission">Criar missao</button>
+        <button type="button" data-vtt-gm-action="gm-create-route">Criar rota</button>
+        <button type="button" data-vtt-gm-action="gm-create-resource">Criar recurso</button>
+        <button type="button" data-vtt-gm-action="gm-create-faction">Criar faccao</button>
+        <button type="button" data-vtt-gm-action="gm-create-clock">Criar contador</button>
+        <button type="button" data-vtt-gm-action="gm-create-hacking">Criar hacking</button>
+        <button type="button" data-vtt-gm-action="gm-create-base">Criar base</button>
+      </div>
+      <div class="vtt-gm-grid">
+        <article class="vtt-gm-card wide">
+          <header>
+            <h3>Missao ativa</h3>
+            <span>${missionRisk ? `${escapeHtml(missionRisk.label)} / risco ${escapeHtml(missionRisk.score)}` : "sem missao"}</span>
+          </header>
+          ${activeMission ? `
+            <div class="vtt-gm-list compact">
+              <article class="active">
+                <div>
+                  <strong>${escapeHtml(activeMission.name)}</strong>
+                  <small>${escapeHtml(activeMission.briefing || activeMission.objective || "Sem briefing.")}</small>
+                  <em>${escapeHtml(activeMission.phase || "chamado")} - ${escapeHtml(activeMission.riskLevel || "simples")}</em>
+                </div>
+                <footer>
+                  <button type="button" data-vtt-gm-mission-advance="${escapeHtml(activeMission.id)}">Avancar fase</button>
+                  <button type="button" data-vtt-gm-mission-complication="${escapeHtml(activeMission.id)}">Complicacao</button>
+                  <button type="button" data-vtt-gm-mission-objective="${escapeHtml(activeMission.id)}">Novo objetivo</button>
+                </footer>
+              </article>
+            </div>
+          ` : `<small>Nenhuma missao registrada. Gere uma missao para iniciar o arco da sessao.</small>`}
+        </article>
+
+        <article class="vtt-gm-card">
+          <header><h3>Recursos</h3><span>${resources.length}</span></header>
+          <div class="vtt-gm-list compact">
+            ${resources.map((resource) => `
+              <article>
+                <div>
+                  <strong>${escapeHtml(resource.name)}</strong>
+                  <small>${escapeHtml(resource.current)}/${escapeHtml(resource.max)} ${escapeHtml(resource.unit || "ponto(s)")}</small>
+                  <span class="vtt-gm-counter-bar"><i style="width:${pct(resource.current, resource.max)}%"></i></span>
+                </div>
+                <footer>
+                  <button type="button" data-vtt-gm-resource-consume="${escapeHtml(resource.id)}">-</button>
+                  <button type="button" data-vtt-gm-resource-restore="${escapeHtml(resource.id)}">+</button>
+                </footer>
+              </article>
+            `).join("") || "<small>Nenhum recurso monitorado.</small>"}
+          </div>
+        </article>
+
+        <article class="vtt-gm-card">
+          <header><h3>Faccoes</h3><span>${factions.length}</span></header>
+          <div class="vtt-gm-list compact">
+            ${factions.map((faction) => `
+              <article>
+                <div>
+                  <strong>${escapeHtml(faction.name)}</strong>
+                  <small>Rep. ${escapeHtml(faction.reputation ?? 0)} - ${escapeHtml(faction.relation || "neutro")}</small>
+                </div>
+                <footer>
+                  <button type="button" data-vtt-gm-faction-reputation="${escapeHtml(faction.id)}" data-delta="-1">- Rep</button>
+                  <button type="button" data-vtt-gm-faction-reputation="${escapeHtml(faction.id)}" data-delta="1">+ Rep</button>
+                </footer>
+              </article>
+            `).join("") || "<small>Nenhuma faccao registrada.</small>"}
+          </div>
+        </article>
+
+        <article class="vtt-gm-card">
+          <header><h3>Viagens</h3><span>${routes.length}</span></header>
+          <div class="vtt-gm-list compact">
+            ${routes.map((route) => {
+              const difficulty = computeTravelDifficulty(route);
+              return `
+                <article>
+                  <div>
+                    <strong>${escapeHtml(route.name)}</strong>
+                    <small>${escapeHtml(route.origin || "?")} -> ${escapeHtml(route.destination || "?")}</small>
+                    <em>${escapeHtml(difficulty.classification)} / dificuldade ${escapeHtml(difficulty.difficulty)}</em>
+                  </div>
+                  <footer>
+                    <button type="button" data-vtt-gm-travel-event="${escapeHtml(route.id)}">Evento</button>
+                  </footer>
+                </article>
+              `;
+            }).join("") || "<small>Nenhuma rota de viagem.</small>"}
+          </div>
+        </article>
+
+        <article class="vtt-gm-card">
+          <header><h3>Contadores</h3><span>${clocks.length}</span></header>
+          <div class="vtt-gm-list compact">
+            ${clocks.map((clock) => `
+              <article>
+                <div>
+                  <strong>${escapeHtml(clock.name)}</strong>
+                  <small>${escapeHtml(clock.current)}/${escapeHtml(clock.max)} - ${escapeHtml(clock.status || "ativo")}</small>
+                  <span class="vtt-gm-counter-bar"><i style="width:${pct(clock.current, clock.max)}%"></i></span>
+                </div>
+                <footer><button type="button" data-vtt-gm-clock-advance="${escapeHtml(clock.id)}">Avancar</button></footer>
+              </article>
+            `).join("") || "<small>Nenhum contador de campanha.</small>"}
+          </div>
+        </article>
+
+        <article class="vtt-gm-card">
+          <header><h3>Hacking</h3><span>${hacking.length}</span></header>
+          <div class="vtt-gm-list compact">
+            ${hacking.map((challenge) => `
+              <article>
+                <div>
+                  <strong>${escapeHtml(challenge.name)}</strong>
+                  <small>SR ${escapeHtml(challenge.sr)} - nos ${escapeHtml(challenge.progress)}/${escapeHtml(challenge.nodes)}</small>
+                  <em>Deteccao ${escapeHtml(challenge.detection)}/${escapeHtml(challenge.detectionMax)}</em>
+                </div>
+                <footer>
+                  <button type="button" data-vtt-gm-hacking-advance="${escapeHtml(challenge.id)}">Sucesso</button>
+                  <button type="button" data-vtt-gm-hacking-fail="${escapeHtml(challenge.id)}">Falha</button>
+                </footer>
+              </article>
+            `).join("") || "<small>Nenhum desafio de hacking.</small>"}
+          </div>
+        </article>
+
+        <article class="vtt-gm-card">
+          <header><h3>Bases e colonias</h3><span>${bases.length}</span></header>
+          <div class="vtt-gm-list compact">
+            ${bases.map((base) => `
+              <article>
+                <div>
+                  <strong>${escapeHtml(base.name)}</strong>
+                  <small>Seg. ${escapeHtml(base.attributes?.security ?? 0)} / Sup. ${escapeHtml(base.resources?.supplies ?? 0)}</small>
+                </div>
+                <footer><button type="button" data-vtt-gm-base-event="${escapeHtml(base.id)}">Evento</button></footer>
+              </article>
+            `).join("") || "<small>Nenhuma base ou colonia.</small>"}
+          </div>
+        </article>
+
+        <article class="vtt-gm-card">
+          <header><h3>Historico GM</h3><span>${recentEvents.length}</span></header>
+          <div class="vtt-gm-list compact">
+            ${recentEvents.slice(0, 8).map((event) => `
+              <article>
+                <div>
+                  <strong>${escapeHtml(event.targetName || event.type || "Evento")}</strong>
+                  <small>${escapeHtml(event.message || "Sem descricao.")}</small>
+                </div>
+              </article>
+            `).join("") || "<small>Nenhum evento de campanha registrado.</small>"}
           </div>
         </article>
       </div>
@@ -6835,6 +7169,14 @@ class SolarisSessionUI {
         if (action === "create-encounter") this.createGmEncounterPrompt();
         if (action === "generate-encounter") this.generatePreparedEncounter();
         if (action === "generate-encounter-now") this.generatePreparedEncounter({ immediate: true });
+        if (action === "gm-generate-mission") this.generateGmMission();
+        if (action === "gm-create-mission") this.createGmMission();
+        if (action === "gm-create-route") this.createGmTravelRoute();
+        if (action === "gm-create-resource") this.createGmResource();
+        if (action === "gm-create-faction") this.createGmFaction();
+        if (action === "gm-create-clock") this.createGmClock();
+        if (action === "gm-create-hacking") this.createGmHacking();
+        if (action === "gm-create-base") this.createGmBase();
       });
     });
     this.root.querySelector("[data-vtt-campaign-form]")?.addEventListener("submit", (event) => {
@@ -6982,6 +7324,39 @@ class SolarisSessionUI {
     });
     this.root.querySelectorAll("[data-vtt-gm-delete-environment]").forEach((button) => {
       button.addEventListener("click", () => this.deleteGmEnvironment(button.dataset.vttGmDeleteEnvironment));
+    });
+    this.root.querySelectorAll("[data-vtt-gm-mission-advance]").forEach((button) => {
+      button.addEventListener("click", () => this.advanceGmMission(button.dataset.vttGmMissionAdvance));
+    });
+    this.root.querySelectorAll("[data-vtt-gm-mission-complication]").forEach((button) => {
+      button.addEventListener("click", () => this.resolveGmMissionComplication(button.dataset.vttGmMissionComplication));
+    });
+    this.root.querySelectorAll("[data-vtt-gm-mission-objective]").forEach((button) => {
+      button.addEventListener("click", () => this.addGmMissionObjective(button.dataset.vttGmMissionObjective));
+    });
+    this.root.querySelectorAll("[data-vtt-gm-resource-consume]").forEach((button) => {
+      button.addEventListener("click", () => this.changeGmResource(button.dataset.vttGmResourceConsume, -1));
+    });
+    this.root.querySelectorAll("[data-vtt-gm-resource-restore]").forEach((button) => {
+      button.addEventListener("click", () => this.changeGmResource(button.dataset.vttGmResourceRestore, 1));
+    });
+    this.root.querySelectorAll("[data-vtt-gm-faction-reputation]").forEach((button) => {
+      button.addEventListener("click", () => this.changeGmFactionReputation(button.dataset.vttGmFactionReputation, Number(button.dataset.delta || 0)));
+    });
+    this.root.querySelectorAll("[data-vtt-gm-travel-event]").forEach((button) => {
+      button.addEventListener("click", () => this.resolveGmTravelEvent(button.dataset.vttGmTravelEvent));
+    });
+    this.root.querySelectorAll("[data-vtt-gm-clock-advance]").forEach((button) => {
+      button.addEventListener("click", () => this.advanceGmCampaignClock(button.dataset.vttGmClockAdvance));
+    });
+    this.root.querySelectorAll("[data-vtt-gm-hacking-advance]").forEach((button) => {
+      button.addEventListener("click", () => this.advanceGmHacking(button.dataset.vttGmHackingAdvance));
+    });
+    this.root.querySelectorAll("[data-vtt-gm-hacking-fail]").forEach((button) => {
+      button.addEventListener("click", () => this.failGmHacking(button.dataset.vttGmHackingFail));
+    });
+    this.root.querySelectorAll("[data-vtt-gm-base-event]").forEach((button) => {
+      button.addEventListener("click", () => this.resolveGmBaseEvent(button.dataset.vttGmBaseEvent));
     });
     this.root.querySelectorAll("[data-vtt-gm-switch-scene]").forEach((button) => {
       button.addEventListener("click", () => this.switchGmScene(button.dataset.vttGmSwitchScene));

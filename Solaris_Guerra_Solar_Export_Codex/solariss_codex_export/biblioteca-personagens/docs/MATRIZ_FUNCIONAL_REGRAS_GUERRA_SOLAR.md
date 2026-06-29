@@ -59,15 +59,15 @@ Prioridade:
 | 1 | Inventario | Carga maxima | Media | Parcial | ficha/inventario | Sim | Parcial | Parcial | Parcial | Conferir formula final | P1 | 20/22 |
 | 1 | Inventario | Item sem local definido | Alta | Implementada | aviso visual | Sim | Sim | Sim | Sim | Deve permanecer sem bloquear rolagem | P2 | 22 |
 | 1 | Progressao | XP, custo, tempo e nivel | Instavel | Implementada/Parcial | botao Evoluir, `progressionHistory` | Sim | Parcial | Parcial | Sim | Wizard de evolucao pode ficar mais guiado | P0 | 21 |
-| 2 | Mestre | Painel do mestre | Media | Implementada | Tabletop | Nao | Sim | Sim | Sim | Falta regras narrativas completas | P2 | 24 |
-| 2 | Mestre | Notas, logs e relatorios | Media | Implementada/Parcial | `solaris-session-persistence` | Nao | Sim | Sim | Sim | Exportacao final e filtros | P2 | 24 |
+| 2 | Mestre | Painel do mestre | Media | Implementada | Tabletop, aba Campanha | Nao | Sim | Sim | Sim | Formularios ainda estao em modo alfa | P2 | 25 |
+| 2 | Mestre | Notas, logs e relatorios | Media | Implementada/Parcial | `solaris-session-persistence`, relatorio GM | Nao | Sim | Sim | Sim | Exportacao final e filtros | P2 | 25 |
 | 2 | Encontros | Criacao e balanceamento | Instavel | Provisoria | `estimateEncounterBalance` | Nao | Sim | Sim | Sim | Formula oficial precisa calibragem | P1 | 24 |
-| 2 | Encontros | Geradores de missao/eventos | Media | Parcial/Ausente | painel mestre | Nao | Parcial | Parcial | Nao | Ainda generico | P2 | 24 |
-| 2 | Campanha | Recompensas | Instavel | Parcial | loot/loja | Sim | Sim | Sim | Parcial | XP, itens e dinheiro por risco | P1 | 24 |
-| 2 | Campanha | Faccao e reputacao | Media | Parcial/Ausente | ficha/regras | Parcial | Parcial | Nao | Nao | Precisa modelo dedicado | P2 | 24 |
-| 2 | Exploracao | Viagem e ambiente hostil | Media | Ausente/Parcial | regras | Parcial | Parcial | Nao | Nao | Faltam ferramentas de mesa | P2 | 24 |
-| 2 | Tecnologia | Hacking e sistemas digitais | Media | Parcial | pericia Tecnologia | Sim | Parcial | Nao | Nao | Falta minissistema | P2 | 24 |
-| 2 | Recursos | Oficinas, reparos e bases | Media | Parcial | rachaduras/reparo | Sim | Parcial | Parcial | Parcial | Bases e oficinas ausentes | P2 | 24 |
+| 2 | Encontros | Geradores de missao/eventos | Media | Implementada/Parcial | `solaris-gm-rules.js`, Painel do Mestre | Nao | Sim | Sim | Sim | Geracao ainda generica | P2 | 25 |
+| 2 | Campanha | Recompensas | Instavel | Parcial | GM rewards, loot/loja | Sim | Sim | Sim | Sim | Aplicacao automatica em ficha ainda precisa refinamento | P1 | 25 |
+| 2 | Campanha | Faccao e reputacao | Media | Implementada/Parcial | `factionStates`, aba Campanha | Parcial | Sim | Sim | Sim | Falta compendio visual dedicado de faccoes | P2 | 25 |
+| 2 | Exploracao | Viagem e ambiente hostil | Media | Implementada/Parcial | rotas, perigos e eventos GM | Parcial | Sim | Sim | Sim | Precisa UI com formularios completos | P2 | 25 |
+| 2 | Tecnologia | Hacking e sistemas digitais | Media | Implementada/Parcial | desafios de hacking GM | Sim | Sim | Sim | Sim | Minissistema ainda precisa tela propria | P2 | 25 |
+| 2 | Recursos | Oficinas, reparos e bases | Media | Implementada/Parcial | bases/colonias, projetos, recursos | Sim | Sim | Sim | Sim | Oficinas/crafting ainda ficam para fase dedicada | P2 | 25 |
 | 3 | Bestiario | Catalogo de monstros | Alta | Implementada | `solaris-bestiary-rules`, bestiario | Sim | Sim | Sim | Sim | Conferir fidelidade textual por monstro a cada recompilacao do Livro 3 | P1 | 24 |
 | 3 | Bestiario | Ficha jogavel de monstro | Alta | Implementada | `MonsterSheet`, VTT | Sim | Sim | Sim | Sim | Completar campos narrativos quando o livro trouxer texto novo | P2 | 24 |
 | 3 | Bestiario | Ataques e dano de monstros | Alta | Implementada | `resolveMonsterAttack`, VTT/ficha monstro | Sim | Sim | Sim | Sim | Validar formulas oficiais por criatura quando houver revisao | P1 | 24 |
@@ -117,6 +117,14 @@ Data: 2026-06-24.
 A Fase 22 adicionou um motor puro de combate oficial em `src/domain/solaris-combat-rules.js` e testes dedicados. O status de combate melhora porque dano, cura, Sangramento, Ferimentos Graves, Marcas de Morte, criticos, erros criticos, resistencias, vulnerabilidades, imunidades, reducoes, cobertura, alcance, Jammed e rachaduras agora possuem uma base serializavel e reaproveitavel pelo app offline e pela Mesa Virtual.
 
 Ainda nao significa que toda a UI esteja finalizada. A proxima fase recomendada e expor esses estados em paineis melhores e conectar propriedades oficiais de todas as armas, monstros, mods e equipamentos ao fluxo de ataque/dano.
+
+## Atualizacao da Fase 25
+
+Data: 2026-06-24.
+
+A Fase 25 adicionou `src/domain/solaris-gm-rules.js` e transformou partes do Livro 2 em modelos funcionais para o Mestre: missoes, objetivos, fases, risco, complicacoes, recompensas, viagem, perigos ambientais, recursos, faccoes, reputacao, contadores de campanha, hacking, bases/colonias e eventos GM.
+
+Esses dados agora entram no `GameRoom`, no Painel do Mestre, no relatorio de sessao e na persistencia de campanhas/sessoes. O status do Livro 2 melhora de ausente/parcial para implementado/parcial porque o motor existe, mas a UI ainda esta em alfa com prompts simples e precisa de formularios dedicados.
 
 ## Diagnostico
 

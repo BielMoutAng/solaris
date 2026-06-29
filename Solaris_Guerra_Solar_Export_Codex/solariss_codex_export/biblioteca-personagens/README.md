@@ -11,7 +11,7 @@ Abra `index.html` no navegador.
 A Mesa Virtual fica disponivel pela tela `Mesa virtual` do app e tambem pode abrir direto com:
 
 ```txt
-http://localhost:3000/?view=launcher&check=20260624e
+http://localhost:3000/?view=launcher&check=20260624f
 ```
 
 Ela possui modo offline/simulado quando nao ha servidor e modo multiplayer quando `npm run server:vtt` esta ativo. A fase atual inclui sala, jogadores, chat, rolagens, ficha sincronizada, combate, monstros, loja, loot, mapa tatico, selecao de alvo, dano automatico no alvo ou em areas, previa visual de tokens atingidos por areas, persistencia local de campanhas/sessoes e Painel do Mestre com notas, contadores, cenas, encontros, gerador de encontros, editores visuais de cena/encontro, escudo rapido conectado ao compendio quando houver dados estruturados e relatorio com preview antes de salvar/exportar.
@@ -22,7 +22,7 @@ O botao **Criar Sala Offline** abre a mesa em modo local/simulado, sem servidor.
 
 A tela **Minhas Campanhas** continua disponivel em `?view=campaigns`. Ali voce pode criar campanha, continuar sessao salva, editar detalhes, duplicar, excluir com confirmacao forte, exportar/importar JSON e restaurar autosaves. Dentro da mesa, o botao **Minhas Campanhas** volta para essa entrada e o botao **Painel do Mestre** abre as ferramentas privadas do mestre.
 
-A versao `0.6.0-alpha.19` adiciona a **Fase 24 - Bestiario Oficial Completo**. Ela cria a camada pura `src/domain/solaris-bestiary-rules.js`, normaliza fichas do Livro 3, integra monstros ao combate da Mesa Virtual, estrutura ataques, habilidades, defesas, sentidos, moral, loot, recursos coletaveis, variantes, templates, chefes, minions, tokens e ameaca de encontros. A Fase 23 de equipamentos, a Fase 22 de combate oficial e a Fase 21 de criacao/progressao continuam preservadas.
+A versao `0.6.0-alpha.20` adiciona a **Fase 25 - Guia do Mestre Funcional**. Ela cria a camada pura `src/domain/solaris-gm-rules.js`, integra missoes, viagens, recursos, faccoes, reputacao, contadores de campanha, hacking, bases/colonias, recompensas narrativas e historico GM ao Painel do Mestre, com persistencia em sessoes/campanhas e testes dedicados. As Fases 21 a 24 continuam preservadas.
 
 ## Auditoria funcional recorrente
 
@@ -32,6 +32,7 @@ Documentos principais:
 
 - `docs/FASE_21_CRIACAO_PROGRESSAO_PERSONAGEM.md`
 - `docs/FASE_22_COMBATE_OFICIAL_COMPLETO.md`
+- `docs/FASE_25_GUIA_DO_MESTRE_FUNCIONAL.md`
 - `docs/FASE_24_BESTIARIO_OFICIAL_COMPLETO.md`
 - `docs/FASE_23_LIVRO_5_EQUIPAMENTOS_COMPLETO.md`
 - `docs/FASE_18_AUDITORIA_FUNCIONAL_RECORRENTE.md`

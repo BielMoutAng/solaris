@@ -27,6 +27,41 @@ function nowIso() {
   return new Date().toISOString();
 }
 
+const GM_CAMPAIGN_KEYS = Object.freeze([
+  "gmSchemaVersion",
+  "activeMissionId",
+  "missions",
+  "travelRoutes",
+  "resourceTracks",
+  "factionStates",
+  "reputationLog",
+  "campaignClocks",
+  "gmEvents",
+  "rewards",
+  "consequences",
+  "hackingChallenges",
+  "bases",
+]);
+
+function extractGmCampaignState(source = {}) {
+  const gmState = objectOf(source.gmState || source.gmDashboard?.gmState);
+  return {
+    gmSchemaVersion: Number(source.gmSchemaVersion || gmState.gmSchemaVersion || 1),
+    activeMissionId: String(source.activeMissionId || gmState.activeMissionId || ""),
+    missions: arrayOf(source.missions || gmState.missions || source.gmDashboard?.missions).map((entry) => clone(entry)),
+    travelRoutes: arrayOf(source.travelRoutes || gmState.travelRoutes || source.gmDashboard?.travelRoutes).map((entry) => clone(entry)),
+    resourceTracks: arrayOf(source.resourceTracks || gmState.resourceTracks || source.gmDashboard?.resourceTracks).map((entry) => clone(entry)),
+    factionStates: arrayOf(source.factionStates || gmState.factionStates || source.gmDashboard?.factionStates).map((entry) => clone(entry)),
+    reputationLog: arrayOf(source.reputationLog || gmState.reputationLog || source.gmDashboard?.reputationLog).map((entry) => clone(entry)),
+    campaignClocks: arrayOf(source.campaignClocks || gmState.campaignClocks || source.gmDashboard?.campaignClocks).map((entry) => clone(entry)),
+    gmEvents: arrayOf(source.gmEvents || gmState.gmEvents || source.gmDashboard?.gmEvents).map((entry) => clone(entry)),
+    rewards: arrayOf(source.rewards || gmState.rewards || source.gmDashboard?.rewards).map((entry) => clone(entry)),
+    consequences: arrayOf(source.consequences || gmState.consequences || source.gmDashboard?.consequences).map((entry) => clone(entry)),
+    hackingChallenges: arrayOf(source.hackingChallenges || gmState.hackingChallenges || source.gmDashboard?.hackingChallenges).map((entry) => clone(entry)),
+    bases: arrayOf(source.bases || gmState.bases || source.gmDashboard?.bases).map((entry) => clone(entry)),
+  };
+}
+
 function compareVersion(a = "0.0.0", b = "0.0.0") {
   const pa = String(a).split(".").map((part) => Number(part) || 0);
   const pb = String(b).split(".").map((part) => Number(part) || 0);
@@ -88,6 +123,7 @@ export function normalizeSessionState(rawState = {}) {
       favoriteShieldRules: arrayOf(source.favoriteShieldRules || source.gmDashboardSettings?.favoriteShieldRules || source.gmDashboard?.settings?.favoriteShieldRules).map(String),
       reportSettings: clone(source.reportSettings || source.gmDashboardSettings?.reportSettings || source.gmDashboard?.settings?.reportSettings || {}) || {},
     },
+    ...extractGmCampaignState(source),
     approvals: arrayOf(source.approvals || source.pendingApprovals).map((entry) => clone(entry)),
     logs: arrayOf(source.logs || source.events).map((entry) => clone(entry)),
     events: arrayOf(source.events || source.logs).map((entry) => clone(entry)),
@@ -174,6 +210,7 @@ export function normalizeCampaign(rawCampaign = {}) {
     sceneList: arrayOf(source.sceneList || source.scenes).map((entry) => clone(entry)),
     activeSceneId: String(source.activeSceneId || ""),
     gmDashboardSettings: clone(source.gmDashboardSettings || {}) || {},
+    ...extractGmCampaignState(source),
     notes: String(source.notes || ""),
     settings: {
       autosaveEnabled: source.settings?.autosaveEnabled !== false,
@@ -231,6 +268,7 @@ export function createCampaign({
     preparedEncounters: sessionState?.preparedEncounters || [],
     sessionReports: sessionState?.sessionReports || [],
     gmDashboardSettings: sessionState?.gmDashboardSettings || {},
+    ...extractGmCampaignState(sessionState || {}),
   });
   return campaign;
 }
@@ -273,6 +311,9 @@ export function upsertCampaignSession(campaign = {}, sessionState = {}, label = 
   next.sceneList = state.sceneList;
   next.activeSceneId = state.activeSceneId;
   next.gmDashboardSettings = state.gmDashboardSettings;
+  for (const key of GM_CAMPAIGN_KEYS) {
+    next[key] = clone(state[key]);
+  }
   next.updatedAt = nowIso();
   next.metadata = {
     ...(next.metadata || {}),
