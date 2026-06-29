@@ -26,6 +26,8 @@ Este registro separa o que parece estavel do que ainda deve ser tratado como pro
 | Item sem local definido nao bloqueia rolagem | Implementado | inventario/dados | Baixo | Se regra de carga mudar |
 | Offline com `localStorage` | Implementado | app principal | Baixo | A cada mudanca de persistencia |
 | Separacao Biblioteca/Tabletop | Implementado | Electron/scripts | Baixo | A cada build de desktop |
+| Motor oficial de bestiario da Fase 24 | Implementado | `solaris-bestiary-rules.js`, VTT | Medio | Se Livro 3 alterar fichas, ataques, loot ou resistencias |
+| Ficha de monstro normalizada | Implementado | `normalizeMonsterEntry`, `createSessionMonsterFromBestiary` | Medio | Sempre que recompilar Livro 3 |
 
 ## Regras Funcionais Provisorias
 
@@ -44,8 +46,10 @@ Este registro separa o que parece estavel do que ainda deve ser tratado como pro
 | Condicoes | Implementada/parcial | Sangramento e duracao entraram no motor; catalogo visual ainda incompleto | Medio | Completar UI e lista oficial |
 | Ferimentos, morte e estabilizacao | Implementada/parcial | Motor existe; faltam paineis/acoes dedicadas na UI | Medio | Expor Marcas, Ferimentos e estabilizar na mesa |
 | Criticos e erros criticos | Implementada/parcial | Tabelas e consequencias existem; algumas dependem de decisao do mestre | Medio | Conectar todos efeitos ao fluxo visual de ataque |
-| Balanceamento de encontro | Provisorio | Formula de mesa depende de Livro 2 | Medio | Calibrar com XP/ameaça |
-| Loot por monstro | Parcial | Tabelas de Livro 3 precisam fechar | Medio | Testes por monstro |
+| Balanceamento de encontro | Provisorio | Formula de mesa depende de Livro 2 e Livro 3 | Medio | Calibrar com XP/ameaca oficial |
+| Loot por monstro | Implementada/parcial | Motor existe, mas tabelas raras podem mudar | Medio | Testes por monstro e revisao de Livro 3 |
+| Variantes, templates, chefes, minions e enxames | Provisorio/parcial | Modelo existe, mas multiplicadores finais podem mudar | Medio | Reauditar quando Livro 3/Guia do Mestre fecharem balanceamento |
+| Moral, fuga e comportamento de criatura | Parcial | Estado e teste existem; gatilhos narrativos ainda dependem do mestre | Medio | Completar compendio tatico por criatura |
 
 ## Regras de Alto Risco de Mudanca
 
@@ -145,3 +149,21 @@ Termos e fontes antigas encontrados nesta fase:
 - `livro 1 base para jogadores.docx`.
 
 Eles nao devem ser usados como fonte atual. Quando aparecerem, devem estar apenas em campo historico.
+
+## Atualizacao da Fase 24
+
+Data: 2026-06-24.
+
+Regras de bestiario que agora estao ativas:
+
+| Regra | Estado | Onde aparece | Risco | Quando reauditar |
+| --- | --- | --- | --- | --- |
+| Normalizacao de ficha de monstro | Implementado | `normalizeMonsterEntry` | Medio | Sempre que Livro 3 mudar campos |
+| Ataque de monstro com acerto, dano e propriedades | Implementado | `resolveMonsterAttack`, `computeMonsterAttackProfile`, `computeMonsterDamageProfile` | Medio | Quando danos oficiais mudarem |
+| Resistencias, imunidades, vulnerabilidades e reducoes | Implementado/parcial | `resistanceProfile` | Medio | Quando fichas oficiais forem revisadas |
+| Loot por chance e recursos coletaveis | Implementado/parcial | `resolveMonsterLoot`, `collectMonsterResource` | Medio | Quando tabelas de drops fecharem |
+| Moral de criatura | Parcial | `resolveMonsterMoraleCheck` | Medio | Quando comportamento oficial ficar mais detalhado |
+| Variantes e templates | Provisorio/parcial | `applyMonsterVariant`, `applyMonsterTemplate` | Alto | Quando balanceamento oficial for fechado |
+| Chefes, elites, minions e enxames | Provisorio/parcial | `createBossMonster`, `createEliteMonster`, `createMinionMonster`, `createSwarmMonster` | Alto | Quando Livro 3/Guia do Mestre fecharem multiplicadores |
+| Tokens de monstro para VTT | Implementado | `createMonsterTokenDefaults`, `buildSceneToken` | Baixo | Se grade/tamanho mudar |
+| Ameaca de encontro | Provisorio/parcial | `estimateMonsterThreat`, `estimateEncounterThreat` | Alto | Quando XP/ameaca oficial for calibrada |

@@ -4,11 +4,11 @@ import {
   Scene,
   SESSION_ROLES,
   estimateEncounterBalance,
-} from "./solaris-session-domain.js?v=20260624d";
+} from "./solaris-session-domain.js?v=20260624e";
 import {
   SESSION_SOCKET_EVENTS,
   SolarisSessionClient,
-} from "./solaris-session-client.js?v=20260624d";
+} from "./solaris-session-client.js?v=20260624e";
 import {
   ACTIVE_CAMPAIGN_STORAGE_KEY,
   CAMPAIGN_STORAGE_KEY,
@@ -23,11 +23,20 @@ import {
   parseSessionExportBundle,
   serializeCampaignList,
   upsertCampaignSession,
-} from "./solaris-session-persistence.js?v=20260624d";
+} from "./solaris-session-persistence.js?v=20260624e";
+import {
+  createSessionMonsterFromBestiary,
+  estimateEncounterThreat as estimateBestiaryEncounterThreat,
+  estimateMonsterThreat as estimateBestiaryMonsterThreat,
+  computeMonsterAttackProfile,
+  computeMonsterDamageProfile,
+  normalizeMonsterEntry,
+  resolveMonsterAttack,
+} from "../domain/solaris-bestiary-rules.js?v=20260624e";
 
 const SESSION_SAVE_KEY = "solaris.virtual.table.session.v1";
 const PLAYER_SESSION_KEY = "solaris.virtual.table.playerId";
-const TABLETOP_APP_VERSION = "0.6.0-alpha.18";
+const TABLETOP_APP_VERSION = "0.6.0-alpha.19";
 const DEFAULT_REPORT_OPTIONS = Object.freeze({
   includeFullChat: false,
   includeSecretNotes: false,
@@ -430,8 +439,7 @@ function campaignStats(campaign = {}) {
 }
 
 function monsterThreatScore(monster = {}) {
-  const tierValue = { F: 1, E: 2, D: 3, C: 4, B: 5, A: 6, S: 8 }[String(monster.tier || "").toUpperCase()] || Number(monster.tier || monster.rank || 1) || 1;
-  return Math.max(1, tierValue * 100 + Math.floor(Number(monster.pv || monster.maxPV || 0) / 2) + Number(monster.ca || 0) * 5);
+  return Math.max(1, Math.round(estimateBestiaryMonsterThreat(monster).score * 100));
 }
 
 function monsterMatchesEncounterFilters(monster = {}, filters = {}) {
@@ -713,31 +721,10 @@ function combatantFromCharacter(character = {}, ownerPlayerId = "local-player") 
 }
 
 function normalizeMonsterForSession(monster = {}) {
-  const maxPV = Number(monster.maxPV ?? monster.pvMax ?? monster.pv ?? 24);
-  const currentPV = Number(monster.currentPV ?? monster.pvAtual ?? monster.pvCurrent ?? maxPV);
-  return {
-    id: monster.instanceId || `${monster.id || "monster"}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-    definitionId: monster.id || monster.definitionId || "",
-    name: monster.name || "Monstro sem nome",
-    snapshot: {
-      ...monster,
-      name: monster.name || "Monstro sem nome",
-      currentPV,
-      maxPV,
-      pv: maxPV,
-      ca: Number(monster.ca ?? 10),
-      movement: Number(monster.movement ?? monster.movimento ?? 6),
-      image: monster.imageDataUrl || monster.image || "",
-      imageDataUrl: monster.imageDataUrl || monster.image || "",
-      tier: monster.tier || "",
-      type: monster.type || "",
-      role: monster.role || "",
-      attacks: monster.attacks || [],
-      abilities: monster.abilities || [],
-    },
-    conditions: [],
-    hidden: false,
-  };
+  const normalized = normalizeMonsterEntry(monster);
+  return createSessionMonsterFromBestiary(normalized, {
+    id: monster.instanceId || `${normalized.id || "monster"}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+  });
 }
 
 function combatantFromMonster(monster = {}) {
@@ -1947,8 +1934,8 @@ class SolarisSessionUI {
     const monster = this.monsterById(monsterId);
     if (!monster) return;
     const snapshot = monster.snapshot || {};
-    const attack = (snapshot.attacks || [])[Number(attackIndex || 0)] || {};
-    const bonus = Number(attack.attack ?? attack.bonus ?? attack.mod ?? 0);
+    const attack = computeMonsterAttackProfile(snapshot, Number(attackIndex || 0)) || {};
+    const bonus = Number(attack.attackBonus ?? attack.attack ?? attack.bonus ?? attack.mod ?? 0);
     const roll = this.roll(`${monster.name} - ${attack.name || "Ataque"}`, 1, 20, bonus);
     if (compareTarget && roll) {
       const target = this.selectedTargetToken();
@@ -1957,10 +1944,15 @@ class SolarisSessionUI {
         return roll;
       }
       const targetCombatant = this.targetCombatantForToken(target);
-      const ca = Number(targetCombatant?.ca || target.metadata?.ca || 0);
-      if (ca > 0) {
-        const result = roll.total >= ca ? "acerto" : "falha";
-        this.sendChat(`${monster.name} atacou ${target.name}: ${roll.total} vs CA ${ca} (${result}).`);
+      if (targetCombatant?.id) {
+        const result = resolveMonsterAttack({
+          monster: snapshot,
+          target: targetCombatant,
+          attackId: attack.id || Number(attackIndex || 0),
+          roll: roll.rolls?.[0] || roll.total,
+        });
+        const ca = result.attackResult?.targetCA ?? target.metadata?.ca ?? 0;
+        this.sendChat(`${monster.name} atacou ${target.name}: ${result.attackResult?.total ?? roll.total} vs CA ${ca} (${result.attackResult?.isHit ? "acerto" : "falha"}).`);
       } else {
         this.sendChat(`${monster.name} atacou ${target.name}: ${roll.total}. CA do alvo nao informada.`);
       }
@@ -1972,8 +1964,9 @@ class SolarisSessionUI {
     const monster = this.monsterById(monsterId);
     if (!monster) return;
     const snapshot = monster.snapshot || {};
-    const attack = (snapshot.attacks || [])[Number(attackIndex || 0)] || {};
-    const formula = String(attack.damage || attack.dano || "1d6");
+    const attack = computeMonsterAttackProfile(snapshot, Number(attackIndex || 0)) || {};
+    const damage = computeMonsterDamageProfile(snapshot, attack.id || Number(attackIndex || 0)) || {};
+    const formula = String(damage.formula || attack.damage || attack.dano || "1d6");
     const parsed = parseDiceFormula(formula);
     if (!parsed) {
       this.sendChat(`${monster.name} - dano de ${attack.name || "ataque"}: ${formula}`);
@@ -2237,7 +2230,7 @@ class SolarisSessionUI {
     const normalized = /^https?:\/\//i.test(raw) ? raw : `http://${raw}`;
     this.launcherJoinAddress = normalized;
     const separator = normalized.includes("?") ? "&" : "?";
-    window.location.href = `${normalized}${separator}view=mesaVirtual&check=20260624d`;
+    window.location.href = `${normalized}${separator}view=mesaVirtual&check=20260624e`;
   }
 
   async copyLauncherText(text = "") {
@@ -3622,7 +3615,7 @@ class SolarisSessionUI {
         ${carts.slice(0, 5).map(([playerId, cart]) => {
           const player = (room.players || []).find((entry) => entry.id === playerId);
           const total = (cart.items || []).reduce((sum, line) => sum + cartLineTotal(line), 0);
-          return `<small>${escapeHtml(player?.name || playerId)}: ${escapeHtml(cart.items?.length || 0)} item(ns), ${total.toLocaleString("pt-BR")} â„“</small>`;
+          return `<small>${escapeHtml(player?.name || playerId)}: ${escapeHtml(cart.items?.length || 0)} item(ns), ${total.toLocaleString("pt-BR")} ℓ</small>`;
         }).join("")}
       </div>
     `;
@@ -3870,6 +3863,9 @@ class SolarisSessionUI {
     const snapshot = monster.snapshot || {};
     const attacks = Array.isArray(snapshot.attacks) ? snapshot.attacks : [];
     const abilities = Array.isArray(snapshot.abilities) ? snapshot.abilities : [];
+    const defenses = snapshot.resistanceProfile || {};
+    const resources = snapshot.lootProfile?.resources || snapshot.resourcesStructured || [];
+    const normalization = snapshot.needsReview ? `Revisar: ${snapshot.reviewReason || "dados oficiais pendentes"}` : "Ficha normalizada";
     return `
       <div class="vtt-modal-backdrop" data-vtt-modal-close="monster">
         <section class="vtt-modal vtt-monster-sheet-modal solaris-modal-large" role="dialog" aria-modal="true">
@@ -3889,6 +3885,7 @@ class SolarisSessionUI {
               <div><dt>Iniciativa</dt><dd>${escapeHtml(snapshot.initiative ?? snapshot.iniciativa ?? "-")}</dd></div>
               <div><dt>Sentidos</dt><dd>${escapeHtml(snapshot.senses ?? snapshot.sentidos ?? "-")}</dd></div>
               <div><dt>Habitat</dt><dd>${escapeHtml(snapshot.habitat ?? "-")}</dd></div>
+              <div><dt>Status</dt><dd>${escapeHtml(normalization)}</dd></div>
             </dl>
           </div>
           <section>
@@ -3907,6 +3904,14 @@ class SolarisSessionUI {
             <h4>Habilidades e notas</h4>
             ${abilities.length ? abilities.map((ability) => `<p><strong>${escapeHtml(ability.name || "Habilidade")}:</strong> ${escapeHtml(ability.description || ability.effect || "")}</p>`).join("") : "<small>Sem habilidades estruturadas.</small>"}
             ${monster.notes || snapshot.notes ? `<p>${escapeHtml(monster.notes || snapshot.notes)}</p>` : ""}
+          </section>
+          <section>
+            <h4>Defesas, moral e recursos</h4>
+            <p><strong>Resistencias:</strong> ${escapeHtml((defenses.resistances || snapshot.resistances || []).join?.(", ") || "-")}</p>
+            <p><strong>Fraquezas:</strong> ${escapeHtml((defenses.vulnerabilities || snapshot.vulnerabilities || []).join?.(", ") || snapshot.weaknesses || "-")}</p>
+            <p><strong>Imunidades:</strong> ${escapeHtml((defenses.immunities || snapshot.immunities || []).join?.(", ") || "-")}</p>
+            <p><strong>Moral:</strong> ${escapeHtml(snapshot.moraleProfile?.text || snapshot.moral || "-")}</p>
+            <p><strong>Recursos:</strong> ${escapeHtml(resources.length ? resources.map((resource) => resource.name).join(", ") : (snapshot.resources || "-"))}</p>
           </section>
           <footer>
             <button type="button" data-vtt-monster-loot="${escapeHtml(monster.id)}">Criar Loot</button>
@@ -4211,6 +4216,9 @@ class SolarisSessionUI {
     const quantity = Math.max(1, Number(this.encounterFilters.quantity || 1));
     const picked = suggestions.slice(0, quantity);
     const monsters = picked.map((monster) => normalizeMonsterForSession(monster));
+    const bestiaryThreat = estimateBestiaryEncounterThreat(monsters.map((monster) => monster.snapshot || monster), {
+      characters: this.activeRoomSnapshot().characters || [],
+    });
     return {
       name: `Encontro ${this.encounterFilters.difficulty || "moderado"} - ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`,
       description: `Gerado por filtros do bestiario: ${[this.encounterFilters.tier, this.encounterFilters.type, this.encounterFilters.role].filter((value) => value && value !== "all").join(" / ") || "sem filtro"}.`,
@@ -4218,6 +4226,7 @@ class SolarisSessionUI {
       difficulty: this.encounterFilters.difficulty || "moderado",
       monsters,
       threatXp: monsters.reduce((sum, monster) => sum + monsterThreatScore(monster.snapshot || monster), 0),
+      bestiaryThreat,
       filters: { ...this.encounterFilters },
       generated: true,
       notes: immediate ? "Gerado e adicionado imediatamente a cena." : "Gerado para preparacao posterior.",
@@ -5451,7 +5460,7 @@ class SolarisSessionUI {
             <p>Jogadores entram por <code>http://IP-DO-MESTRE:3000</code> quando o servidor local estiver ativo.</p>
             <div>
               <span>${escapeHtml(TABLETOP_APP_VERSION)}</span>
-              <span>cache 20260624d</span>
+              <span>cache 20260624e</span>
               <span>HTML/CSS/JS</span>
             </div>
           </section>

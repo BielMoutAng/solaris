@@ -25,10 +25,14 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260624d";
+} from "./src/domain/solaris-domain-architecture.js?v=20260624e";
 import {
   EQUIPMENT_SCHEMA_VERSION,
-} from "./src/domain/solaris-equipment-rules.js?v=20260624d";
+} from "./src/domain/solaris-equipment-rules.js?v=20260624e";
+import {
+  BESTIARY_SCHEMA_VERSION,
+  normalizeMonsterEntry,
+} from "./src/domain/solaris-bestiary-rules.js?v=20260624e";
 import {
   CHARACTER_CREATION_CACHE_VERSION,
   CHARACTER_CREATION_SCHEMA_VERSION,
@@ -39,8 +43,8 @@ import {
   buildCreationChoicesSnapshot,
   buildProgressionHistoryEntry,
   createInitialAttributeRoll,
-} from "./src/domain/solaris-character-creation.js?v=20260624d";
-import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260624d";
+} from "./src/domain/solaris-character-creation.js?v=20260624e";
+import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260624e";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -1119,7 +1123,7 @@ const modifierChipData = (Array.isArray(OFFICIAL_BOOK5.catalog.modifierChips)
 }));
 
 const monsterData = Array.isArray(OFFICIAL_BOOKS.bestiary) && OFFICIAL_BOOKS.bestiary.length
-  ? OFFICIAL_BOOKS.bestiary
+  ? OFFICIAL_BOOKS.bestiary.map((monster) => normalizeMonsterEntry(monster))
   : [
       { id: "fallback-predador", name: "Predador territorial", tier: "E", type: "Besta", tags: ["emboscada", "rastros"], summary: "Ameaça de exploração externa, normalmente foge quando ferida demais.", assets: [] },
     ];
@@ -7492,6 +7496,7 @@ function extractMonsterAttributes(record = {}) {
 }
 
 function monsterDefinitionFromRecord(record) {
+  const normalized = normalizeMonsterEntry(record);
   const assetAttacks = (record.assets || [])
     .filter((asset) => asset.category === "weapon")
     .map((asset) => ({ name: asset.name, description: asset.summary, ...structuredCloneSafe(asset.snapshot || {}) }));
@@ -7499,24 +7504,24 @@ function monsterDefinitionFromRecord(record) {
     .filter((asset) => asset.category !== "weapon")
     .map((asset) => ({ name: asset.name, description: asset.summary, source: monsterAssetCategoryLabel(asset.category) }));
   return new MonsterDefinition({
-    id: record.id,
-    name: record.name,
-    tier: record.tier || record.rank,
-    rank: record.rank || record.tier,
-    type: record.type || record.role,
-    description: record.description || record.summary || record.behavior,
-    image: record.imageDataUrl || record.image || "",
-    attributes: extractMonsterAttributes(record),
-    maxPV: Math.max(1, numberValue(record.pv, parseFirstNumber(record.pv) || 1)),
-    ca: Math.max(0, numberValue(record.ca, parseFirstNumber(record.ca))),
-    movement: record.movement || "",
+    id: normalized.id,
+    name: normalized.name,
+    tier: normalized.tier || normalized.rank,
+    rank: normalized.rank || normalized.tier,
+    type: normalized.type || normalized.role,
+    description: normalized.description || normalized.summary || normalized.behavior || normalized.narrativeUse,
+    image: normalized.imageDataUrl || normalized.image || "",
+    attributes: normalized.attributes || extractMonsterAttributes(record),
+    maxPV: Math.max(1, numberValue(normalized.maxPV, parseFirstNumber(normalized.pv) || 1)),
+    ca: Math.max(0, numberValue(normalized.ca, parseFirstNumber(normalized.ca))),
+    movement: normalized.movementLabel || normalized.movement || "",
     maxCosmos: Math.max(0, numberValue(record.cosmos, parseFirstNumber(record.cosmos))),
     maxStress: Math.max(0, numberValue(record.maxStress, parseFirstNumber(record.stress))),
-    attacks: [...extractMonsterAttacks(record), ...assetAttacks],
-    abilities: [...extractMonsterAbilities(record), ...assetAbilities],
+    attacks: [...(normalized.attacks || extractMonsterAttacks(record)), ...assetAttacks],
+    abilities: [...(normalized.abilities || extractMonsterAbilities(record)), ...assetAbilities],
     rachadurasMax: Math.max(1, numberValue(record.rachadurasMax, parseFirstNumber(record.cracks) || ITEM_CRACK_MAX)),
     quickRolls: splitMonsterText(record.quickRolls),
-    metadata: structuredCloneSafe(record),
+    metadata: { ...structuredCloneSafe(normalized), bestiarySchemaVersion: BESTIARY_SCHEMA_VERSION },
     sourceReference: { origin: record.source || "Biblioteca de monstros Solaris" },
   });
 }
@@ -8057,7 +8062,7 @@ function saveMonsterSheet(event) {
     createdAt: current?.createdAt || new Date().toISOString(),
     needsCoreStats: false,
   };
-  state.monsterSheets[id] = record;
+  state.monsterSheets[id] = normalizeMonsterEntry(record);
   persistMonsterSheets();
   closeMonsterEditor();
   renderLibrary();
