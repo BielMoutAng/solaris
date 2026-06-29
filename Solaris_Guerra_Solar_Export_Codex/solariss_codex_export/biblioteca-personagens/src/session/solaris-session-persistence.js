@@ -1,3 +1,9 @@
+import {
+  LORE_SCHEMA_VERSION,
+  hydrateLoreState,
+  serializeLoreState,
+} from "../domain/solaris-lore-rules.js";
+
 export const SESSION_SCHEMA_VERSION = "1.0.0";
 export const SESSION_EXPORT_KIND = "solaris-tabletop-session";
 export const CAMPAIGN_STORAGE_KEY = "solaris.tabletop.campaigns.v1";
@@ -43,6 +49,23 @@ const GM_CAMPAIGN_KEYS = Object.freeze([
   "bases",
 ]);
 
+const LORE_CAMPAIGN_KEYS = Object.freeze([
+  "loreSchemaVersion",
+  "loreState",
+  "pinnedLoreEntries",
+  "discoveredLoreEntries",
+  "secretLoreEntries",
+  "loreNotes",
+  "loreRelations",
+  "reportLoreEntries",
+  "missionLoreLinks",
+  "factionLoreLinks",
+  "locationLoreLinks",
+  "npcLoreLinks",
+  "monsterLoreLinks",
+  "itemLoreLinks",
+]);
+
 function extractGmCampaignState(source = {}) {
   const gmState = objectOf(source.gmState || source.gmDashboard?.gmState);
   return {
@@ -59,6 +82,41 @@ function extractGmCampaignState(source = {}) {
     consequences: arrayOf(source.consequences || gmState.consequences || source.gmDashboard?.consequences).map((entry) => clone(entry)),
     hackingChallenges: arrayOf(source.hackingChallenges || gmState.hackingChallenges || source.gmDashboard?.hackingChallenges).map((entry) => clone(entry)),
     bases: arrayOf(source.bases || gmState.bases || source.gmDashboard?.bases).map((entry) => clone(entry)),
+  };
+}
+
+function extractLoreCampaignState(source = {}) {
+  const loreState = hydrateLoreState({
+    ...(clone(source.loreState || source.gmDashboard?.loreState) || {}),
+    loreSchemaVersion: source.loreSchemaVersion || source.gmDashboard?.loreSchemaVersion || LORE_SCHEMA_VERSION,
+    pinnedLoreEntries: source.pinnedLoreEntries || source.gmDashboard?.pinnedLoreEntries || source.gmDashboard?.loreState?.pinnedLoreEntries,
+    discoveredLoreEntries: source.discoveredLoreEntries || source.gmDashboard?.discoveredLoreEntries || source.gmDashboard?.loreState?.discoveredLoreEntries,
+    secretLoreEntries: source.secretLoreEntries || source.gmDashboard?.secretLoreEntries || source.gmDashboard?.loreState?.secretLoreEntries,
+    loreNotes: source.loreNotes || source.gmDashboard?.loreNotes || source.gmDashboard?.loreState?.loreNotes,
+    relations: source.loreRelations || source.gmDashboard?.loreRelations || source.gmDashboard?.loreState?.relations,
+    reportLoreEntries: source.reportLoreEntries || source.gmDashboard?.reportLoreEntries || source.gmDashboard?.loreState?.reportLoreEntries,
+    missionLoreLinks: source.missionLoreLinks || source.gmDashboard?.missionLoreLinks || source.gmDashboard?.loreState?.missionLoreLinks,
+    factionLoreLinks: source.factionLoreLinks || source.gmDashboard?.factionLoreLinks || source.gmDashboard?.loreState?.factionLoreLinks,
+    locationLoreLinks: source.locationLoreLinks || source.gmDashboard?.locationLoreLinks || source.gmDashboard?.loreState?.locationLoreLinks,
+    npcLoreLinks: source.npcLoreLinks || source.gmDashboard?.npcLoreLinks || source.gmDashboard?.loreState?.npcLoreLinks,
+    monsterLoreLinks: source.monsterLoreLinks || source.gmDashboard?.monsterLoreLinks || source.gmDashboard?.loreState?.monsterLoreLinks,
+    itemLoreLinks: source.itemLoreLinks || source.gmDashboard?.itemLoreLinks || source.gmDashboard?.loreState?.itemLoreLinks,
+  });
+  return {
+    loreSchemaVersion: loreState.loreSchemaVersion,
+    loreState: serializeLoreState(loreState),
+    pinnedLoreEntries: arrayOf(loreState.pinnedLoreEntries).map((entry) => clone(entry)),
+    discoveredLoreEntries: arrayOf(loreState.discoveredLoreEntries).map((entry) => clone(entry)),
+    secretLoreEntries: arrayOf(loreState.secretLoreEntries).map((entry) => clone(entry)),
+    loreNotes: arrayOf(loreState.loreNotes).map((entry) => clone(entry)),
+    loreRelations: arrayOf(loreState.relations).map((entry) => clone(entry)),
+    reportLoreEntries: arrayOf(loreState.reportLoreEntries).map((entry) => clone(entry)),
+    missionLoreLinks: arrayOf(loreState.missionLoreLinks).map((entry) => clone(entry)),
+    factionLoreLinks: arrayOf(loreState.factionLoreLinks).map((entry) => clone(entry)),
+    locationLoreLinks: arrayOf(loreState.locationLoreLinks).map((entry) => clone(entry)),
+    npcLoreLinks: arrayOf(loreState.npcLoreLinks).map((entry) => clone(entry)),
+    monsterLoreLinks: arrayOf(loreState.monsterLoreLinks).map((entry) => clone(entry)),
+    itemLoreLinks: arrayOf(loreState.itemLoreLinks).map((entry) => clone(entry)),
   };
 }
 
@@ -124,6 +182,7 @@ export function normalizeSessionState(rawState = {}) {
       reportSettings: clone(source.reportSettings || source.gmDashboardSettings?.reportSettings || source.gmDashboard?.settings?.reportSettings || {}) || {},
     },
     ...extractGmCampaignState(source),
+    ...extractLoreCampaignState(source),
     approvals: arrayOf(source.approvals || source.pendingApprovals).map((entry) => clone(entry)),
     logs: arrayOf(source.logs || source.events).map((entry) => clone(entry)),
     events: arrayOf(source.events || source.logs).map((entry) => clone(entry)),
@@ -211,6 +270,7 @@ export function normalizeCampaign(rawCampaign = {}) {
     activeSceneId: String(source.activeSceneId || ""),
     gmDashboardSettings: clone(source.gmDashboardSettings || {}) || {},
     ...extractGmCampaignState(source),
+    ...extractLoreCampaignState(source),
     notes: String(source.notes || ""),
     settings: {
       autosaveEnabled: source.settings?.autosaveEnabled !== false,
@@ -269,6 +329,7 @@ export function createCampaign({
     sessionReports: sessionState?.sessionReports || [],
     gmDashboardSettings: sessionState?.gmDashboardSettings || {},
     ...extractGmCampaignState(sessionState || {}),
+    ...extractLoreCampaignState(sessionState || {}),
   });
   return campaign;
 }
@@ -312,6 +373,9 @@ export function upsertCampaignSession(campaign = {}, sessionState = {}, label = 
   next.activeSceneId = state.activeSceneId;
   next.gmDashboardSettings = state.gmDashboardSettings;
   for (const key of GM_CAMPAIGN_KEYS) {
+    next[key] = clone(state[key]);
+  }
+  for (const key of LORE_CAMPAIGN_KEYS) {
     next[key] = clone(state[key]);
   }
   next.updatedAt = nowIso();

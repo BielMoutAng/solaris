@@ -25,14 +25,14 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260624f";
+} from "./src/domain/solaris-domain-architecture.js?v=20260624g";
 import {
   EQUIPMENT_SCHEMA_VERSION,
-} from "./src/domain/solaris-equipment-rules.js?v=20260624f";
+} from "./src/domain/solaris-equipment-rules.js?v=20260624g";
 import {
   BESTIARY_SCHEMA_VERSION,
   normalizeMonsterEntry,
-} from "./src/domain/solaris-bestiary-rules.js?v=20260624f";
+} from "./src/domain/solaris-bestiary-rules.js?v=20260624g";
 import {
   CHARACTER_CREATION_CACHE_VERSION,
   CHARACTER_CREATION_SCHEMA_VERSION,
@@ -43,8 +43,11 @@ import {
   buildCreationChoicesSnapshot,
   buildProgressionHistoryEntry,
   createInitialAttributeRoll,
-} from "./src/domain/solaris-character-creation.js?v=20260624f";
-import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260624f";
+} from "./src/domain/solaris-character-creation.js?v=20260624g";
+import {
+  createDefaultLoreState,
+} from "./src/domain/solaris-lore-rules.js?v=20260624g";
+import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260624g";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -1294,6 +1297,14 @@ const characterCreationFormulas = [
 ];
 
 const characterCreationChecklist = OFFICIAL_CREATION_CHECKLIST;
+const loreData = createDefaultLoreState().entries.map((entry) => ({
+  ...entry,
+  name: entry.title,
+  source: "Livro 4",
+  bookLabel: "Livro 4",
+  summary: entry.summary || entry.description || "",
+  category: "lore",
+}));
 
 const libraryMap = {
   racas: { title: "Raças", kicker: "Povos de Tarantus", items: raceData },
@@ -1306,6 +1317,7 @@ const libraryMap = {
   armaduras: { title: "Armaduras", kicker: "CA e mods", items: armorData, market: true },
   itens: { title: "Itens comuns", kicker: "Utilidades e suprimentos", items: commonItemData, market: true },
   monstros: { title: "Monstros", kicker: "Livro 3 - Bestiário", items: monsterData },
+  lore: { title: "Lore e Cenarios", kicker: "Livro 4 - Tarantus e Historia", items: loreData },
   regras: { title: "Regras", kicker: "Livros oficiais 1 a 5", items: ruleData },
   acoes: { title: "Ações possíveis", kicker: "Combate, cena e downtime", items: actionData },
 };
@@ -6859,6 +6871,7 @@ function getLibraryFilterConfig(view) {
     itens: { allLabel: "Todas as categorias", prefix: "", type: "text" },
     armazenamento: { allLabel: "Todos os tipos", prefix: "", type: "text" },
     monstros: { allLabel: "Todos os tiers", prefix: "Tier", type: "tier" },
+    lore: { allLabel: "Todos os tipos", prefix: "", type: "text" },
     regras: { allLabel: "Todos os livros", prefix: "", type: "text" },
   };
   return configs[view] || null;
@@ -6878,6 +6891,7 @@ function getLibraryGroupValues(item, view) {
     return [domainEntityTypeLabel(definition.entityType)];
   }
   if (view === "monstros") return item.tier ? [String(item.tier)] : [];
+  if (view === "lore") return item.type ? [String(item.type)] : [];
   if (view === "regras") return item.bookLabel ? [String(item.bookLabel)] : [];
   return [];
 }
@@ -6990,6 +7004,8 @@ function itemSearchText(item) {
     item.kind,
     item.damage,
     item.summary,
+    item.description,
+    item.longText,
     item.price,
     item.cost,
     item.rank,

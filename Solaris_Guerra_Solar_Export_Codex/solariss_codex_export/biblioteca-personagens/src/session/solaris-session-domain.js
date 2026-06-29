@@ -42,6 +42,26 @@ import {
   updateBaseResource,
   updateFactionReputation,
 } from "../domain/solaris-gm-rules.js";
+import {
+  LORE_DISCOVERY_STATES,
+  LORE_SCHEMA_VERSION,
+  LORE_SECRET_LEVELS,
+  createEncounterSeedFromLore,
+  createLocationSceneSeed,
+  createLoreLinkedFactionState,
+  createLoreRelation,
+  createMissionSeedFromLore,
+  createNpcSeedFromLore,
+  hydrateLoreState,
+  linkLoreEntries,
+  markLoreDiscovered,
+  markLoreSecret,
+  pinLoreEntry,
+  sendLoreToGmNotes,
+  sendLoreToSessionReport,
+  serializeLoreState,
+  unpinLoreEntry,
+} from "../domain/solaris-lore-rules.js";
 
 export const SESSION_ROLES = Object.freeze({
   GM: "gm",
@@ -184,6 +204,18 @@ export const GAME_EVENT_TYPES = Object.freeze({
   GM_SHIELD_SEARCH: "gm:shield:search",
   GM_SHIELD_PIN: "gm:shield:pin",
   GM_SHIELD_SEND_TO_CHAT: "gm:shield:send-to-chat",
+  GM_LORE_PIN: "gm:lore:pin",
+  GM_LORE_DISCOVER: "gm:lore:discover",
+  GM_LORE_SECRET: "gm:lore:secret",
+  GM_LORE_NOTE: "gm:lore:note",
+  GM_LORE_REPORT: "gm:lore:report",
+  GM_LORE_RELATION: "gm:lore:relation",
+  GM_LORE_MISSION: "gm:lore:mission",
+  GM_LORE_ENCOUNTER: "gm:lore:encounter",
+  GM_LORE_NPC: "gm:lore:npc",
+  GM_LORE_SCENE: "gm:lore:scene",
+  GM_LORE_CLOCK: "gm:lore:clock",
+  GM_LORE_FACTION: "gm:lore:faction",
   GM_REPORT_EXPORT: "gm:report:export",
   GM_REPORT_SAVE: "gm:report:save",
   GM_MISSION_CREATE: "gm:mission:create",
@@ -310,6 +342,18 @@ export const GM_DASHBOARD_EVENTS = new Set([
   GAME_EVENT_TYPES.GM_SHIELD_SEARCH,
   GAME_EVENT_TYPES.GM_SHIELD_PIN,
   GAME_EVENT_TYPES.GM_SHIELD_SEND_TO_CHAT,
+  GAME_EVENT_TYPES.GM_LORE_PIN,
+  GAME_EVENT_TYPES.GM_LORE_DISCOVER,
+  GAME_EVENT_TYPES.GM_LORE_SECRET,
+  GAME_EVENT_TYPES.GM_LORE_NOTE,
+  GAME_EVENT_TYPES.GM_LORE_REPORT,
+  GAME_EVENT_TYPES.GM_LORE_RELATION,
+  GAME_EVENT_TYPES.GM_LORE_MISSION,
+  GAME_EVENT_TYPES.GM_LORE_ENCOUNTER,
+  GAME_EVENT_TYPES.GM_LORE_NPC,
+  GAME_EVENT_TYPES.GM_LORE_SCENE,
+  GAME_EVENT_TYPES.GM_LORE_CLOCK,
+  GAME_EVENT_TYPES.GM_LORE_FACTION,
   GAME_EVENT_TYPES.GM_REPORT_EXPORT,
   GAME_EVENT_TYPES.GM_REPORT_SAVE,
   GAME_EVENT_TYPES.GM_MISSION_CREATE,
@@ -802,6 +846,9 @@ function normalizePreparedEncounter(value = {}) {
     threatScore: Math.max(0, numeric(value.threatScore ?? value.balance?.totalThreat, value.threatXp ?? value.xp ?? 0)),
     balance: clone(value.balance || {}) || {},
     sourceFilters: clone(value.sourceFilters || value.filters || {}) || {},
+    source: String(value.source || ""),
+    sourceLoreId: String(value.sourceLoreId || value.loreId || ""),
+    loreLinks: normalizeTags(value.loreLinks || value.linkedLore || value.loreIds),
     generated: Boolean(value.generated),
     rewards: clone(value.rewards || {}) || {},
     lootSuggested: clone(value.lootSuggested || value.suggestedLoot || {}) || {},
@@ -985,6 +1032,15 @@ function generateSessionReport(room, options = {}) {
   const clocks = data.campaignClocks || data.gmState?.campaignClocks || [];
   const hacking = data.hackingChallenges || data.gmState?.hackingChallenges || [];
   const bases = data.bases || data.gmState?.bases || [];
+  const loreState = serializeLoreState(data.loreState || {});
+  const loreEntries = loreState.entries || [];
+  const pinnedLore = loreEntries.filter((entry) => loreState.pinnedLoreEntries.includes(entry.id) || entry.pinned);
+  const reportLore = loreState.reportLoreEntries || [];
+  const discoveredLore = loreEntries.filter((entry) => loreState.discoveredLoreEntries.includes(entry.id));
+  const secretLore = settings.includeSecretNotes
+    ? loreEntries.filter((entry) => loreState.secretLoreEntries.includes(entry.id) || entry.secretLevel !== LORE_SECRET_LEVELS.PUBLIC)
+    : [];
+  const loreByType = (types = []) => loreEntries.filter((entry) => types.includes(entry.type));
   const completedObjectives = arrayOf(data.scene?.objectives).filter((objective) =>
     objective.completed || numeric(objective.progressCurrent, 0) >= numeric(objective.progressMax, 1)
   );
@@ -1023,6 +1079,15 @@ function generateSessionReport(room, options = {}) {
       ...(bases.length ? bases.map((base) => `- Base/Colonia: ${base.name} seguranca ${base.attributes?.security ?? 0}, suprimentos ${base.resources?.supplies ?? 0}`) : []),
       "",
     ] : []),
+    "## Lore e cenario",
+    ...(pinnedLore.length ? pinnedLore.map((entry) => `- Pin: ${entry.title} (${entry.type})`) : ["- Nenhuma lore pinada."]),
+    ...(reportLore.length ? reportLore.map((entry) => `- Relatorio: ${entry.title}: ${entry.summary}`) : []),
+    ...(loreByType(["local", "cidade", "planeta", "regiao", "plataforma"]).length ? loreByType(["local", "cidade", "planeta", "regiao", "plataforma"]).slice(0, 8).map((entry) => `- Local: ${entry.title}`) : []),
+    ...(loreByType(["faccao", "organizacao"]).length ? loreByType(["faccao", "organizacao"]).slice(0, 8).map((entry) => `- Faccao/organizacao: ${entry.title}`) : []),
+    ...(loreByType(["npc"]).length ? loreByType(["npc"]).slice(0, 8).map((entry) => `- NPC: ${entry.title}`) : []),
+    ...(discoveredLore.length ? discoveredLore.slice(0, 8).map((entry) => `- Descoberto: ${entry.title}`) : []),
+    ...(secretLore.length ? secretLore.slice(0, 8).map((entry) => `- Segredo: ${entry.title}`) : []),
+    "",
     "## Notas do mestre",
     ...(visibleNotes.length ? visibleNotes.map((note) => `- ${note.important ? "[!]" : "[ ]"} ${note.title}: ${note.body}`) : ["- Nenhuma nota revelada."]),
     "",
@@ -1902,6 +1967,8 @@ export class Scene {
     dangerLevel = "",
     linkedMonsters = [],
     linkedNpcs = [],
+    loreId = "",
+    loreLinks = [],
     metadata = {},
   } = {}) {
     this.id = String(id || createId("scene"));
@@ -1932,6 +1999,8 @@ export class Scene {
     this.dangerLevel = this.danger;
     this.linkedMonsters = arrayOf(linkedMonsters).map((entry) => clone(entry));
     this.linkedNpcs = arrayOf(linkedNpcs).map((entry) => clone(entry));
+    this.loreId = String(loreId || "");
+    this.loreLinks = normalizeTags(loreLinks || (loreId ? [loreId] : []));
     this.metadata = clone(metadata) || {};
   }
 
@@ -2196,6 +2265,8 @@ export class Scene {
     if (patch.metadata) this.metadata = { ...this.metadata, ...clone(patch.metadata) };
     if (patch.linkedMonsters) this.linkedMonsters = arrayOf(patch.linkedMonsters).map((entry) => clone(entry));
     if (patch.linkedNpcs) this.linkedNpcs = arrayOf(patch.linkedNpcs).map((entry) => clone(entry));
+    if (patch.loreId !== undefined) this.loreId = String(patch.loreId || "");
+    if (patch.loreLinks) this.loreLinks = normalizeTags(patch.loreLinks);
     if (patch.tokens) this.tokens = arrayOf(patch.tokens).map((token) => token instanceof MapToken ? token : MapToken.fromJSON(token));
     if (patch.zones) this.zones = arrayOf(patch.zones).map((zone) => this.normalizeZone(zone));
     if (patch.areas) this.areas = arrayOf(patch.areas).map((area) => this.normalizeArea(area));
@@ -2234,6 +2305,8 @@ export class Scene {
       dangerLevel: this.dangerLevel,
       linkedMonsters: this.linkedMonsters.map((entry) => clone(entry)),
       linkedNpcs: this.linkedNpcs.map((entry) => clone(entry)),
+      loreId: this.loreId,
+      loreLinks: this.loreLinks.map((entry) => String(entry)),
       metadata: clone(this.metadata),
     };
   }
@@ -2576,6 +2649,20 @@ export class GameRoom {
     consequences = [],
     hackingChallenges = [],
     bases = [],
+    loreState = {},
+    loreSchemaVersion = LORE_SCHEMA_VERSION,
+    pinnedLoreEntries = [],
+    discoveredLoreEntries = [],
+    secretLoreEntries = [],
+    loreNotes = [],
+    loreRelations = [],
+    reportLoreEntries = [],
+    missionLoreLinks = [],
+    factionLoreLinks = [],
+    locationLoreLinks = [],
+    npcLoreLinks = [],
+    monsterLoreLinks = [],
+    itemLoreLinks = [],
     events = [],
     sequence = 0,
     createdAt = nowIso(),
@@ -2635,6 +2722,35 @@ export class GameRoom {
     this.consequences = hydratedGmState.consequences;
     this.hackingChallenges = hydratedGmState.hackingChallenges;
     this.bases = hydratedGmState.bases;
+    this.loreState = hydrateLoreState({
+      ...(clone(loreState) || {}),
+      loreSchemaVersion,
+      pinnedLoreEntries,
+      discoveredLoreEntries,
+      secretLoreEntries,
+      loreNotes,
+      relations: loreRelations,
+      reportLoreEntries,
+      missionLoreLinks,
+      factionLoreLinks,
+      locationLoreLinks,
+      npcLoreLinks,
+      monsterLoreLinks,
+      itemLoreLinks,
+    });
+    this.loreSchemaVersion = this.loreState.loreSchemaVersion;
+    this.pinnedLoreEntries = this.loreState.pinnedLoreEntries;
+    this.discoveredLoreEntries = this.loreState.discoveredLoreEntries;
+    this.secretLoreEntries = this.loreState.secretLoreEntries;
+    this.loreNotes = this.loreState.loreNotes;
+    this.loreRelations = this.loreState.relations;
+    this.reportLoreEntries = this.loreState.reportLoreEntries;
+    this.missionLoreLinks = this.loreState.missionLoreLinks;
+    this.factionLoreLinks = this.loreState.factionLoreLinks;
+    this.locationLoreLinks = this.loreState.locationLoreLinks;
+    this.npcLoreLinks = this.loreState.npcLoreLinks;
+    this.monsterLoreLinks = this.loreState.monsterLoreLinks;
+    this.itemLoreLinks = this.loreState.itemLoreLinks;
     this.events = arrayOf(events).map((event) => event instanceof GameEvent ? event : GameEvent.fromJSON(event));
     this.sequence = Math.max(0, Math.floor(numeric(sequence, 0)));
     this.createdAt = createdAt || nowIso();
@@ -2652,6 +2768,24 @@ export class GameRoom {
 
   getMonster(monsterId = "") {
     return this.monsters.find((monster) => monster.id === monsterId || monster.definitionId === monsterId) || null;
+  }
+
+  setLoreState(nextLoreState = {}) {
+    this.loreState = hydrateLoreState(nextLoreState);
+    this.loreSchemaVersion = this.loreState.loreSchemaVersion;
+    this.pinnedLoreEntries = this.loreState.pinnedLoreEntries;
+    this.discoveredLoreEntries = this.loreState.discoveredLoreEntries;
+    this.secretLoreEntries = this.loreState.secretLoreEntries;
+    this.loreNotes = this.loreState.loreNotes;
+    this.loreRelations = this.loreState.relations;
+    this.reportLoreEntries = this.loreState.reportLoreEntries;
+    this.missionLoreLinks = this.loreState.missionLoreLinks;
+    this.factionLoreLinks = this.loreState.factionLoreLinks;
+    this.locationLoreLinks = this.loreState.locationLoreLinks;
+    this.npcLoreLinks = this.loreState.npcLoreLinks;
+    this.monsterLoreLinks = this.loreState.monsterLoreLinks;
+    this.itemLoreLinks = this.loreState.itemLoreLinks;
+    return this.loreState;
   }
 
   dispatch(type, payload = {}, actorId = "") {
@@ -2759,6 +2893,18 @@ export class GameRoom {
       case GAME_EVENT_TYPES.GM_SHIELD_SEARCH:
       case GAME_EVENT_TYPES.GM_SHIELD_PIN:
       case GAME_EVENT_TYPES.GM_SHIELD_SEND_TO_CHAT:
+      case GAME_EVENT_TYPES.GM_LORE_PIN:
+      case GAME_EVENT_TYPES.GM_LORE_DISCOVER:
+      case GAME_EVENT_TYPES.GM_LORE_SECRET:
+      case GAME_EVENT_TYPES.GM_LORE_NOTE:
+      case GAME_EVENT_TYPES.GM_LORE_REPORT:
+      case GAME_EVENT_TYPES.GM_LORE_RELATION:
+      case GAME_EVENT_TYPES.GM_LORE_MISSION:
+      case GAME_EVENT_TYPES.GM_LORE_ENCOUNTER:
+      case GAME_EVENT_TYPES.GM_LORE_NPC:
+      case GAME_EVENT_TYPES.GM_LORE_SCENE:
+      case GAME_EVENT_TYPES.GM_LORE_CLOCK:
+      case GAME_EVENT_TYPES.GM_LORE_FACTION:
       case GAME_EVENT_TYPES.GM_REPORT_EXPORT:
       case GAME_EVENT_TYPES.GM_REPORT_SAVE:
         return this.applyGmDashboardEvent(event.type, payload, actor);
@@ -3208,6 +3354,19 @@ export class GameRoom {
     const visibleCounter = (counter) => counter.visibleToPlayers || counter.revealed;
     const visibleEffect = (effect) => effect.visibleToPlayers || effect.revealed;
     const visibleEntry = (entry) => entry.visibleToPlayers || entry.revealed;
+    const fullLoreState = serializeLoreState(this.loreState);
+    const visibleLoreState = isGm ? fullLoreState : serializeLoreState({
+      ...fullLoreState,
+      entries: fullLoreState.entries.filter((entry) =>
+        entry.visibleToPlayers ||
+        entry.revealed ||
+        entry.secretLevel === LORE_SECRET_LEVELS.PUBLIC ||
+        entry.discoveryState === LORE_DISCOVERY_STATES.REVEALED
+      ),
+      relations: fullLoreState.relations.filter((relation) => relation.public && !relation.secret),
+      loreNotes: fullLoreState.loreNotes.filter((note) => note.visibleToPlayers || note.revealed),
+      reportLoreEntries: [],
+    });
     const gmState = serializeGmState({
       gmSchemaVersion: this.gmSchemaVersion,
       activeMissionId: this.activeMissionId,
@@ -3247,6 +3406,20 @@ export class GameRoom {
       consequences: gmState.consequences,
       hackingChallenges: gmState.hackingChallenges,
       bases: gmState.bases,
+      loreSchemaVersion: visibleLoreState.loreSchemaVersion,
+      loreState: visibleLoreState,
+      pinnedLoreEntries: visibleLoreState.pinnedLoreEntries,
+      discoveredLoreEntries: visibleLoreState.discoveredLoreEntries,
+      secretLoreEntries: isGm ? visibleLoreState.secretLoreEntries : [],
+      loreNotes: visibleLoreState.loreNotes,
+      loreRelations: visibleLoreState.relations,
+      reportLoreEntries: isGm ? visibleLoreState.reportLoreEntries : [],
+      missionLoreLinks: visibleLoreState.missionLoreLinks,
+      factionLoreLinks: visibleLoreState.factionLoreLinks,
+      locationLoreLinks: visibleLoreState.locationLoreLinks,
+      npcLoreLinks: visibleLoreState.npcLoreLinks,
+      monsterLoreLinks: visibleLoreState.monsterLoreLinks,
+      itemLoreLinks: visibleLoreState.itemLoreLinks,
     };
   }
 
@@ -3759,6 +3932,150 @@ export class GameRoom {
       });
       return { title, summary };
     }
+
+    const findLoreEntry = (loreId = "") => {
+      const id = String(loreId || payload.loreId || payload.entryId || payload.id || "");
+      return this.loreState.entries.find((entry) => entry.id === id) || null;
+    };
+
+    if (type === GAME_EVENT_TYPES.GM_LORE_PIN) {
+      const entry = findLoreEntry();
+      if (!entry) throw new Error("Entrada de lore nao encontrada.");
+      this.setLoreState(payload.pinned === false ? unpinLoreEntry(this.loreState, entry.id) : pinLoreEntry(this.loreState, entry.id));
+      addGmRuleEvent({ type: "lore", targetId: entry.id, targetName: entry.title, message: payload.pinned === false ? `Lore removida dos pins: ${entry.title}.` : `Lore pinada: ${entry.title}.` });
+      return this.loreState;
+    }
+    if (type === GAME_EVENT_TYPES.GM_LORE_DISCOVER) {
+      const entry = findLoreEntry();
+      if (!entry) throw new Error("Entrada de lore nao encontrada.");
+      this.setLoreState(markLoreDiscovered(this.loreState, entry.id, payload.discoveryState || LORE_DISCOVERY_STATES.DISCOVERED));
+      addGmRuleEvent({ type: "lore", targetId: entry.id, targetName: entry.title, message: `Lore descoberta: ${entry.title}.`, visibleToPlayers: payload.discoveryState === LORE_DISCOVERY_STATES.REVEALED });
+      return this.loreState;
+    }
+    if (type === GAME_EVENT_TYPES.GM_LORE_SECRET) {
+      const entry = findLoreEntry();
+      if (!entry) throw new Error("Entrada de lore nao encontrada.");
+      this.setLoreState(markLoreSecret(this.loreState, entry.id, payload.secretLevel || LORE_SECRET_LEVELS.SECRET));
+      addGmRuleEvent({ type: "lore", targetId: entry.id, targetName: entry.title, message: `Segredo de lore marcado: ${entry.title}.` });
+      return this.loreState;
+    }
+    if (type === GAME_EVENT_TYPES.GM_LORE_NOTE) {
+      const entry = findLoreEntry();
+      if (!entry) throw new Error("Entrada de lore nao encontrada.");
+      this.setLoreState(sendLoreToGmNotes(this.loreState, entry.id, payload.options || payload));
+      const note = this.loreNotes[0];
+      if (note) {
+        const gmNote = normalizeGmNote({
+          ...note,
+          title: `Lore: ${note.title}`,
+          linkedType: "lore",
+          linkedId: entry.id,
+        });
+        this.gmNotes = [gmNote, ...this.gmNotes.filter((saved) => saved.id !== gmNote.id)].slice(0, 160);
+      }
+      addGmRuleEvent({ type: "lore", targetId: entry.id, targetName: entry.title, message: `Lore enviada para notas: ${entry.title}.` });
+      return note || this.loreState;
+    }
+    if (type === GAME_EVENT_TYPES.GM_LORE_REPORT) {
+      const entry = findLoreEntry();
+      if (!entry) throw new Error("Entrada de lore nao encontrada.");
+      this.setLoreState(sendLoreToSessionReport(this.loreState, entry.id, payload.options || payload));
+      addGmRuleEvent({ type: "lore", targetId: entry.id, targetName: entry.title, message: `Lore enviada para relatorio: ${entry.title}.` });
+      return this.reportLoreEntries[0] || this.loreState;
+    }
+    if (type === GAME_EVENT_TYPES.GM_LORE_RELATION) {
+      if (payload.remove) {
+        this.setLoreState({
+          ...this.loreState,
+          relations: this.loreState.relations.filter((relation) => relation.id !== payload.relationId && relation.id !== payload.id),
+        });
+        return this.loreState;
+      }
+      const relation = createLoreRelation(payload.relation || payload);
+      this.setLoreState(linkLoreEntries(this.loreState, relation));
+      return relation;
+    }
+    if (type === GAME_EVENT_TYPES.GM_LORE_MISSION) {
+      const entry = findLoreEntry();
+      if (!entry) throw new Error("Entrada de lore nao encontrada.");
+      const mission = upsertMission(createMissionSeedFromLore(entry, payload.options || payload));
+      this.setLoreState({
+        ...this.loreState,
+        missionLoreLinks: [{ missionId: mission.id, loreId: entry.id, createdAt: nowIso() }, ...this.loreState.missionLoreLinks].slice(0, 120),
+      });
+      addGmRuleEvent({ type: "mission", targetId: mission.id, targetName: mission.name, message: `Missao criada a partir de lore: ${entry.title}.`, visibleToPlayers: mission.visibleToPlayers });
+      return mission;
+    }
+    if (type === GAME_EVENT_TYPES.GM_LORE_ENCOUNTER) {
+      const entry = findLoreEntry();
+      if (!entry) throw new Error("Entrada de lore nao encontrada.");
+      const encounter = normalizePreparedEncounter(createEncounterSeedFromLore(entry, payload.options || payload));
+      this.preparedEncounters = [encounter, ...this.preparedEncounters.filter((saved) => saved.id !== encounter.id)].slice(0, 80);
+      addGmRuleEvent({ type: "lore", targetId: entry.id, targetName: entry.title, message: `Encontro sugerido por lore: ${encounter.name}.` });
+      return encounter;
+    }
+    if (type === GAME_EVENT_TYPES.GM_LORE_SCENE) {
+      const entry = findLoreEntry();
+      if (!entry) throw new Error("Entrada de lore nao encontrada.");
+      const scene = normalizeSceneList([createLocationSceneSeed(entry, payload.options || payload)], this.scene.toJSON())[0];
+      this.sceneList = [scene, ...this.sceneList.filter((saved) => saved.id !== scene.id)].slice(0, 80);
+      this.setLoreState({
+        ...this.loreState,
+        locationLoreLinks: [{ sceneId: scene.id, loreId: entry.id, createdAt: nowIso() }, ...this.loreState.locationLoreLinks].slice(0, 120),
+      });
+      addGmRuleEvent({ type: "lore", targetId: entry.id, targetName: entry.title, message: `Cena criada a partir de lore: ${scene.name}.` });
+      return scene;
+    }
+    if (type === GAME_EVENT_TYPES.GM_LORE_NPC) {
+      const entry = findLoreEntry();
+      if (!entry) throw new Error("Entrada de lore nao encontrada.");
+      const npc = createNpcSeedFromLore(entry, payload.options || payload);
+      const note = normalizeGmNote({
+        title: `NPC: ${npc.name}`,
+        body: [npc.role, npc.faction, npc.location, npc.motivation].filter(Boolean).join(" | "),
+        tags: ["lore", "npc", ...(npc.tags || [])],
+        linkedType: "lore",
+        linkedId: entry.id,
+        visibleToPlayers: false,
+      });
+      this.gmNotes = [note, ...this.gmNotes.filter((saved) => saved.id !== note.id)].slice(0, 160);
+      this.setLoreState({
+        ...this.loreState,
+        npcLoreLinks: [{ npcId: npc.id, loreId: entry.id, createdAt: nowIso() }, ...this.loreState.npcLoreLinks].slice(0, 120),
+      });
+      addGmRuleEvent({ type: "lore", targetId: entry.id, targetName: entry.title, message: `NPC enviado para notas: ${npc.name}.` });
+      return npc;
+    }
+    if (type === GAME_EVENT_TYPES.GM_LORE_CLOCK) {
+      const entry = findLoreEntry();
+      if (!entry) throw new Error("Entrada de lore nao encontrada.");
+      const clock = createCampaignClock({
+        name: payload.name || `Ameaca: ${entry.title}`,
+        description: payload.description || entry.summary || entry.description,
+        max: payload.max || 6,
+        current: payload.current ?? 0,
+        direction: payload.direction || "up",
+        type: "ameaca",
+        visibleToPlayers: false,
+        loreId: entry.id,
+      });
+      this.campaignClocks = [clock, ...this.campaignClocks.filter((saved) => saved.id !== clock.id)].slice(0, 80);
+      addGmRuleEvent({ type: "clock", targetId: clock.id, targetName: clock.name, message: `Contador criado a partir de lore: ${entry.title}.` });
+      return clock;
+    }
+    if (type === GAME_EVENT_TYPES.GM_LORE_FACTION) {
+      const entry = findLoreEntry();
+      if (!entry) throw new Error("Entrada de lore nao encontrada.");
+      const faction = createFactionState(createLoreLinkedFactionState(entry, payload.options || payload));
+      this.factionStates = [faction, ...this.factionStates.filter((saved) => saved.id !== faction.id)].slice(0, 80);
+      this.setLoreState({
+        ...this.loreState,
+        factionLoreLinks: [{ factionId: faction.id, loreId: entry.id, createdAt: nowIso() }, ...this.loreState.factionLoreLinks].slice(0, 120),
+      });
+      addGmRuleEvent({ type: "faccao", targetId: faction.id, targetName: faction.name, message: `Faccao criada a partir de lore: ${entry.title}.` });
+      return faction;
+    }
+
     if (type === GAME_EVENT_TYPES.GM_REPORT_EXPORT) {
       this.gmDashboardSettings = normalizeGmDashboardSettings({
         ...this.gmDashboardSettings,
@@ -4597,6 +4914,20 @@ export class GameRoom {
       consequences: this.consequences.map((consequence) => clone(consequence)),
       hackingChallenges: this.hackingChallenges.map((challenge) => clone(challenge)),
       bases: this.bases.map((base) => clone(base)),
+      loreSchemaVersion: this.loreSchemaVersion,
+      loreState: serializeLoreState(this.loreState),
+      pinnedLoreEntries: this.pinnedLoreEntries.map((entry) => clone(entry)),
+      discoveredLoreEntries: this.discoveredLoreEntries.map((entry) => clone(entry)),
+      secretLoreEntries: this.secretLoreEntries.map((entry) => clone(entry)),
+      loreNotes: this.loreNotes.map((entry) => clone(entry)),
+      loreRelations: this.loreRelations.map((entry) => clone(entry)),
+      reportLoreEntries: this.reportLoreEntries.map((entry) => clone(entry)),
+      missionLoreLinks: this.missionLoreLinks.map((entry) => clone(entry)),
+      factionLoreLinks: this.factionLoreLinks.map((entry) => clone(entry)),
+      locationLoreLinks: this.locationLoreLinks.map((entry) => clone(entry)),
+      npcLoreLinks: this.npcLoreLinks.map((entry) => clone(entry)),
+      monsterLoreLinks: this.monsterLoreLinks.map((entry) => clone(entry)),
+      itemLoreLinks: this.itemLoreLinks.map((entry) => clone(entry)),
       gmState: serializeGmState(this),
       gmDashboard: this.gmDashboardStateFor({ isGM: true }),
       events: this.events.map((event) => event.toJSON()),

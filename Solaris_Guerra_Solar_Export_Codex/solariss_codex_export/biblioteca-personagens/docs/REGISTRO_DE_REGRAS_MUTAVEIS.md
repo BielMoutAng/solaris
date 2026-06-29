@@ -30,6 +30,7 @@ Este registro separa o que parece estavel do que ainda deve ser tratado como pro
 | Ficha de monstro normalizada | Implementado | `normalizeMonsterEntry`, `createSessionMonsterFromBestiary` | Medio | Sempre que recompilar Livro 3 |
 | Modelos do Guia do Mestre da Fase 25 | Implementado | `solaris-gm-rules.js`, Painel do Mestre | Medio | Se Livro 2 alterar missoes, viagem, hacking, bases ou reputacao |
 | Persistencia de campanha GM | Implementado | `gmState`, sessoes/campanhas/autosaves | Baixo | A cada mudanca de schema de campanha |
+| Compendio inicial do Livro 4 | Implementado/parcial | `solaris-lore-rules.js`, Biblioteca Lore, Painel do Mestre | Medio | Se Livro 4 alterar lore, locais, faccoes, NPCs ou ganchos |
 
 ## Regras Funcionais Provisorias
 
@@ -72,7 +73,7 @@ Este registro separa o que parece estavel do que ainda deve ser tratado como pro
 | Robos e automatos | Medio/alto | Aparecem em Livro 5 e possivelmente Livro 3 | Modelo unificado |
 | Faccao e reputacao | Medio | Afeta campanha, recompensa e narrativa | Fase 25 criou modelo; refinar compendio e UI |
 | Viagem e ambiente hostil | Medio | Exige recursos e eventos | Fase 25 criou modelo; refinar formularios e automacoes |
-| Livro 4 de lore | Medio | Nao e so texto, precisa navegacao | Compendio por tags |
+| Livro 4 de lore | Medio | Agora tem compendio inicial, mas falta granularidade total | Expandir por capitulo e vincular monstros/itens/cenas |
 
 ## Regras que Nao Devem Bloquear o Jogador
 

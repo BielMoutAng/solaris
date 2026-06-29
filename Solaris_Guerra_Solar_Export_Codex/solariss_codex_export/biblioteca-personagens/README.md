@@ -11,7 +11,7 @@ Abra `index.html` no navegador.
 A Mesa Virtual fica disponivel pela tela `Mesa virtual` do app e tambem pode abrir direto com:
 
 ```txt
-http://localhost:3000/?view=launcher&check=20260624f
+http://localhost:3000/?view=launcher&check=20260624g
 ```
 
 Ela possui modo offline/simulado quando nao ha servidor e modo multiplayer quando `npm run server:vtt` esta ativo. A fase atual inclui sala, jogadores, chat, rolagens, ficha sincronizada, combate, monstros, loja, loot, mapa tatico, selecao de alvo, dano automatico no alvo ou em areas, previa visual de tokens atingidos por areas, persistencia local de campanhas/sessoes e Painel do Mestre com notas, contadores, cenas, encontros, gerador de encontros, editores visuais de cena/encontro, escudo rapido conectado ao compendio quando houver dados estruturados e relatorio com preview antes de salvar/exportar.
@@ -22,7 +22,7 @@ O botao **Criar Sala Offline** abre a mesa em modo local/simulado, sem servidor.
 
 A tela **Minhas Campanhas** continua disponivel em `?view=campaigns`. Ali voce pode criar campanha, continuar sessao salva, editar detalhes, duplicar, excluir com confirmacao forte, exportar/importar JSON e restaurar autosaves. Dentro da mesa, o botao **Minhas Campanhas** volta para essa entrada e o botao **Painel do Mestre** abre as ferramentas privadas do mestre.
 
-A versao `0.6.0-alpha.20` adiciona a **Fase 25 - Guia do Mestre Funcional**. Ela cria a camada pura `src/domain/solaris-gm-rules.js`, integra missoes, viagens, recursos, faccoes, reputacao, contadores de campanha, hacking, bases/colonias, recompensas narrativas e historico GM ao Painel do Mestre, com persistencia em sessoes/campanhas e testes dedicados. As Fases 21 a 24 continuam preservadas.
+A versao `0.6.0-alpha.21` adiciona a **Fase 26 - Livro 4 como Compendio Navegavel e Lore de Campanha**. Ela cria a camada pura `src/domain/solaris-lore-rules.js`, inclui uma primeira base estruturada de Solaris, Falaris, Tarantus, Ktaluhl Kalar, faccoes, NPCs, Uryon, Portais Tharan e ganchos narrativos, adiciona a aba `Lore` ao Painel do Mestre, integra pins/descobertas/segredos/notas/relatorios, permite gerar missoes, cenas, encontros, faccoes, NPCs e contadores a partir da lore, e preserva tudo em sessoes, campanhas, autosaves, exportacao e importacao. As Fases 21 a 25 continuam preservadas.
 
 ## Auditoria funcional recorrente
 
@@ -32,6 +32,7 @@ Documentos principais:
 
 - `docs/FASE_21_CRIACAO_PROGRESSAO_PERSONAGEM.md`
 - `docs/FASE_22_COMBATE_OFICIAL_COMPLETO.md`
+- `docs/FASE_26_LIVRO_4_COMPENDIO_LORE.md`
 - `docs/FASE_25_GUIA_DO_MESTRE_FUNCIONAL.md`
 - `docs/FASE_24_BESTIARIO_OFICIAL_COMPLETO.md`
 - `docs/FASE_23_LIVRO_5_EQUIPAMENTOS_COMPLETO.md`
