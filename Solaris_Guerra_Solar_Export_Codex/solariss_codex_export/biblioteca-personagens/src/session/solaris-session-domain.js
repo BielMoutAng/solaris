@@ -7,6 +7,11 @@ import {
   removeConditionFromCombatant,
   resetTurnActionState,
 } from "../domain/solaris-combat-rules.js";
+import {
+  BESTIARY_SCHEMA_VERSION,
+  createSessionMonsterFromBestiary,
+  resolveMonsterLoot,
+} from "../domain/solaris-bestiary-rules.js";
 
 export const SESSION_ROLES = Object.freeze({
   GM: "gm",
@@ -326,6 +331,8 @@ function normalizeSheetSnapshot(value = {}) {
     skills: clone(snapshot.skills || snapshot.pericias || {}),
     protections: clone(snapshot.protections || snapshot.saves || snapshot.jogadasProtecao || {}),
     equipment: clone(snapshot.equipment || {}),
+    equipmentSchemaVersion: Math.max(1, Math.floor(numeric(snapshot.equipmentSchemaVersion ?? snapshot.equipmentState?.schemaVersion, 1))),
+    equipmentState: clone(snapshot.equipmentState || {}) || {},
     loadout: clone(snapshot.loadout || {}),
     inventory,
     unassignedItems: arrayOf(snapshot.unassignedItems).map((item) => ({ ...clone(item) })),
@@ -359,7 +366,12 @@ function normalizeSheetSnapshot(value = {}) {
     combatActionState: clone(snapshot.combatActionState || {}) || {},
     lastCombatEvents: arrayOf(snapshot.lastCombatEvents).map((item) => ({ ...clone(item) })),
     equipmentCombatState: clone(snapshot.equipmentCombatState || {}) || {},
+    ammoState: clone(snapshot.ammoState || {}) || {},
+    magazines: arrayOf(snapshot.magazines).map((item) => ({ ...clone(item) })),
     ammoCombatState: clone(snapshot.ammoCombatState || {}) || {},
+    craftingHistory: arrayOf(snapshot.craftingHistory).map((item) => ({ ...clone(item) })),
+    repairHistory: arrayOf(snapshot.repairHistory).map((item) => ({ ...clone(item) })),
+    sourceGovernance: clone(snapshot.sourceGovernance || {}) || {},
     usesDeathMarks: snapshot.usesDeathMarks !== false,
     playerNotes: String(snapshot.playerNotes || ""),
     metadata: {
@@ -1483,15 +1495,55 @@ export class SharedMonster {
     hidden = false,
     conditions = [],
     notes = "",
+    bestiarySchemaVersion = BESTIARY_SCHEMA_VERSION,
+    monsterState = null,
+    monsterSource = null,
+    monsterCombatProfile = null,
+    monsterLootProfile = null,
+    monsterMoraleProfile = null,
+    monsterVariantState = null,
+    monsterTemplateState = null,
+    collectedResources = [],
+    usedAbilities = [],
+    abilityCooldowns = {},
+    sourceGovernance = null,
     updatedAt = nowIso(),
   } = {}) {
+    const sessionMonster = createSessionMonsterFromBestiary(
+      { ...(clone(snapshot) || {}), id: definitionId || snapshot.id || id, name: name || snapshot.name },
+      { id, conditions, hidden, notes }
+    );
     this.id = String(id || createId("shared-monster"));
-    this.definitionId = String(definitionId || "");
-    this.name = String(name || snapshot.name || "Monstro sem nome");
-    this.snapshot = clone(snapshot) || {};
+    this.definitionId = String(definitionId || sessionMonster.definitionId || "");
+    this.name = String(name || sessionMonster.name || snapshot.name || "Monstro sem nome");
+    this.snapshot = {
+      ...(clone(sessionMonster.snapshot) || {}),
+      ...(clone(snapshot) || {}),
+      attacks: clone(sessionMonster.snapshot?.attacks || snapshot.attacks || []),
+      abilities: clone(sessionMonster.snapshot?.abilities || snapshot.abilities || []),
+      resistanceProfile: clone(sessionMonster.snapshot?.resistanceProfile || snapshot.resistanceProfile || {}) || {},
+      lootProfile: clone(sessionMonster.snapshot?.lootProfile || snapshot.lootProfile || {}) || {},
+      moraleProfile: clone(sessionMonster.snapshot?.moraleProfile || snapshot.moraleProfile || {}) || {},
+      sensesProfile: clone(sessionMonster.snapshot?.sensesProfile || snapshot.sensesProfile || []) || [],
+      tokenSize: sessionMonster.snapshot?.tokenSize ?? snapshot.tokenSize,
+      tokenDefaults: clone(sessionMonster.snapshot?.tokenDefaults || snapshot.tokenDefaults || {}) || {},
+      bestiarySchemaVersion,
+    };
     this.hidden = Boolean(hidden);
     this.conditions = normalizeConditions(conditions.length ? conditions : this.snapshot.conditions);
     this.notes = String(notes || snapshot.notes || "");
+    this.bestiarySchemaVersion = bestiarySchemaVersion;
+    this.monsterState = clone(monsterState || sessionMonster.monsterState) || null;
+    this.monsterSource = clone(monsterSource || sessionMonster.monsterSource) || null;
+    this.monsterCombatProfile = clone(monsterCombatProfile || sessionMonster.monsterCombatProfile) || null;
+    this.monsterLootProfile = clone(monsterLootProfile || sessionMonster.monsterLootProfile) || null;
+    this.monsterMoraleProfile = clone(monsterMoraleProfile || sessionMonster.monsterMoraleProfile) || null;
+    this.monsterVariantState = clone(monsterVariantState || sessionMonster.monsterVariantState) || null;
+    this.monsterTemplateState = clone(monsterTemplateState || sessionMonster.monsterTemplateState) || null;
+    this.collectedResources = arrayOf(collectedResources || sessionMonster.collectedResources).map(clone);
+    this.usedAbilities = arrayOf(usedAbilities || sessionMonster.usedAbilities).map(clone);
+    this.abilityCooldowns = clone(abilityCooldowns || sessionMonster.abilityCooldowns || {}) || {};
+    this.sourceGovernance = clone(sourceGovernance || sessionMonster.sourceGovernance || this.snapshot.sourceGovernance) || null;
     this.updatedAt = updatedAt || nowIso();
   }
 
@@ -1500,6 +1552,10 @@ export class SharedMonster {
     if (patch.name) this.name = String(patch.name);
     if (patch.conditions) this.conditions = normalizeConditions(patch.conditions);
     if (patch.notes !== undefined) this.notes = String(patch.notes || "");
+    if (patch.monsterState) this.monsterState = clone(patch.monsterState);
+    if (patch.monsterCombatProfile) this.monsterCombatProfile = clone(patch.monsterCombatProfile);
+    if (patch.monsterLootProfile) this.monsterLootProfile = clone(patch.monsterLootProfile);
+    if (patch.monsterMoraleProfile) this.monsterMoraleProfile = clone(patch.monsterMoraleProfile);
     this.updatedAt = nowIso();
     return this;
   }
@@ -1624,6 +1680,18 @@ export class SharedMonster {
       hidden: this.hidden,
       conditions: this.conditions.map((condition) => ({ ...condition })),
       notes: this.notes,
+      bestiarySchemaVersion: this.bestiarySchemaVersion,
+      monsterState: clone(this.monsterState),
+      monsterSource: clone(this.monsterSource),
+      monsterCombatProfile: clone(this.monsterCombatProfile),
+      monsterLootProfile: clone(this.monsterLootProfile),
+      monsterMoraleProfile: clone(this.monsterMoraleProfile),
+      monsterVariantState: clone(this.monsterVariantState),
+      monsterTemplateState: clone(this.monsterTemplateState),
+      collectedResources: this.collectedResources.map((entry) => ({ ...clone(entry) })),
+      usedAbilities: this.usedAbilities.map((entry) => ({ ...clone(entry) })),
+      abilityCooldowns: clone(this.abilityCooldowns),
+      sourceGovernance: clone(this.sourceGovernance),
       updatedAt: this.updatedAt,
     };
   }
@@ -2739,7 +2807,7 @@ export class GameRoom {
       name: entity.name || snapshot.name || (isMonster ? "Monstro" : "Personagem"),
       x,
       y,
-      size: numeric(snapshot.size, 1),
+      size: numeric(snapshot.tokenSize ?? snapshot.tokenDefaults?.size ?? snapshot.size, 1),
       image: snapshot.portrait || snapshot.photoDataUrl || snapshot.imageDataUrl || snapshot.image || "",
       color: isMonster ? "#ff4e63" : "#39cfff",
       hidden: Boolean(entity.hidden),
@@ -2748,6 +2816,7 @@ export class GameRoom {
         role: snapshot.role || "",
         ca: snapshot.ca ?? snapshot.CA ?? "",
         movement: snapshot.movement ?? snapshot.movimento ?? "",
+        bestiarySchemaVersion: snapshot.bestiarySchemaVersion || "",
       },
     });
   }
@@ -2768,6 +2837,7 @@ export class GameRoom {
       if (existing) {
         existing.name = monster.name;
         existing.image = monster.snapshot?.imageDataUrl || monster.snapshot?.image || existing.image;
+        existing.size = numeric(monster.snapshot?.tokenSize ?? monster.snapshot?.tokenDefaults?.size, existing.size);
         existing.hidden = Boolean(monster.hidden);
       } else {
         this.scene.upsertToken(this.buildSceneToken(monster, index));
@@ -3519,9 +3589,18 @@ export class GameRoom {
     if (snapshot.lootPackId && this.lootPacks.some((pack) => pack.id === snapshot.lootPackId)) {
       return this.lootPacks.find((pack) => pack.id === snapshot.lootPackId);
     }
-    const rawLoot = arrayOf(snapshot.loot || snapshot.lootTable || snapshot.drops || snapshot.rewards);
+    const lootRoll = resolveMonsterLoot(snapshot, { defeated: true });
+    const rawLoot = lootRoll.drops.length
+      ? lootRoll.drops
+      : arrayOf(snapshot.loot || snapshot.drops || snapshot.rewards);
     const items = rawLoot.map((entry) => normalizeCartLine({
-      item: entry.item || entry,
+      item: entry.item || {
+        id: entry.id || createId("loot-item"),
+        name: entry.name || "Loot de monstro",
+        category: entry.category || "material",
+        rarity: entry.rarity || "",
+        source: monster.name,
+      },
       quantity: entry.quantity || entry.qty || 1,
       price: entry.price || 0,
     }));
@@ -3530,10 +3609,11 @@ export class GameRoom {
       source: monster.name,
       items,
       luzentis: Math.max(0, numeric(snapshot.luzentis || snapshot.credits || snapshot.currency, 0)),
-      notes: items.length ? "Criado automaticamente ao derrotar a criatura." : "Pacote vazio criado automaticamente; mestre define recompensas.",
+      notes: items.length ? lootRoll.log : "Pacote vazio criado automaticamente; mestre define recompensas.",
       createdBy: actor?.id || "",
     });
     monster.snapshot.lootPackId = pack.id;
+    monster.snapshot.lastLootRoll = lootRoll.result;
     this.lootPacks.unshift(pack);
     this.lootPacks = this.lootPacks.slice(0, 80);
     this.addTransaction({

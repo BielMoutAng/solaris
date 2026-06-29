@@ -133,11 +133,13 @@ Mudanca recente:
 - O antigo bloqueio que impedia rolagens quando havia item sem local definido foi cancelado.
 - Agora item sem local definido apenas mostra aviso visual, sem bloquear dados, iniciativa, ataques, dano de monstro ou testes.
 - O Solaris Tabletop Alpha agora abre em um launcher proprio pela rota `?view=launcher` ou `?view=home`.
-- O Electron VTT usa `?view=launcher&tabletop=1&check=20260624c` como entrada.
-- O cache atual do runtime da Fase 22 e `20260624c`.
-- A versao local do Tabletop passou para `0.6.0-alpha.17`.
+- O Electron VTT usa `?view=launcher&tabletop=1&check=20260624e` como entrada.
+- O cache atual do runtime da Fase 24 e `20260624e`.
+- A versao local do Tabletop passou para `0.6.0-alpha.19`.
 - A Fase 21 adicionou um modulo puro para criacao/progressao oficial de personagem, guia em 7 etapas guiadas que agrupam os 10 passos do Livro 1, snapshot persistente de escolhas de criacao, historico estruturado de progressao e testes dedicados.
 - A Fase 22 adicionou o modulo puro `src/domain/solaris-combat-rules.js`, testes de combate oficial, estado critico, Marcas de Morte, Sangramento, Ferimentos Graves, consequencias de critico/erro critico, dano com resistencia/vulnerabilidade/imunidade/reducao e integracao desses efeitos ao turno da Mesa Virtual.
+- A Fase 23 adicionou o modulo puro `src/domain/solaris-equipment-rules.js`, testes de equipamentos do Livro 5, normalizacao de armas/armaduras/mods/municao/carregadores, rachaduras, Jammed, cubos, armazenamento, compra/venda e base de crafting.
+- A Fase 24 adicionou o modulo puro `src/domain/solaris-bestiary-rules.js`, testes do bestiario oficial, normalizacao de fichas do Livro 3, ataques/habilidades de monstros integrados ao combate, resistencias/imunidades/vulnerabilidades, moral, loot com chances, recursos coletaveis, variantes, templates, chefes, minions, tokens e estimativa de ameaca para encontros.
 
 ## Nova Fase 2 - Mesa Virtual
 

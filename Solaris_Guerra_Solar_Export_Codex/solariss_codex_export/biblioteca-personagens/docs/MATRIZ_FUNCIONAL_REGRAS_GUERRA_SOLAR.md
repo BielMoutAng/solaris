@@ -68,13 +68,13 @@ Prioridade:
 | 2 | Exploracao | Viagem e ambiente hostil | Media | Ausente/Parcial | regras | Parcial | Parcial | Nao | Nao | Faltam ferramentas de mesa | P2 | 24 |
 | 2 | Tecnologia | Hacking e sistemas digitais | Media | Parcial | pericia Tecnologia | Sim | Parcial | Nao | Nao | Falta minissistema | P2 | 24 |
 | 2 | Recursos | Oficinas, reparos e bases | Media | Parcial | rachaduras/reparo | Sim | Parcial | Parcial | Parcial | Bases e oficinas ausentes | P2 | 24 |
-| 3 | Bestiario | Catalogo de monstros | Alta | Implementada/Parcial | bestiario | Sim | Sim | Sim | Parcial | Conferir todos os monstros atuais | P1 | 23 |
-| 3 | Bestiario | Ficha jogavel de monstro | Alta | Implementada | `MonsterSheet` | Sim | Sim | Sim | Sim | Completar campos narrativos | P2 | 23 |
-| 3 | Bestiario | Ataques e dano de monstros | Alta | Implementada/Parcial | VTT/ficha monstro | Sim | Sim | Sim | Sim | Validar formulas oficiais | P1 | 23 |
-| 3 | Bestiario | Resistencias, imunidades, vulnerabilidades | Alta | Parcial | bestiario | Sim | Sim | Parcial | Parcial | Conferir listas oficiais | P1 | 23 |
-| 3 | Bestiario | Loot automatico | Media | Implementada/Parcial | `rollMonsterLoot` | Sim | Sim | Sim | Sim | Tabelas de drop por monstro precisam fechar | P1 | 23 |
-| 3 | Bestiario | Comportamento, taticas e ecologia | Media | Parcial/Ausente | detalhes | Sim | Parcial | Nao | Nao | Texto do livro deve entrar em detalhes | P2 | 23 |
-| 3 | Bestiario | Variantes e templates | Media | Ausente/Parcial | bestiario | Parcial | Parcial | Nao | Nao | Falta modelo estruturado | P2 | 23 |
+| 3 | Bestiario | Catalogo de monstros | Alta | Implementada | `solaris-bestiary-rules`, bestiario | Sim | Sim | Sim | Sim | Conferir fidelidade textual por monstro a cada recompilacao do Livro 3 | P1 | 24 |
+| 3 | Bestiario | Ficha jogavel de monstro | Alta | Implementada | `MonsterSheet`, VTT | Sim | Sim | Sim | Sim | Completar campos narrativos quando o livro trouxer texto novo | P2 | 24 |
+| 3 | Bestiario | Ataques e dano de monstros | Alta | Implementada | `resolveMonsterAttack`, VTT/ficha monstro | Sim | Sim | Sim | Sim | Validar formulas oficiais por criatura quando houver revisao | P1 | 24 |
+| 3 | Bestiario | Resistencias, imunidades, vulnerabilidades | Alta | Implementada/Parcial | `resistanceProfile` | Sim | Sim | Sim | Sim | Conferir listas oficiais por criatura | P1 | 24 |
+| 3 | Bestiario | Loot automatico | Media | Implementada/Parcial | `resolveMonsterLoot`, VTT | Sim | Sim | Sim | Sim | Tabelas raras continuam dependentes de fechamento oficial | P1 | 24 |
+| 3 | Bestiario | Comportamento, taticas e ecologia | Media | Parcial | detalhes/metadata | Sim | Parcial | Parcial | Parcial | Texto narrativo ainda precisa virar compendio navegavel | P2 | 24 |
+| 3 | Bestiario | Variantes e templates | Media | Provisoria/Parcial | `applyMonsterVariant`, `createBossMonster` | Parcial | Parcial | Sim | Sim | Modelo existe, mas calibragem oficial ainda e sensivel | P2 | 24 |
 | 4 | Cenarios | Compendio de lore | Instavel | Parcial | livros/regras | Sim | Parcial | Nao | Nao | Nao e banco navegavel ainda | P2 | 25 |
 | 4 | Cenarios | Locais e cenas | Media | Parcial | cenas/VTT | Nao | Sim | Sim | Sim | Faltam links com lore oficial | P2 | 25 |
 | 4 | Cenarios | Faccao/NPC/linha do tempo | Media | Ausente/Parcial | notas | Parcial | Parcial | Nao | Nao | Precisa modelo dedicado | P2 | 25 |
