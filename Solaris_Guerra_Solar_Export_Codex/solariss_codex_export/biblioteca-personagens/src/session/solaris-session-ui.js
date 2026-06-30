@@ -5,11 +5,11 @@ import {
   SESSION_ROLES,
   SOLARIS_DEFAULT_SCENE,
   estimateEncounterBalance,
-} from "./solaris-session-domain.js?v=20260624h";
+} from "./solaris-session-domain.js?v=20260629a";
 import {
   SESSION_SOCKET_EVENTS,
   SolarisSessionClient,
-} from "./solaris-session-client.js?v=20260624h";
+} from "./solaris-session-client.js?v=20260629a";
 import {
   ACTIVE_CAMPAIGN_STORAGE_KEY,
   CAMPAIGN_STORAGE_KEY,
@@ -24,7 +24,7 @@ import {
   parseSessionExportBundle,
   serializeCampaignList,
   upsertCampaignSession,
-} from "./solaris-session-persistence.js?v=20260624h";
+} from "./solaris-session-persistence.js?v=20260629a";
 import {
   createSessionMonsterFromBestiary,
   estimateEncounterThreat as estimateBestiaryEncounterThreat,
@@ -33,13 +33,13 @@ import {
   computeMonsterDamageProfile,
   normalizeMonsterEntry,
   resolveMonsterAttack,
-} from "../domain/solaris-bestiary-rules.js?v=20260624h";
+} from "../domain/solaris-bestiary-rules.js?v=20260629a";
 import {
   computeMissionRisk,
   computeTravelDifficulty,
   generateMissionSeed,
   generateTravelEventSeed,
-} from "../domain/solaris-gm-rules.js?v=20260624h";
+} from "../domain/solaris-gm-rules.js?v=20260629a";
 import {
   LORE_ENTRY_TYPES,
   LORE_IMPORTANCE_LEVELS,
@@ -48,11 +48,11 @@ import {
   hydrateLoreState,
   rankLoreSearchResults,
   searchLoreEntries,
-} from "../domain/solaris-lore-rules.js?v=20260624h";
+} from "../domain/solaris-lore-rules.js?v=20260629a";
 
 const SESSION_SAVE_KEY = "solaris.virtual.table.session.v1";
 const PLAYER_SESSION_KEY = "solaris.virtual.table.playerId";
-const TABLETOP_APP_VERSION = "0.6.0-alpha.22";
+const TABLETOP_APP_VERSION = "0.6.0-alpha.24";
 const DEFAULT_REPORT_OPTIONS = Object.freeze({
   includeFullChat: false,
   includeSecretNotes: false,
@@ -1142,6 +1142,9 @@ class SolarisSessionUI {
     const routeView = activeRouteView();
     this.screen = options.initialScreen || (routeView === "campaigns" ? "campaigns" : routeView === "launcher" || routeView === "home" ? "launcher" : "table");
     this.tableView = options.initialTableView || "table";
+    this.sessionPanelTab = "chat";
+    this.characterCreatorModalOpen = false;
+    this.initiativeModalOpen = true;
     this.gmForm = null;
     this.sceneEditor = null;
     this.sceneEditorDrag = null;
@@ -2317,7 +2320,7 @@ class SolarisSessionUI {
     const normalized = /^https?:\/\//i.test(raw) ? raw : `http://${raw}`;
     this.launcherJoinAddress = normalized;
     const separator = normalized.includes("?") ? "&" : "?";
-    window.location.href = `${normalized}${separator}view=mesaVirtual&check=20260624h`;
+    window.location.href = `${normalized}${separator}view=mesaVirtual&check=20260629a`;
   }
 
   async copyLauncherText(text = "") {
@@ -5650,6 +5653,103 @@ class SolarisSessionUI {
     `;
   }
 
+  renderLauncherHomeV2() {
+    const active = this.activeCampaign();
+    const session = active?.sessions?.[0] || null;
+    const stats = active ? campaignStats(active) : null;
+    const updatedAt = active
+      ? new Date(active.updatedAt || active.createdAt || Date.now()).toLocaleString("pt-BR")
+      : "Nenhuma campanha recente";
+    const statusLabel = this.client.isConnected ? "Servidor local conectado" : "Offline / simulado pronto";
+    const statusClass = this.client.isConnected ? "online" : "offline";
+    return `
+      <section class="solaris-launcher solaris-launcher-cinematic ${this.launcherReducedFx ? "reduced-fx" : ""}" aria-label="Launcher Solaris Tabletop Alpha">
+        <div class="solaris-launcher-bg solaris-launcher-cinematic-bg" aria-hidden="true">
+          <span class="solaris-launcher-stars"></span>
+          <span class="solaris-launcher-citadel"></span>
+          <span class="solaris-launcher-world"></span>
+          <span class="solaris-launcher-orbit"></span>
+          <span class="solaris-launcher-pulse"></span>
+          <span class="solaris-launcher-grid"></span>
+        </div>
+        <div class="solaris-launcher-top-icons" aria-label="Acoes rapidas">
+          <button type="button" data-vtt-action="launcher-settings" aria-label="Configuracoes">CFG</button>
+          <button type="button" data-vtt-action="launcher-library" aria-label="Biblioteca">LIV</button>
+          <button type="button" data-vtt-action="open-campaigns" aria-label="Campanhas">PWR</button>
+        </div>
+        <header class="solaris-launcher-cinematic-brand" aria-label="Solaris Tabletop Guerra Solar">
+          <strong>SOLARIS</strong>
+          <span>TABLETOP</span>
+          <small>GUERRA SOLAR</small>
+        </header>
+        <main class="solaris-launcher-cinematic-grid">
+          <section class="solaris-launcher-card launcher-entry-card" aria-label="Entrar na sessao">
+            <header>
+              <span>01</span>
+              <h2>Entrar na Sessao</h2>
+            </header>
+            <label>
+              <span>Nome da sala</span>
+              <input type="text" value="${escapeHtml(active?.name || "")}" placeholder="Ex.: Colonia Solaris-7" />
+            </label>
+            <label>
+              <span>Senha (opcional)</span>
+              <input type="password" placeholder="Digite a senha da sala" />
+            </label>
+            <button type="button" class="launcher-primary" data-vtt-action="launcher-join">Entrar</button>
+            <button type="button" class="launcher-secondary purple" data-vtt-action="launcher-offline">Criar Sala Offline</button>
+            <button type="button" class="launcher-secondary cyan" data-vtt-action="launcher-multiplayer">Criar Sala Multijogador Local</button>
+          </section>
+
+          <section class="solaris-launcher-card launcher-world-card" aria-label="Descricao do mundo">
+            <header>
+              <span>02</span>
+              <h2>Descricao do Mundo</h2>
+            </header>
+            <p>Solaris e um sistema a beira da guerra.</p>
+            <p>Imperios colidem, aliancas se quebram e segredos ancestrais despertam em mundos distantes.</p>
+            <p>Herois e viloes cruzam o vazio em busca de poder, redencao ou sobrevivencia.</p>
+            <strong>Bem-vindo a Guerra Solar.</strong>
+            <i aria-hidden="true"></i>
+          </section>
+
+          <section class="solaris-launcher-card launcher-session-card" aria-label="Detalhes da sessao">
+            <header>
+              <span>03</span>
+              <h2>Detalhes da Sessao</h2>
+            </header>
+            <dl>
+              <div><dt>Proxima sessao</dt><dd>${escapeHtml(stats?.lastSession || session?.label || "Nao agendada")}</dd></div>
+              <div><dt>Jogadores atuais</dt><dd>${escapeHtml((stats?.characters ?? 0) || 3)} / 8 conectados</dd></div>
+              <div><dt>Campanha recente</dt><dd>${escapeHtml(active?.name || "Nenhuma campanha")}</dd></div>
+              <div><dt>Ultimo save</dt><dd>${escapeHtml(updatedAt)}</dd></div>
+            </dl>
+            <button type="button" data-vtt-action="open-campaigns">Ver sessoes recentes</button>
+          </section>
+
+          <section class="solaris-launcher-card launcher-master-card" aria-label="Configuracao do mestre">
+            <header>
+              <span>04</span>
+              <h2>Configuracao do Mestre</h2>
+            </header>
+            <p>Personalize sua experiencia e prepare sua mesa.</p>
+            <button type="button" data-vtt-action="launcher-gm-shield">Configurar Campanha</button>
+            <button type="button" data-vtt-action="go-table">Gerenciar Mapas & Tokens</button>
+            <button type="button" data-vtt-action="launcher-settings">Configuracoes Avancadas</button>
+          </section>
+        </main>
+        <footer class="solaris-launcher-cinematic-footer">
+          <span class="${statusClass}">${escapeHtml(statusLabel)}</span>
+          <span>Versao ${escapeHtml(TABLETOP_APP_VERSION)}</span>
+          <span>Cache 20260629a</span>
+          <span>Dica: crie uma sala offline para testar mapas e mecanicas.</span>
+        </footer>
+        ${this.renderLauncherModal()}
+        <input type="file" accept="application/json,.json" data-vtt-session-import hidden />
+      </section>
+    `;
+  }
+
   renderLauncherHome() {
     const active = this.activeCampaign();
     const session = active?.sessions?.[0] || null;
@@ -5718,7 +5818,7 @@ class SolarisSessionUI {
             <p>Jogadores entram por <code>http://IP-DO-MESTRE:3000</code> quando o servidor local estiver ativo.</p>
             <div>
               <span>${escapeHtml(TABLETOP_APP_VERSION)}</span>
-              <span>cache 20260624h</span>
+              <span>cache 20260629a</span>
               <span>HTML/CSS/JS</span>
             </div>
           </section>
@@ -6880,10 +6980,393 @@ class SolarisSessionUI {
     `;
   }
 
+  renderCleanSessionShell(room, current, combat, pendingApprovals = [], syncLabel = "", statusLabel = "", statusClass = "") {
+    const scene = normalizeScene(room.scene, current);
+    const playerCount = Array.isArray(room.players) ? room.players.length : 0;
+    const activeTab = ["chat", "characters", "combat", "items"].includes(this.sessionPanelTab) ? this.sessionPanelTab : "chat";
+    this.sessionPanelTab = activeTab;
+    return `
+      <section class="vtt-shell solaris-shell vtt-clean-shell solaris-screen-tabletop" aria-label="Mesa Virtual Solaris">
+        <header class="vtt-clean-topbar">
+          <div class="vtt-clean-brand">
+            <span class="vtt-brand-mark" aria-hidden="true"></span>
+            <div>
+              <strong>SOLARIS</strong>
+              <small>TABLETOP</small>
+            </div>
+          </div>
+          <nav class="vtt-clean-nav" aria-label="Navegacao principal da mesa">
+            <button type="button" class="${activeTab === "chat" ? "active" : ""}" data-vtt-session-panel-tab="chat">Mesa</button>
+            <button type="button" class="${activeTab === "characters" ? "active" : ""}" data-vtt-session-panel-tab="characters">Personagens</button>
+            <button type="button" class="${activeTab === "combat" ? "active" : ""}" data-vtt-session-panel-tab="combat">Combate</button>
+            <button type="button" class="${activeTab === "items" ? "active" : ""}" data-vtt-session-panel-tab="items">Compendio</button>
+          </nav>
+          <div class="vtt-clean-status">
+            <span class="${escapeHtml(statusClass)}">${escapeHtml(statusLabel || "Offline")}</span>
+            <small>${escapeHtml(syncLabel)}</small>
+            <button type="button" data-vtt-action="open-campaigns" aria-label="Campanhas">CMP</button>
+            <button type="button" data-vtt-action="save-session" aria-label="Salvar sessao">SAV</button>
+            <button type="button" data-vtt-action="open-gm-panel" aria-label="Escudo do mestre">GM</button>
+          </div>
+        </header>
+
+        <main class="vtt-clean-tabletop">
+          ${this.renderVttToolRail()}
+          <section class="vtt-clean-map-stage" aria-label="Mapa da sessao">
+            ${this.renderSceneWheel(room)}
+            ${this.renderTacticalMap(room, current, combat)}
+            ${activeTab === "characters" ? this.renderFloatingCharacterSheet(current) : ""}
+            ${activeTab === "combat" ? this.renderInitiativeModal(combat) : ""}
+            <div class="vtt-clean-session-chip">
+              <strong>${escapeHtml(scene.name || room.roomName || "Cena atual")}</strong>
+              <span>${combat.active ? `Combate: rodada ${escapeHtml(combat.round || 1)}` : "Sessao pausada"}</span>
+            </div>
+          </section>
+          ${this.renderCleanSessionPanel(room, current, combat, pendingApprovals)}
+        </main>
+
+        ${this.renderCleanSessionFooter(room, combat, playerCount)}
+        ${this.renderItemDetailModal()}
+        ${this.renderLootModal(room)}
+        ${this.renderMonsterSheetModal(room)}
+        ${this.renderCampaignPanel()}
+        ${this.renderGmDashboardPanel(room, current, combat)}
+        ${this.renderSceneEditorModal(room)}
+        ${this.renderEncounterEditorModal(room)}
+        ${this.renderReportPreviewModal(room, combat)}
+        ${this.renderRecoveryNotice()}
+        <input type="file" accept="application/json,.json" data-vtt-session-import hidden />
+      </section>
+    `;
+  }
+
+  renderVttToolRail() {
+    const tools = [
+      ["move", "SEL"],
+      ["grid", "GRD"],
+      ["pan", "PAN"],
+      ["target", "ALV"],
+      ["measure", "MED"],
+      ["draw", "DES"],
+      ["text", "TXT"],
+      ["token", "TOK"],
+      ["light", "LUZ"],
+      ["search", "BUS"],
+    ];
+    return `
+      <aside class="vtt-clean-toolrail" aria-label="Ferramentas do mapa">
+        ${tools.map(([tool, label]) => `
+          <button type="button" class="${this.mapTool === tool ? "active" : ""}" data-vtt-map-tool="${escapeHtml(tool)}" title="${escapeHtml(label)}">
+            ${escapeHtml(label)}
+          </button>
+        `).join("")}
+      </aside>
+    `;
+  }
+
+  renderSceneWheel(room) {
+    const scenes = (room.sceneList && room.sceneList.length ? room.sceneList : [room.scene || {}]).filter(Boolean).slice(0, 6);
+    const activeSceneId = room.activeSceneId || room.scene?.id || scenes[0]?.id || "";
+    const activeIndex = Math.max(0, scenes.findIndex((scene) => scene.id === activeSceneId));
+    const wheelLabels = ["MAP", "CAS", "TRP", "NPC", "OBJ", "ARC"];
+    return `
+      <nav class="vtt-scene-wheel" aria-label="Menu circular de cenas">
+        <div>
+          <strong>CENAS</strong>
+          <span>${escapeHtml(activeIndex + 1)} / ${escapeHtml(Math.max(1, scenes.length))}</span>
+        </div>
+        ${wheelLabels.map((label, index) => {
+          const scene = scenes[index] || scenes[0] || {};
+          const active = scene?.id && scene.id === activeSceneId;
+          return `
+            <button
+              type="button"
+              class="wheel-${index + 1} ${active ? "active" : ""}"
+              data-vtt-scene-wheel-switch="${escapeHtml(scene?.id || "")}"
+              title="${escapeHtml(scene?.name || label)}"
+            >
+              ${escapeHtml(label)}
+            </button>
+          `;
+        }).join("")}
+      </nav>
+    `;
+  }
+
+  renderCleanSessionPanel(room, current, combat, pendingApprovals = []) {
+    const activeTab = ["chat", "characters", "combat", "items"].includes(this.sessionPanelTab) ? this.sessionPanelTab : "chat";
+    const titles = {
+      chat: "Registro de Acoes",
+      characters: "Personagens",
+      combat: "Combate",
+      items: "Itens",
+    };
+    return `
+      <aside class="vtt-clean-side-panel" aria-label="Painel lateral da sessao">
+        <header>
+          <div>
+            <strong>${escapeHtml(titles[activeTab])}</strong>
+            <small>${escapeHtml(this.client.isConnected ? "Sincronizado" : "Modo local")}</small>
+          </div>
+          <span>${pendingApprovals.length ? `${escapeHtml(pendingApprovals.length)} pendente(s)` : "OK"}</span>
+        </header>
+        <nav class="vtt-clean-panel-tabs" aria-label="Abas do painel lateral">
+          <button type="button" class="${activeTab === "chat" ? "active" : ""}" data-vtt-session-panel-tab="chat">Bate-papo</button>
+          <button type="button" class="${activeTab === "characters" ? "active" : ""}" data-vtt-session-panel-tab="characters">Personagens</button>
+          <button type="button" class="${activeTab === "combat" ? "active" : ""}" data-vtt-session-panel-tab="combat">Combate</button>
+          <button type="button" class="${activeTab === "items" ? "active" : ""}" data-vtt-session-panel-tab="items">Itens</button>
+        </nav>
+        <div class="vtt-clean-panel-scroll">
+          ${activeTab === "characters" ? this.renderCleanCharactersPanel(room, current) : ""}
+          ${activeTab === "combat" ? this.renderCleanCombatPanel(combat) : ""}
+          ${activeTab === "items" ? this.renderCleanItemsPanel(room, current) : ""}
+          ${activeTab === "chat" ? this.renderCleanChatPanel(room) : ""}
+        </div>
+      </aside>
+    `;
+  }
+
+  renderCleanChatPanel(room) {
+    const rolls = (room.diceRolls || []).map((roll) => ({
+      kind: "roll",
+      id: roll.id || createId("roll"),
+      title: roll.authorName || "Solaris",
+      body: `${roll.label || "Rolagem"} ${roll.formula || ""}`,
+      result: roll.total ?? "-",
+      createdAt: roll.createdAt,
+    }));
+    const messages = (room.chatMessages || []).map((message) => ({
+      kind: "chat",
+      id: message.id || createId("chat"),
+      title: message.authorName || "Solaris",
+      body: message.message || "",
+      result: "",
+      createdAt: message.createdAt,
+    }));
+    const entries = [...rolls, ...messages]
+      .sort((a, b) => Number(new Date(b.createdAt || 0)) - Number(new Date(a.createdAt || 0)))
+      .slice(0, 12);
+    return `
+      <section class="vtt-clean-feed" aria-label="Registro de acoes">
+        ${entries.length ? entries.map((entry) => `
+          <article class="${escapeHtml(entry.kind)}">
+            <span>${escapeHtml(String(entry.title).slice(0, 1).toUpperCase() || "S")}</span>
+            <div>
+              <strong>${escapeHtml(entry.title)}</strong>
+              <p>${escapeHtml(entry.body)}</p>
+              <small>${formatTime(entry.createdAt)}</small>
+            </div>
+            ${entry.result !== "" ? `<em>${escapeHtml(entry.result)}</em>` : ""}
+          </article>
+        `).join("") : "<small>Nenhuma acao registrada ainda.</small>"}
+      </section>
+      <form class="vtt-chat-form vtt-clean-chat-form" data-vtt-chat-form>
+        <input name="message" type="text" placeholder="Digite sua mensagem..." autocomplete="off" />
+        <button type="submit" aria-label="Enviar mensagem">Enviar</button>
+      </form>
+      <button type="button" class="vtt-clean-roll-button" data-vtt-roll="Rolagem rapida" data-count="3" data-sides="6">Rolar Dados</button>
+    `;
+  }
+
+  renderCleanCharactersPanel(room, current) {
+    const characters = (room.characters || []).map((entry) => characterSnapshot({
+      ...(entry.snapshot || {}),
+      id: entry.id,
+      characterId: entry.id,
+      name: entry.name || entry.snapshot?.name,
+    }));
+    const roster = characters.length ? characters : [current];
+    return `
+      <section class="vtt-clean-characters" aria-label="Personagens da sessao">
+        <div class="vtt-clean-panel-actions">
+          <button type="button" data-vtt-action="open-campaigns">Criar Pasta</button>
+          <button type="button" data-vtt-action="launcher-creator">Criar Personagem</button>
+        </div>
+        <div class="vtt-clean-folder">
+          <header>
+            <strong>Jogadores</strong>
+            <span>${escapeHtml(roster.length)}</span>
+          </header>
+          ${roster.map((character) => `
+            <article class="${character.id === current.id ? "active" : ""}">
+              <span>${character.portrait ? `<img src="${escapeHtml(character.portrait)}" alt="" />` : escapeHtml(String(character.name || "S").slice(0, 1))}</span>
+              <div>
+                <strong>${escapeHtml(character.name || "Personagem sem nome")}</strong>
+                <small>${escapeHtml(character.race || "Raca")} - Nivel ${escapeHtml(character.level || 1)}</small>
+              </div>
+              <button type="button" data-vtt-action="open-sheet">Ficha</button>
+            </article>
+          `).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  renderCleanCombatPanel(combat) {
+    const entries = combat.entries.length ? combat.entries : combat.combatants.map((entry) => ({
+      entityId: entry.entityId || entry.id,
+      name: entry.name,
+      initiative: entry.initiative,
+    }));
+    return `
+      <section class="vtt-clean-combat" aria-label="Combate">
+        <div class="vtt-clean-combat-actions">
+          <button type="button" data-vtt-combat-action="start" ${combat.active ? "disabled" : ""}>Iniciar</button>
+          <button type="button" data-vtt-combat-action="next" ${combat.active ? "" : "disabled"}>Proximo Turno</button>
+          <button type="button" data-vtt-combat-action="end" ${combat.active ? "" : "disabled"}>Encerrar</button>
+          <button type="button" data-vtt-combat-action="toggle-monsters">Adicionar Monstro</button>
+        </div>
+        ${this.renderMonsterPicker()}
+        <button type="button" class="vtt-clean-roll-button" data-vtt-roll="Iniciativa" data-count="1" data-sides="20">Rolar a iniciativa</button>
+        <ol class="vtt-clean-initiative">
+          ${entries.length ? entries.map((entry, index) => {
+            const active = index === combat.turnIndex && combat.active;
+            return `
+              <li class="${active ? "active" : ""}">
+                <button type="button" data-vtt-select-combatant="${escapeHtml(entry.entityId || entry.id || "")}">
+                  <span>${escapeHtml(index + 1)}</span>
+                  <strong>${escapeHtml(entry.name || "Entidade")}</strong>
+                  <em>${escapeHtml(entry.initiative ?? "-")}</em>
+                </button>
+              </li>
+            `;
+          }).join("") : "<li><button type=\"button\" disabled><strong>Nenhum combatente</strong><em>-</em></button></li>"}
+        </ol>
+        <div class="vtt-clean-combat-log">
+          ${(combat.log || []).slice(0, 6).map((entry) => `<p>${escapeHtml(entry.message || "")}</p>`).join("") || "<small>Nenhum evento de combate.</small>"}
+        </div>
+      </section>
+    `;
+  }
+
+  renderInitiativeModal(combat) {
+    const entities = (combat.combatants || []).slice(0, 5);
+    return `
+      <section class="vtt-initiative-modal" aria-label="Modal de iniciativa">
+        <header>
+          <strong>Iniciativa</strong>
+          <span>1d20 + iniciativa</span>
+        </header>
+        <div class="vtt-initiative-options">
+          <label>Bonus manual<input type="number" value="0" /></label>
+          <label><input type="checkbox" /> Surpreendido</label>
+          <label><input type="checkbox" /> Emboscada</label>
+          <label><input type="checkbox" /> Vantagem</label>
+          <label><input type="checkbox" /> Desvantagem</label>
+        </div>
+        <div class="vtt-initiative-entity-list">
+          ${entities.length ? entities.map((entity) => `
+            <button type="button" data-vtt-roll-initiative="${escapeHtml(entity.entityId || entity.id || "")}">
+              <span>D20</span>
+              <strong>${escapeHtml(entity.name || "Entidade")}</strong>
+              <em>${escapeHtml(entity.initiative ?? "+0")}</em>
+            </button>
+          `).join("") : "<small>Adicione personagens ou monstros ao combate.</small>"}
+        </div>
+      </section>
+    `;
+  }
+
+  renderCleanItemsPanel(room, current) {
+    const categories = [
+      ["weapon", "Armas"],
+      ["armor", "Armaduras"],
+      ["common", "Itens comuns"],
+      ["chip", "Chips"],
+      ["kit", "Kits"],
+      ["other", "Outros"],
+    ];
+    const items = this.shopCatalog().slice(0, 36);
+    const visible = items.filter((item) => {
+      if (this.shopCategory === "all") return true;
+      if (this.shopCategory === "kit") return String(item.name || "").toLowerCase().includes("kit");
+      if (this.shopCategory === "other") return !["weapon", "armor", "chip", "common"].includes(item.sessionCategory);
+      return item.sessionCategory === this.shopCategory;
+    }).slice(0, 10);
+    const balance = Number(current.currency || current.luzentis || 0);
+    return `
+      <section class="vtt-clean-items" aria-label="Biblioteca rapida de itens">
+        <div class="vtt-clean-item-cats">
+          ${categories.map(([id, label]) => `
+            <button type="button" class="${this.shopCategory === id ? "active" : ""}" data-vtt-shop-category-button="${escapeHtml(id)}">${escapeHtml(label)}</button>
+          `).join("")}
+        </div>
+        <label class="vtt-clean-search">
+          <span>Buscar</span>
+          <input type="search" value="${escapeHtml(this.shopQuery)}" placeholder="Item, arma, chip..." data-vtt-shop-query />
+        </label>
+        <div class="vtt-clean-item-list">
+          ${visible.length ? visible.map((item) => `
+            <article>
+              <div>
+                <strong>${escapeHtml(item.name)}</strong>
+                <small>${escapeHtml([item.categoryLabel, item.tier ? `Tier ${item.tier}` : "", item.rarity].filter(Boolean).join(" - "))}</small>
+              </div>
+              <em>${Number(item.price || 0).toLocaleString("pt-BR")} L</em>
+              <button type="button" data-vtt-shop-details="${escapeHtml(item.id)}">Detalhes</button>
+              <button type="button" data-vtt-shop-buy-now="${escapeHtml(item.id)}">Comprar</button>
+            </article>
+          `).join("") : "<small>Nenhum item encontrado.</small>"}
+        </div>
+        <footer>
+          <span>Luzentis: ${balance.toLocaleString("pt-BR")}</span>
+          <button type="button" data-vtt-action="request-purchase">Adicionar a ficha</button>
+        </footer>
+      </section>
+    `;
+  }
+
+  renderFloatingCharacterSheet(character) {
+    const portrait = character.portrait
+      ? `<img src="${escapeHtml(character.portrait)}" alt="" />`
+      : `<span>${escapeHtml(String(character.name || "S").slice(0, 1))}</span>`;
+    const inventory = Array.isArray(character.inventory) ? character.inventory : [];
+    const equipped = inventory.filter((item) => item.equipped || item.location?.kind === "equipped").slice(0, 3);
+    return `
+      <section class="vtt-floating-sheet" aria-label="Ficha flutuante de personagem">
+        <button type="button" class="vtt-floating-close" data-vtt-session-panel-tab="chat" aria-label="Fechar ficha">X</button>
+        <div class="vtt-floating-portrait">${portrait}</div>
+        <div class="vtt-floating-copy">
+          <h2>${escapeHtml(character.name || "Personagem sem nome")}</h2>
+          <small>${escapeHtml(character.race || "Humanis")} - ${escapeHtml(character.profession || "Sem profissao")} - Nivel ${escapeHtml(character.level || 1)}</small>
+          <div class="vtt-floating-resources">
+            ${this.renderResourceInput("pv", "PV", character.currentPV, character.maxPV)}
+            ${this.renderResourceInput("cosmos", "Cosmos", character.cosmosCurrent, character.cosmosMax)}
+            ${this.renderResourceInput("stress", "Estresse", character.stress, character.stressMax)}
+          </div>
+          <div class="vtt-floating-stats">
+            <span><small>CA</small><strong>${escapeHtml(character.ca || 0)}</strong></span>
+            <span><small>MOV</small><strong>${escapeHtml(character.movement || 0)}m</strong></span>
+            <span><small>INI</small><strong>${escapeHtml(character.initiative || 0)}</strong></span>
+          </div>
+          <div class="vtt-floating-equipment">
+            ${equipped.length ? equipped.map((item) => `<span>${escapeHtml(item.name || item.itemId || "Item")}</span>`).join("") : "<span>Nenhum equipamento equipado.</span>"}
+          </div>
+          <footer>
+            <button type="button" data-vtt-action="open-sheet">Abrir ficha completa</button>
+            <button type="button" data-vtt-action="open-inventory">Inventario</button>
+          </footer>
+        </div>
+      </section>
+    `;
+  }
+
+  renderCleanSessionFooter(room, combat, playerCount = 0) {
+    return `
+      <footer class="vtt-clean-footer">
+        <button type="button" data-vtt-action="open-campaigns">Jogadores (${escapeHtml(playerCount)})</button>
+        <span>${escapeHtml(room.roomName || "Colonia Solaris-7")}</span>
+        <strong>${combat.active ? `Rodada ${escapeHtml(combat.round || 1)}` : "Sessao pausada"}</strong>
+        <button type="button" data-vtt-roll="Teste rapido" data-count="3" data-sides="6">Rolar</button>
+        <button type="button" data-vtt-action="open-gm-panel">Escudo do Mestre</button>
+      </footer>
+    `;
+  }
+
   render() {
     if (!this.root) return;
     if (this.screen === "launcher") {
-      this.root.innerHTML = this.renderLauncherHome();
+      this.root.innerHTML = this.renderLauncherHomeV2();
       this.bindDom();
       return;
     }
@@ -6905,6 +7388,10 @@ class SolarisSessionUI {
       ? (remoteCharacter ? `Ficha sync r${escapeHtml(remoteCharacter.revision || remoteCharacter.snapshot?.revision || 0)}` : "Ficha ainda nao enviada")
       : "Ficha local";
     const tableView = ["table", "shop", "sheet", "gm"].includes(this.tableView) ? this.tableView : "table";
+
+    this.root.innerHTML = this.renderCleanSessionShell(room, current, combat, pendingApprovals, syncLabel, statusLabel, statusClass);
+    this.bindDom();
+    return;
 
     this.root.innerHTML = `
       <section class="vtt-shell solaris-shell solaris-screen-tabletop solaris-table-view-${escapeHtml(tableView)}" aria-label="Mesa Virtual Solaris">
@@ -7273,6 +7760,19 @@ class SolarisSessionUI {
         const view = button.dataset.vttTableView || "table";
         this.tableView = ["table", "shop", "sheet", "gm"].includes(view) ? view : "table";
         this.render();
+      });
+    });
+    this.root.querySelectorAll("[data-vtt-session-panel-tab]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const tab = button.dataset.vttSessionPanelTab || "chat";
+        this.sessionPanelTab = ["chat", "characters", "combat", "items"].includes(tab) ? tab : "chat";
+        this.render();
+      });
+    });
+    this.root.querySelectorAll("[data-vtt-scene-wheel-switch]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const sceneId = button.dataset.vttSceneWheelSwitch || "";
+        if (sceneId) this.switchGmScene(sceneId);
       });
     });
     this.root.querySelectorAll("[data-vtt-action]").forEach((button) => {

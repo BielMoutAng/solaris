@@ -4,7 +4,7 @@ const { pathToFileURL } = require("node:url");
 
 app.setAppUserModelId("com.solaris.tabletop");
 
-const TABLETOP_QUERY = "view=launcher&tabletop=1&check=20260624h";
+const TABLETOP_QUERY = "view=launcher&tabletop=1&check=20260629a";
 
 async function startEmbeddedTabletopServer() {
   try {
@@ -37,7 +37,7 @@ async function createWindow() {
     mainWindow.loadURL(`http://localhost:${process.env.PORT || 3000}/?${TABLETOP_QUERY}`);
   } else {
     mainWindow.loadFile(path.join(__dirname, "index.html"), {
-      query: { view: "launcher", tabletop: "1", check: "20260624h" },
+      query: { view: "launcher", tabletop: "1", check: "20260629a" },
     });
   }
 

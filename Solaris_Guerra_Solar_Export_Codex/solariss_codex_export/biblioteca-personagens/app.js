@@ -25,14 +25,14 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260624h";
+} from "./src/domain/solaris-domain-architecture.js?v=20260629a";
 import {
   EQUIPMENT_SCHEMA_VERSION,
-} from "./src/domain/solaris-equipment-rules.js?v=20260624h";
+} from "./src/domain/solaris-equipment-rules.js?v=20260629a";
 import {
   BESTIARY_SCHEMA_VERSION,
   normalizeMonsterEntry,
-} from "./src/domain/solaris-bestiary-rules.js?v=20260624h";
+} from "./src/domain/solaris-bestiary-rules.js?v=20260629a";
 import {
   CHARACTER_CREATION_CACHE_VERSION,
   CHARACTER_CREATION_SCHEMA_VERSION,
@@ -43,11 +43,11 @@ import {
   buildCreationChoicesSnapshot,
   buildProgressionHistoryEntry,
   createInitialAttributeRoll,
-} from "./src/domain/solaris-character-creation.js?v=20260624h";
+} from "./src/domain/solaris-character-creation.js?v=20260629a";
 import {
   createDefaultLoreState,
-} from "./src/domain/solaris-lore-rules.js?v=20260624h";
-import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260624h";
+} from "./src/domain/solaris-lore-rules.js?v=20260629a";
+import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260629a";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");

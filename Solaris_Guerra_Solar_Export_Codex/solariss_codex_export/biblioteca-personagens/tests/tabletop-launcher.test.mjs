@@ -8,7 +8,7 @@ const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
 
 test("Electron VTT abre no launcher versionado", () => {
   const electronMain = read("electron-main-vtt.cjs");
-  assert.match(electronMain, /view=launcher&tabletop=1&check=20260624h/);
+  assert.match(electronMain, /view=launcher&tabletop=1&check=20260629a/);
   assert.match(electronMain, /Solaris Tabletop Alpha/);
 });
 
@@ -22,6 +22,11 @@ test("rotas launcher e home entram no fluxo da mesa virtual", () => {
 test("launcher possui acoes principais e modais essenciais", () => {
   const ui = read("src/session/solaris-session-ui.js");
   [
+    "solaris-launcher-cinematic",
+    "Entrar na Sessao",
+    "Descricao do Mundo",
+    "Detalhes da Sessao",
+    "Configuracao do Mestre",
     "Continuar Campanha",
     "Criar Sala Offline",
     "Criar Sala Multijogador Local",
@@ -39,13 +44,28 @@ test("launcher possui acoes principais e modais essenciais", () => {
   ].forEach((fragment) => assert.ok(ui.includes(fragment), `fragmento ausente: ${fragment}`));
 });
 
+test("sessao limpa substitui a tela antiga por mapa dominante e painel lateral", () => {
+  const ui = read("src/session/solaris-session-ui.js");
+  const styles = read("styles.css");
+  [
+    "vtt-clean-shell",
+    "vtt-clean-tabletop",
+    "vtt-scene-wheel",
+    "vtt-clean-side-panel",
+    "data-vtt-session-panel-tab",
+    "renderCleanItemsPanel",
+    "renderInitiativeModal",
+  ].forEach((fragment) => assert.ok(ui.includes(fragment) || styles.includes(fragment), `fragmento ausente: ${fragment}`));
+});
+
 test("launcher usa cache novo e respeita reducao de movimento", () => {
   const styles = read("styles.css");
   const index = read("index.html");
   const sw = read("sw.js");
   assert.match(styles, /solaris-launcher/);
+  assert.match(styles, /solaris-launcher-cinematic/);
   assert.match(styles, /prefers-reduced-motion/);
   assert.match(styles, /vtt-shell\.vtt-campaign-home\.solaris-shell/);
-  assert.match(index, /20260624h/);
-  assert.match(sw, /20260624h/);
+  assert.match(index, /20260629a/);
+  assert.match(sw, /20260629a/);
 });
