@@ -73,6 +73,7 @@ function toFoundryActor(character = {}) {
       solarisId: character.id,
       identity: clone(character.identity || {}),
       attributes: clone(character.attributes || {}),
+      resources: clone(character.resources || {}),
       modifiers: clone(character.modifiers || {}),
       derived: clone(character.derived || {}),
       skills: clone(character.skills || {}),
@@ -91,13 +92,14 @@ function toFoundryActor(character = {}) {
         sourceSchema: character.schema,
         draftSchema: SOLARIS_FOUNDRY_DRAFT_SCHEMA,
         exportedAt: character.meta?.exportedAt || "",
+        legacy: clone(character.legacy || {}),
       },
     },
   };
 }
 
 export function exportFoundryDraft(character = {}, options = {}) {
-  const solarisCharacter = character?.schema ? character : exportSolarisCharacter(character, options);
+  const solarisCharacter = exportSolarisCharacter(character, options);
   const actor = toFoundryActor(solarisCharacter);
   const exportedAt = options.exportedAt || new Date().toISOString();
   const draft = {
@@ -131,8 +133,15 @@ export function exportFoundryDraft(character = {}, options = {}) {
     flags: {
       solaris: {
         source: "Biblioteca Solaris",
+        schema: solarisCharacter.schema,
         draftSchema: SOLARIS_FOUNDRY_DRAFT_SCHEMA,
         sourceSchema: solarisCharacter.schema,
+        originalCharacter: clone(solarisCharacter),
+        legacy: clone(solarisCharacter.legacy || {}),
+        warnings: [
+          ...(solarisCharacter.validation?.warnings || []),
+          "Draft ainda nao cria documentos Foundry diretamente; use como contrato para o importador.",
+        ],
       },
     },
     mappingNotes: [

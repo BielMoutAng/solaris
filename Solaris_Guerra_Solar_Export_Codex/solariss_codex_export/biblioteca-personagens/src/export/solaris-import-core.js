@@ -11,6 +11,18 @@ function parseJson(value) {
   return typeof value === "string" ? JSON.parse(value) : clone(value);
 }
 
+function parseJsonSafe(value) {
+  try {
+    return { ok: true, value: parseJson(value), errors: [] };
+  } catch (error) {
+    return {
+      ok: false,
+      value: null,
+      errors: [`JSON invalido: ${error.message}`],
+    };
+  }
+}
+
 function upperAttributes(attributes = {}) {
   return {
     FOR: Number(attributes.for ?? attributes.FOR ?? 7),
@@ -24,9 +36,18 @@ function upperAttributes(attributes = {}) {
 
 function legacyEspWarnings(character = {}) {
   const attributes = character.attributes || {};
-  return attributes.esp !== undefined || attributes.ESP !== undefined
+  return attributes.esp !== undefined || attributes.ESP !== undefined || character.legacy?.attributes?.esp !== undefined || character.legacy?.attributes?.ESP !== undefined
     ? ["ESP legado preservado em source/legacy; nao foi convertido automaticamente para MEN."]
     : [];
+}
+
+function readResource(character = {}, key, legacyCurrent, legacyMax) {
+  const resources = character.resources || {};
+  const derived = character.derived || {};
+  return {
+    value: Number(resources[key]?.value ?? derived[key]?.value ?? legacyCurrent ?? 0),
+    max: Number(resources[key]?.max ?? derived[key]?.max ?? legacyMax ?? legacyCurrent ?? 0),
+  };
 }
 
 function legacyInventoryFromSolaris(character = {}) {
@@ -54,6 +75,9 @@ function legacyInventoryFromSolaris(character = {}) {
 }
 
 function legacyCharacterFromSolaris(character = {}) {
+  const pv = readResource(character, "pv", 0, 0);
+  const cosmos = readResource(character, "cosmos", 0, 0);
+  const stress = readResource(character, "stress", 0, 0);
   return {
     ...(character.legacy || {}),
     id: character.id,
@@ -68,9 +92,14 @@ function legacyCharacterFromSolaris(character = {}) {
     experience: Number(character.identity?.xp || 0),
     origin: character.identity?.origin || "",
     attributes: upperAttributes(character.attributes),
-    pvCurrent: Number(character.derived?.pv?.value || 0),
-    cosmosCurrent: Number(character.derived?.cosmos?.value || 0),
-    stress: Number(character.derived?.stress?.value || 0),
+    pvCurrent: pv.value,
+    cosmosCurrent: cosmos.value,
+    stress: stress.value,
+    resources: {
+      pv,
+      cosmos,
+      stress,
+    },
     currency: Number(character.inventory?.credits || 0),
     inventory: legacyInventoryFromSolaris(character),
     knownAbilities: (character.abilities || []).map((ability) => ability.legacy || ability),
@@ -81,14 +110,27 @@ function legacyCharacterFromSolaris(character = {}) {
 }
 
 export function importSolarisCharacter(json) {
-  const parsed = parseJson(json);
+  const parsedResult = parseJsonSafe(json);
+  if (!parsedResult.ok) {
+    return {
+      ok: false,
+      character: null,
+      schema: "invalid-json",
+      source: null,
+      errors: parsedResult.errors,
+      warnings: [],
+    };
+  }
+  const parsed = parsedResult.value;
   if (parsed?.schema === SOLARIS_EXPORT_BUNDLE_SCHEMA) {
-    const character = parsed.payload?.characters?.[0] || parsed.characters?.[0];
+    const character = parsed.payload?.character || parsed.payload?.characters?.[0] || parsed.characters?.[0];
     if (!character) throw new Error("Pacote Solaris nao contem personagens.");
     return {
+      ok: true,
       character: legacyCharacterFromSolaris(character),
       schema: parsed.schema,
       source: parsed,
+      errors: [],
       warnings: [
         "Pacote importado usando o primeiro personagem encontrado.",
         ...legacyEspWarnings(character),
@@ -97,19 +139,24 @@ export function importSolarisCharacter(json) {
   }
   if (parsed?.schema === SOLARIS_CHARACTER_SCHEMA) {
     return {
+      ok: true,
       character: legacyCharacterFromSolaris(parsed),
       schema: parsed.schema,
       source: parsed,
+      errors: [],
       warnings: [
         ...(parsed.validation?.warnings || []),
+        ...(parsed.warnings || []),
         ...legacyEspWarnings(parsed),
       ],
     };
   }
   return {
+    ok: true,
     character: parsed,
     schema: "legacy-biblioteca-solaris-character",
     source: parsed,
+    errors: [],
     warnings: ["Ficha legada importada sem schema Solaris oficial."],
   };
 }

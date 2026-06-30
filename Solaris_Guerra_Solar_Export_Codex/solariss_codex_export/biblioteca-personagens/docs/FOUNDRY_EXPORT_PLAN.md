@@ -15,6 +15,12 @@ Implementado nesta base:
 - Itens draft para armas, armaduras, cubos, consumiveis e habilidades
 - `flags.solaris` preservando o objeto original
 - `system` preenchido com dados Solaris normalizados
+- `system.attributes` recebendo FOR, REF, CON, INT, PRE e MEN
+- `system.resources` recebendo PV, Estresse e Cosmos
+- `system.derived` recebendo CA, movimento, iniciativa e dados base
+- `equipment`, `inventory` e `abilities` virando items draft quando possivel
+- `flags.solaris.originalCharacter` preservando a ficha Solaris normalizada
+- `flags.solaris.legacy` preservando dados legados, incluindo ESP quando existir
 
 Este arquivo ainda nao cria documentos dentro do Foundry. Ele e um contrato para
 o futuro importador.

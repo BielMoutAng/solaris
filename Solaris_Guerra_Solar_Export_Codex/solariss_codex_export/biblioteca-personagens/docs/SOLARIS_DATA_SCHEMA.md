@@ -1,8 +1,9 @@
 # Solaris Data Schema
 
 Os schemas iniciais ficam em `src/schemas/solaris-schemas.js`. Esse arquivo
-contem as constantes oficiais e validadores basicos da Fase 2. A validacao
-profunda vira depois, quando os modelos oficiais estiverem estabilizados.
+contem as constantes oficiais, validadores basicos e validadores por secao da
+ficha. A validacao profunda de regras numericas ainda vira depois, quando os
+modelos oficiais estiverem estabilizados.
 
 ## Schemas atuais
 
@@ -23,6 +24,7 @@ Campos principais:
 - `identity`
 - `attributes`
 - `modifiers`
+- `resources`
 - `derived`
 - `skills`
 - `protectionRolls`
@@ -52,7 +54,40 @@ valor em `legacy` sem apagar. Migradores so devem converter `esp` para `men` se
 uma regra de migracao for confirmada manualmente.
 
 Cosmos nao e atributo base. Cosmos continua existindo como recurso/poder
-separado e deve ficar em `derived`, `resources` ou campo equivalente futuro.
+separado e deve ficar em `resources`.
+
+### `resources`
+
+`resources` e a secao oficial para recursos mutaveis do personagem:
+
+- `pv`
+- `stress`
+- `cosmos`
+
+Cada recurso usa o formato:
+
+```json
+{
+  "value": 0,
+  "max": 0
+}
+```
+
+Durante a transicao, exportacoes podem manter espelhos antigos em
+`derived.pv`, `derived.stress` e `derived.cosmos` para compatibilidade, mas o
+destino oficial e `resources`.
+
+### `derived`
+
+`derived` deve guardar valores calculados ou auxiliares, como:
+
+- `ca`
+- `movement`
+- `baseDice`
+- `initiative`
+
+PV, Estresse e Cosmos nao devem ser considerados valores derivados oficiais;
+eles pertencem a `resources`.
 
 O campo `legacy` preserva dados originais para compatibilidade enquanto o app
 migra para formatos mais estaveis.
@@ -89,5 +124,8 @@ Regras especificas desta fase:
 - `MEN` e atributo oficial.
 - `ESP` e legado/compatibilidade.
 - `Cosmos` e recurso separado.
-- Os validadores de `src/schemas/solaris-schemas.js` sao minimos e nao corrigem
-  dados automaticamente.
+- `resources` e a origem oficial de PV, Estresse e Cosmos.
+- `derived` fica para CA, movimento, iniciativa, dados base e outros valores
+  calculados.
+- Os validadores de `src/schemas/solaris-schemas.js` verificam secoes da ficha,
+  mas nao corrigem dados automaticamente.

@@ -16,6 +16,8 @@ import {
   isNonEmptyString,
   isNumberLike,
   isObject,
+  validateCharacterAttributes,
+  validateCharacterResources,
   validateBasicCampaignShape,
   validateBasicCharacterShape,
   validateBasicCreatureShape,
@@ -28,16 +30,23 @@ const minimalCharacter = {
   schema: SOLARIS_CHARACTER_SCHEMA,
   id: "char-1",
   meta: { saveVersion: CURRENT_SOLARIS_SAVE_VERSION, appVersion: "test" },
-  identity: { name: "", level: 1 },
+  identity: { name: "", race: "", origin: "", profession: "", level: 1, portrait: null },
   attributes: { for: 7, ref: 7, con: 7, int: 7, pre: 7, men: 7 },
-  derived: {},
-  skills: {},
-  combat: {},
-  equipment: {},
-  inventory: {},
-  ammoSystem: {},
+  resources: {
+    pv: { value: 8, max: 8 },
+    stress: { value: 0, max: 7 },
+    cosmos: { value: 0, max: 0 },
+  },
+  derived: { ca: 2, movement: 4, baseDice: "3d6", initiative: 0 },
+  skills: { trained: [], focus: [], professionSkills: [], ignorant: [] },
+  combat: { conditions: [], damageResistances: [], damageWeaknesses: [], activeEffects: [] },
+  equipment: { armor: null, weapons: [], activeWeaponId: null, equippedItems: [], hooks: [], holsters: [], bandoliers: [] },
+  inventory: { looseItems: [], cubes: [], credits: 0, allItems: [], unassigned: [] },
+  ammoSystem: { magazines: [], ammoStacks: [], loadedWeapons: [] },
   abilities: [],
-  notes: {},
+  notes: { background: "", appearance: "", personality: "", campaignNotes: "" },
+  migration: { fromLegacy: false, warnings: [] },
+  legacy: {},
 };
 
 test("schema constants and utility validators are available", () => {
@@ -61,6 +70,22 @@ test("validateBasicCharacterShape accepts MEN and does not require ESP", () => {
   const result = validateBasicCharacterShape(minimalCharacter);
   assert.equal(result.ok, true);
   assert.equal(result.valid, true);
+});
+
+test("validateCharacterAttributes accepts official attributes and warns for ESP", () => {
+  assert.equal(validateCharacterAttributes({ for: 7, ref: 7, con: 7, int: 7, pre: 7, men: 7 }).ok, true);
+  const legacy = validateCharacterAttributes({ for: 7, ref: 7, con: 7, int: 7, pre: 7, men: 7, esp: 12 });
+  assert.equal(legacy.ok, true);
+  assert.ok(legacy.warnings.some((warning) => warning.includes("esp")));
+});
+
+test("validateCharacterResources accepts PV, Estresse and Cosmos", () => {
+  const result = validateCharacterResources({
+    pv: { value: 8, max: 10 },
+    stress: { value: 1, max: 7 },
+    cosmos: { value: 2, max: 5 },
+  });
+  assert.equal(result.ok, true);
 });
 
 test("validateBasicCharacterShape rejects wrong schema", () => {

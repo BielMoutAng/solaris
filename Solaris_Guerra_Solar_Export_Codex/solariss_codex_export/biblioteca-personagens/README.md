@@ -73,5 +73,5 @@ node --check src/domain/solaris-lore-rules.js
 
 ## Versao
 
-Versao atual: `0.6.0-alpha.28`
-Cache web atual: `20260630e`
+Versao atual: `0.6.0-alpha.29`
+Cache web atual: `20260630f`

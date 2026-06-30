@@ -1,6 +1,7 @@
 import {
   SOLARIS_CHARACTER_SCHEMA,
   SOLARIS_EXPORT_BUNDLE_SCHEMA,
+  SOLARIS_EXPORT_BUNDLE_TYPES,
   SOLARIS_ITEM_SCHEMA,
   SOLARIS_SCHEMA_SAVE_VERSION,
   validateBasicCharacterShape,
@@ -8,7 +9,7 @@ import {
   validateBasicItemShape,
 } from "../schemas/solaris-schemas.js";
 
-export const SOLARIS_EXPORT_APP_VERSION = "0.6.0-alpha.28";
+export const SOLARIS_EXPORT_APP_VERSION = "0.6.0-alpha.29";
 
 const clone = (value) => (typeof structuredClone === "function"
   ? structuredClone(value)
@@ -105,25 +106,36 @@ function hasLegacyEsp(character = {}) {
   return attrs.esp !== undefined || attrs.ESP !== undefined;
 }
 
-function normalizeDerived(character = {}) {
+function normalizeResources(character = {}) {
+  const resourceSource = character.resources || {};
   const derived = character.exportContext?.derived || character.derived || {};
   return {
     pv: {
-      value: numberValue(firstValue(character.pvCurrent, derived.pv?.value), 0),
-      max: numberValue(firstValue(derived.pvMax, character.pvMax, derived.pv?.max, character.pvCurrent), 0),
+      value: numberValue(firstValue(resourceSource.pv?.value, character.pvCurrent, derived.pv?.value), 0),
+      max: numberValue(firstValue(resourceSource.pv?.max, derived.pvMax, character.pvMax, derived.pv?.max, character.pvCurrent), 0),
     },
+    stress: {
+      value: numberValue(firstValue(resourceSource.stress?.value, character.stress, derived.stress?.value), 0),
+      max: numberValue(firstValue(resourceSource.stress?.max, derived.stressMax, character.stressMax, derived.stress?.max), 6),
+    },
+    cosmos: {
+      value: numberValue(firstValue(resourceSource.cosmos?.value, character.cosmosCurrent, derived.cosmos?.value), 0),
+      max: numberValue(firstValue(resourceSource.cosmos?.max, derived.cosmosMax, character.cosmosMax, derived.cosmos?.max), 0),
+    },
+  };
+}
+
+function normalizeDerived(character = {}, resources = normalizeResources(character)) {
+  const derived = character.exportContext?.derived || character.derived || {};
+  return {
     ca: numberValue(firstValue(derived.ca, character.ca), 0),
     movement: numberValue(firstValue(derived.move, derived.movement, character.movement), 0),
     baseDice: textValue(firstValue(derived.baseDice, character.baseDice), "3d6"),
-    stress: {
-      value: numberValue(firstValue(character.stress, derived.stress?.value), 0),
-      max: numberValue(firstValue(derived.stressMax, character.stressMax, derived.stress?.max), 6),
-    },
-    cosmos: {
-      value: numberValue(firstValue(character.cosmosCurrent, derived.cosmos?.value), 0),
-      max: numberValue(firstValue(derived.cosmosMax, character.cosmosMax, derived.cosmos?.max), 0),
-    },
+    initiative: numberValue(firstValue(derived.initiative, character.initiative, character.exportContext?.initiative), 0),
     cubeSlots: numberValue(firstValue(derived.cubeSlots, character.cubeSlots, character.loadUsed), 0),
+    pv: clone(resources.pv),
+    stress: clone(resources.stress),
+    cosmos: clone(resources.cosmos),
   };
 }
 
@@ -138,13 +150,16 @@ function normalizeSkills(character = {}) {
 }
 
 function normalizeInventory(character = {}) {
-  const entries = arrayOf(character.inventory).map((entry) => normalizeSolarisItemForExport(entry));
+  const rawEntries = Array.isArray(character.inventory)
+    ? character.inventory
+    : arrayOf(character.inventory?.allItems || character.inventory?.looseItems);
+  const entries = rawEntries.map((entry) => normalizeSolarisItemForExport(entry));
   return {
     looseItems: entries.filter((entry) => !entry.storage.cubeUid && !entry.storage.supportSlot && !entry.equip.equipped),
     unassigned: entries.filter((entry) => entry.storage.location?.kind === "unassigned"),
     allItems: entries,
     cubes: entries.filter((entry) => entry.type === "cube"),
-    credits: numberValue(firstValue(character.currency, character.credits), 0),
+    credits: numberValue(firstValue(character.inventory?.credits, character.currency, character.credits), 0),
   };
 }
 
@@ -163,69 +178,86 @@ function normalizeEquipment(character = {}, inventory) {
   };
 }
 
+function normalizeAmmoSystem(character = {}) {
+  const source = firstValue(character.ammoSystem, character.domainCharacter?.ammoSystem, {});
+  return {
+    ...clone(source),
+    magazines: arrayOf(source?.magazines),
+    ammoStacks: arrayOf(source?.ammoStacks),
+    loadedWeapons: arrayOf(source?.loadedWeapons),
+  };
+}
+
 export function exportSolarisCharacter(character = {}, options = {}) {
   const source = isObject(character) ? character : {};
   const now = options.exportedAt || new Date().toISOString();
+  const resources = normalizeResources(source);
   const inventory = normalizeInventory(source);
   const equipment = normalizeEquipment(source, inventory);
+  const migrationWarnings = [
+    ...arrayOf(firstValue(source.migration?.warnings, [])),
+    ...arrayOf(firstValue(source.needsReviewFlags, [])),
+    ...(hasLegacyEsp(source) ? ["legacy-esp-preserved-without-men-migration"] : []),
+  ];
   const exported = {
     schema: SOLARIS_CHARACTER_SCHEMA,
     id: makeId("char", source),
     meta: {
-      appVersion: textValue(firstValue(options.appVersion, source.createdWithVersion, source.exportContext?.appVersion), SOLARIS_EXPORT_APP_VERSION),
+      appVersion: textValue(firstValue(options.appVersion, source.meta?.appVersion, source.createdWithVersion, source.exportContext?.appVersion), SOLARIS_EXPORT_APP_VERSION),
       saveVersion: SOLARIS_SCHEMA_SAVE_VERSION,
-      createdAt: textValue(source.createdAt, ""),
-      updatedAt: textValue(source.updatedAt, ""),
+      createdAt: textValue(firstValue(source.meta?.createdAt, source.createdAt), ""),
+      updatedAt: textValue(firstValue(source.meta?.updatedAt, source.updatedAt), ""),
       exportedAt: now,
-      legacySchemaVersion: source.characterSchemaVersion || null,
+      legacySchemaVersion: source.characterSchemaVersion || source.meta?.legacySchemaVersion || null,
     },
     identity: {
-      name: textValue(source.name, "Personagem Solaris"),
-      player: textValue(source.player, ""),
-      race: textValue(source.race, "humanis"),
-      raceName: textValue(source.exportContext?.raceName, ""),
-      origin: textValue(source.origin, ""),
-      profession: textValue(source.profession, ""),
-      professionName: textValue(source.exportContext?.professionName, ""),
-      level: numberValue(source.level, 1),
-      xp: numberValue(firstValue(source.experience, source.xp), 0),
-      portrait: source.photoDataUrl || null,
+      name: textValue(firstValue(source.identity?.name, source.name), "Personagem Solaris"),
+      player: textValue(firstValue(source.identity?.player, source.player), ""),
+      race: textValue(firstValue(source.identity?.race, source.race), "humanis"),
+      raceName: textValue(firstValue(source.identity?.raceName, source.exportContext?.raceName), ""),
+      origin: textValue(firstValue(source.identity?.origin, source.origin), ""),
+      profession: textValue(firstValue(source.identity?.profession, source.profession), ""),
+      professionName: textValue(firstValue(source.identity?.professionName, source.exportContext?.professionName), ""),
+      level: numberValue(firstValue(source.identity?.level, source.level), 1),
+      xp: numberValue(firstValue(source.identity?.xp, source.experience, source.xp), 0),
+      portrait: firstValue(source.identity?.portrait, source.photoDataUrl, null),
     },
     attributes: normalizeAttributes(source),
     modifiers: clone(firstValue(source.modifiers, source.exportContext?.modifiers, {})),
-    derived: normalizeDerived(source),
+    resources,
+    derived: normalizeDerived(source, resources),
     skills: normalizeSkills(source),
     protectionRolls: clone(firstValue(source.protectionRolls, source.saves, {})),
     combat: {
-      initiative: numberValue(firstValue(source.initiative, source.exportContext?.initiative), 0),
       conditions: clone(firstValue(source.conditions, [])),
       damageResistances: clone(firstValue(source.damageResistances, [])),
       damageWeaknesses: clone(firstValue(source.damageWeaknesses, [])),
+      activeEffects: clone(firstValue(source.activeEffects, source.combat?.activeEffects, [])),
     },
     equipment,
     inventory,
-    ammoSystem: clone(firstValue(source.ammoSystem, source.domainCharacter?.ammoSystem, {})),
-    abilities: arrayOf(source.knownAbilities).map((ability) => normalizeSolarisItemForExport({
+    ammoSystem: normalizeAmmoSystem(source),
+    abilities: arrayOf(firstValue(source.knownAbilities, source.abilities, [])).map((ability) => normalizeSolarisItemForExport({
       ...ability,
       type: ability.source === "Cosmos" ? "ability" : ability.type || "ability",
     })),
     notes: {
-      background: textValue(source.background, ""),
-      appearance: textValue(source.appearance, ""),
-      personality: textValue(source.personality, ""),
-      campaignNotes: textValue(source.notes, ""),
-      abilities: textValue(source.abilities, ""),
+      background: textValue(firstValue(source.notes?.background, source.background), ""),
+      appearance: textValue(firstValue(source.notes?.appearance, source.appearance), ""),
+      personality: textValue(firstValue(source.notes?.personality, source.personality), ""),
+      campaignNotes: textValue(firstValue(source.notes?.campaignNotes, typeof source.notes === "string" ? source.notes : ""), ""),
+      abilities: textValue(firstValue(source.notes?.abilities, typeof source.abilities === "string" ? source.abilities : ""), ""),
     },
     migration: {
+      fromLegacy: source.schema !== SOLARIS_CHARACTER_SCHEMA,
+      warnings: migrationWarnings,
       source: "biblioteca-solaris-legacy-character",
-      needsReviewFlags: [
-        ...arrayOf(firstValue(source.needsReviewFlags, [])),
-        ...(hasLegacyEsp(source) ? ["legacy-esp-preserved-without-men-migration"] : []),
-      ],
+      needsReviewFlags: migrationWarnings,
     },
     legacy: options.includeLegacy === false ? null : clone(source),
   };
-  return { ...exported, validation: validateBasicCharacterShape(exported) };
+  const validation = validateBasicCharacterShape(exported);
+  return { ...exported, validation, warnings: validation.warnings };
 }
 
 export function validateSolarisCharacter(character = {}) {
@@ -239,7 +271,10 @@ export function createSolarisExportBundle(data = {}, options = {}) {
   const characters = sourceCharacters.map((character) => exportSolarisCharacter(character, { ...options, exportedAt: now }));
   const items = arrayOf(data.items).map((item) => normalizeSolarisItemForExport(item));
   const creatures = arrayOf(data.creatures).map((creature) => clone(creature));
+  const campaigns = arrayOf(data.campaigns || (data.campaign ? [data.campaign] : [])).map((campaign) => clone(campaign));
+  const bundleType = textValue(firstValue(options.type, data.type, sourceCharacters.length === 1 && !items.length && !creatures.length && !campaigns.length ? "character" : "mixed"), "unknown");
   const warnings = [
+    ...(!SOLARIS_EXPORT_BUNDLE_TYPES.includes(bundleType) ? [`Tipo de bundle nao catalogado no schema v1: ${bundleType}.`] : []),
     ...characters.flatMap((character) => character.validation?.warnings || []),
     ...items.flatMap((item) => item.validation?.warnings || []),
   ];
@@ -249,13 +284,19 @@ export function createSolarisExportBundle(data = {}, options = {}) {
     meta: {
       appVersion: textValue(options.appVersion, SOLARIS_EXPORT_APP_VERSION),
       saveVersion: SOLARIS_SCHEMA_SAVE_VERSION,
+      createdAt: textValue(firstValue(options.createdAt, data.createdAt), ""),
       exportedAt: now,
     },
-    type: textValue(options.type, "library-export"),
+    type: bundleType,
     payload: {
+      character: characters[0] || null,
+      item: items[0] || null,
+      creature: creatures[0] || null,
+      campaign: campaigns[0] || null,
       characters,
       items,
       creatures,
+      campaigns,
       notes: textValue(data.notes, ""),
     },
     saveVersion: SOLARIS_SCHEMA_SAVE_VERSION,
@@ -264,6 +305,7 @@ export function createSolarisExportBundle(data = {}, options = {}) {
     characters,
     items,
     creatures,
+    campaigns,
     notes: textValue(data.notes, ""),
     warnings,
     legacy: options.includeLegacy === false ? null : clone(data),

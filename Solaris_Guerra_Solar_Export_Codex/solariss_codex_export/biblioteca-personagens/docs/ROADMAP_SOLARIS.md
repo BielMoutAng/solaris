@@ -17,10 +17,14 @@
 
 ## Fase 3 - Exportacao/importacao base
 
+Status: iniciada em `0.6.0-alpha.29`.
+
 - Exportar ficha para `solaris-character-v1`.
 - Importar `solaris-character-v1` e fichas legadas.
 - Criar `solaris-export-bundle-v1`.
 - Criar `solaris-foundry-draft-v1`.
+- Estabilizar `resources` como secao oficial para PV, Estresse e Cosmos.
+- Priorizar exportacao/importacao e validacao antes de novas telas.
 
 ## Fases seguintes
 

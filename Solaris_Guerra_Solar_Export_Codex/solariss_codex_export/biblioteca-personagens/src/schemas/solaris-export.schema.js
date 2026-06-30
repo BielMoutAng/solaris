@@ -1,5 +1,6 @@
 export {
   SOLARIS_EXPORT_BUNDLE_SCHEMA,
+  SOLARIS_EXPORT_BUNDLE_TYPES,
   SOLARIS_FOUNDRY_DRAFT_SCHEMA,
   SOLARIS_SCHEMA_SAVE_VERSION,
   validateBasicExportBundleShape,
@@ -8,11 +9,20 @@ export {
 
 export const SOLARIS_EXPORT_BUNDLE_FIELDS = Object.freeze([
   "schema",
-  "saveVersion",
-  "appVersion",
-  "exportedAt",
-  "characters",
+  "id",
+  "meta",
+  "type",
+  "payload",
+  "warnings",
+  "legacy",
+]);
+
+export const SOLARIS_FOUNDRY_DRAFT_FIELDS = Object.freeze([
+  "schema",
+  "id",
+  "meta",
+  "actor",
   "items",
-  "creatures",
-  "notes",
+  "flags",
+  "legacy",
 ]);

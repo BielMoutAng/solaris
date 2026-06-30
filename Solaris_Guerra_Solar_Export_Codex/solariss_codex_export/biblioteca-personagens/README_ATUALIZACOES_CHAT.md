@@ -13,11 +13,11 @@ sem virar o centro do projeto.
 
 ## Versao Atual
 
-- App: `0.6.0-alpha.28`
-- Cache web/PWA: `20260630e`
+- App: `0.6.0-alpha.29`
+- Cache web/PWA: `20260630f`
 - Branch enviada ao GitHub: `main`
-- Ultima tag enviada: `v0.6.0-alpha.28`
-- Ultimo commit relevante: `4851dcc Oficializa MEN nos schemas Solaris`
+- Ultima tag enviada: `v0.6.0-alpha.29`
+- Ultimo commit relevante: Fase 3 de exportacao/importacao base refinada
 
 ## Decisao Oficial de Atributos
 
@@ -41,6 +41,22 @@ Cosmos continua existindo como recurso/poder separado, mas nao como atributo
 base.
 
 ## O Que Foi Atualizado
+
+### Fase 3 - Exportacao/importacao Base Refinada
+
+O formato `solaris-character-v1` foi refinado para preparar uma transicao mais
+segura entre ficha atual, JSON oficial Solaris e Foundry Draft.
+
+Mudancas centrais:
+
+- `resources` agora e a secao oficial para PV, Estresse e Cosmos.
+- `derived` fica para valores calculados como CA, movimento, iniciativa e dados base.
+- `derived.pv`, `derived.stress` e `derived.cosmos` seguem como espelho temporario de compatibilidade.
+- importacao aceita string JSON ou objeto.
+- JSON invalido retorna erro estruturado.
+- bundles aceitam tipos `character`, `item`, `creature`, `campaign`, `mixed`, `backup` e `unknown`.
+- Foundry Draft mapeia `attributes`, `resources` e `derived` para `system`.
+- Foundry Draft preserva a ficha original em `flags.solaris.originalCharacter`.
 
 ### Documentacao
 
