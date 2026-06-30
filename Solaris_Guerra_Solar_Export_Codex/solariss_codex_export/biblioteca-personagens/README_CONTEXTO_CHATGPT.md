@@ -31,6 +31,10 @@ Arquivos principais:
 - `src/domain/solaris-combat-rules.js`
 - `src/domain/solaris-gm-rules.js`
 - `src/domain/solaris-lore-rules.js`
+- `src/schemas/solaris-schemas.js`
+- `src/export/solaris-export-core.js`
+- `src/export/solaris-import-core.js`
+- `src/export/solaris-foundry-export.js`
 - `electron-main.cjs`
 - `electron-builder.ficha.cjs`
 
@@ -59,8 +63,8 @@ node --check src/domain/solaris-lore-rules.js
 
 Versao atual:
 
-- App: `0.6.0-alpha.26`
-- Cache web: `20260630b`
+- App: `0.6.0-alpha.27`
+- Cache web: `20260630d`
 
 Regras de manutencao:
 
@@ -71,3 +75,5 @@ Regras de manutencao:
   cliques quando a tela oferecer detalhamento.
 - Ao publicar, atualizar cache em `index.html`, `app.js`, `sw.js` e nos imports
   de dominio quando necessario.
+- A exportacao oficial agora comeca por `solaris-character-v1`; o Foundry usa
+  `solaris-foundry-draft-v1` como rascunho independente.

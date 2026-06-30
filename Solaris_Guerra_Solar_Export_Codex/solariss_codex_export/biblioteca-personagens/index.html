@@ -12,7 +12,7 @@
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./assets/icons/solaris-icon.svg" />
     <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
-    <link rel="stylesheet" href="./styles.css?v=20260630b" />
+    <link rel="stylesheet" href="./styles.css?v=20260630d" />
   </head>
   <body>
     <div class="app-shell">
@@ -304,6 +304,7 @@
               <button class="ghost-button" id="importButton" type="button"><span data-icon="upload"></span>Importar ficha</button>
               <input id="importInput" type="file" accept="application/json" hidden />
               <button class="ghost-button" id="exportButton" type="button"><span data-icon="download"></span>Exportar ficha atual</button>
+              <button class="ghost-button" id="exportFoundryButton" type="button"><span data-icon="download"></span>Foundry Draft</button>
             </div>
             <section class="saved-panel character-manager-library" aria-label="Personagens salvos">
               <div class="panel-heading">
@@ -1007,9 +1008,9 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="./official-books-data.js?v=20260630b"></script>
-    <script src="./official-book5-catalog.js?v=20260630b"></script>
-    <script src="./official-rulebook-compendium.js?v=20260630b"></script>
+    <script src="./official-books-data.js?v=20260630d"></script>
+    <script src="./official-book5-catalog.js?v=20260630d"></script>
+    <script src="./official-rulebook-compendium.js?v=20260630d"></script>
     <script type="importmap">
       {
         "imports": {
@@ -1019,6 +1020,6 @@
       }
     </script>
     <script src="./HumanisVitalHUD.js?v=20260606e"></script>
-    <script type="module" src="./app.js?v=20260630b"></script>
+    <script type="module" src="./app.js?v=20260630d"></script>
   </body>
 </html>

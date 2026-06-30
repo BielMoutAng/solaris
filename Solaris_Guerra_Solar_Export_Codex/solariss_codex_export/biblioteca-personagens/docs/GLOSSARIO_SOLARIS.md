@@ -1,0 +1,30 @@
+# Glossario Solaris
+
+- Solaris: universo/cenario.
+- Guerra Solar: sistema de RPG.
+- Biblioteca Solaris: app principal e fonte oficial dos dados.
+- Ficha ativa: personagem atualmente aberto.
+- Personagem: ficha de jogador.
+- Criatura: entidade do bestiario.
+- NPC: personagem nao jogador.
+- Actor: termo usado apenas no contexto Foundry.
+- Item: objeto manipulavel.
+- Equipamento: item usavel.
+- Arma: item de ataque.
+- Armadura: item defensivo.
+- Cubo: recipiente fisico de armazenamento.
+- Gancho: suporte externo.
+- Coldre: suporte para arma/item especifico.
+- Bandoleira: suporte de acesso rapido.
+- Carregador: recipiente de municao acoplavel a arma.
+- Municao: recurso consumido por arma.
+- Cartucho: municao inserida diretamente em arma sem carregador.
+- HUD vital: painel de monitoramento do personagem.
+- Cosmos: recurso/poder cosmico.
+- Estresse: recurso de tensao fisica/mental.
+- JPF: Jogada de Protecao Fisica.
+- PV: Pontos de Vida.
+- CA: Classe de Armadura.
+- MOV: Movimento.
+- FOR, REF, CON, MEN, PRE, INT: atributos usados hoje na Biblioteca.
+- Foundry Draft: pacote intermediario para importador Foundry futuro.

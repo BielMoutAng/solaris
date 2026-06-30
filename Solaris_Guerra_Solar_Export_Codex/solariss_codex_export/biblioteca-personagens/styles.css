@@ -2270,6 +2270,17 @@ textarea:focus {
   padding: 0 10px;
 }
 
+.crack-stepper {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.crack-stepper .mini-button {
+  min-height: 34px;
+  justify-content: center;
+}
+
 .armor-integrity-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(170px, 220px);

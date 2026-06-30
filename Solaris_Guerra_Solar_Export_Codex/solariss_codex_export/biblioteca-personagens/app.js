@@ -22,14 +22,14 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260630b";
+} from "./src/domain/solaris-domain-architecture.js?v=20260630d";
 import {
   EQUIPMENT_SCHEMA_VERSION,
-} from "./src/domain/solaris-equipment-rules.js?v=20260630b";
+} from "./src/domain/solaris-equipment-rules.js?v=20260630d";
 import {
   BESTIARY_SCHEMA_VERSION,
   normalizeMonsterEntry,
-} from "./src/domain/solaris-bestiary-rules.js?v=20260630b";
+} from "./src/domain/solaris-bestiary-rules.js?v=20260630d";
 import {
   CHARACTER_CREATION_CACHE_VERSION,
   CHARACTER_CREATION_SCHEMA_VERSION,
@@ -40,10 +40,19 @@ import {
   buildCreationChoicesSnapshot,
   buildProgressionHistoryEntry,
   createInitialAttributeRoll,
-} from "./src/domain/solaris-character-creation.js?v=20260630b";
+} from "./src/domain/solaris-character-creation.js?v=20260630d";
 import {
   createDefaultLoreState,
-} from "./src/domain/solaris-lore-rules.js?v=20260630b";
+} from "./src/domain/solaris-lore-rules.js?v=20260630d";
+import {
+  exportSolarisCharacter,
+} from "./src/export/solaris-export-core.js";
+import {
+  importSolarisCharacter,
+} from "./src/export/solaris-import-core.js";
+import {
+  exportFoundryDraft,
+} from "./src/export/solaris-foundry-export.js";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -1895,6 +1904,7 @@ function bindEvents() {
   document.querySelector("#saveButton").addEventListener("click", saveCurrent);
   document.querySelector("#newCharacterSide").addEventListener("click", newCharacter);
   document.querySelector("#exportButton").addEventListener("click", exportCurrent);
+  document.querySelector("#exportFoundryButton")?.addEventListener("click", exportFoundryCurrent);
   document.querySelector("#printButton").addEventListener("click", () => window.print());
   document.querySelector("#importButton").addEventListener("click", () => document.querySelector("#importInput").click());
   document.querySelector("#importInput").addEventListener("change", importCharacter);
@@ -2143,6 +2153,11 @@ function bindEvents() {
       const equipmentRoll = event.target.closest("[data-equipment-roll]");
       if (equipmentRoll) {
         handleEquipmentRoll(equipmentRoll.dataset.equipmentRoll);
+        return;
+      }
+      const crackAdjust = event.target.closest("[data-crack-adjust]");
+      if (crackAdjust) {
+        adjustEquippedCrack(crackAdjust.dataset.crackAdjust, numberValue(crackAdjust.dataset.crackDelta, 0));
         return;
       }
       const action = event.target.closest("[data-inventory-action]");
@@ -2702,7 +2717,6 @@ function renderSummary() {
   renderLauncherSummary({ race, profession, derived, diceProfile });
   renderStressHud(diceProfile, derived);
   renderCharacterPages(derived);
-  refreshMesaVirtual();
 }
 
 function renderLauncherSummary(context = {}) {
@@ -3293,6 +3307,10 @@ function renderEquipmentPage(derived) {
       <label class="crack-control">
         Rachaduras da arma equipada
         <input id="crackLevelInput" type="number" min="0" max="${ITEM_CRACK_MAX}" step="1" value="${itemCrackLevel(equippedWeaponEntry)}" ${equippedWeaponEntry ? "" : "disabled"} />
+        <span class="crack-stepper" aria-label="Ajustar rachaduras da arma equipada">
+          <button class="mini-button" type="button" data-crack-adjust="weapon" data-crack-delta="-1" ${equippedWeaponEntry ? "" : "disabled"}>-1</button>
+          <button class="mini-button" type="button" data-crack-adjust="weapon" data-crack-delta="1" ${equippedWeaponEntry ? "" : "disabled"}>+1</button>
+        </span>
       </label>
     </section>
     <section class="inventory-panel inventory-panel-wide armor-integrity-panel">
@@ -3350,6 +3368,10 @@ function renderArmorIntegrityPanel(equippedArmor, equippedArmorEntry) {
       <label class="crack-control armor-crack-control">
         Rachaduras da armadura equipada
         <input id="armorCrackLevelInput" type="number" min="0" max="${ITEM_CRACK_MAX}" step="1" value="${crack}" ${equippedArmorEntry ? "" : "disabled"} />
+        <span class="crack-stepper" aria-label="Ajustar rachaduras da armadura equipada">
+          <button class="mini-button" type="button" data-crack-adjust="armor" data-crack-delta="-1" ${equippedArmorEntry ? "" : "disabled"}>-1</button>
+          <button class="mini-button" type="button" data-crack-adjust="armor" data-crack-delta="1" ${equippedArmorEntry ? "" : "disabled"}>+1</button>
+        </span>
       </label>
     </div>
   `;
@@ -6862,25 +6884,57 @@ function handleSavedAction(action, id) {
   }
 }
 
-function exportCurrent() {
-  readForm();
-  syncDomainSnapshotFromLegacy();
-  syncCreationChoices("export");
-  const data = JSON.stringify(state.current, null, 2);
-  const blob = new Blob([data], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  const safeName = (state.current.name || "personagem-solaris")
+function safeFileName(value, fallback = "personagem-solaris") {
+  return (value || fallback)
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/gi, "-")
     .replace(/(^-|-$)/g, "")
-    .toLowerCase();
+    .toLowerCase() || fallback;
+}
+
+function downloadJsonFile(payload, filename) {
+  const data = JSON.stringify(payload, null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
   link.href = url;
-  link.download = `${safeName || "personagem-solaris"}.json`;
+  link.download = filename;
   link.click();
   URL.revokeObjectURL(url);
-  showToast("Ficha exportada em JSON.");
+}
+
+function currentExportSource() {
+  const race = findRace(state.current.race);
+  const profession = findProfession(state.current.profession);
+  const derived = derivedStats(totalAttributes(), race, profession);
+  return {
+    ...state.current,
+    exportContext: {
+      appVersion: SOLARIS_BIBLIOTECA_VERSION,
+      raceName: race.name,
+      professionName: profession.name,
+      derived,
+    },
+  };
+}
+
+function exportCurrent() {
+  readForm();
+  syncDomainSnapshotFromLegacy();
+  syncCreationChoices("export");
+  const payload = exportSolarisCharacter(currentExportSource());
+  downloadJsonFile(payload, `${safeFileName(state.current.name)}.solaris-character-v1.json`);
+  showToast("Ficha exportada em Solaris JSON.");
+}
+
+function exportFoundryCurrent() {
+  readForm();
+  syncDomainSnapshotFromLegacy();
+  syncCreationChoices("foundry-export");
+  const payload = exportFoundryDraft(currentExportSource());
+  downloadJsonFile(payload, `${safeFileName(state.current.name)}.solaris-foundry-draft-v1.json`);
+  showToast("Rascunho Foundry exportado.");
 }
 
 async function importCharacter(event) {
@@ -6888,7 +6942,8 @@ async function importCharacter(event) {
   if (!file) return;
 
   try {
-    const data = JSON.parse(await file.text());
+    const imported = importSolarisCharacter(await file.text());
+    const data = imported.character;
     state.current = normalizeCharacter({
       ...data,
       id: data.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
@@ -6898,7 +6953,7 @@ async function importCharacter(event) {
     renderForm();
     renderSavedList();
     switchView("personagens");
-    showToast("Ficha importada.");
+    showToast(imported.warnings?.length ? `Ficha importada. ${imported.warnings[0]}` : "Ficha importada.");
   } catch (error) {
     showToast("Arquivo JSON inválido.");
   } finally {
@@ -9482,6 +9537,17 @@ function getEquippedInventoryEntry(category) {
 
 function itemCrackLevel(entry) {
   return clamp(numberValue(entry?.crackLevel, 0), 0, ITEM_CRACK_MAX);
+}
+
+function adjustEquippedCrack(category, delta = 0) {
+  const entry = getEquippedInventoryEntry(category);
+  if (!entry) {
+    showToast(category === "armor" ? "Nenhuma armadura equipada." : "Nenhuma arma equipada.");
+    return;
+  }
+  entry.crackLevel = clamp(itemCrackLevel(entry) + delta, 0, ITEM_CRACK_MAX);
+  renderSummary();
+  showToast(`${category === "armor" ? "Armadura" : "Arma"}: rachaduras ${entry.crackLevel}/${ITEM_CRACK_MAX}.`);
 }
 
 function getMarketItemByInventoryUid(uid) {
