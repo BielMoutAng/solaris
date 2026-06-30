@@ -21,7 +21,7 @@ export const CURRENT_OFFICIAL_BOOKS = {
     title: "Guia do Mestre",
     fileName: "Livro_2_Guia_do_Mestre_rifles_corrigido.docx",
     governs: ["escudo", "encontros", "missoes", "viagem", "recompensas", "faccao", "hacking"],
-    appFiles: ["official-rulebook-compendium.js", "src/session/solaris-session-domain.js"],
+    appFiles: ["official-rulebook-compendium.js", "src/domain/solaris-gm-rules.js", "app.js"],
     status: "current-source-needs-review"
   },
   book3: {

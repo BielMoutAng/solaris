@@ -7,11 +7,6 @@ import {
   projectRootFromHere,
 } from "../scripts/audit-official-sources.mjs";
 import {
-  GAME_EVENT_TYPES,
-  GameRoom,
-  SESSION_ROLES,
-} from "../src/session/solaris-session-domain.js";
-import {
   BESTIARY_SCHEMA_VERSION,
   MONSTER_TIERS,
   applyMonsterTemplate,
@@ -28,7 +23,6 @@ import {
   createMinionVersion,
   createMonsterState,
   createMonsterTokenDefaults,
-  createSessionMonsterFromBestiary,
   createSwarmVersion,
   estimateEncounterThreat,
   estimateMonsterThreat,
@@ -375,23 +369,7 @@ test("encontro estima ameaca agregada", () => {
   assert.ok(result.rewardSuggestion > 0);
 });
 
-test("sessao aceita campos novos de monstro sem quebrar", () => {
-  const room = new GameRoom({ id: "room", players: [{ id: "gm", name: "GM", role: SESSION_ROLES.GM }] });
-  const sessionMonster = createSessionMonsterFromBestiary(sampleMonster(), { id: "monster-1" });
-  room.dispatch(GAME_EVENT_TYPES.MONSTER_CREATE, { monster: sessionMonster }, "gm");
-  assert.equal(room.monsters[0].bestiarySchemaVersion, BESTIARY_SCHEMA_VERSION);
-  assert.ok(room.monsters[0].snapshot.monsterCombatProfile);
-});
 
-test("campanhas antigas recebem defaults sem quebrar", () => {
-  const room = new GameRoom({
-    id: "old-room",
-    players: [{ id: "gm", name: "GM", role: SESSION_ROLES.GM }],
-    monsters: [{ id: "old-monster", name: "Antigo", snapshot: { name: "Antigo", pv: 6, ca: 10, movement: "6 m", attacks: "Mordida: 1d4 perfurante" } }],
-  });
-  assert.equal(room.monsters[0].bestiarySchemaVersion, BESTIARY_SCHEMA_VERSION);
-  assert.ok(room.monsters[0].snapshot.attacks.length >= 1);
-});
 
 test("computeMonsterDefenses e iniciativa expõem perfis auxiliares", () => {
   assert.equal(computeMonsterDefenses(sampleMonster()).ca, 15);

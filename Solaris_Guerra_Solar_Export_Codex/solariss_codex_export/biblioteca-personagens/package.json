@@ -1,6 +1,6 @@
 {
   "name": "solaris-biblioteca",
-  "version": "0.6.0-alpha.24",
+  "version": "0.6.0-alpha.25",
   "description": "Biblioteca local de personagens para Solaris Guerra Solar.",
   "author": "Solaris",
   "main": "electron-main.cjs",
@@ -9,23 +9,18 @@
   "scripts": {
     "start": "npm run start:ficha",
     "start:ficha": "electron .",
-    "start:vtt": "electron electron-main-vtt.cjs",
-    "server": "npm run server:vtt",
-    "server:vtt": "node server/solaris-server.js",
+    "server": "npm run start:ficha",
     "test": "node --test tests",
     "pack": "npm run pack:ficha",
     "pack:ficha": "electron-builder --dir --config electron-builder.ficha.cjs",
-    "pack:vtt": "electron-builder --dir --config electron-builder.vtt.cjs",
     "dist": "npm run dist:ficha",
-    "dist:ficha": "electron-builder --win nsis portable --config electron-builder.ficha.cjs",
-    "dist:vtt": "electron-builder --win nsis portable --config electron-builder.vtt.cjs"
+    "dist:ficha": "electron-builder --win nsis portable --config electron-builder.ficha.cjs"
   },
   "devDependencies": {
     "electron": "^31.7.0",
     "electron-builder": "^24.13.3"
   },
   "dependencies": {
-    "three": "^0.184.0",
-    "ws": "^8.21.0"
+    "three": "^0.184.0"
   }
 }

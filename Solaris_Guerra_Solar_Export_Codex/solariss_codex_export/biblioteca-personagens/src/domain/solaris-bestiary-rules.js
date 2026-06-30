@@ -555,7 +555,7 @@ export function createMonsterState(monster = {}, options = {}) {
   const normalized = normalizeMonsterEntry(monster);
   return {
     ...normalized,
-    id: String(options.id || monster.instanceId || monster.sessionMonsterId || normalized.id),
+    id: String(options.id || monster.instanceId || monster.playableMonsterId || normalized.id),
     definitionId: String(monster.definitionId || normalized.id),
     currentPV: Math.max(0, numeric(options.currentPV ?? normalized.currentPV, normalized.maxPV)),
     maxPV: Math.max(1, numeric(options.maxPV ?? normalized.maxPV, 1)),
@@ -967,7 +967,7 @@ export function createMonsterTokenDefaults(monster = {}) {
   };
 }
 
-export function createSessionMonsterFromBestiary(monster = {}, options = {}) {
+export function createPlayableMonsterFromBestiary(monster = {}, options = {}) {
   const state = createMonsterState(monster, options);
   const token = createMonsterTokenDefaults(state);
   const snapshot = {
@@ -981,7 +981,7 @@ export function createSessionMonsterFromBestiary(monster = {}, options = {}) {
     sourceGovernance: state.sourceGovernance,
   };
   return {
-    id: String(options.id || options.sessionMonsterId || `shared-${state.id}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`),
+    id: String(options.id || options.playableMonsterId || `monster-${state.id}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`),
     definitionId: state.definitionId || state.id,
     name: state.name,
     snapshot,

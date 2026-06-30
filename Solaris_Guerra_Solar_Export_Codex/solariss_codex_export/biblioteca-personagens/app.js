@@ -8,11 +8,8 @@ import {
   FIRE_MODES,
   INVENTORY_SIZES,
   LOCATION_KINDS,
-  MonsterDefinition,
-  MonsterSheet,
   ammoCubeUnitsFor,
   attachMagazineToWeapon,
-  buildMonsterLootTable,
   createMagazineInstance,
   createWeaponAmmoState,
   definitionFromLegacyItem,
@@ -25,29 +22,28 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260629a";
+} from "./src/domain/solaris-domain-architecture.js?v=20260630a";
 import {
   EQUIPMENT_SCHEMA_VERSION,
-} from "./src/domain/solaris-equipment-rules.js?v=20260629a";
+} from "./src/domain/solaris-equipment-rules.js?v=20260630a";
 import {
   BESTIARY_SCHEMA_VERSION,
   normalizeMonsterEntry,
-} from "./src/domain/solaris-bestiary-rules.js?v=20260629a";
+} from "./src/domain/solaris-bestiary-rules.js?v=20260630a";
 import {
   CHARACTER_CREATION_CACHE_VERSION,
   CHARACTER_CREATION_SCHEMA_VERSION,
   OFFICIAL_CREATION_CHECKLIST,
   OFFICIAL_CREATION_STAGES,
-  TABLETOP_ALPHA_VERSION,
+  SOLARIS_BIBLIOTECA_VERSION,
   applyInitialAttributeAssignments,
   buildCreationChoicesSnapshot,
   buildProgressionHistoryEntry,
   createInitialAttributeRoll,
-} from "./src/domain/solaris-character-creation.js?v=20260629a";
+} from "./src/domain/solaris-character-creation.js?v=20260630a";
 import {
   createDefaultLoreState,
-} from "./src/domain/solaris-lore-rules.js?v=20260629a";
-import { mountSolarisSessionUI } from "./src/session/solaris-session-ui.js?v=20260629a";
+} from "./src/domain/solaris-lore-rules.js?v=20260630a";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -56,7 +52,6 @@ const ATTRIBUTE_MOD_BASE = 10;
 const STORAGE_KEY = "solaris.character.library.v1";
 const EQUIPMENT_RULES_SCHEMA_VERSION = EQUIPMENT_SCHEMA_VERSION;
 const MONSTER_STORAGE_KEY = "solaris.monster.library.v1";
-const MONSTER_SESSION_STORAGE_KEY = "solaris.monster.session.v1";
 const CUSTOM_LIBRARY_STORAGE_KEY = "solaris.custom.content.library.v1";
 const SHOP_PRICE_STORAGE_KEY = "solaris.shop.price.overrides.v1";
 const PAGE_SIZE = 20;
@@ -1340,7 +1335,7 @@ const emptyCharacter = () => ({
   id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
   createdAt: new Date().toISOString(),
   updatedAt: null,
-  createdWithVersion: TABLETOP_ALPHA_VERSION,
+  createdWithVersion: SOLARIS_BIBLIOTECA_VERSION,
   characterSchemaVersion: CHARACTER_CREATION_SCHEMA_VERSION,
   equipmentSchemaVersion: EQUIPMENT_RULES_SCHEMA_VERSION,
   creationChoices: null,
@@ -1407,7 +1402,6 @@ const state = {
   manualImageDataUrl: "",
   manualImageName: "",
   monsterSheets: {},
-  monsterSession: [],
   activeMonsterId: "",
   activeMonsterImageId: "",
   activeMonsterAssetCategory: "weapon",
@@ -1432,8 +1426,6 @@ const el = {
   booksHubView: document.querySelector("#booksHubView"),
   rulesHubView: document.querySelector("#rulesHubView"),
   characterManagerView: document.querySelector("#characterManagerView"),
-  mesaVirtualView: document.querySelector("#mesaVirtualView"),
-  mesaVirtualRoot: document.querySelector("#mesaVirtualRoot"),
   topbar: document.querySelector(".topbar"),
   homeButton: document.querySelector("#homeButton"),
   launcherVitalTrigger: document.querySelector("#launcherVitalTrigger"),
@@ -1457,7 +1449,6 @@ const el = {
   librarySort: document.querySelector("#librarySort"),
   libraryGrid: document.querySelector("#libraryGrid"),
   libraryPagination: document.querySelector("#libraryPagination"),
-  monsterSessionPanel: document.querySelector("#monsterSessionPanel"),
   libraryTitle: document.querySelector("#libraryTitle"),
   libraryKicker: document.querySelector("#libraryKicker"),
   personagensView: document.querySelector("#personagensView"),
@@ -1569,8 +1560,6 @@ const el = {
   toast: document.querySelector("#toast"),
 };
 
-let mesaVirtualUi = null;
-
 function init() {
   installIcons();
   syncNavState();
@@ -1582,13 +1571,11 @@ function init() {
   loadCustomLibraryContent();
   loadShopPriceOverrides();
   loadMonsterSheets();
-  loadMonsterSession();
   bindEvents();
   renderForm();
   renderSavedList();
   renderSummary();
   renderLibrary();
-  mountMesaVirtual();
   switchView(initialViewFromUrl());
 }
 
@@ -1597,7 +1584,6 @@ function initialViewFromUrl() {
   const view = params.get("view") || params.get("start") || "";
   const hashView = (window.location.hash || "").replace(/^#\/?/, "");
   const requested = view || hashView;
-  if (requested === "mesaVirtual" || requested === "vtt" || requested === "tabletop" || requested === "campaigns" || requested === "launcher" || requested === "home") return "mesaVirtual";
   if (requested === "ficha") return "personagens";
   return "inicio";
 }
@@ -2072,14 +2058,9 @@ function bindEvents() {
   });
   el.libraryGrid.addEventListener("click", (event) => {
     if (!(event.target instanceof Element)) return;
-    const addSessionButton = event.target.closest("[data-monster-session-add]");
-    if (addSessionButton) {
-      addMonsterToSession(addSessionButton.dataset.monsterSessionAdd);
-      return;
-    }
     const playableButton = event.target.closest("[data-monster-playable]");
     if (playableButton) {
-      addMonsterToSession(playableButton.dataset.monsterPlayable, { openEditor: true });
+      openMonsterEditor(playableButton.dataset.monsterPlayable);
       return;
     }
     const deleteMonsterCardButton = event.target.closest("[data-monster-delete]");
@@ -2124,13 +2105,6 @@ function bindEvents() {
       openRaceDetail(raceCard.dataset.raceId);
       raceCardClickTimer = null;
     }, 240);
-  });
-
-  el.monsterSessionPanel.addEventListener("click", (event) => {
-    if (!(event.target instanceof Element)) return;
-    const action = event.target.closest("[data-monster-session-action]");
-    if (!action) return;
-    handleMonsterSessionAction(action.dataset.monsterSessionAction, action.dataset.monsterSessionId, action);
   });
 
   [el.cosmosPageContent, el.abilitiesPageContent, el.manualCreatedContent].forEach((container) => {
@@ -2298,266 +2272,6 @@ function bindEvents() {
   });
 }
 
-function mountMesaVirtual() {
-  if (!el.mesaVirtualRoot || mesaVirtualUi) return;
-  const params = new URLSearchParams(window.location.search || "");
-  const requestedView = params.get("view") || params.get("start") || "";
-  const initialScreen = requestedView === "campaigns"
-    ? "campaigns"
-    : requestedView === "launcher" || requestedView === "home"
-      ? "launcher"
-      : "table";
-  mesaVirtualUi = mountSolarisSessionUI(el.mesaVirtualRoot, {
-    initialScreen,
-    getCurrentCharacter: currentSessionCharacterSnapshot,
-    onOpenCharacter: () => switchView("personagens"),
-    onOpenCreator: () => {
-      switchView("personagens");
-      switchCharacterPage("criar");
-    },
-    onOpenBestiary: () => switchView("monstros"),
-    onOpenInventory: () => {
-      switchView("personagens");
-      switchCharacterPage("equipamentos");
-    },
-    onResourceUpdate: applySessionResourceUpdate,
-    onRemoteCharacterUpdate: applySessionFullCharacterSnapshot,
-    getMonsterCatalog: sessionMonsterCatalog,
-    getShopCatalog: sessionShopCatalog,
-    notify: showToast,
-  });
-}
-
-function refreshMesaVirtual() {
-  if (mesaVirtualUi && state.activeView === "mesaVirtual") mesaVirtualUi.refresh();
-}
-
-function currentSessionCharacterSnapshot() {
-  syncCreationChoices("session-snapshot");
-  const race = findRace(state.current.race);
-  const profession = findProfession(state.current.profession);
-  const attrs = totalAttributes();
-  const derived = derivedStats(attrs, race, profession);
-  const weapon = getEquippedMarketItem("weapon");
-  const armor = getEquippedMarketItem("armor");
-  const inventory = structuredCloneSafe(state.current.inventory || []);
-  const unassignedItems = inventory.filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.UNASSIGNED);
-  const equippedItems = inventory.filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.EQUIPPED);
-  const activeItems = inventory.filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.ACTIVE);
-  const cubes = inventory.filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.CUBE || entry.category === "cube");
-  const backpacks = inventory.filter((entry) => entry.category === "storage" || /mochila/i.test(findMarketItem(entry.itemId)?.name || ""));
-  const holsters = inventory.filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.HOLSTER || entry.supportSlot === "coldre");
-  const bandoliers = inventory.filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.BANDOLIER || entry.supportSlot === "bandoleira");
-  const hooks = inventory.filter((entry) => entryLocationKind(entry) === LOCATION_KINDS.HOOK || entry.supportSlot === "gancho");
-  const modifiers = ATTRIBUTES.reduce((acc, attr) => {
-    acc[attr] = attributeModifier(attrs[attr]);
-    return acc;
-  }, {});
-  const cosmicSpells = cosmicSpellEntries().map((entry) => structuredCloneSafe(entry));
-  const modifierChips = modifierChipEntries().map((entry) => structuredCloneSafe(entry));
-  const racialAbilities = (state.current.knownAbilities || []).filter((ability) => ability.source === "Raça").map((entry) => structuredCloneSafe(entry));
-  const manualAbilities = (state.current.knownAbilities || []).filter((ability) => ability.source === "Manual" || ability.custom).map((entry) => structuredCloneSafe(entry));
-  return {
-    id: state.current.id,
-    characterId: state.current.id,
-    ownerId: "",
-    name: state.current.name || "Personagem sem nome",
-    player: state.current.player || "Jogador local",
-    race: race.name,
-    profession: profession.name,
-    level: state.current.level,
-    xp: state.current.experience || state.current.xp || 0,
-    attributes: attrs,
-    modifiers,
-    derived,
-    skills: structuredCloneSafe(state.current.skillTraining || state.current.skillStates || state.current.skills || {}),
-    protections: structuredCloneSafe(state.current.protectionStates || state.current.protections || {}),
-    currentPV: state.current.pvCurrent,
-    pvCurrent: state.current.pvCurrent,
-    maxPV: derived.pvMax,
-    cosmosCurrent: state.current.cosmosCurrent,
-    cosmosMax: derived.cosmosMax,
-    stress: state.current.stress,
-    stressMax: derived.stressMax,
-    ca: derived.ca,
-    movement: derived.movement,
-    initiative: derived.initiative || modifiers.REF || 0,
-    inventory,
-    unassignedItems,
-    activeItems,
-    equipment: {
-      weapon: weapon ? structuredCloneSafe(weapon) : null,
-      armor: armor ? structuredCloneSafe(armor) : null,
-      equippedItems,
-      equippedWeaponUid: state.current.equippedWeaponUid || "",
-      equippedArmorUid: state.current.equippedArmorUid || "",
-    },
-    loadout: {
-      weaponUid: state.current.equippedWeaponUid || "",
-      armorUid: state.current.equippedArmorUid || "",
-    },
-    storage: structuredCloneSafe(state.current.domainCharacter?.inventory || {}),
-    cubes,
-    backpacks,
-    holsters,
-    bandoliers,
-    hooks,
-    cosmicSpells,
-    modifierChips,
-    professionChip: structuredCloneSafe(findProfession(state.current.profession) || {}),
-    installedMods: modifierChips.filter((entry) => entry.installed !== false),
-    racialAbilities,
-    manualAbilities,
-    abilities: structuredCloneSafe(state.current.knownAbilities || []),
-    conditions: structuredCloneSafe(state.current.conditions || []),
-    playerNotes: state.current.notes || "",
-    currency: numberValue(state.current.currency, STARTING_CURRENCY),
-    luzentis: numberValue(state.current.currency, STARTING_CURRENCY),
-    creationChoices: structuredCloneSafe(state.current.creationChoices || {}),
-    progressionHistory: structuredCloneSafe(state.current.progressionHistory || []),
-    evolutionHistory: structuredCloneSafe(state.current.evolutionHistory || []),
-    appliedBonuses: structuredCloneSafe(state.current.appliedBonuses || []),
-    manualOverrides: structuredCloneSafe(state.current.manualOverrides || {}),
-    needsReviewFlags: structuredCloneSafe(state.current.needsReviewFlags || []),
-    metadata: {
-      schemaVersion: CHARACTER_CREATION_SCHEMA_VERSION,
-      characterSchemaVersion: state.current.characterSchemaVersion || CHARACTER_CREATION_SCHEMA_VERSION,
-      appVersion: TABLETOP_ALPHA_VERSION,
-      appCache: CHARACTER_CREATION_CACHE_VERSION,
-      source: "solaris-local-character",
-      updatedAt: state.current.updatedAt || new Date().toISOString(),
-    },
-    revision: numberValue(state.current.sessionRevision, 0),
-    weapon: weapon?.name || state.current.weapon || "Arma nao equipada",
-    armor: armor?.name || state.current.armor || "Armadura nao equipada",
-    portrait: state.current.photoDataUrl || "",
-  };
-}
-
-function sessionMonsterCatalog() {
-  return getMonsterLibraryItems().map((monster) => ({
-    id: monster.id,
-    name: monster.name,
-    tier: monster.tier || "",
-    type: monster.type || "",
-    role: monster.role || "",
-    pv: Number(monster.pv ?? monster.maxPV ?? monster.pvMax ?? 24),
-    maxPV: Number(monster.maxPV ?? monster.pvMax ?? monster.pv ?? 24),
-    currentPV: Number(monster.currentPV ?? monster.pvAtual ?? monster.pv ?? monster.maxPV ?? 24),
-    ca: Number(monster.ca ?? 10),
-    movement: Number(monster.movement ?? monster.movimento ?? 6),
-    image: monster.imageDataUrl || monster.image || "",
-    imageDataUrl: monster.imageDataUrl || monster.image || "",
-    attacks: monster.attacks || monster.actions || "",
-    abilities: monster.abilities || monster.traits || "",
-    source: monster.source || "Bestiario Solaris",
-  })).slice(0, 40);
-}
-
-function sessionShopCatalog() {
-  const buckets = [
-    ["itens", "common"],
-    ["armas", "weapon"],
-    ["armaduras", "armor"],
-    ["armazenamento", "utility"],
-    ["chipsMod", "chip"],
-    ["magias", "spell"],
-    ["mods", "utility"],
-  ];
-  return buckets.flatMap(([view, sessionCategory]) => getLibraryItemsForView(view).map((item) => ({
-    ...structuredCloneSafe(item),
-    sessionCategory,
-    categoryLabel: libraryMap[view]?.title || "Item",
-    price: getLibraryPrice(item),
-    sourceView: view,
-  })));
-}
-
-function applySessionResourceUpdate(resources = {}) {
-  const race = findRace(state.current.race);
-  const profession = findProfession(state.current.profession);
-  const derived = derivedStats(totalAttributes(), race, profession);
-  if (resources.currentPV !== undefined || resources.pvCurrent !== undefined) {
-    state.current.pvCurrent = clamp(numberValue(resources.currentPV ?? resources.pvCurrent, state.current.pvCurrent), 0, derived.pvMax);
-  }
-  if (resources.cosmosCurrent !== undefined) {
-    state.current.cosmosCurrent = clamp(numberValue(resources.cosmosCurrent, state.current.cosmosCurrent), 0, derived.cosmosMax);
-  }
-  if (resources.stress !== undefined) {
-    state.current.stress = clamp(numberValue(resources.stress, state.current.stress), 0, derived.stressMax);
-  }
-  renderForm();
-  persistCurrentCharacterSilently();
-}
-
-function applySessionFullCharacterSnapshot(snapshot = {}) {
-  if (!snapshot) return;
-  const characterId = snapshot.characterId || snapshot.id;
-  if (characterId && characterId !== state.current.id) return;
-  const incomingRevision = numberValue(snapshot.revision, 0);
-  const currentRevision = numberValue(state.current.sessionRevision, 0);
-  if (incomingRevision && incomingRevision < currentRevision) return;
-  const race = findRace(state.current.race);
-  const profession = findProfession(state.current.profession);
-  const derived = derivedStats(totalAttributes(), race, profession);
-  if (snapshot.name !== undefined) state.current.name = String(snapshot.name || state.current.name);
-  if (snapshot.player !== undefined) state.current.player = String(snapshot.player || state.current.player);
-  if (snapshot.level !== undefined) state.current.level = clamp(numberValue(snapshot.level, state.current.level), 1, 10);
-  if (snapshot.xp !== undefined || snapshot.experience !== undefined) {
-    state.current.experience = Math.max(0, numberValue(snapshot.experience ?? snapshot.xp, state.current.experience || 0));
-  }
-  if (snapshot.currentPV !== undefined || snapshot.pvCurrent !== undefined) {
-    state.current.pvCurrent = clamp(numberValue(snapshot.currentPV ?? snapshot.pvCurrent, state.current.pvCurrent), 0, derived.pvMax);
-  }
-  if (snapshot.cosmosCurrent !== undefined) {
-    state.current.cosmosCurrent = clamp(numberValue(snapshot.cosmosCurrent, state.current.cosmosCurrent), 0, derived.cosmosMax);
-  }
-  if (snapshot.stress !== undefined) {
-    state.current.stress = clamp(numberValue(snapshot.stress, state.current.stress), 0, derived.stressMax);
-  }
-  if (snapshot.currency !== undefined || snapshot.luzentis !== undefined) {
-    state.current.currency = Math.max(0, numberValue(snapshot.currency ?? snapshot.luzentis, state.current.currency));
-  }
-  if (Array.isArray(snapshot.inventory)) {
-    state.current.inventory = structuredCloneSafe(snapshot.inventory);
-  }
-  if (snapshot.equipment) {
-    state.current.equippedWeaponUid = snapshot.equipment.equippedWeaponUid || snapshot.loadout?.weaponUid || state.current.equippedWeaponUid || "";
-    state.current.equippedArmorUid = snapshot.equipment.equippedArmorUid || snapshot.loadout?.armorUid || state.current.equippedArmorUid || "";
-  }
-  if (Array.isArray(snapshot.abilities)) {
-    state.current.knownAbilities = structuredCloneSafe(snapshot.abilities);
-  } else if (Array.isArray(snapshot.cosmicSpells) || Array.isArray(snapshot.modifierChips)) {
-    const nonSessionAbilities = (state.current.knownAbilities || []).filter((ability) =>
-      ability.source !== "Cosmos" && ability.source !== "Chip modificador"
-    );
-    state.current.knownAbilities = [
-      ...nonSessionAbilities,
-      ...structuredCloneSafe(snapshot.cosmicSpells || []),
-      ...structuredCloneSafe(snapshot.modifierChips || []),
-    ];
-  }
-  if (Array.isArray(snapshot.conditions)) state.current.conditions = structuredCloneSafe(snapshot.conditions);
-  if (snapshot.creationChoices && typeof snapshot.creationChoices === "object") {
-    state.current.creationChoices = structuredCloneSafe(snapshot.creationChoices);
-  }
-  if (Array.isArray(snapshot.progressionHistory)) state.current.progressionHistory = structuredCloneSafe(snapshot.progressionHistory);
-  if (Array.isArray(snapshot.evolutionHistory)) state.current.evolutionHistory = structuredCloneSafe(snapshot.evolutionHistory);
-  if (Array.isArray(snapshot.appliedBonuses)) state.current.appliedBonuses = structuredCloneSafe(snapshot.appliedBonuses);
-  if (snapshot.manualOverrides && typeof snapshot.manualOverrides === "object") state.current.manualOverrides = structuredCloneSafe(snapshot.manualOverrides);
-  if (Array.isArray(snapshot.needsReviewFlags)) state.current.needsReviewFlags = structuredCloneSafe(snapshot.needsReviewFlags);
-  if (snapshot.metadata?.characterSchemaVersion) {
-    state.current.characterSchemaVersion = Math.max(
-      CHARACTER_CREATION_SCHEMA_VERSION,
-      numberValue(snapshot.metadata.characterSchemaVersion, CHARACTER_CREATION_SCHEMA_VERSION)
-    );
-  }
-  state.current.sessionRevision = incomingRevision || currentRevision;
-  state.current.updatedAt = new Date().toISOString();
-  renderForm();
-  persistCurrentCharacterSilently();
-}
-
 function handleNavClick(view) {
   if (view === state.activeView) {
     setNavExpanded(!state.navExpanded);
@@ -2595,7 +2309,7 @@ function switchView(view) {
   setNavExpanded(false);
   state.activeView = view;
   state.activeRaceId = null;
-  document.title = view === "mesaVirtual" ? "Solaris Tabletop Alpha" : "Solaris - Biblioteca de Personagens";
+  document.title = "Solaris - Biblioteca de Personagens";
   hideWorkspaceViews();
 
   const hubViews = {
@@ -2606,9 +2320,8 @@ function switchView(view) {
     criador: el.characterManagerView,
   };
   const isHub = Boolean(hubViews[view]);
-  el.topbar.hidden = view === "inicio" || isHub || view === "mesaVirtual";
+  el.topbar.hidden = view === "inicio" || isHub;
   document.body.classList.toggle("is-tablet-home", view === "inicio");
-  document.body.classList.toggle("is-virtual-table", view === "mesaVirtual");
   document.querySelector("#saveButton").hidden = view !== "personagens";
   document.querySelector("#printButton").hidden = view !== "personagens";
 
@@ -2622,13 +2335,6 @@ function switchView(view) {
   if (isHub) {
     hubViews[view].classList.add("active");
     if (view === "criador") renderSavedList();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    return;
-  }
-
-  if (view === "mesaVirtual") {
-    el.mesaVirtualView.classList.add("active");
-    refreshMesaVirtual();
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
@@ -2850,7 +2556,7 @@ function readCosmicSlotInputs() {
 function syncCreationChoices(reason = "sync") {
   const race = findRace(state.current.race);
   const profession = findProfession(state.current.profession);
-  state.current.createdWithVersion = state.current.createdWithVersion || TABLETOP_ALPHA_VERSION;
+  state.current.createdWithVersion = state.current.createdWithVersion || SOLARIS_BIBLIOTECA_VERSION;
   state.current.characterSchemaVersion = Math.max(
     CHARACTER_CREATION_SCHEMA_VERSION,
     numberValue(state.current.characterSchemaVersion, CHARACTER_CREATION_SCHEMA_VERSION)
@@ -2871,7 +2577,7 @@ function syncCreationChoices(reason = "sync") {
     raceName: race.name,
     professionName: profession.name,
     professionFocus: profession.focus || profession.skill || "",
-    appVersion: TABLETOP_ALPHA_VERSION,
+    appVersion: SOLARIS_BIBLIOTECA_VERSION,
     cacheVersion: CHARACTER_CREATION_CACHE_VERSION,
     reason,
   });
@@ -3334,7 +3040,6 @@ function renderCreationGuidePage(derived) {
           <button class="mini-button danger-mini-button" type="button" data-bulk-delete="chips">Excluir todos os chips modificadores</button>
           <button class="mini-button danger-mini-button" type="button" data-bulk-delete="spells">Excluir todas as magias</button>
           <button class="mini-button danger-mini-button" type="button" data-bulk-delete="manual">Excluir todas as habilidades manuais</button>
-          <button class="mini-button danger-mini-button" type="button" data-bulk-delete="monsters">Excluir todos os monstros da sessão</button>
           <button class="mini-button danger-mini-button" type="button" data-bulk-delete="inventory">Limpar inventário completo</button>
         </div>
       </section>
@@ -6372,8 +6077,6 @@ function renderLibrary() {
     ? `${selectedGroup} - ${selectedRulebookTitle}`
     : library.title;
   el.createMonsterButton.hidden = !isMonsterLibrary;
-  el.monsterSessionPanel.hidden = !isMonsterLibrary;
-  if (isMonsterLibrary) renderMonsterSessionPanel();
 
   const filtered = sortLibraryItems(libraryItems.filter((item) => {
     const matchesSearch = !query || itemSearchText(item).includes(query);
@@ -6422,7 +6125,6 @@ function renderLibrary() {
         ${isLearnLibrary ? `<button class="primary-button shop-button" type="button" data-learn-id="${escapeHtml(item.id)}" ${learnDisabled ? "disabled" : ""} ${slotBlocked ? `data-slot-blocked="${slotBlocked}" aria-disabled="true"` : ""}>${learnLabel}</button>` : ""}
         ${isMonsterLibrary ? `
           <div class="inventory-actions monster-card-actions">
-            <button class="mini-button" type="button" data-monster-session-add="${escapeHtml(item.id)}">Adicionar à sessão</button>
             <button class="mini-button" type="button" data-monster-playable="${escapeHtml(item.id)}">Criar ficha jogável</button>
             <button class="mini-button" type="button" data-monster-image="${escapeHtml(item.id)}">${item.imageDataUrl || item.image ? "Alterar imagem" : "Adicionar imagem"}</button>
             <button class="mini-button" type="button" data-monster-assets="${escapeHtml(item.id)}">Conteúdo</button>
@@ -6512,7 +6214,6 @@ function handlePaginationClick(event) {
   else if (key.startsWith("manual:")) renderManualCreatedPage();
   else if (key.startsWith("monster-assets:")) renderMonsterAssetManager();
   else if (key.startsWith("cubes:")) renderCubePage(derivedStats(totalAttributes(), findRace(state.current.race), findProfession(state.current.profession)));
-  else if (key.startsWith("monster-session:")) renderMonsterSessionPanel();
 }
 
 function resetLibraryPaginationAndRender() {
@@ -6796,13 +6497,6 @@ function createRandomLevel1Character() {
 
 function bulkDeleteCharacterContent(kind) {
   if (!window.confirm("Tem certeza? Essa ação não devolve Luzentis e não pode ser desfeita.")) return;
-  if (kind === "monsters") {
-    state.monsterSession = [];
-    persistMonsterSession();
-    renderMonsterSessionPanel();
-    showToast("Monstros da sessão excluídos.");
-    return;
-  }
   if (["chips", "spells", "manual"].includes(kind)) {
     state.current.knownAbilities = (state.current.knownAbilities || []).filter((ability) => {
       if (kind === "chips") return ability.source !== "Chip modificador";
@@ -7345,20 +7039,6 @@ function persistMonsterSheets() {
   localStorage.setItem(MONSTER_STORAGE_KEY, JSON.stringify(state.monsterSheets));
 }
 
-function loadMonsterSession() {
-  try {
-    const raw = localStorage.getItem(MONSTER_SESSION_STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    state.monsterSession = Array.isArray(parsed) ? parsed.map((sheet) => MonsterSheet.fromJSON(sheet)) : [];
-  } catch {
-    state.monsterSession = [];
-  }
-}
-
-function persistMonsterSession() {
-  localStorage.setItem(MONSTER_SESSION_STORAGE_KEY, JSON.stringify(state.monsterSession.map((sheet) => sheet.toJSON())));
-}
-
 function splitMonsterText(value) {
   return String(value || "")
     .split(/\r?\n|;/)
@@ -7542,373 +7222,12 @@ function monsterDefinitionFromRecord(record) {
   });
 }
 
-function addMonsterToSession(monsterId, { openEditor = false } = {}) {
-  const record = findMonsterSheet(monsterId);
-  if (!record) return;
-  const sheet = new MonsterSheet({
-    definition: monsterDefinitionFromRecord(record),
-    gmNotes: record.gmNotes || "",
-  });
-  state.monsterSession.unshift(sheet);
-  persistMonsterSession();
-  renderMonsterSessionPanel();
-  if (openEditor && !record.official) openMonsterEditor(monsterId);
-  showToast(`${record.name} adicionado à sessão.`);
-}
-
-function renderMonsterSessionPanel() {
-  if (!el.monsterSessionPanel) return;
-  const sheets = state.monsterSession || [];
-  const key = "monster-session:active";
-  const paginated = paginateItems(sheets, state.pagination[key] || 1);
-  state.pagination[key] = paginated.page;
-  el.monsterSessionPanel.innerHTML = `
-    <div class="monster-session-heading">
-      <div>
-        <span class="ability-source">Mesa ativa</span>
-        <h2>Monstros da sessão</h2>
-      </div>
-      <strong>${sheets.length}</strong>
-    </div>
-    ${sheets.length ? `
-      <div class="monster-session-grid">
-        ${paginated.items.map((sheet) => renderMonsterSessionCard(sheet)).join("")}
-      </div>
-      <nav class="pagination-controls">${renderPaginationControls(paginated, key)}</nav>
-    ` : '<div class="empty-state">Adicione uma criatura do bestiário para usar sua ficha simplificada durante a sessão.</div>'}
-  `;
-}
-
-function normalizedMonsterAttack(attack) {
-  if (typeof attack === "string") return parseMonsterAttackEntry(attack.replace(/^Ataques?\s*:\s*/i, ""));
-  if (!attack || typeof attack !== "object") return null;
-  return {
-    ...attack,
-    name: attack.name || "Ataque",
-    damage: attack.damage || monsterDamageFormula(attack.description),
-    description: attack.description || [attack.name, attack.damage].filter(Boolean).join(": "),
-  };
-}
-
-function normalizedMonsterAbility(ability) {
-  if (typeof ability === "string") {
-    const heading = ability.match(/^(?:Habilidade|Ação(?: de chefe)?|Reação|Fase)\s*[—-]\s*([^:]+)\s*:?\s*(.*)$/i);
-    const name = heading ? heading[1].trim() : ability;
-    const description = heading ? heading[2].trim() : "";
-    return { name, description, damage: monsterDamageFormula(description || ability) };
-  }
-  if (!ability || typeof ability !== "object") return null;
-  return {
-    ...ability,
-    name: ability.name || "Habilidade",
-    description: ability.description || ability.effect || "",
-    damage: ability.damage || monsterDamageFormula(ability.description || ability.effect),
-  };
-}
-
-function monsterSessionAttacks(monster) {
-  const direct = (monster.attacks || []).map(normalizedMonsterAttack).filter((attack) => attack?.name && !/^ataques?$/i.test(attack.name));
-  return direct.length ? direct : extractMonsterAttacks(monster.metadata || {});
-}
-
-function monsterSessionAbilities(monster) {
-  const direct = (monster.abilities || []).map(normalizedMonsterAbility).filter((ability) => ability?.name && !/^habilidades?$/i.test(ability.name));
-  return direct.length ? direct : extractMonsterAbilities(monster.metadata || {});
-}
-
-function renderMonsterAttackEntry(monster, attack, index) {
-  const damage = attack.damage || monsterDamageFormula(attack.description);
-  return `
-    <div class="monster-combat-entry">
-      <div>
-        <strong>${escapeHtml(attack.name)}</strong>
-        <span>${escapeHtml(damage || attack.description || "Dano não informado")}</span>
-      </div>
-      <div class="monster-combat-actions">
-        <button class="mini-button" type="button" data-monster-session-action="attack" data-monster-session-id="${escapeHtml(monster.id)}" data-monster-attack-index="${index}">Ataque</button>
-        <button class="mini-button" type="button" data-monster-session-action="attack-damage" data-monster-session-id="${escapeHtml(monster.id)}" data-monster-attack-index="${index}" ${monsterDiceExpressions(damage).length ? "" : "disabled"}>Dano</button>
-      </div>
-    </div>
-  `;
-}
-
-function renderMonsterAbilityEntry(monster, ability, index) {
-  return `
-    <div class="monster-combat-entry ability-entry">
-      <div>
-        <strong>${escapeHtml(ability.name)}</strong>
-        <span>${escapeHtml(ability.description || "Efeito não informado.")}</span>
-        ${ability.damage ? `<small>Dano: ${escapeHtml(ability.damage)}</small>` : ""}
-      </div>
-      ${ability.damage ? `
-        <div class="monster-combat-actions">
-          <button class="mini-button" type="button" data-monster-session-action="ability-damage" data-monster-session-id="${escapeHtml(monster.id)}" data-monster-ability-index="${index}">Rolar dano</button>
-        </div>
-      ` : ""}
-    </div>
-  `;
-}
-
-function monsterLootResultSummary(result) {
-  if (!result?.drops?.length) return "Nenhum recurso recuperado";
-  return result.drops
-    .map((drop) => `${drop.name}${drop.quantity > 1 ? ` x${drop.quantity}` : ""}`)
-    .join(", ");
-}
-
-function renderMonsterLootPanel(monster) {
-  if (!monster.lootTable?.length && monster.metadata?.resources) {
-    monster.lootTable = buildMonsterLootTable(monster.metadata.resources);
-  }
-  const table = monster.lootTable || [];
-  const history = monster.lootHistory || [];
-  const latest = history[0];
-  const tableMarkup = table.length
-    ? table.map((item) => `
-        <span class="monster-loot-chance rarity-${dataSlug(item.rarity)}" title="${escapeHtml(item.rarity)}">
-          ${escapeHtml(item.name)} <strong>${item.chance}%</strong>
-        </span>
-      `).join("")
-    : '<span class="inventory-note">Sem recursos coletáveis catalogados.</span>';
-  const logMarkup = history.length
-    ? history.slice(0, 3).map((entry) => `
-        <li>
-          <time datetime="${escapeHtml(entry.createdAt)}">${escapeHtml(new Date(entry.createdAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }))}</time>
-          <span>${escapeHtml(monsterLootResultSummary(entry))}</span>
-        </li>
-      `).join("")
-    : '<li class="monster-loot-empty">O resultado aparecerá quando a criatura for derrotada.</li>';
-  return `
-    <section class="monster-loot-panel" aria-label="Loot de ${escapeHtml(monster.name)}">
-      <div class="monster-loot-heading">
-        <div>
-          <strong>Loot</strong>
-          <span>${latest ? escapeHtml(monsterLootResultSummary(latest)) : "Chances por recurso"}</span>
-        </div>
-        ${monster.currentPV === 0 ? `
-          <button class="mini-button" type="button" data-monster-session-action="reroll-loot" data-monster-session-id="${escapeHtml(monster.id)}">
-            Rolar novamente
-          </button>
-        ` : ""}
-      </div>
-      <div class="monster-loot-table">${tableMarkup}</div>
-      <ol class="monster-loot-log" aria-label="Histórico de loot">${logMarkup}</ol>
-    </section>
-  `;
-}
-
-function renderMonsterSessionCard(sheet) {
-  const monster = sheet.instance;
-  const attacks = monsterSessionAttacks(monster);
-  const abilities = monsterSessionAbilities(monster);
-  const latestRoll = monster.rollHistory?.[0];
-  const conditionMarkup = monster.conditions.length
-    ? monster.conditions.map((condition) => `<button class="tag" type="button" title="Clique para remover" data-monster-session-action="remove-condition" data-monster-session-id="${escapeHtml(monster.id)}" data-condition-id="${escapeHtml(condition.id)}">${escapeHtml(condition.label)}</button>`).join("")
-    : '<span class="inventory-note">Nenhuma condição</span>';
-  return `
-    <article class="monster-session-card" data-monster-session-card="${escapeHtml(monster.id)}" data-detail-kind="library" data-detail-view="monstros" data-detail-id="${escapeHtml(sheet.definition.id)}">
-      <header>
-        ${monster.image ? `<img src="${escapeHtml(monster.image)}" alt="${escapeHtml(monster.name)}" />` : '<span class="monster-session-avatar" aria-hidden="true">M</span>'}
-        <div>
-          <span class="ability-source">${escapeHtml([monster.tier ? `Tier ${monster.tier}` : "", monster.type].filter(Boolean).join(" - ") || "Criatura")}</span>
-          <h3>${renderCardTitleButton(monster.name)}</h3>
-          <p>${escapeHtml(monster.description || "Ficha de sessão Solaris.")}</p>
-        </div>
-      </header>
-      <div class="monster-session-stats">
-        <div><span>PV</span><strong>${monster.currentPV}/${monster.maxPV}</strong></div>
-        <div><span>CA</span><strong>${monster.ca}</strong></div>
-        <div><span>MOV.</span><strong>${escapeHtml(monster.movement || "—")}</strong></div>
-        <div><span>Cosmos</span><strong>${monster.currentCosmos}/${monster.maxCosmos}</strong></div>
-        <div><span>Estresse</span><strong>${monster.stress}/${monster.maxStress}</strong></div>
-        <div><span>Rachaduras</span><strong>${monster.rachaduras.current}/${monster.rachaduras.max}</strong></div>
-      </div>
-      <div class="monster-session-section">
-        <strong>Ataques</strong>
-        ${attacks.length
-          ? `<div class="monster-combat-list">${attacks.map((attack, index) => renderMonsterAttackEntry(monster, attack, index)).join("")}</div>`
-          : "<p>Nenhum ataque registrado.</p>"}
-      </div>
-      <div class="monster-session-section">
-        <strong>Habilidades</strong>
-        ${abilities.length
-          ? `<div class="monster-combat-list">${abilities.map((ability, index) => renderMonsterAbilityEntry(monster, ability, index)).join("")}</div>`
-          : "<p>Nenhuma habilidade registrada.</p>"}
-      </div>
-      <div class="tag-row monster-condition-row">${conditionMarkup}</div>
-      ${renderMonsterLootPanel(monster)}
-      <label class="monster-notes-field">
-        Notas do mestre
-        <textarea rows="2" data-monster-session-notes="${escapeHtml(monster.id)}">${escapeHtml(sheet.gmNotes || "")}</textarea>
-      </label>
-      ${latestRoll ? `<p class="monster-last-roll"><strong>Última rolagem:</strong> ${escapeHtml(latestRoll.label || latestRoll.formula)} = ${escapeHtml(latestRoll.total)}</p>` : ""}
-      <div class="monster-session-actions">
-        <button class="mini-button" type="button" data-monster-session-action="damage" data-monster-session-id="${escapeHtml(monster.id)}">Receber dano</button>
-        <button class="mini-button danger-mini-button" type="button" data-monster-session-action="defeat" data-monster-session-id="${escapeHtml(monster.id)}">Derrotar</button>
-        <button class="mini-button" type="button" data-monster-session-action="heal" data-monster-session-id="${escapeHtml(monster.id)}">Curar</button>
-        <button class="mini-button" type="button" data-monster-session-action="condition" data-monster-session-id="${escapeHtml(monster.id)}">Aplicar condição</button>
-        <button class="mini-button" type="button" data-monster-session-action="save-notes" data-monster-session-id="${escapeHtml(monster.id)}">Salvar notas</button>
-        <button class="mini-button danger-mini-button" type="button" data-monster-session-action="delete" data-monster-session-id="${escapeHtml(monster.id)}">Excluir monstro</button>
-      </div>
-    </article>
-  `;
-}
-
-function findMonsterSessionSheet(instanceId) {
-  return (state.monsterSession || []).find((sheet) => sheet.instance.id === instanceId) || null;
-}
-
-function monsterAttackAttributeKey(attack = {}) {
-  const text = normalizeSearch([attack.name, attack.damage, attack.description].filter(Boolean).join(" "));
-  if (/\b(cosmico|cosmica|mental|psiquico|ressonante|magia)\b/.test(text)) return "MEN";
-  if (/\b(pistola|revolver|rifle|fuzil|disparo|tiro|projetil|arco|besta|lancador)\b/.test(text)) return "REF";
-  return "FOR";
-}
-
-function monsterAttributeModifier(monster, attribute) {
-  const value = monster.attributes?.[attribute];
-  if (value && typeof value === "object") return numberValue(value.modifier, attributeModifier(value.value));
-  if (Number.isFinite(value)) return attributeModifier(value);
-  return 0;
-}
-
-function rollMonsterDamageFormula(monster, label, value) {
-  if (!ensureDiceRollAllowed()) return;
-  const expressions = monsterDiceExpressions(value);
-  if (!expressions.length) {
-    showToast("Este ataque ou habilidade não possui dano em dados.", "tech-error");
-    return;
-  }
-  const allRolls = [];
-  let total = 0;
-  expressions.forEach((expression) => {
-    const pool = rollDicePool(expression.count, expression.sides);
-    allRolls.push(...pool.rolls);
-    total += pool.raw + expression.bonus;
-  });
-  const formula = expressions.map((expression) => (
-    `${expression.count}d${expression.sides}${expression.bonus ? formatMod(expression.bonus) : ""}`
-  )).join(" + ");
-  monster.recordRoll({ label, formula, rolls: allRolls, total });
-  persistMonsterSession();
-  renderMonsterSessionPanel();
-  showHolographicDiceOverlay({
-    label,
-    sides: expressions[0].sides,
-    rolls: allRolls,
-    total,
-    formula,
-  });
-}
-
-function handleMonsterSessionAction(action, instanceId, actionElement = null) {
-  const sheet = findMonsterSessionSheet(instanceId);
-  if (!sheet) return;
-  const monster = sheet.instance;
-  if (action === "attack") {
-    if (!ensureDiceRollAllowed()) return;
-    const attacks = monsterSessionAttacks(monster);
-    const attackIndex = Math.max(0, numberValue(actionElement?.dataset.monsterAttackIndex, 0));
-    const attack = attacks[attackIndex] || attacks[0];
-    if (!attack) {
-      showToast("Este monstro não possui ataque registrado.", "tech-error");
-      return;
-    }
-    const attribute = monsterAttackAttributeKey(attack);
-    const bonus = monsterAttributeModifier(monster, attribute);
-    const rolls = rollDicePool(1, 20);
-    const total = rolls.raw + bonus;
-    const formula = `1d20${bonus ? formatMod(bonus) : ""}`;
-    monster.recordRoll({
-      label: `${attack.name} - ataque`,
-      formula,
-      rolls: rolls.rolls,
-      total,
-    });
-    persistMonsterSession();
-    renderMonsterSessionPanel();
-    showHolographicDiceOverlay({ label: `${attack.name} - ataque (${attribute})`, sides: 20, rolls: rolls.rolls, total, formula });
-    return;
-  }
-  if (action === "attack-damage") {
-    const attacks = monsterSessionAttacks(monster);
-    const attackIndex = Math.max(0, numberValue(actionElement?.dataset.monsterAttackIndex, 0));
-    const attack = attacks[attackIndex] || attacks[0];
-    if (!attack) return;
-    rollMonsterDamageFormula(monster, `${attack.name} - dano`, attack.damage || attack.description);
-    return;
-  }
-  if (action === "ability-damage") {
-    const abilities = monsterSessionAbilities(monster);
-    const abilityIndex = Math.max(0, numberValue(actionElement?.dataset.monsterAbilityIndex, 0));
-    const ability = abilities[abilityIndex] || abilities[0];
-    if (!ability) return;
-    rollMonsterDamageFormula(monster, `${ability.name} - dano`, ability.damage || ability.description);
-    return;
-  }
-  if (action === "reroll-loot") {
-    if (monster.currentPV > 0) {
-      showToast("O loot só pode ser rolado depois que a criatura for derrotada.", "tech-error");
-      return;
-    }
-    const result = monster.generateLoot({ reason: "nova rolagem" });
-    persistMonsterSession();
-    renderMonsterSessionPanel();
-    showToast(`Novo loot de ${monster.name}: ${monsterLootResultSummary(result)}.`);
-    return;
-  }
-  if (action === "defeat") {
-    const previousLootCount = monster.lootHistory?.length || 0;
-    if (monster.currentPV > 0) monster.receiveDamage(monster.currentPV);
-    else if (!monster.lootGeneratedForDefeat) monster.markDefeated();
-    const result = monster.lootHistory?.length > previousLootCount ? monster.lootHistory[0] : null;
-    persistMonsterSession();
-    renderMonsterSessionPanel();
-    showToast(result
-      ? `${monster.name} derrotado. Loot: ${monsterLootResultSummary(result)}.`
-      : `${monster.name} já estava derrotado.`);
-    return;
-  }
-  if (["damage", "heal"].includes(action)) {
-    const requested = window.prompt(action === "damage" ? `Quanto dano ${monster.name} recebe?` : `Quantos PV ${monster.name} recupera?`, "1");
-    if (requested === null) return;
-    const amount = Math.max(0, numberValue(requested, 0));
-    if (action === "damage") {
-      const previousPV = monster.currentPV;
-      const previousLootCount = monster.lootHistory?.length || 0;
-      monster.receiveDamage(amount);
-      if (previousPV > 0 && monster.currentPV === 0 && monster.lootHistory.length > previousLootCount) {
-        showToast(`${monster.name} derrotado. Loot: ${monsterLootResultSummary(monster.lootHistory[0])}.`);
-      }
-    } else monster.heal(amount);
-  } else if (action === "condition") {
-    const label = window.prompt(`Qual condição aplicar em ${monster.name}?`, "");
-    if (!label?.trim()) return;
-    monster.applyCondition({ label: label.trim(), key: dataSlug(label), description: "Condição aplicada durante a sessão." });
-  } else if (action === "remove-condition") {
-    const conditionId = actionElement?.dataset.conditionId;
-    if (conditionId) monster.removeCondition(conditionId);
-  } else if (action === "save-notes") {
-    const card = actionElement?.closest("[data-monster-session-card]");
-    sheet.gmNotes = card?.querySelector("[data-monster-session-notes]")?.value || "";
-    monster.notes = sheet.gmNotes;
-    showToast("Notas do mestre salvas.");
-  } else if (action === "delete") {
-    if (!window.confirm(`Excluir ${monster.name} da sessão? Esta ação não devolve Luzentis.`)) return;
-    state.monsterSession = state.monsterSession.filter((entry) => entry.instance.id !== instanceId);
-  }
-  persistMonsterSession();
-  renderMonsterSessionPanel();
-}
-
 function deleteMonsterSheetById(monsterId) {
   const monster = state.monsterSheets[monsterId];
   if (!monster) return;
   if (!window.confirm(`Excluir ${monster.name}? Esta ação não devolve Luzentis.`)) return;
   delete state.monsterSheets[monsterId];
-  state.monsterSession = state.monsterSession.filter((sheet) => sheet.definition.id !== monsterId);
   persistMonsterSheets();
-  persistMonsterSession();
   renderLibrary();
   showToast(`${monster.name} excluído.`);
 }
@@ -7963,16 +7282,6 @@ function renderMonsterImagePreview(monster = findMonsterSheet(state.activeMonste
   }
 }
 
-function syncMonsterImageToSession(monsterId, image) {
-  (state.monsterSession || []).forEach((sheet) => {
-    if (sheet.definition.id !== monsterId) return;
-    sheet.definition.image = image;
-    sheet.instance.image = image;
-  });
-  persistMonsterSession();
-  renderMonsterSessionPanel();
-}
-
 async function setMonsterImage(file) {
   const monsterId = state.activeMonsterImageId;
   const current = findMonsterSheet(monsterId);
@@ -7991,7 +7300,6 @@ async function setMonsterImage(file) {
     monster.updatedAt = new Date().toISOString();
     state.monsterSheets[monster.id] = monster;
     persistMonsterSheets();
-    syncMonsterImageToSession(monsterId, imageDataUrl);
     renderMonsterImagePreview(monster);
     renderLibrary();
     showToast(`Imagem de ${monster.name} salva no bestiário.`);
@@ -8010,7 +7318,6 @@ function removeMonsterImage() {
   monster.updatedAt = new Date().toISOString();
   state.monsterSheets[monster.id] = monster;
   persistMonsterSheets();
-  syncMonsterImageToSession(monsterId, "");
   renderMonsterImagePreview(monster);
   renderLibrary();
   showToast(`Imagem de ${monster.name} removida.`);
@@ -8092,9 +7399,7 @@ function deleteActiveMonsterSheet() {
   const target = state.monsterSheets[id];
   if (!window.confirm(wasOfficial ? `Restaurar a ficha oficial de ${target.name}?` : `Excluir ${target.name}? Esta ação não devolve Luzentis.`)) return;
   delete state.monsterSheets[id];
-  state.monsterSession = state.monsterSession.filter((sheet) => sheet.definition.id !== id);
   persistMonsterSheets();
-  persistMonsterSession();
   closeMonsterEditor();
   renderLibrary();
   showToast(wasOfficial ? "Ficha oficial restaurada." : "Ficha de criatura excluída.");
@@ -10783,7 +10088,7 @@ function normalizeCharacter(character) {
     race: race.id,
     profession: profession.id,
     racialChoice: defaultRacialChoice(race, character.racialChoice),
-    createdWithVersion: character.createdWithVersion || TABLETOP_ALPHA_VERSION,
+    createdWithVersion: character.createdWithVersion || SOLARIS_BIBLIOTECA_VERSION,
     characterSchemaVersion: Math.max(
       CHARACTER_CREATION_SCHEMA_VERSION,
       numberValue(character.characterSchemaVersion, CHARACTER_CREATION_SCHEMA_VERSION)
@@ -10794,7 +10099,7 @@ function normalizeCharacter(character) {
         raceName: race.name,
         professionName: profession.name,
         professionFocus: profession.focus || profession.skill || "",
-        appVersion: TABLETOP_ALPHA_VERSION,
+        appVersion: SOLARIS_BIBLIOTECA_VERSION,
         cacheVersion: CHARACTER_CREATION_CACHE_VERSION,
         reason: "normalize",
       }),

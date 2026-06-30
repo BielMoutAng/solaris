@@ -1,6 +1,6 @@
 export const CHARACTER_CREATION_SCHEMA_VERSION = 2;
-export const CHARACTER_CREATION_CACHE_VERSION = "20260629a";
-export const TABLETOP_ALPHA_VERSION = "0.6.0-alpha.24";
+export const CHARACTER_CREATION_CACHE_VERSION = "20260630a";
+export const SOLARIS_BIBLIOTECA_VERSION = "0.6.0-alpha.25";
 
 export const CREATION_RULE_SOURCE = Object.freeze({
   book: "Livro 1 base do jogador.docx",
@@ -190,7 +190,7 @@ export function buildCreationChoicesSnapshot(character = {}, context = {}) {
     schemaVersion: CHARACTER_CREATION_SCHEMA_VERSION,
     sourceBook: CREATION_RULE_SOURCE.book,
     sourceChapters: [...CREATION_RULE_SOURCE.chapters],
-    appVersion: context.appVersion || TABLETOP_ALPHA_VERSION,
+    appVersion: context.appVersion || SOLARIS_BIBLIOTECA_VERSION,
     cacheVersion: context.cacheVersion || CHARACTER_CREATION_CACHE_VERSION,
     raceId: character.race || "humanis",
     raceName: context.raceName || "",

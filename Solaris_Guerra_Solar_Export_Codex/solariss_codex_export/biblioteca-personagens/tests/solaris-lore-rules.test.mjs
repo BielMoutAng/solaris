@@ -2,17 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
-  GAME_EVENT_TYPES,
-  GameRoom,
-  PlayerConnection,
-  SESSION_ROLES,
-} from "../src/session/solaris-session-domain.js";
-import {
-  createCampaign,
-  migrateSessionState,
-  upsertCampaignSession,
-} from "../src/session/solaris-session-persistence.js";
-import {
   DEFAULT_LORE_ENTRIES,
   DEFAULT_LORE_RELATIONS,
   FACTION_LORE_TYPES,
@@ -58,16 +47,6 @@ import {
   validateLoreEntry,
 } from "../src/domain/solaris-lore-rules.js";
 
-function gmRoom() {
-  return new GameRoom({
-    id: "lore-room",
-    name: "Mesa de Tarantus",
-    players: [
-      new PlayerConnection({ id: "gm", name: "Solaris GM", role: SESSION_ROLES.GM }),
-      new PlayerConnection({ id: "p1", name: "Lyssara", role: SESSION_ROLES.PLAYER }),
-    ],
-  });
-}
 
 test("compendio de lore carrega entradas oficiais do Livro 4", () => {
   const state = createDefaultLoreState();
@@ -210,83 +189,4 @@ test("estado de lore hidrata sem perder dados e ordena linha do tempo", () => {
   assert.equal(hydrated.entries.length, 3);
   assert.ok(hydrated.pinnedLoreEntries.includes("custom-lore"));
   assert.deepEqual(timeline.map((entry) => entry.id), ["event-1", "event-2"]);
-});
-
-test("GameRoom aplica acoes GM de lore e filtra segredos para jogadores", () => {
-  const room = gmRoom();
-
-  room.dispatch(GAME_EVENT_TYPES.GM_LORE_PIN, { loreId: "lore-entidade-uryon" }, "gm");
-  room.dispatch(GAME_EVENT_TYPES.GM_LORE_DISCOVER, {
-    loreId: "lore-entidade-uryon",
-    discoveryState: LORE_DISCOVERY_STATES.REVEALED,
-  }, "gm");
-  room.dispatch(GAME_EVENT_TYPES.GM_LORE_NOTE, { loreId: "lore-planeta-tarantus" }, "gm");
-  room.dispatch(GAME_EVENT_TYPES.GM_LORE_REPORT, { loreId: "lore-planeta-tarantus" }, "gm");
-  room.dispatch(GAME_EVENT_TYPES.GM_LORE_MISSION, { loreId: "lore-cidade-ktaluhl-kalar" }, "gm");
-  room.dispatch(GAME_EVENT_TYPES.GM_LORE_SCENE, { loreId: "lore-cidade-ktaluhl-kalar" }, "gm");
-  room.dispatch(GAME_EVENT_TYPES.GM_LORE_ENCOUNTER, { loreId: "lore-planeta-tarantus" }, "gm");
-  room.dispatch(GAME_EVENT_TYPES.GM_LORE_NPC, { loreId: "lore-npc-selia-vardes" }, "gm");
-  room.dispatch(GAME_EVENT_TYPES.GM_LORE_CLOCK, { loreId: "lore-entidade-uryon", max: 4 }, "gm");
-  room.dispatch(GAME_EVENT_TYPES.GM_LORE_FACTION, { loreId: "lore-faccao-conselho-ktaluhl-kalar" }, "gm");
-
-  assert.ok(room.pinnedLoreEntries.includes("lore-entidade-uryon"));
-  assert.ok(room.loreNotes.length >= 1);
-  assert.ok(room.reportLoreEntries.length >= 1);
-  assert.ok(room.missions.some((entry) => entry.sourceLoreId === "lore-cidade-ktaluhl-kalar"));
-  assert.ok(room.sceneList.some((entry) => entry.loreId === "lore-cidade-ktaluhl-kalar"));
-  assert.ok(room.preparedEncounters.some((entry) => entry.source === "lore"));
-  assert.ok(room.gmNotes.some((entry) => entry.linkedType === "lore"));
-  assert.ok(room.campaignClocks.some((entry) => entry.loreId === "lore-entidade-uryon"));
-  assert.ok(room.factionStates.some((entry) => entry.loreId === "lore-faccao-conselho-ktaluhl-kalar"));
-
-  const gmState = room.gmDashboardStateFor({ isGM: true });
-  const playerState = room.gmDashboardStateFor({ isGM: false });
-
-  assert.ok(gmState.loreState.entries.some((entry) => entry.id === "lore-tecnologia-portais-tharan"));
-  assert.ok(!playerState.loreState.entries.some((entry) => entry.id === "lore-tecnologia-portais-tharan"));
-});
-
-test("GameRoom vincula lore a relacoes, monstros, itens e relatorio de sessao", () => {
-  const room = gmRoom();
-
-  room.dispatch(GAME_EVENT_TYPES.GM_LORE_RELATION, {
-    fromId: "lore-entidade-uryon",
-    toId: "monster-vanguarda-xirax",
-    type: LORE_RELATION_TYPES.LINKED_MONSTER,
-    secret: true,
-  }, "gm");
-  room.dispatch(GAME_EVENT_TYPES.GM_LORE_RELATION, {
-    fromId: "lore-tecnologia-portais-tharan",
-    toId: "item-cubo",
-    type: LORE_RELATION_TYPES.LINKED_ITEM,
-    secret: true,
-  }, "gm");
-
-  const monsterRelations = getLoreRelatedEntries(room.loreState, "lore-entidade-uryon");
-  const report = room.applyGmDashboardEvent(
-    GAME_EVENT_TYPES.GM_REPORT_EXPORT,
-    {},
-    room.getPlayer("gm")
-  );
-
-  assert.ok(room.loreRelations.some((entry) => entry.type === LORE_RELATION_TYPES.LINKED_MONSTER));
-  assert.equal(monsterRelations.length, 1);
-  assert.match(report.report, /Lore e cenario/);
-  assert.match(report.report, /Tarantus/);
-});
-
-test("persistencia de sessoes e campanhas preserva compendio de lore", () => {
-  const room = gmRoom();
-  room.dispatch(GAME_EVENT_TYPES.GM_LORE_NOTE, { loreId: "lore-planeta-tarantus" }, "gm");
-  room.dispatch(GAME_EVENT_TYPES.GM_LORE_MISSION, { loreId: "lore-cidade-ktaluhl-kalar" }, "gm");
-
-  const migrated = migrateSessionState(room.toJSON());
-  const campaign = createCampaign({ name: "Campanha de Lore", sessionState: migrated });
-  const updated = upsertCampaignSession(campaign, migrated, "Teste de lore");
-
-  assert.equal(migrated.loreSchemaVersion, LORE_SCHEMA_VERSION);
-  assert.ok(migrated.loreState.entries.some((entry) => entry.id === "lore-planeta-tarantus"));
-  assert.ok(migrated.loreNotes.length >= 1);
-  assert.ok(campaign.loreState.entries.some((entry) => entry.id === "lore-cidade-ktaluhl-kalar"));
-  assert.ok(updated.missionLoreLinks.some((entry) => entry.loreId === "lore-cidade-ktaluhl-kalar"));
 });
