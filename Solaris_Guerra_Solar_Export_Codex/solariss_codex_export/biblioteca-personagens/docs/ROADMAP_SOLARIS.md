@@ -10,6 +10,9 @@
 
 - Criar constantes de schema em `src/schemas`.
 - Validar formas basicas de personagem, item e criatura.
+- Reconhecer FOR, REF, CON, INT, PRE e MEN como atributos oficiais.
+- Manter ESP apenas como legado/compatibilidade ate migracao manual confirmada.
+- Manter Cosmos como recurso/poder separado.
 - Manter schemas sem dependencias externas.
 
 ## Fase 3 - Exportacao/importacao base

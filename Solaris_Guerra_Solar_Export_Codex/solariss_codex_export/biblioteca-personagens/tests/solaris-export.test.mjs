@@ -90,12 +90,24 @@ test("exportSolarisCharacter serializes legacy Biblioteca character into officia
   const exported = exportSolarisCharacter(sampleCharacter);
   assert.equal(exported.identity.name, "Lyssara Kalar");
   assert.equal(exported.attributes.ref, 11);
-  assert.equal(exported.attributes.esp, 10);
+  assert.equal(exported.attributes.men, 10);
+  assert.equal(Object.hasOwn(exported.attributes, "esp"), false);
   assert.equal(exported.derived.pv.max, 20);
   assert.equal(exported.inventory.credits, 350);
   assert.equal(exported.equipment.weapons.length, 1);
   assert.equal(exported.equipment.armor.durability.cracks, 2);
   assert.equal(exported.abilities[0].schema, SOLARIS_ITEM_SCHEMA);
+});
+
+test("exportSolarisCharacter preserves legacy ESP without making it official", () => {
+  const exported = exportSolarisCharacter({
+    ...sampleCharacter,
+    attributes: { FOR: 8, REF: 11, CON: 9, ESP: 13, PRE: 7, INT: 12 },
+  });
+  assert.equal(exported.attributes.men, 0);
+  assert.equal(Object.hasOwn(exported.attributes, "esp"), false);
+  assert.equal(exported.legacy.attributes.ESP, 13);
+  assert.ok(exported.migration.needsReviewFlags.includes("legacy-esp-preserved-without-men-migration"));
 });
 
 test("importSolarisCharacter hydrates official schema back into legacy-compatible data", () => {
@@ -108,9 +120,27 @@ test("importSolarisCharacter hydrates official schema back into legacy-compatibl
   assert.equal(imported.character.inventory.length, 2);
 });
 
+test("importSolarisCharacter does not migrate legacy ESP to MEN automatically", () => {
+  const imported = importSolarisCharacter(JSON.stringify({
+    schema: SOLARIS_CHARACTER_SCHEMA,
+    id: "char-legacy-esp",
+    meta: { saveVersion: 1, appVersion: "0.6.0-alpha.27" },
+    identity: { name: "Ficha antiga", level: 1 },
+    attributes: { for: 7, ref: 7, con: 7, int: 7, pre: 7, esp: 14 },
+    derived: {},
+    inventory: {},
+    abilities: [],
+    notes: {},
+  }));
+  assert.equal(imported.character.attributes.MEN, 7);
+  assert.ok(imported.warnings.some((warning) => warning.includes("ESP legado")));
+});
+
 test("createSolarisExportBundle creates versioned bundle", () => {
   const bundle = createSolarisExportBundle({ character: sampleCharacter, items: [{ id: "vela", name: "Vela", type: "utility" }] });
   assert.equal(bundle.schema, SOLARIS_EXPORT_BUNDLE_SCHEMA);
+  assert.equal(bundle.validation.ok, true);
+  assert.equal(bundle.payload.characters.length, 1);
   assert.equal(bundle.characters.length, 1);
   assert.equal(bundle.items.length, 1);
 });
@@ -118,6 +148,8 @@ test("createSolarisExportBundle creates versioned bundle", () => {
 test("exportFoundryDraft maps Solaris character to draft actor and items", () => {
   const draft = exportFoundryDraft(sampleCharacter);
   assert.equal(draft.schema, SOLARIS_FOUNDRY_DRAFT_SCHEMA);
+  assert.equal(draft.validation.ok, true);
+  assert.equal(draft.actor.type, "character");
   assert.equal(draft.actors.length, 1);
   assert.equal(draft.actors[0].type, "character");
   assert.equal(draft.actors[0].system.identity.name, "Lyssara Kalar");

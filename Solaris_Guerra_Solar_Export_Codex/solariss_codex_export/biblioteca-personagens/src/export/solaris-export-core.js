@@ -4,10 +4,11 @@ import {
   SOLARIS_ITEM_SCHEMA,
   SOLARIS_SCHEMA_SAVE_VERSION,
   validateBasicCharacterShape,
+  validateBasicExportBundleShape,
   validateBasicItemShape,
 } from "../schemas/solaris-schemas.js";
 
-export const SOLARIS_EXPORT_APP_VERSION = "0.6.0-alpha.27";
+export const SOLARIS_EXPORT_APP_VERSION = "0.6.0-alpha.28";
 
 const clone = (value) => (typeof structuredClone === "function"
   ? structuredClone(value)
@@ -96,8 +97,12 @@ function normalizeAttributes(character = {}) {
     men: numberValue(firstValue(attrs.men, attrs.MEN), 0),
     pre: numberValue(firstValue(attrs.pre, attrs.PRE), 0),
     int: numberValue(firstValue(attrs.int, attrs.INT), 0),
-    esp: numberValue(firstValue(attrs.esp, attrs.ESP, attrs.MEN), 0),
   };
+}
+
+function hasLegacyEsp(character = {}) {
+  const attrs = character.attributes || {};
+  return attrs.esp !== undefined || attrs.ESP !== undefined;
 }
 
 function normalizeDerived(character = {}) {
@@ -213,7 +218,10 @@ export function exportSolarisCharacter(character = {}, options = {}) {
     },
     migration: {
       source: "biblioteca-solaris-legacy-character",
-      needsReviewFlags: clone(firstValue(source.needsReviewFlags, [])),
+      needsReviewFlags: [
+        ...arrayOf(firstValue(source.needsReviewFlags, [])),
+        ...(hasLegacyEsp(source) ? ["legacy-esp-preserved-without-men-migration"] : []),
+      ],
     },
     legacy: options.includeLegacy === false ? null : clone(source),
   };
@@ -230,18 +238,35 @@ export function createSolarisExportBundle(data = {}, options = {}) {
   const sourceCharacters = arrayOf(firstValue(data.characters, data.character ? [data.character] : []));
   const characters = sourceCharacters.map((character) => exportSolarisCharacter(character, { ...options, exportedAt: now }));
   const items = arrayOf(data.items).map((item) => normalizeSolarisItemForExport(item));
-  return {
+  const creatures = arrayOf(data.creatures).map((creature) => clone(creature));
+  const warnings = [
+    ...characters.flatMap((character) => character.validation?.warnings || []),
+    ...items.flatMap((item) => item.validation?.warnings || []),
+  ];
+  const bundle = {
     schema: SOLARIS_EXPORT_BUNDLE_SCHEMA,
+    id: makeId("export", { id: options.id, name: firstValue(options.name, data.name, "bundle") }),
+    meta: {
+      appVersion: textValue(options.appVersion, SOLARIS_EXPORT_APP_VERSION),
+      saveVersion: SOLARIS_SCHEMA_SAVE_VERSION,
+      exportedAt: now,
+    },
+    type: textValue(options.type, "library-export"),
+    payload: {
+      characters,
+      items,
+      creatures,
+      notes: textValue(data.notes, ""),
+    },
     saveVersion: SOLARIS_SCHEMA_SAVE_VERSION,
     appVersion: textValue(options.appVersion, SOLARIS_EXPORT_APP_VERSION),
     exportedAt: now,
     characters,
     items,
-    creatures: arrayOf(data.creatures).map((creature) => clone(creature)),
+    creatures,
     notes: textValue(data.notes, ""),
-    warnings: [
-      ...characters.flatMap((character) => character.validation?.warnings || []),
-      ...items.flatMap((item) => item.validation?.warnings || []),
-    ],
+    warnings,
+    legacy: options.includeLegacy === false ? null : clone(data),
   };
+  return { ...bundle, validation: validateBasicExportBundleShape(bundle) };
 }

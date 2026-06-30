@@ -1,6 +1,7 @@
 import {
   SOLARIS_FOUNDRY_DRAFT_SCHEMA,
   SOLARIS_SCHEMA_SAVE_VERSION,
+  validateBasicFoundryDraftShape,
 } from "../schemas/solaris-schemas.js";
 import {
   SOLARIS_EXPORT_APP_VERSION,
@@ -98,11 +99,18 @@ function toFoundryActor(character = {}) {
 export function exportFoundryDraft(character = {}, options = {}) {
   const solarisCharacter = character?.schema ? character : exportSolarisCharacter(character, options);
   const actor = toFoundryActor(solarisCharacter);
-  return {
+  const exportedAt = options.exportedAt || new Date().toISOString();
+  const draft = {
     schema: SOLARIS_FOUNDRY_DRAFT_SCHEMA,
+    id: `foundry-draft-${solarisCharacter.id || Date.now()}`,
+    meta: {
+      appVersion: options.appVersion || solarisCharacter.meta?.appVersion || SOLARIS_EXPORT_APP_VERSION,
+      saveVersion: SOLARIS_SCHEMA_SAVE_VERSION,
+      exportedAt,
+    },
     saveVersion: SOLARIS_SCHEMA_SAVE_VERSION,
     appVersion: options.appVersion || solarisCharacter.meta?.appVersion || SOLARIS_EXPORT_APP_VERSION,
-    exportedAt: options.exportedAt || new Date().toISOString(),
+    exportedAt,
     source: {
       schema: solarisCharacter.schema,
       id: solarisCharacter.id,
@@ -115,10 +123,18 @@ export function exportFoundryDraft(character = {}, options = {}) {
         futureSystem: "guerra-solar",
       },
     },
+    actor,
     actors: [actor],
     items: actor.items,
     journals: [],
     compendiums: [],
+    flags: {
+      solaris: {
+        source: "Biblioteca Solaris",
+        draftSchema: SOLARIS_FOUNDRY_DRAFT_SCHEMA,
+        sourceSchema: solarisCharacter.schema,
+      },
+    },
     mappingNotes: [
       "Este e um rascunho independente do Foundry: a Biblioteca Solaris continua sendo a fonte oficial.",
       "Actor character recebe a ficha completa em system e flags.solaris.",
@@ -129,5 +145,7 @@ export function exportFoundryDraft(character = {}, options = {}) {
       ...(solarisCharacter.validation?.warnings || []),
       "Draft ainda nao cria documentos Foundry diretamente; use como contrato para o importador.",
     ],
+    legacy: clone(solarisCharacter.legacy || {}),
   };
+  return { ...draft, validation: validateBasicFoundryDraftShape(draft) };
 }

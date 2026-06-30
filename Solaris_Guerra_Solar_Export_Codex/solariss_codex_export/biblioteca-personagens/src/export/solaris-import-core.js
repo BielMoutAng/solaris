@@ -16,10 +16,17 @@ function upperAttributes(attributes = {}) {
     FOR: Number(attributes.for ?? attributes.FOR ?? 7),
     REF: Number(attributes.ref ?? attributes.REF ?? 7),
     CON: Number(attributes.con ?? attributes.CON ?? 7),
-    MEN: Number(attributes.men ?? attributes.MEN ?? attributes.esp ?? attributes.ESP ?? 7),
+    MEN: Number(attributes.men ?? attributes.MEN ?? 7),
     PRE: Number(attributes.pre ?? attributes.PRE ?? 7),
     INT: Number(attributes.int ?? attributes.INT ?? 7),
   };
+}
+
+function legacyEspWarnings(character = {}) {
+  const attributes = character.attributes || {};
+  return attributes.esp !== undefined || attributes.ESP !== undefined
+    ? ["ESP legado preservado em source/legacy; nao foi convertido automaticamente para MEN."]
+    : [];
 }
 
 function legacyInventoryFromSolaris(character = {}) {
@@ -76,13 +83,16 @@ function legacyCharacterFromSolaris(character = {}) {
 export function importSolarisCharacter(json) {
   const parsed = parseJson(json);
   if (parsed?.schema === SOLARIS_EXPORT_BUNDLE_SCHEMA) {
-    const character = parsed.characters?.[0];
+    const character = parsed.payload?.characters?.[0] || parsed.characters?.[0];
     if (!character) throw new Error("Pacote Solaris nao contem personagens.");
     return {
       character: legacyCharacterFromSolaris(character),
       schema: parsed.schema,
       source: parsed,
-      warnings: ["Pacote importado usando o primeiro personagem encontrado."],
+      warnings: [
+        "Pacote importado usando o primeiro personagem encontrado.",
+        ...legacyEspWarnings(character),
+      ],
     };
   }
   if (parsed?.schema === SOLARIS_CHARACTER_SCHEMA) {
@@ -90,7 +100,10 @@ export function importSolarisCharacter(json) {
       character: legacyCharacterFromSolaris(parsed),
       schema: parsed.schema,
       source: parsed,
-      warnings: parsed.validation?.warnings || [],
+      warnings: [
+        ...(parsed.validation?.warnings || []),
+        ...legacyEspWarnings(parsed),
+      ],
     };
   }
   return {

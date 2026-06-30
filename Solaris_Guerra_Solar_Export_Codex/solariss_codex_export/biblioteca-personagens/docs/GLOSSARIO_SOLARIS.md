@@ -20,11 +20,13 @@
 - Municao: recurso consumido por arma.
 - Cartucho: municao inserida diretamente em arma sem carregador.
 - HUD vital: painel de monitoramento do personagem.
-- Cosmos: recurso/poder cosmico.
+- Cosmos: recurso/poder cosmico separado, nao atributo base.
 - Estresse: recurso de tensao fisica/mental.
 - JPF: Jogada de Protecao Fisica.
 - PV: Pontos de Vida.
 - CA: Classe de Armadura.
 - MOV: Movimento.
-- FOR, REF, CON, MEN, PRE, INT: atributos usados hoje na Biblioteca.
+- FOR, REF, CON, INT, PRE, MEN: atributos oficiais do Guerra Solar.
+- ESP: pode aparecer em dados antigos ou rascunhos anteriores, mas nao e atributo oficial do schema v1. Quando encontrado, deve ser preservado em legacy ate migracao segura.
+- Cosmos e recurso/poder separado, nao atributo base.
 - Foundry Draft: pacote intermediario para importador Foundry futuro.

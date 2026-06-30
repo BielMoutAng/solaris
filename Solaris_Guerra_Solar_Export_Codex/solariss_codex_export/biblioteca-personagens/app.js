@@ -22,14 +22,14 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260630d";
+} from "./src/domain/solaris-domain-architecture.js?v=20260630e";
 import {
   EQUIPMENT_SCHEMA_VERSION,
-} from "./src/domain/solaris-equipment-rules.js?v=20260630d";
+} from "./src/domain/solaris-equipment-rules.js?v=20260630e";
 import {
   BESTIARY_SCHEMA_VERSION,
   normalizeMonsterEntry,
-} from "./src/domain/solaris-bestiary-rules.js?v=20260630d";
+} from "./src/domain/solaris-bestiary-rules.js?v=20260630e";
 import {
   CHARACTER_CREATION_CACHE_VERSION,
   CHARACTER_CREATION_SCHEMA_VERSION,
@@ -40,10 +40,10 @@ import {
   buildCreationChoicesSnapshot,
   buildProgressionHistoryEntry,
   createInitialAttributeRoll,
-} from "./src/domain/solaris-character-creation.js?v=20260630d";
+} from "./src/domain/solaris-character-creation.js?v=20260630e";
 import {
   createDefaultLoreState,
-} from "./src/domain/solaris-lore-rules.js?v=20260630d";
+} from "./src/domain/solaris-lore-rules.js?v=20260630e";
 import {
   exportSolarisCharacter,
 } from "./src/export/solaris-export-core.js";

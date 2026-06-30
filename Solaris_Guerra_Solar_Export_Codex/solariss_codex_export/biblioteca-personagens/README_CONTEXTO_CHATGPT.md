@@ -63,8 +63,8 @@ node --check src/domain/solaris-lore-rules.js
 
 Versao atual:
 
-- App: `0.6.0-alpha.27`
-- Cache web: `20260630d`
+- App: `0.6.0-alpha.28`
+- Cache web: `20260630e`
 
 Regras de manutencao:
 
