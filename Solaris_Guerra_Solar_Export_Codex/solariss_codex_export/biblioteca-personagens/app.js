@@ -22,14 +22,14 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260630a";
+} from "./src/domain/solaris-domain-architecture.js?v=20260630b";
 import {
   EQUIPMENT_SCHEMA_VERSION,
-} from "./src/domain/solaris-equipment-rules.js?v=20260630a";
+} from "./src/domain/solaris-equipment-rules.js?v=20260630b";
 import {
   BESTIARY_SCHEMA_VERSION,
   normalizeMonsterEntry,
-} from "./src/domain/solaris-bestiary-rules.js?v=20260630a";
+} from "./src/domain/solaris-bestiary-rules.js?v=20260630b";
 import {
   CHARACTER_CREATION_CACHE_VERSION,
   CHARACTER_CREATION_SCHEMA_VERSION,
@@ -40,10 +40,10 @@ import {
   buildCreationChoicesSnapshot,
   buildProgressionHistoryEntry,
   createInitialAttributeRoll,
-} from "./src/domain/solaris-character-creation.js?v=20260630a";
+} from "./src/domain/solaris-character-creation.js?v=20260630b";
 import {
   createDefaultLoreState,
-} from "./src/domain/solaris-lore-rules.js?v=20260630a";
+} from "./src/domain/solaris-lore-rules.js?v=20260630b";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -2262,6 +2262,13 @@ function bindEvents() {
         renderSummary();
         return;
       }
+      if (event.target.id === "armorCrackLevelInput") {
+        const entry = getEquippedInventoryEntry("armor");
+        if (!entry) return;
+        entry.crackLevel = clamp(numberValue(event.target.value, 0), 0, ITEM_CRACK_MAX);
+        renderSummary();
+        return;
+      }
       if (event.target.dataset.itemCrack) {
         const entry = getInventoryEntry(event.target.dataset.itemCrack);
         if (!entry) return;
@@ -3288,6 +3295,10 @@ function renderEquipmentPage(derived) {
         <input id="crackLevelInput" type="number" min="0" max="${ITEM_CRACK_MAX}" step="1" value="${itemCrackLevel(equippedWeaponEntry)}" ${equippedWeaponEntry ? "" : "disabled"} />
       </label>
     </section>
+    <section class="inventory-panel inventory-panel-wide armor-integrity-panel">
+      <h3>Integridade da armadura</h3>
+      ${renderArmorIntegrityPanel(equippedArmor, equippedArmorEntry)}
+    </section>
     <section class="inventory-panel inventory-panel-wide">
       <h3>Suportes externos</h3>
       ${renderExternalSupportPanel(supportState)}
@@ -3308,6 +3319,39 @@ function renderEquipmentPage(derived) {
         : "Nenhum alerta de localização.",
       inventoryGroups.unassigned.length ? "inventory-location-warning" : ""
     )}
+  `;
+}
+
+function renderArmorIntegrityPanel(equippedArmor, equippedArmorEntry) {
+  const crack = itemCrackLevel(equippedArmorEntry);
+  const collapsed = Boolean(equippedArmorEntry && crack >= ITEM_CRACK_MAX);
+  const armorCa = numberValue(equippedArmor?.ca, 0);
+  const effectiveCa = collapsed ? 0 : armorCa;
+  return `
+    <div class="armor-integrity-card ${collapsed ? "collapsed" : ""}">
+      <div class="armor-integrity-main" ${equippedArmor ? `data-detail-kind="inventory" data-detail-id="${escapeHtml(equippedArmor.id)}" data-detail-uid="${escapeHtml(equippedArmorEntry?.uid || "")}"` : ""}>
+        <div class="armor-sketch" aria-hidden="true">
+          <svg viewBox="0 0 128 128">
+            <path d="M34 24h60l12 28-12 54H34L22 52z" />
+            <path d="M46 32c8 9 28 9 36 0l8 22-8 38H46l-8-38z" />
+            <path d="M38 54h52M45 92h38" />
+          </svg>
+        </div>
+        <div>
+          <span class="ability-source">${equippedArmor ? escapeHtml(marketMeta(equippedArmor)) : "Nenhuma armadura"}</span>
+          <h4>${equippedArmor ? renderCardTitleButton(equippedArmor.name) : "Sem armadura equipada"}</h4>
+          <p>${equippedArmor ? `CA da armadura: ${armorCa}. CA efetiva: ${effectiveCa}.` : "Equipe uma armadura para controlar rachaduras e colapso."}</p>
+          <div class="crack-track armor-crack-track" aria-label="Rachaduras da armadura">
+            ${Array.from({ length: ITEM_CRACK_MAX }, (_, index) => `<span class="${index < crack ? "filled" : ""}"></span>`).join("")}
+          </div>
+          <p class="inventory-note">${collapsed ? "Armadura colapsada: ela nao concede CA ate ser reparada." : equippedArmorEntry ? `Rachaduras ${crack}/${ITEM_CRACK_MAX}.` : "Nenhuma armadura equipada."}</p>
+        </div>
+      </div>
+      <label class="crack-control armor-crack-control">
+        Rachaduras da armadura equipada
+        <input id="armorCrackLevelInput" type="number" min="0" max="${ITEM_CRACK_MAX}" step="1" value="${crack}" ${equippedArmorEntry ? "" : "disabled"} />
+      </label>
+    </div>
   `;
 }
 
