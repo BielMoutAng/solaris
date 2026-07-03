@@ -9,7 +9,7 @@ import {
   validateBasicItemShape,
 } from "../schemas/solaris-schemas.js";
 
-export const SOLARIS_EXPORT_APP_VERSION = "0.6.0-alpha.31";
+export const SOLARIS_EXPORT_APP_VERSION = "0.6.0-alpha.32";
 
 const clone = (value) => (typeof structuredClone === "function"
   ? structuredClone(value)

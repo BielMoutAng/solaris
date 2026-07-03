@@ -79,6 +79,36 @@ Durante a transicao, exportacoes podem manter espelhos antigos em
 `derived.pv`, `derived.stress` e `derived.cosmos` para compatibilidade, mas o
 destino oficial e `resources`.
 
+### Ficha ativa na Biblioteca
+
+A UI da Biblioteca usa uma camada modular de ficha ativa em
+`src/ui/solaris-character-state.js`. Essa camada recebe a ficha visual antiga,
+normaliza para `solaris-character-v1` e preserva compatibilidade sem alterar a
+mecanica exibida em `app.js`.
+
+Secoes garantidas na ficha ativa:
+
+- `identity`
+- `attributes`
+- `modifiers`
+- `resources`
+- `derived`
+- `skills`
+- `protectionRolls`
+- `combat`
+- `equipment`
+- `inventory`
+- `ammoSystem`
+- `abilities`
+- `notes`
+- `migration`
+- `legacy`
+
+`src/ui/solaris-character-ui.js` fornece adaptadores somente de leitura para a
+interface atual, como resumo, recursos, atributos, combate e equipamentos. Esses
+adaptadores nao fazem migracao agressiva, nao convertem `ESP` para `MEN` e nao
+tratam Cosmos como atributo base.
+
 ### `derived`
 
 `derived` deve guardar valores calculados ou auxiliares, como:

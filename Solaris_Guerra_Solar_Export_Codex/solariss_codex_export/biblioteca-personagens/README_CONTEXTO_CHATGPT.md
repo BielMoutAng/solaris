@@ -38,7 +38,11 @@ Arquivos principais:
 - `src/storage/solaris-storage.js`
 - `src/storage/solaris-migrations.js`
 - `src/storage/solaris-backup.js`
+- `src/ui/solaris-character-state.js`
+- `src/ui/solaris-character-ui.js`
 - `tests/solaris-storage-integration.test.mjs`
+- `tests/solaris-character-state.test.mjs`
+- `tests/solaris-character-ui.test.mjs`
 - `electron-main.cjs`
 - `electron-builder.ficha.cjs`
 
@@ -70,13 +74,17 @@ node --check src/export/solaris-foundry-export.js
 node --check src/storage/solaris-storage.js
 node --check src/storage/solaris-migrations.js
 node --check src/storage/solaris-backup.js
+node --check src/ui/solaris-character-state.js
+node --check src/ui/solaris-character-ui.js
 node --test tests/solaris-storage-integration.test.mjs
+node --test tests/solaris-character-state.test.mjs
+node --test tests/solaris-character-ui.test.mjs
 ```
 
 Versao atual:
 
-- App: `0.6.0-alpha.31`
-- Cache web: `20260703b`
+- App: `0.6.0-alpha.32`
+- Cache web: `20260703c`
 
 Regras de manutencao:
 
@@ -94,3 +102,6 @@ Regras de manutencao:
 - O app visual ja inicializa pelo storage dedicado: quando so existem chaves
   legadas, ele le em modo compatibilidade e cria backup antes da primeira
   gravacao persistida no storage novo.
+- A ficha ativa ja possui camada modular em `src/ui`, normalizada para
+  `solaris-character-v1`, com recursos oficiais em `resources` e `ESP`
+  preservado somente em `legacy`.

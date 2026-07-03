@@ -33,10 +33,14 @@ node --check src/export/solaris-foundry-export.js
 node --check src/storage/solaris-storage.js
 node --check src/storage/solaris-migrations.js
 node --check src/storage/solaris-backup.js
+node --check src/ui/solaris-character-state.js
+node --check src/ui/solaris-character-ui.js
 node --test tests/solaris-schemas.test.mjs
 node --test tests/solaris-export.test.mjs
 node --test tests/solaris-storage.test.mjs
 node --test tests/solaris-migrations.test.mjs
 node --test tests/solaris-backup.test.mjs
 node --test tests/solaris-storage-integration.test.mjs
+node --test tests/solaris-character-state.test.mjs
+node --test tests/solaris-character-ui.test.mjs
 ```

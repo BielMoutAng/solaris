@@ -22,14 +22,14 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260703b";
+} from "./src/domain/solaris-domain-architecture.js?v=20260703c";
 import {
   EQUIPMENT_SCHEMA_VERSION,
-} from "./src/domain/solaris-equipment-rules.js?v=20260703b";
+} from "./src/domain/solaris-equipment-rules.js?v=20260703c";
 import {
   BESTIARY_SCHEMA_VERSION,
   normalizeMonsterEntry,
-} from "./src/domain/solaris-bestiary-rules.js?v=20260703b";
+} from "./src/domain/solaris-bestiary-rules.js?v=20260703c";
 import {
   CHARACTER_CREATION_CACHE_VERSION,
   CHARACTER_CREATION_SCHEMA_VERSION,
@@ -40,19 +40,19 @@ import {
   buildCreationChoicesSnapshot,
   buildProgressionHistoryEntry,
   createInitialAttributeRoll,
-} from "./src/domain/solaris-character-creation.js?v=20260703b";
+} from "./src/domain/solaris-character-creation.js?v=20260703c";
 import {
   createDefaultLoreState,
-} from "./src/domain/solaris-lore-rules.js?v=20260703b";
+} from "./src/domain/solaris-lore-rules.js?v=20260703c";
 import {
   exportSolarisCharacter,
-} from "./src/export/solaris-export-core.js?v=20260703b";
+} from "./src/export/solaris-export-core.js?v=20260703c";
 import {
   importSolarisCharacter,
-} from "./src/export/solaris-import-core.js?v=20260703b";
+} from "./src/export/solaris-import-core.js?v=20260703c";
 import {
   exportFoundryDraft,
-} from "./src/export/solaris-foundry-export.js?v=20260703b";
+} from "./src/export/solaris-foundry-export.js?v=20260703c";
 import {
   initializeSolarisAppStorage,
   listStoredSolarisCharacters,
@@ -60,7 +60,20 @@ import {
   saveSolarisStorage,
   saveStoredSolarisCharacter,
   saveStoredSolarisCharacters,
-} from "./src/storage/solaris-storage.js?v=20260703b";
+} from "./src/storage/solaris-storage.js?v=20260703c";
+import {
+  createCharacterState,
+  getActiveCharacter,
+  isCharacterDirty,
+  markCharacterDirty,
+  markCharacterSaved,
+  normalizeActiveCharacter,
+  setActiveCharacter,
+} from "./src/ui/solaris-character-state.js?v=20260703c";
+import {
+  getCharacterResourceViewModel,
+  getCharacterSummary,
+} from "./src/ui/solaris-character-ui.js?v=20260703c";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -1435,6 +1448,7 @@ const state = {
   storageMode: "current",
   storageWarnings: [],
   storageErrors: [],
+  characterState: createCharacterState(),
   current: emptyCharacter(),
   saved: [],
 };
@@ -1860,6 +1874,7 @@ function bindEvents() {
       }
       delete state.current.skillTraining[skillName];
     }
+    markCurrentCharacterDirty();
     hydrateQuickTests();
     renderSummary();
   });
@@ -2575,6 +2590,7 @@ function readForm() {
   state.current.notes = form.get("notes").trim();
   readCosmicSlotInputs();
   syncCreationChoices("form-read");
+  syncCharacterStateFromCurrent({ dirty: true });
 }
 
 function readCosmicSlotInputs() {
@@ -2659,14 +2675,18 @@ function renderSummary() {
   syncLoadUsedInput();
   syncResourceBounds(derived);
   refreshSkillTrainingModifiers(totals);
+  const activeCharacter = syncCharacterStateFromCurrent({ dirty: isCharacterDirty(state.characterState) });
+  const characterSummary = getCharacterSummary(activeCharacter);
+  const resourceView = getCharacterResourceViewModel(activeCharacter);
+  const resourceByKey = Object.fromEntries(resourceView.map((resource) => [resource.key, resource]));
 
   ATTRIBUTES.forEach((attr) => {
     const totalNode = document.querySelector(`#${attr}Total`);
     totalNode.textContent = `${totals[attr]} (${formatMod(attributeModifier(totals[attr]))})`;
   });
 
-  document.querySelector("#summaryName").textContent = state.current.name || "Personagem sem nome";
-  document.querySelector("#summaryLine").textContent = `${race.name} - ${profession.name} - Nível ${state.current.level}`;
+  document.querySelector("#summaryName").textContent = characterSummary.name;
+  document.querySelector("#summaryLine").textContent = `${race.name} - ${profession.name} - Nível ${characterSummary.level}`;
   renderPhotoPreviews();
   document.querySelector("#currentSheetState").textContent = state.current.updatedAt
     ? `Salva em ${formatDate(state.current.updatedAt)}`
@@ -2683,10 +2703,10 @@ function renderSummary() {
   const cosmicSpellSlots = cosmicSpellSlotState();
 
   document.querySelector("#derivedStats").innerHTML = [
-    ["PV", `${state.current.pvCurrent}/${derived.pvMax}`],
+    ["PV", resourceByKey.pv?.text || `${state.current.pvCurrent}/${derived.pvMax}`],
     ["CA", derived.ca],
     ["Mov.", `${derived.movement} m`],
-    ["Cosmos", `${state.current.cosmosCurrent}/${derived.cosmosMax}`],
+    ["Cosmos", resourceByKey.cosmos?.text || `${state.current.cosmosCurrent}/${derived.cosmosMax}`],
     ["Cubos", `${state.current.loadUsed}/${cubeStorage.totalUnits}`],
     ["Dados", `${diceProfile.count}d6`],
     ["Percepção", derived.passivePerception],
@@ -2739,11 +2759,16 @@ function renderLauncherSummary(context = {}) {
   const derived = context.derived || derivedStats(totalAttributes(), race, profession);
   const diceProfile = context.diceProfile || currentDiceProfile();
   const stressMax = derived.stressMax || STRESS_MAX;
+  const activeCharacter = getActiveCharacter(state.characterState)
+    || syncCharacterStateFromCurrent({ dirty: isCharacterDirty(state.characterState) });
+  const characterSummary = getCharacterSummary(activeCharacter);
+  const resourceView = getCharacterResourceViewModel(activeCharacter);
+  const resourceByKey = Object.fromEntries(resourceView.map((resource) => [resource.key, resource]));
 
-  el.launcherName.textContent = state.current.name || "Personagem sem nome";
-  el.launcherLine.textContent = `${race.name} // ${profession.name} // Nível ${state.current.level}`;
+  el.launcherName.textContent = characterSummary.name;
+  el.launcherLine.textContent = `${race.name} // ${profession.name} // Nível ${characterSummary.level}`;
   el.launcherStats.innerHTML = [
-    ["PV", `${state.current.pvCurrent}/${derived.pvMax}`],
+    ["PV", resourceByKey.pv?.text || `${state.current.pvCurrent}/${derived.pvMax}`],
     ["CA", derived.ca],
     ["MOV", `${derived.movement} m`],
     ["DADOS", `${diceProfile.count}d6`],
@@ -2755,9 +2780,9 @@ function renderLauncherSummary(context = {}) {
   `).join("");
 
   const resources = [
-    ["PV", state.current.pvCurrent, derived.pvMax, "life"],
-    ["COSMOS", state.current.cosmosCurrent, derived.cosmosMax, "cosmos"],
-    ["ESTRESSE", state.current.stress, stressMax, "stress"],
+    ["PV", resourceByKey.pv?.value ?? state.current.pvCurrent, resourceByKey.pv?.max ?? derived.pvMax, "life"],
+    ["COSMOS", resourceByKey.cosmos?.value ?? state.current.cosmosCurrent, resourceByKey.cosmos?.max ?? derived.cosmosMax, "cosmos"],
+    ["ESTRESSE", resourceByKey.stress?.value ?? state.current.stress, resourceByKey.stress?.max ?? stressMax, "stress"],
   ];
   el.launcherResourceBars.innerHTML = resources.map(([label, value, max, kind]) => {
     const percent = max > 0 ? clamp((value / max) * 100, 0, 100) : 0;
@@ -6849,14 +6874,16 @@ function saveCurrent() {
   state.current.updatedAt = now;
   const payload = structuredCloneSafe(state.current);
 
-  persistCharacterPayload(payload, { updateCurrent: true });
+  const saved = persistCharacterPayload(payload, { updateCurrent: true });
+  syncCharacterStateFromCurrent({ dirty: !saved });
+  if (saved) markCurrentCharacterSaved();
   renderSavedList();
   renderSummary();
   showToast("Ficha salva no arquivo local.");
 }
 
 function newCharacter() {
-  state.current = emptyCharacter();
+  replaceCurrentCharacter(emptyCharacter());
   state.openCubeUid = "";
   renderForm();
   renderSavedList();
@@ -6875,7 +6902,7 @@ function loadCharacter(id) {
   }
   character ||= state.saved.find((item) => item.id === id);
   if (!character) return;
-  state.current = normalizeCharacter(character);
+  replaceCurrentCharacter(character);
   state.openCubeUid = "";
   renderForm();
   renderSavedList();
@@ -6891,13 +6918,13 @@ function handleSavedAction(action, id) {
   if (action === "duplicate") {
     const character = state.saved.find((item) => item.id === id);
     if (!character) return;
-    state.current = {
+    replaceCurrentCharacter({
       ...normalizeCharacter(character),
       id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
       name: `${character.name || "Personagem"} cópia`,
       createdAt: new Date().toISOString(),
       updatedAt: null,
-    };
+    }, { dirty: true });
     state.openCubeUid = "";
     renderForm();
     switchView("personagens");
@@ -6908,7 +6935,7 @@ function handleSavedAction(action, id) {
   if (action === "delete") {
     state.saved = state.saved.filter((item) => item.id !== id);
     if (state.current.id === id) {
-      state.current = emptyCharacter();
+      replaceCurrentCharacter(emptyCharacter());
       state.openCubeUid = "";
     }
     persistSaved();
@@ -6957,7 +6984,8 @@ function exportCurrent() {
   readForm();
   syncDomainSnapshotFromLegacy();
   syncCreationChoices("export");
-  const payload = exportSolarisCharacter(currentExportSource());
+  const activeCharacter = syncCharacterStateFromCurrent({ dirty: isCharacterDirty(state.characterState) });
+  const payload = activeCharacter || exportSolarisCharacter(currentExportSource());
   downloadJsonFile(payload, `${safeFileName(state.current.name)}.solaris-character-v1.json`);
   showToast("Ficha exportada em Solaris JSON.");
 }
@@ -6981,11 +7009,11 @@ async function importCharacter(event) {
       throw new Error(imported.errors?.[0] || "Arquivo JSON invalido.");
     }
     const data = imported.character;
-    state.current = normalizeCharacter({
+    replaceCurrentCharacter({
       ...data,
       id: data.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
       updatedAt: null,
-    });
+    }, { dirty: true });
     state.openCubeUid = "";
     renderForm();
     renderSavedList();
@@ -7008,6 +7036,7 @@ async function setCharacterPhoto(file) {
   try {
     state.current.photoDataUrl = await imageFileToDataUrl(file);
     state.current.photoName = file.name;
+    markCurrentCharacterDirty();
     renderPhotoPreviews();
     showToast("Imagem adicionada à ficha.");
   } catch (error) {
@@ -7173,6 +7202,37 @@ function persistStorageSection(section, value) {
   const saved = saveSolarisStorage(next, storageOptions());
   applyStorageResult(saved);
   return saved;
+}
+
+function syncCharacterStateFromCurrent({ dirty = isCharacterDirty(state.characterState) } = {}) {
+  try {
+    const activeCharacter = normalizeActiveCharacter(currentExportSource(), {
+      appVersion: SOLARIS_BIBLIOTECA_VERSION,
+    });
+    state.characterState = setActiveCharacter(state.characterState, activeCharacter);
+    if (dirty) state.characterState = markCharacterDirty(state.characterState);
+    return getActiveCharacter(state.characterState);
+  } catch (error) {
+    state.characterState = {
+      ...state.characterState,
+      errors: [...new Set([...(state.characterState.errors || []), error.message || "Nao foi possivel normalizar a ficha ativa."])],
+    };
+    return null;
+  }
+}
+
+function replaceCurrentCharacter(character, { dirty = false } = {}) {
+  state.current = normalizeCharacter(character);
+  syncCharacterStateFromCurrent({ dirty });
+  return state.current;
+}
+
+function markCurrentCharacterDirty() {
+  state.characterState = markCharacterDirty(state.characterState);
+}
+
+function markCurrentCharacterSaved() {
+  state.characterState = markCharacterSaved(state.characterState);
 }
 
 function loadSaved() {
@@ -8118,7 +8178,9 @@ function persistCurrentCharacterSilently() {
   state.current.updatedAt = new Date().toISOString();
   syncCreationChoices("persist");
   const payload = structuredCloneSafe(state.current);
-  persistCharacterPayload(payload);
+  const saved = persistCharacterPayload(payload);
+  syncCharacterStateFromCurrent({ dirty: !saved });
+  if (saved) markCurrentCharacterSaved();
   renderSavedList();
 }
 

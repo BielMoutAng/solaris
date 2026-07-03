@@ -49,6 +49,9 @@ para fazer backup ou passar fichas para outro computador.
 - `src/storage/solaris-storage.js`: camada dedicada de persistencia.
 - `src/storage/solaris-migrations.js`: migracoes seguras de storage legado.
 - `src/storage/solaris-backup.js`: backup e restauracao de snapshots Solaris.
+- `src/ui/solaris-character-state.js`: estado modular da ficha ativa.
+- `src/ui/solaris-character-ui.js`: adaptadores de leitura da ficha ativa para
+  a interface atual.
 
 ## Build Desktop
 
@@ -79,10 +82,14 @@ node --check src/export/solaris-foundry-export.js
 node --check src/storage/solaris-storage.js
 node --check src/storage/solaris-migrations.js
 node --check src/storage/solaris-backup.js
+node --check src/ui/solaris-character-state.js
+node --check src/ui/solaris-character-ui.js
 node --test tests/solaris-storage-integration.test.mjs
+node --test tests/solaris-character-state.test.mjs
+node --test tests/solaris-character-ui.test.mjs
 ```
 
 ## Versao
 
-Versao atual: `0.6.0-alpha.31`
-Cache web atual: `20260703b`
+Versao atual: `0.6.0-alpha.32`
+Cache web atual: `20260703c`

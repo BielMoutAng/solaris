@@ -53,9 +53,25 @@ Status: concluida em `0.6.0-alpha.31`.
 - Manter dados desconhecidos e `ESP` legado preservados em `legacy`.
 - Manter UI e mecanicas sem alteracao nesta etapa.
 
+## Fase 5 - Ficha ativa completa e modularizacao
+
+Status: concluida em `0.6.0-alpha.32`.
+
+- Criar estado modular de ficha ativa em `src/ui/solaris-character-state.js`.
+- Criar adaptadores de leitura para UI em `src/ui/solaris-character-ui.js`.
+- Normalizar a ficha ativa para `solaris-character-v1` sem alterar a interface
+  visual.
+- Manter `resources.pv`, `resources.stress` e `resources.cosmos` como origem
+  oficial de PV, Estresse e Cosmos.
+- Manter FOR, REF, CON, INT, PRE e MEN como atributos oficiais.
+- Preservar `ESP` em `legacy`, sem migracao automatica para `MEN`.
+- Preparar secoes minimas de `equipment`, `inventory` e `ammoSystem` para
+  fases futuras.
+- Integrar salvar, carregar, importar, exportar e persistencia silenciosa da
+  UI atual ao estado modular.
+
 ## Fases seguintes
 
-- Ficha ativa mais modular.
 - Inventario fisico completo.
 - Municao e carregadores completos.
 - Itens, skills e bestiario totalmente estruturados.

@@ -13,11 +13,11 @@ sem virar o centro do projeto.
 
 ## Versao Atual
 
-- App: `0.6.0-alpha.31`
-- Cache web/PWA: `20260703b`
+- App: `0.6.0-alpha.32`
+- Cache web/PWA: `20260703c`
 - Branch enviada ao GitHub: `main`
-- Ultima tag enviada: `v0.6.0-alpha.31`
-- Ultima fase registrada: Fase 4.5 - Integracao gradual do app visual ao storage
+- Ultima tag enviada: `v0.6.0-alpha.32`
+- Ultima fase registrada: Fase 5 - Ficha ativa completa e modularizacao
 
 ## Decisao Oficial de Atributos
 
@@ -82,6 +82,28 @@ Mudancas centrais:
 - `ESP` continua preservado como legado, sem conversao automatica para `MEN`.
 - Nenhuma mecanica, UI ou integracao real com Foundry foi alterada nesta fase.
 
+### Fase 5 - Ficha Ativa Completa e Modularizacao
+
+Foi criada a primeira camada modular da ficha ativa, preparando a Biblioteca
+Solaris para evoluir inventario, municao, exportacao Foundry e futuras telas
+sem duplicar regras diretamente em `app.js`.
+
+Mudancas centrais:
+
+- Criado `src/ui/solaris-character-state.js` para normalizar a ficha ativa.
+- Criado `src/ui/solaris-character-ui.js` com adaptadores de leitura para a UI.
+- A ficha ativa passa a ser normalizada para `solaris-character-v1`.
+- `resources.pv`, `resources.stress` e `resources.cosmos` seguem como origem
+  oficial de PV, Estresse e Cosmos.
+- FOR, REF, CON, INT, PRE e MEN seguem como atributos oficiais.
+- `ESP` segue preservado apenas em `legacy`, sem conversao automatica para
+  `MEN`.
+- Cosmos segue como recurso/poder separado, nao como atributo.
+- Foram preparadas secoes minimas de `equipment`, `inventory` e `ammoSystem`.
+- `app.js` passou a sincronizar a ficha ativa ao salvar, carregar, importar,
+  exportar, duplicar, criar nova ficha e persistir silenciosamente.
+- A UI e as mecanicas foram preservadas; esta fase e estrutural.
+
 ### Arquivos Criados
 
 - `src/storage/solaris-storage.js`
@@ -91,6 +113,10 @@ Mudancas centrais:
 - `tests/solaris-migrations.test.mjs`
 - `tests/solaris-backup.test.mjs`
 - `tests/solaris-storage-integration.test.mjs`
+- `src/ui/solaris-character-state.js`
+- `src/ui/solaris-character-ui.js`
+- `tests/solaris-character-state.test.mjs`
+- `tests/solaris-character-ui.test.mjs`
 
 ### Arquivos Alterados
 
@@ -110,6 +136,10 @@ Mudancas centrais:
 - `src/export/solaris-import-core.js`
 - `src/storage/solaris-storage.js`
 - `src/storage/solaris-backup.js`
+- `src/ui/solaris-character-state.js`
+- `src/ui/solaris-character-ui.js`
+- `tests/solaris-character-state.test.mjs`
+- `tests/solaris-character-ui.test.mjs`
 
 ## Como a Fase 4 Funciona
 
@@ -182,6 +212,28 @@ Wrappers adicionados/estabilizados:
 - `saveStoredSolarisCharacters`
 - `deleteStoredSolarisCharacter`
 
+## Como a Fase 5 Funciona
+
+`src/ui/solaris-character-state.js` recebe a ficha visual/legada atual e gera
+uma ficha ativa normalizada para `solaris-character-v1`.
+
+Esse estado garante:
+
+- `identity` com nome, jogador, raca, profissao, nivel e XP;
+- `attributes` oficiais com `for`, `ref`, `con`, `int`, `pre` e `men`;
+- `resources` oficiais com `pv`, `stress` e `cosmos`;
+- `derived` para CA, movimento, iniciativa e dados base;
+- `equipment`, `inventory` e `ammoSystem` minimos para fases futuras;
+- `legacy` preservado, incluindo `ESP` quando aparecer em dados antigos.
+
+`src/ui/solaris-character-ui.js` transforma a ficha ativa em dados de leitura
+para a interface, como resumo, recursos, atributos, combate e equipamentos.
+Esses adaptadores nao alteram mecanicas e nao fazem migracao agressiva.
+
+No `app.js`, a ficha ativa e sincronizada quando o usuario salva, carrega,
+duplica, importa, exporta, cria ficha nova, altera foto ou quando o app faz
+persistencia silenciosa.
+
 ## Testes Criados/Atualizados
 
 Foram criados testes dedicados para:
@@ -202,6 +254,11 @@ Foram criados testes dedicados para:
 - backup antes da primeira migracao persistida;
 - wrappers de fichas usados pelo app visual;
 - fallback em memoria sem `localStorage`.
+- normalizacao da ficha ativa;
+- preservacao de `ESP` em `legacy` na ficha ativa;
+- recursos oficiais PV, Estresse e Cosmos em `resources`;
+- adaptadores de UI para resumo, atributos, recursos, combate e equipamentos;
+- sincronizacao estrutural da ficha ativa sem depender do DOM.
 
 ## Validacao Realizada
 
@@ -225,20 +282,26 @@ node --check src/export/solaris-foundry-export.js
 node --check src/storage/solaris-storage.js
 node --check src/storage/solaris-migrations.js
 node --check src/storage/solaris-backup.js
+node --check src/ui/solaris-character-state.js
+node --check src/ui/solaris-character-ui.js
 node --test tests/solaris-storage.test.mjs
 node --test tests/solaris-migrations.test.mjs
 node --test tests/solaris-backup.test.mjs
 node --test tests/solaris-storage-integration.test.mjs
+node --test tests/solaris-character-state.test.mjs
+node --test tests/solaris-character-ui.test.mjs
 git diff --check
 ```
 
 Resultado:
 
-- `npm test`: 212 testes passaram.
+- `npm test`: 237 testes passaram.
 - `node --test tests/solaris-storage.test.mjs`: 6 testes passaram.
 - `node --test tests/solaris-migrations.test.mjs`: 5 testes passaram.
 - `node --test tests/solaris-backup.test.mjs`: 6 testes passaram.
 - `node --test tests/solaris-storage-integration.test.mjs`: 9 testes passaram.
+- `node --test tests/solaris-character-state.test.mjs`: 17 testes passaram.
+- `node --test tests/solaris-character-ui.test.mjs`: 8 testes passaram.
 - Todos os `node --check` passaram.
 - `git diff --check`: sem erro; apenas avisos normais de LF/CRLF no Windows.
 
@@ -252,5 +315,6 @@ Resultado:
 
 ## Proximo Passo Recomendado
 
-Seguir para a Fase 5: modularizar a ficha ativa e preparar o inventario fisico
-para usar o storage dedicado sem duplicar regras em `app.js`.
+Seguir para a Fase 6: inventario fisico completo usando a ficha ativa modular,
+com foco em equipamentos, locais fisicos, municao, carregadores e preparacao
+mais rica para exportacao Foundry futura.
