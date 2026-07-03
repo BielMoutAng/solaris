@@ -139,6 +139,29 @@ Campos principais:
 As fichas dentro de `data.characters` devem ser normalizadas para
 `solaris-character-v1`.
 
+### Integracao com o app visual
+
+A Biblioteca deve inicializar a persistencia por `solaris-storage-v1` usando a
+chave raiz `solaris.storage.v1`. Quando essa chave ainda nao existir, o app pode
+ler as chaves legadas em modo compatibilidade e montar um snapshot migrado em
+memoria.
+
+Chaves legadas reconhecidas:
+
+- `solaris.character.library.v1`
+- `solaris.custom.content.library.v1`
+- `solaris.shop.price.overrides.v1`
+- `solaris.monster.library.v1`
+
+Regra de seguranca:
+
+- leitura legada nao apaga chaves antigas;
+- primeira gravacao persistida apos detectar legado deve criar backup
+  `solaris-backup-v1`;
+- importadores e migradores preservam campos desconhecidos em `legacy`;
+- `ESP` legado continua preservado em `legacy` e nao e convertido
+  automaticamente para `MEN`.
+
 ## Backup
 
 `solaris-backup-v1` guarda snapshots exportaveis do storage.

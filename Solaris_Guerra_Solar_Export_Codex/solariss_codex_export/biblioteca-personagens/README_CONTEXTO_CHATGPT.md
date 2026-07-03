@@ -38,6 +38,7 @@ Arquivos principais:
 - `src/storage/solaris-storage.js`
 - `src/storage/solaris-migrations.js`
 - `src/storage/solaris-backup.js`
+- `tests/solaris-storage-integration.test.mjs`
 - `electron-main.cjs`
 - `electron-builder.ficha.cjs`
 
@@ -62,15 +63,20 @@ node --check src/domain/solaris-bestiary-rules.js
 node --check src/domain/solaris-combat-rules.js
 node --check src/domain/solaris-gm-rules.js
 node --check src/domain/solaris-lore-rules.js
+node --check src/schemas/solaris-schemas.js
+node --check src/export/solaris-export-core.js
+node --check src/export/solaris-import-core.js
+node --check src/export/solaris-foundry-export.js
 node --check src/storage/solaris-storage.js
 node --check src/storage/solaris-migrations.js
 node --check src/storage/solaris-backup.js
+node --test tests/solaris-storage-integration.test.mjs
 ```
 
 Versao atual:
 
-- App: `0.6.0-alpha.30`
-- Cache web: `20260703a`
+- App: `0.6.0-alpha.31`
+- Cache web: `20260703b`
 
 Regras de manutencao:
 
@@ -85,3 +91,6 @@ Regras de manutencao:
   `solaris-foundry-draft-v1` como rascunho independente.
 - A persistencia dedicada usa `solaris-storage-v1` e backups usam
   `solaris-backup-v1`, preservando chaves antigas em modo compatibilidade.
+- O app visual ja inicializa pelo storage dedicado: quando so existem chaves
+  legadas, ele le em modo compatibilidade e cria backup antes da primeira
+  gravacao persistida no storage novo.

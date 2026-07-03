@@ -37,6 +37,22 @@ Status: concluida em `0.6.0-alpha.30`.
 - Criar `solaris-backup-v1` para exportar/restaurar snapshots com checksum.
 - Testar storage, migracoes e backup sem depender do navegador real.
 
+## Fase 4.5 - Integracao gradual do app visual ao storage
+
+Status: concluida em `0.6.0-alpha.31`.
+
+- Inicializar a Biblioteca pelo `solaris-storage-v1` quando a chave nova
+  existir.
+- Ler chaves legadas em modo compatibilidade quando ainda nao houver
+  `solaris.storage.v1`.
+- Nao apagar nem sobrescrever chaves antigas automaticamente.
+- Criar backup `solaris-backup-v1` antes da primeira migracao persistida a
+  partir de dados legados.
+- Encapsular leitura/gravacao de fichas por wrappers de storage compativeis
+  com a UI atual.
+- Manter dados desconhecidos e `ESP` legado preservados em `legacy`.
+- Manter UI e mecanicas sem alteracao nesta etapa.
+
 ## Fases seguintes
 
 - Ficha ativa mais modular.

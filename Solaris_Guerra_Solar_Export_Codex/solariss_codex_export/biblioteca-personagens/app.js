@@ -22,14 +22,14 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260703a";
+} from "./src/domain/solaris-domain-architecture.js?v=20260703b";
 import {
   EQUIPMENT_SCHEMA_VERSION,
-} from "./src/domain/solaris-equipment-rules.js?v=20260703a";
+} from "./src/domain/solaris-equipment-rules.js?v=20260703b";
 import {
   BESTIARY_SCHEMA_VERSION,
   normalizeMonsterEntry,
-} from "./src/domain/solaris-bestiary-rules.js?v=20260703a";
+} from "./src/domain/solaris-bestiary-rules.js?v=20260703b";
 import {
   CHARACTER_CREATION_CACHE_VERSION,
   CHARACTER_CREATION_SCHEMA_VERSION,
@@ -40,19 +40,27 @@ import {
   buildCreationChoicesSnapshot,
   buildProgressionHistoryEntry,
   createInitialAttributeRoll,
-} from "./src/domain/solaris-character-creation.js?v=20260703a";
+} from "./src/domain/solaris-character-creation.js?v=20260703b";
 import {
   createDefaultLoreState,
-} from "./src/domain/solaris-lore-rules.js?v=20260703a";
+} from "./src/domain/solaris-lore-rules.js?v=20260703b";
 import {
   exportSolarisCharacter,
-} from "./src/export/solaris-export-core.js?v=20260703a";
+} from "./src/export/solaris-export-core.js?v=20260703b";
 import {
   importSolarisCharacter,
-} from "./src/export/solaris-import-core.js?v=20260703a";
+} from "./src/export/solaris-import-core.js?v=20260703b";
 import {
   exportFoundryDraft,
-} from "./src/export/solaris-foundry-export.js?v=20260703a";
+} from "./src/export/solaris-foundry-export.js?v=20260703b";
+import {
+  initializeSolarisAppStorage,
+  listStoredSolarisCharacters,
+  loadStoredSolarisCharacter,
+  saveSolarisStorage,
+  saveStoredSolarisCharacter,
+  saveStoredSolarisCharacters,
+} from "./src/storage/solaris-storage.js?v=20260703b";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -1422,6 +1430,11 @@ const state = {
   pendingRacialChoiceChange: null,
   customLibraryContent: emptyCustomLibraryContent(),
   shopPriceOverrides: {},
+  storageAdapter: null,
+  storageEnvelope: null,
+  storageMode: "current",
+  storageWarnings: [],
+  storageErrors: [],
   current: emptyCharacter(),
   saved: [],
 };
@@ -6811,19 +6824,32 @@ function mergeCatalogByName(primary = [], fallback = []) {
   return entries;
 }
 
+function persistCharacterPayload(payload, { updateCurrent = false } = {}) {
+  try {
+    const saved = saveStoredSolarisCharacter(payload, storageOptions());
+    applyStorageResult(saved);
+    if (saved.ok === false) throw new Error(saved.errors?.[0] || "Falha ao salvar ficha no storage Solaris.");
+    if (updateCurrent && saved.character) state.current = normalizeCharacter(saved.character);
+    refreshSavedFromStorage();
+    return true;
+  } catch (error) {
+    applyStorageResult({ errors: [error.message || "Nao foi possivel salvar ficha no storage Solaris."] });
+    const index = state.saved.findIndex((character) => character.id === payload.id);
+    if (index >= 0) state.saved[index] = payload;
+    else state.saved.unshift(payload);
+    return false;
+  }
+}
+
 function saveCurrent() {
   readForm();
   syncDomainSnapshotFromLegacy();
   syncCreationChoices("save");
   const now = new Date().toISOString();
   state.current.updatedAt = now;
-  const index = state.saved.findIndex((character) => character.id === state.current.id);
   const payload = structuredCloneSafe(state.current);
 
-  if (index >= 0) state.saved[index] = payload;
-  else state.saved.unshift(payload);
-
-  persistSaved();
+  persistCharacterPayload(payload, { updateCurrent: true });
   renderSavedList();
   renderSummary();
   showToast("Ficha salva no arquivo local.");
@@ -6839,7 +6865,15 @@ function newCharacter() {
 }
 
 function loadCharacter(id) {
-  const character = state.saved.find((item) => item.id === id);
+  let character = null;
+  try {
+    const loaded = loadStoredSolarisCharacter(id, storageOptions());
+    applyStorageResult(loaded);
+    character = loaded.character;
+  } catch (error) {
+    applyStorageResult({ errors: [error.message || "Nao foi possivel carregar ficha do storage Solaris."] });
+  }
+  character ||= state.saved.find((item) => item.id === id);
   if (!character) return;
   state.current = normalizeCharacter(character);
   state.openCubeUid = "";
@@ -7076,30 +7110,94 @@ function renderManualImagePreview() {
   }
 }
 
+function storageOptions() {
+  return {
+    adapter: state.storageAdapter || undefined,
+    appVersion: SOLARIS_BIBLIOTECA_VERSION,
+  };
+}
+
+function applyStorageResult(result = {}) {
+  if (result.adapter) state.storageAdapter = result.adapter;
+  if (result.storage) state.storageEnvelope = result.storage;
+  if (result.data) state.storageEnvelope = result.data;
+  if (result.mode) state.storageMode = result.mode;
+  if (Array.isArray(result.warnings) && result.warnings.length) {
+    state.storageWarnings = [...new Set([...state.storageWarnings, ...result.warnings])];
+    console.warn("[Solaris storage]", ...result.warnings);
+  }
+  if (Array.isArray(result.errors) && result.errors.length) {
+    state.storageErrors = [...new Set([...state.storageErrors, ...result.errors])];
+    console.warn("[Solaris storage]", ...result.errors);
+  }
+}
+
+function ensureAppStorageInitialized() {
+  if (state.storageEnvelope) return {
+    ok: true,
+    storage: state.storageEnvelope,
+    adapter: state.storageAdapter,
+    mode: state.storageMode,
+    warnings: state.storageWarnings,
+    errors: state.storageErrors,
+  };
+  const result = initializeSolarisAppStorage({
+    appVersion: SOLARIS_BIBLIOTECA_VERSION,
+  });
+  applyStorageResult(result);
+  return result;
+}
+
+function normalizeStoredCharacterList(characters = []) {
+  return characters.map(normalizeCharacter);
+}
+
+function refreshSavedFromStorage() {
+  ensureAppStorageInitialized();
+  const listed = listStoredSolarisCharacters(storageOptions());
+  applyStorageResult(listed);
+  state.saved = normalizeStoredCharacterList(listed.characters || []);
+  return listed;
+}
+
+function persistStorageSection(section, value) {
+  ensureAppStorageInitialized();
+  const base = state.storageEnvelope || {};
+  const next = {
+    ...base,
+    data: {
+      ...(base.data || {}),
+      [section]: value,
+    },
+  };
+  const saved = saveSolarisStorage(next, storageOptions());
+  applyStorageResult(saved);
+  return saved;
+}
+
 function loadSaved() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    state.saved = raw ? JSON.parse(raw).map(normalizeCharacter) : [];
-    if (raw) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.saved));
-      } catch {
-        // Keep the migrated sheets loaded even if local persistence is blocked.
-      }
-    }
+    refreshSavedFromStorage();
   } catch (error) {
+    applyStorageResult({ errors: [error.message || "Nao foi possivel carregar o storage Solaris."] });
     state.saved = [];
   }
 }
 
 function persistSaved() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.saved));
+  try {
+    const saved = saveStoredSolarisCharacters(state.saved, storageOptions());
+    applyStorageResult(saved);
+    if (saved.ok !== false) state.saved = normalizeStoredCharacterList(saved.characters || state.saved);
+  } catch (error) {
+    applyStorageResult({ errors: [error.message || "Nao foi possivel salvar fichas no storage Solaris."] });
+  }
 }
 
 function loadCustomLibraryContent() {
   try {
-    const raw = localStorage.getItem(CUSTOM_LIBRARY_STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : {};
+    ensureAppStorageInitialized();
+    const parsed = state.storageEnvelope?.data?.customLibraryContent || {};
     state.customLibraryContent = CUSTOM_LIBRARY_VIEWS.reduce((content, view) => {
       content[view] = Array.isArray(parsed?.[view]) ? parsed[view] : [];
       return content;
@@ -7110,13 +7208,13 @@ function loadCustomLibraryContent() {
 }
 
 function persistCustomLibraryContent() {
-  localStorage.setItem(CUSTOM_LIBRARY_STORAGE_KEY, JSON.stringify(state.customLibraryContent));
+  persistStorageSection("customLibraryContent", state.customLibraryContent);
 }
 
 function loadShopPriceOverrides() {
   try {
-    const raw = localStorage.getItem(SHOP_PRICE_STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : {};
+    ensureAppStorageInitialized();
+    const parsed = state.storageEnvelope?.data?.shopPriceOverrides || {};
     state.shopPriceOverrides = parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
   } catch {
     state.shopPriceOverrides = {};
@@ -7124,13 +7222,13 @@ function loadShopPriceOverrides() {
 }
 
 function persistShopPriceOverrides() {
-  localStorage.setItem(SHOP_PRICE_STORAGE_KEY, JSON.stringify(state.shopPriceOverrides));
+  persistStorageSection("shopPriceOverrides", state.shopPriceOverrides);
 }
 
 function loadMonsterSheets() {
   try {
-    const raw = localStorage.getItem(MONSTER_STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : {};
+    ensureAppStorageInitialized();
+    const parsed = state.storageEnvelope?.data?.monsterSheets || {};
     state.monsterSheets = parsed && typeof parsed === "object" ? parsed : {};
   } catch (error) {
     state.monsterSheets = {};
@@ -7138,7 +7236,7 @@ function loadMonsterSheets() {
 }
 
 function persistMonsterSheets() {
-  localStorage.setItem(MONSTER_STORAGE_KEY, JSON.stringify(state.monsterSheets));
+  persistStorageSection("monsterSheets", state.monsterSheets);
 }
 
 function splitMonsterText(value) {
@@ -8019,11 +8117,8 @@ function syncDomainSnapshotFromLegacy({ autoSave = false } = {}) {
 function persistCurrentCharacterSilently() {
   state.current.updatedAt = new Date().toISOString();
   syncCreationChoices("persist");
-  const index = state.saved.findIndex((character) => character.id === state.current.id);
   const payload = structuredCloneSafe(state.current);
-  if (index >= 0) state.saved[index] = payload;
-  else state.saved.unshift(payload);
-  persistSaved();
+  persistCharacterPayload(payload);
   renderSavedList();
 }
 

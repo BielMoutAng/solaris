@@ -82,7 +82,7 @@ function legacyCharacterFromSolaris(character = {}) {
     ...(character.legacy || {}),
     id: character.id,
     createdAt: character.meta?.createdAt || character.legacy?.createdAt || new Date().toISOString(),
-    updatedAt: null,
+    updatedAt: character.meta?.updatedAt || character.legacy?.updatedAt || null,
     createdWithVersion: character.meta?.appVersion || character.legacy?.createdWithVersion || "",
     name: character.identity?.name || "",
     player: character.identity?.player || "",

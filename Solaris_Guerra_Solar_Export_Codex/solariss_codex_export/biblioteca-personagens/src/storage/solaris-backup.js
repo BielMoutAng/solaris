@@ -92,6 +92,13 @@ export function createSolarisBackup(storageState = {}, options = {}) {
   };
 }
 
+export function createSolarisFullBackup(storageState = {}, options = {}) {
+  return createSolarisBackup(storageState, {
+    ...options,
+    reason: options.reason || "pre-migration",
+  });
+}
+
 export function restoreSolarisBackup(backupInput = {}, options = {}) {
   const parsed = parseBackup(backupInput);
   if (!parsed.ok) {
@@ -148,4 +155,3 @@ export function rotateSolarisBackups(backups = [], limit = 10) {
     .sort((a, b) => String(b.meta?.createdAt || "").localeCompare(String(a.meta?.createdAt || "")))
     .slice(0, Math.max(0, Number(limit) || 0));
 }
-

@@ -72,12 +72,17 @@ node --check src/domain/solaris-bestiary-rules.js
 node --check src/domain/solaris-combat-rules.js
 node --check src/domain/solaris-gm-rules.js
 node --check src/domain/solaris-lore-rules.js
+node --check src/schemas/solaris-schemas.js
+node --check src/export/solaris-export-core.js
+node --check src/export/solaris-import-core.js
+node --check src/export/solaris-foundry-export.js
 node --check src/storage/solaris-storage.js
 node --check src/storage/solaris-migrations.js
 node --check src/storage/solaris-backup.js
+node --test tests/solaris-storage-integration.test.mjs
 ```
 
 ## Versao
 
-Versao atual: `0.6.0-alpha.30`
-Cache web atual: `20260703a`
+Versao atual: `0.6.0-alpha.31`
+Cache web atual: `20260703b`

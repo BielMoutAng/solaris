@@ -4,6 +4,12 @@ import {
   migrateSolarisStorageState,
   normalizeStorageCharacter,
 } from "./solaris-migrations.js";
+import {
+  importSolarisCharacter,
+} from "../export/solaris-import-core.js";
+import {
+  createSolarisFullBackup,
+} from "./solaris-backup.js";
 
 export const SOLARIS_STORAGE_ROOT_KEY = "solaris.storage.v1";
 export const SOLARIS_LEGACY_STORAGE_KEYS = Object.freeze({
@@ -16,6 +22,16 @@ export const SOLARIS_LEGACY_STORAGE_KEYS = Object.freeze({
 const clone = (value) => (typeof structuredClone === "function"
   ? structuredClone(value)
   : JSON.parse(JSON.stringify(value ?? null)));
+
+function isStorageAdapter(adapter) {
+  return Boolean(adapter) && typeof adapter.getItem === "function" && typeof adapter.setItem === "function";
+}
+
+function resolveOptionalAdapter(options = {}) {
+  return Object.prototype.hasOwnProperty.call(options, "adapter")
+    ? options.adapter
+    : globalThis.localStorage;
+}
 
 function resolveAdapter(adapter = globalThis.localStorage) {
   if (!adapter || typeof adapter.getItem !== "function" || typeof adapter.setItem !== "function") {
@@ -36,6 +52,68 @@ function parseLegacyKey(adapter, key, fallback) {
 
 function nowIso(options = {}) {
   return options.now || new Date().toISOString();
+}
+
+function hasCollectionData(value) {
+  if (Array.isArray(value)) return value.length > 0;
+  return Boolean(value) && typeof value === "object" && Object.keys(value).length > 0;
+}
+
+function hasLegacySnapshotData(snapshot = {}) {
+  return hasCollectionData(snapshot.saved)
+    || hasCollectionData(snapshot.customLibraryContent)
+    || hasCollectionData(snapshot.shopPriceOverrides)
+    || hasCollectionData(snapshot.monsterSheets);
+}
+
+function toLegacyCompatibleCharacter(character = null) {
+  if (!character) return null;
+  const imported = importSolarisCharacter(character);
+  return imported.ok === false ? character : imported.character;
+}
+
+function dedupeCharactersById(characters = [], options = {}) {
+  const byId = new Map();
+  characters.forEach((character) => {
+    const normalized = normalizeStorageCharacter(character, options).character;
+    byId.set(normalized.id, normalized);
+  });
+  return [...byId.values()];
+}
+
+function backupIfFirstLegacyPersistence(adapter, storageEnvelope, options = {}) {
+  const key = options.key || SOLARIS_STORAGE_ROOT_KEY;
+  if (adapter.getItem(key)) return { storage: storageEnvelope, warnings: [] };
+
+  const legacySnapshot = readLegacySolarisStorageSnapshot(adapter);
+  if (!hasLegacySnapshotData(legacySnapshot)) return { storage: storageEnvelope, warnings: [] };
+
+  const backupResult = createSolarisFullBackup(legacySnapshot, {
+    ...options,
+    reason: "pre-storage-v1-migration",
+  });
+  if (!backupResult.ok) {
+    return {
+      storage: storageEnvelope,
+      warnings: ["Nao foi possivel criar backup antes da migracao persistida."],
+    };
+  }
+
+  const warning = "Dados legados migrados para solaris-storage-v1; chaves antigas preservadas.";
+  return {
+    storage: {
+      ...storageEnvelope,
+      data: {
+        ...storageEnvelope.data,
+        backups: [...(storageEnvelope.data?.backups || []), backupResult.backup],
+      },
+      migration: {
+        ...(storageEnvelope.migration || {}),
+        warnings: [...new Set([...(storageEnvelope.migration?.warnings || []), warning])],
+      },
+    },
+    warnings: [warning],
+  };
 }
 
 export function createMemoryStorage(initial = {}) {
@@ -77,6 +155,76 @@ export function readLegacySolarisStorageSnapshot(adapterInput = globalThis.local
   };
 }
 
+export function initializeSolarisAppStorage(options = {}) {
+  const key = options.key || SOLARIS_STORAGE_ROOT_KEY;
+  const warnings = [];
+  const requestedAdapter = resolveOptionalAdapter(options);
+
+  if (!isStorageAdapter(requestedAdapter)) {
+    if (options.allowMemoryFallback === false) {
+      return {
+        ok: false,
+        storage: null,
+        adapter: null,
+        mode: "unavailable",
+        warnings,
+        errors: ["localStorage indisponivel e fallback em memoria desativado."],
+      };
+    }
+    const adapter = createMemoryStorage();
+    const storage = createEmptySolarisStorage(options);
+    warnings.push("localStorage indisponivel; usando storage temporario em memoria.");
+    adapter.setItem(key, JSON.stringify(storage));
+    return {
+      ok: true,
+      storage,
+      adapter,
+      mode: "memory-fallback",
+      warnings,
+      errors: [],
+    };
+  }
+
+  const adapter = resolveAdapter(requestedAdapter);
+  const raw = adapter.getItem(key);
+  if (raw) {
+    const migrated = migrateSolarisStorageState(raw, options);
+    return {
+      ok: migrated.ok,
+      storage: migrated.data,
+      adapter,
+      mode: migrated.ok ? "current" : "unavailable",
+      warnings: migrated.warnings,
+      errors: migrated.errors,
+    };
+  }
+
+  const legacySnapshot = readLegacySolarisStorageSnapshot(adapter);
+  if (hasLegacySnapshotData(legacySnapshot)) {
+    const migrated = migrateSolarisStorageState(legacySnapshot, options);
+    return {
+      ok: migrated.ok,
+      storage: migrated.data,
+      adapter,
+      mode: migrated.ok ? "legacy-compatible" : "unavailable",
+      warnings: [
+        ...(migrated.warnings || []),
+        "Dados legados detectados; usando snapshot migrado em memoria ate a proxima gravacao segura.",
+      ],
+      errors: migrated.errors,
+    };
+  }
+
+  return {
+    ok: true,
+    storage: createEmptySolarisStorage(options),
+    adapter,
+    mode: "current",
+    warnings: [],
+    errors: [],
+  };
+}
+
 export function loadSolarisStorage(options = {}) {
   const adapter = resolveAdapter(options.adapter);
   const key = options.key || SOLARIS_STORAGE_ROOT_KEY;
@@ -101,8 +249,17 @@ export function saveSolarisStorage(storageState = createEmptySolarisStorage(), o
   const migration = migrateSolarisStorageState(storageState, options);
   if (!migration.ok) return { ...migration, key };
 
-  adapter.setItem(key, JSON.stringify(migration.data));
-  return { ...migration, key, source: "root" };
+  const guarded = options.createBackupBeforeLegacyMigration === false
+    ? { storage: migration.data, warnings: [] }
+    : backupIfFirstLegacyPersistence(adapter, migration.data, options);
+  adapter.setItem(key, JSON.stringify(guarded.storage));
+  return {
+    ...migration,
+    data: guarded.storage,
+    warnings: [...new Set([...(migration.warnings || []), ...guarded.warnings])],
+    key,
+    source: "root",
+  };
 }
 
 export function listSolarisCharacters(options = {}) {
@@ -120,6 +277,24 @@ export function loadSolarisCharacter(characterId, options = {}) {
   return {
     ...loaded,
     character,
+  };
+}
+
+export function listStoredSolarisCharacters(options = {}) {
+  const listed = listSolarisCharacters(options);
+  return {
+    ...listed,
+    storedCharacters: listed.characters,
+    characters: listed.characters.map(toLegacyCompatibleCharacter).filter(Boolean),
+  };
+}
+
+export function loadStoredSolarisCharacter(characterId, options = {}) {
+  const loaded = loadSolarisCharacter(characterId, options);
+  return {
+    ...loaded,
+    storedCharacter: loaded.character,
+    character: toLegacyCompatibleCharacter(loaded.character),
   };
 }
 
@@ -154,6 +329,39 @@ export function saveSolarisCharacter(character, options = {}) {
   };
 }
 
+export function saveStoredSolarisCharacter(character, options = {}) {
+  const saved = saveSolarisCharacter(character, options);
+  return {
+    ...saved,
+    storedCharacter: saved.character,
+    character: toLegacyCompatibleCharacter(saved.character),
+  };
+}
+
+export function saveStoredSolarisCharacters(characters = [], options = {}) {
+  const loaded = loadSolarisStorage(options);
+  if (!loaded.ok) return { ...loaded, characters: [], storedCharacters: [] };
+
+  const normalizedCharacters = dedupeCharactersById(characters, options);
+  const next = {
+    ...loaded.data,
+    meta: {
+      ...loaded.data.meta,
+      updatedAt: nowIso(options),
+    },
+    data: {
+      ...loaded.data.data,
+      characters: normalizedCharacters,
+    },
+  };
+  const saved = saveSolarisStorage(next, options);
+  return {
+    ...saved,
+    storedCharacters: saved.data?.data?.characters || [],
+    characters: (saved.data?.data?.characters || []).map(toLegacyCompatibleCharacter).filter(Boolean),
+  };
+}
+
 export function removeSolarisCharacter(characterId, options = {}) {
   const loaded = loadSolarisStorage(options);
   if (!loaded.ok) return { ...loaded, removed: false };
@@ -178,6 +386,10 @@ export function removeSolarisCharacter(characterId, options = {}) {
   };
 }
 
+export function deleteStoredSolarisCharacter(characterId, options = {}) {
+  return removeSolarisCharacter(characterId, options);
+}
+
 export function clearSolarisStorage(options = {}) {
   const adapter = resolveAdapter(options.adapter);
   const key = options.key || SOLARIS_STORAGE_ROOT_KEY;
@@ -188,4 +400,3 @@ export function clearSolarisStorage(options = {}) {
     key,
   };
 }
-

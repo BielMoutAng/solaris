@@ -13,11 +13,11 @@ sem virar o centro do projeto.
 
 ## Versao Atual
 
-- App: `0.6.0-alpha.30`
-- Cache web/PWA: `20260703a`
+- App: `0.6.0-alpha.31`
+- Cache web/PWA: `20260703b`
 - Branch enviada ao GitHub: `main`
-- Ultima tag enviada: `v0.6.0-alpha.30`
-- Ultima fase registrada: Fase 4 - Persistencia e migracao dedicada
+- Ultima tag enviada: `v0.6.0-alpha.31`
+- Ultima fase registrada: Fase 4.5 - Integracao gradual do app visual ao storage
 
 ## Decisao Oficial de Atributos
 
@@ -59,6 +59,29 @@ Mudancas centrais:
 - `ESP` legado segue preservado em `legacy`, sem migracao automatica para `MEN`.
 - `resources` segue como destino oficial de PV, Estresse e Cosmos.
 
+### Fase 4.5 - Integracao Gradual do App Visual ao Storage
+
+O app visual da Biblioteca agora inicializa e salva dados usando a camada
+dedicada `solaris-storage-v1`, sem quebrar as fichas antigas nem apagar as
+chaves legadas.
+
+Mudancas centrais:
+
+- `app.js` passou a inicializar a persistencia com
+  `initializeSolarisAppStorage`.
+- Se `solaris.storage.v1` ja existir, a Biblioteca usa o storage novo como
+  fonte principal.
+- Se so existirem chaves antigas, a Biblioteca le os dados em modo
+  compatibilidade e monta um snapshot migrado em memoria.
+- As chaves antigas nao sao removidas nem sobrescritas automaticamente.
+- A primeira gravacao persistida apos detectar dados legados cria um backup
+  `solaris-backup-v1`.
+- Fichas, conteudo personalizado, bestiario local e precos editados agora
+  passam pelos wrappers do storage dedicado.
+- O fallback em memoria continua disponivel quando `localStorage` nao existe.
+- `ESP` continua preservado como legado, sem conversao automatica para `MEN`.
+- Nenhuma mecanica, UI ou integracao real com Foundry foi alterada nesta fase.
+
 ### Arquivos Criados
 
 - `src/storage/solaris-storage.js`
@@ -67,12 +90,16 @@ Mudancas centrais:
 - `tests/solaris-storage.test.mjs`
 - `tests/solaris-migrations.test.mjs`
 - `tests/solaris-backup.test.mjs`
+- `tests/solaris-storage-integration.test.mjs`
 
 ### Arquivos Alterados
 
 - `README.md`
 - `README_CONTEXTO_CHATGPT.md`
 - `README_ATUALIZACOES_CHAT.md`
+- `docs/ROADMAP_SOLARIS.md`
+- `docs/SOLARIS_DATA_SCHEMA.md`
+- `docs/CHECKLIST_PUBLICACAO.md`
 - `app.js`
 - `index.html`
 - `sw.js`
@@ -80,6 +107,9 @@ Mudancas centrais:
 - `package-lock.json`
 - `src/domain/solaris-character-creation.js`
 - `src/export/solaris-export-core.js`
+- `src/export/solaris-import-core.js`
+- `src/storage/solaris-storage.js`
+- `src/storage/solaris-backup.js`
 
 ## Como a Fase 4 Funciona
 
@@ -133,6 +163,25 @@ O backup cria `solaris-backup-v1`, com:
 A restauracao valida o schema, avisa quando o checksum nao confere e normaliza
 o conteudo pelo mesmo fluxo de migracao.
 
+## Como a Fase 4.5 Funciona
+
+Na abertura do app, a Biblioteca tenta carregar `solaris.storage.v1`. Se a
+chave existir, ela e migrada/normalizada e usada como estado atual.
+
+Se a chave nova nao existir, o app verifica as chaves legadas e monta um estado
+compativel em memoria. Isso permite que a ficha continue abrindo como antes. A
+gravacao no storage novo so acontece quando o usuario salva algo; nesse primeiro
+save, um backup completo e inserido em `data.backups` antes da persistencia.
+
+Wrappers adicionados/estabilizados:
+
+- `initializeSolarisAppStorage`
+- `listStoredSolarisCharacters`
+- `loadStoredSolarisCharacter`
+- `saveStoredSolarisCharacter`
+- `saveStoredSolarisCharacters`
+- `deleteStoredSolarisCharacter`
+
 ## Testes Criados/Atualizados
 
 Foram criados testes dedicados para:
@@ -147,6 +196,12 @@ Foram criados testes dedicados para:
 - importacao/restauracao de backup;
 - warning de checksum divergente;
 - rotacao de backups.
+- inicializacao do app com storage novo;
+- inicializacao sem storage novo;
+- leitura de chaves legadas em modo compatibilidade;
+- backup antes da primeira migracao persistida;
+- wrappers de fichas usados pelo app visual;
+- fallback em memoria sem `localStorage`.
 
 ## Validacao Realizada
 
@@ -173,15 +228,17 @@ node --check src/storage/solaris-backup.js
 node --test tests/solaris-storage.test.mjs
 node --test tests/solaris-migrations.test.mjs
 node --test tests/solaris-backup.test.mjs
+node --test tests/solaris-storage-integration.test.mjs
 git diff --check
 ```
 
 Resultado:
 
-- `npm test`: 203 testes passaram.
+- `npm test`: 212 testes passaram.
 - `node --test tests/solaris-storage.test.mjs`: 6 testes passaram.
 - `node --test tests/solaris-migrations.test.mjs`: 5 testes passaram.
 - `node --test tests/solaris-backup.test.mjs`: 6 testes passaram.
+- `node --test tests/solaris-storage-integration.test.mjs`: 9 testes passaram.
 - Todos os `node --check` passaram.
 - `git diff --check`: sem erro; apenas avisos normais de LF/CRLF no Windows.
 
@@ -195,6 +252,5 @@ Resultado:
 
 ## Proximo Passo Recomendado
 
-Integrar gradualmente o app visual ao novo `solaris-storage-v1`, primeiro em
-modo compatibilidade, mantendo leitura das chaves antigas e gerando backup antes
-de qualquer migracao persistida automaticamente.
+Seguir para a Fase 5: modularizar a ficha ativa e preparar o inventario fisico
+para usar o storage dedicado sem duplicar regras em `app.js`.

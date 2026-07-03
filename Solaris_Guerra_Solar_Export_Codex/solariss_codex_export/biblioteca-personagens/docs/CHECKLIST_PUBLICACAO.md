@@ -26,4 +26,17 @@ node --check src/domain/solaris-bestiary-rules.js
 node --check src/domain/solaris-combat-rules.js
 node --check src/domain/solaris-gm-rules.js
 node --check src/domain/solaris-lore-rules.js
+node --check src/schemas/solaris-schemas.js
+node --check src/export/solaris-export-core.js
+node --check src/export/solaris-import-core.js
+node --check src/export/solaris-foundry-export.js
+node --check src/storage/solaris-storage.js
+node --check src/storage/solaris-migrations.js
+node --check src/storage/solaris-backup.js
+node --test tests/solaris-schemas.test.mjs
+node --test tests/solaris-export.test.mjs
+node --test tests/solaris-storage.test.mjs
+node --test tests/solaris-migrations.test.mjs
+node --test tests/solaris-backup.test.mjs
+node --test tests/solaris-storage-integration.test.mjs
 ```
