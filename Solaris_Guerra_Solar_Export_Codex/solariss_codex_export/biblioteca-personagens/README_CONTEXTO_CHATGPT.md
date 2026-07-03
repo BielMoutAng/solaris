@@ -35,6 +35,9 @@ Arquivos principais:
 - `src/export/solaris-export-core.js`
 - `src/export/solaris-import-core.js`
 - `src/export/solaris-foundry-export.js`
+- `src/storage/solaris-storage.js`
+- `src/storage/solaris-migrations.js`
+- `src/storage/solaris-backup.js`
 - `electron-main.cjs`
 - `electron-builder.ficha.cjs`
 
@@ -59,12 +62,15 @@ node --check src/domain/solaris-bestiary-rules.js
 node --check src/domain/solaris-combat-rules.js
 node --check src/domain/solaris-gm-rules.js
 node --check src/domain/solaris-lore-rules.js
+node --check src/storage/solaris-storage.js
+node --check src/storage/solaris-migrations.js
+node --check src/storage/solaris-backup.js
 ```
 
 Versao atual:
 
-- App: `0.6.0-alpha.29`
-- Cache web: `20260630f`
+- App: `0.6.0-alpha.30`
+- Cache web: `20260703a`
 
 Regras de manutencao:
 
@@ -77,3 +83,5 @@ Regras de manutencao:
   de dominio quando necessario.
 - A exportacao oficial agora comeca por `solaris-character-v1`; o Foundry usa
   `solaris-foundry-draft-v1` como rascunho independente.
+- A persistencia dedicada usa `solaris-storage-v1` e backups usam
+  `solaris-backup-v1`, preservando chaves antigas em modo compatibilidade.

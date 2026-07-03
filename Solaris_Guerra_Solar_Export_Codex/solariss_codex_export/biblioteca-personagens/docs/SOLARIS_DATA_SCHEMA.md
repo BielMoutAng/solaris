@@ -13,6 +13,8 @@ modelos oficiais estiverem estabilizados.
 - `solaris-campaign-v1`
 - `solaris-export-bundle-v1`
 - `solaris-foundry-draft-v1`
+- `solaris-storage-v1`
+- `solaris-backup-v1`
 
 ## Personagem
 
@@ -112,6 +114,48 @@ Campos principais:
 - `weight`
 - `description`
 - `legacy`
+
+## Storage
+
+`solaris-storage-v1` e o envelope dedicado para persistencia local da
+Biblioteca Solaris. Ele fica em `src/storage` e deve permitir migracao segura
+de dados antigos sem apagar as chaves legadas automaticamente.
+
+Campos principais:
+
+- `schema`
+- `version`
+- `meta`
+- `data.characters`
+- `data.customLibraryContent`
+- `data.monsterSheets`
+- `data.shopPriceOverrides`
+- `data.settings`
+- `data.campaigns`
+- `data.backups`
+- `migration`
+- `legacy`
+
+As fichas dentro de `data.characters` devem ser normalizadas para
+`solaris-character-v1`.
+
+## Backup
+
+`solaris-backup-v1` guarda snapshots exportaveis do storage.
+
+Campos principais:
+
+- `schema`
+- `version`
+- `id`
+- `meta`
+- `payload.storage`
+- `checksum`
+- `warnings`
+- `legacy`
+
+O checksum e usado como alerta simples de integridade. Falha de checksum deve
+gerar warning e restauracao cautelosa, nao migracao destrutiva.
 
 ## Regra de compatibilidade
 

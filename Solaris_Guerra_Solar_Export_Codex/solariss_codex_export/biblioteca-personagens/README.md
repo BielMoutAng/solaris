@@ -46,6 +46,9 @@ para fazer backup ou passar fichas para outro computador.
 - `src/domain/solaris-gm-rules.js`: tabelas e apoio ao mestre dentro da
   Biblioteca.
 - `src/domain/solaris-lore-rules.js`: compendio de lore.
+- `src/storage/solaris-storage.js`: camada dedicada de persistencia.
+- `src/storage/solaris-migrations.js`: migracoes seguras de storage legado.
+- `src/storage/solaris-backup.js`: backup e restauracao de snapshots Solaris.
 
 ## Build Desktop
 
@@ -69,9 +72,12 @@ node --check src/domain/solaris-bestiary-rules.js
 node --check src/domain/solaris-combat-rules.js
 node --check src/domain/solaris-gm-rules.js
 node --check src/domain/solaris-lore-rules.js
+node --check src/storage/solaris-storage.js
+node --check src/storage/solaris-migrations.js
+node --check src/storage/solaris-backup.js
 ```
 
 ## Versao
 
-Versao atual: `0.6.0-alpha.29`
-Cache web atual: `20260630f`
+Versao atual: `0.6.0-alpha.30`
+Cache web atual: `20260703a`

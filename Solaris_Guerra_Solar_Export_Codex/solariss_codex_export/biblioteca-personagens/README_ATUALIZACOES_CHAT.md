@@ -13,15 +13,13 @@ sem virar o centro do projeto.
 
 ## Versao Atual
 
-- App: `0.6.0-alpha.29`
-- Cache web/PWA: `20260630f`
+- App: `0.6.0-alpha.30`
+- Cache web/PWA: `20260703a`
 - Branch enviada ao GitHub: `main`
-- Ultima tag enviada: `v0.6.0-alpha.29`
-- Ultimo commit relevante: Fase 3 de exportacao/importacao base refinada
+- Ultima tag enviada: `v0.6.0-alpha.30`
+- Ultima fase registrada: Fase 4 - Persistencia e migracao dedicada
 
 ## Decisao Oficial de Atributos
-
-Foi oficializada a opcao B.
 
 Os atributos oficiais do Guerra Solar sao:
 
@@ -42,101 +40,117 @@ base.
 
 ## O Que Foi Atualizado
 
-### Fase 3 - Exportacao/importacao Base Refinada
+### Fase 4 - Persistencia e Migracao Dedicada
 
-O formato `solaris-character-v1` foi refinado para preparar uma transicao mais
-segura entre ficha atual, JSON oficial Solaris e Foundry Draft.
+Foi criada uma camada dedicada de storage, migracao e backup para preparar a
+Biblioteca Solaris para evolucoes futuras sem depender diretamente dos formatos
+antigos de `localStorage`.
 
 Mudancas centrais:
 
-- `resources` agora e a secao oficial para PV, Estresse e Cosmos.
-- `derived` fica para valores calculados como CA, movimento, iniciativa e dados base.
-- `derived.pv`, `derived.stress` e `derived.cosmos` seguem como espelho temporario de compatibilidade.
-- importacao aceita string JSON ou objeto.
-- JSON invalido retorna erro estruturado.
-- bundles aceitam tipos `character`, `item`, `creature`, `campaign`, `mixed`, `backup` e `unknown`.
-- Foundry Draft mapeia `attributes`, `resources` e `derived` para `system`.
-- Foundry Draft preserva a ficha original em `flags.solaris.originalCharacter`.
+- Criado o envelope oficial `solaris-storage-v1`.
+- Criada migracao de snapshots legados da biblioteca para storage oficial.
+- Criada leitura de chaves legadas sem apagar dados antigos automaticamente.
+- Criado adaptador de storage em memoria para testes e uso sem navegador.
+- Criadas funcoes para salvar, listar, carregar e remover fichas no storage novo.
+- Criado sistema de backup `solaris-backup-v1`.
+- Backups incluem checksum simples para alerta de alteracao/corrupcao.
+- Restauracao de backup passa pela mesma migracao segura.
+- `ESP` legado segue preservado em `legacy`, sem migracao automatica para `MEN`.
+- `resources` segue como destino oficial de PV, Estresse e Cosmos.
 
-### Documentacao
+### Arquivos Criados
 
-Foram atualizados:
+- `src/storage/solaris-storage.js`
+- `src/storage/solaris-migrations.js`
+- `src/storage/solaris-backup.js`
+- `tests/solaris-storage.test.mjs`
+- `tests/solaris-migrations.test.mjs`
+- `tests/solaris-backup.test.mjs`
 
-- `docs/GLOSSARIO_SOLARIS.md`
-- `docs/SOLARIS_DATA_SCHEMA.md`
-- `docs/ARQUITETURA_SOLARIS.md`
-- `docs/ROADMAP_SOLARIS.md`
+### Arquivos Alterados
 
-Esses documentos agora deixam claro que:
-
-- `MEN` e atributo oficial.
-- `ESP` e apenas legado/compatibilidade.
-- Cosmos e recurso/poder separado.
-- Conversoes de `ESP` para `MEN` nao devem acontecer automaticamente.
-
-### Schemas e Validadores
-
-O arquivo principal de schemas foi reforcado:
-
-- `src/schemas/solaris-schemas.js`
-
-Ele agora contem:
-
-- constantes oficiais de schema;
-- `CURRENT_SOLARIS_SAVE_VERSION`;
-- lista oficial de atributos;
-- lista de atributos legados;
-- validadores basicos para personagem, item, criatura, campanha, export bundle e Foundry Draft;
-- warnings quando `ESP` aparece em dados legados;
-- warning quando Cosmos aparece indevidamente dentro de `attributes`.
-
-Arquivos auxiliares tambem foram alinhados:
-
-- `src/schemas/solaris-character.schema.js`
-- `src/schemas/solaris-item.schema.js`
-- `src/schemas/solaris-campaign.schema.js`
-- `src/schemas/solaris-export.schema.js`
-
-### Exportacao e Importacao
-
-Foram ajustados:
-
+- `README.md`
+- `README_CONTEXTO_CHATGPT.md`
+- `README_ATUALIZACOES_CHAT.md`
+- `app.js`
+- `index.html`
+- `sw.js`
+- `package.json`
+- `package-lock.json`
+- `src/domain/solaris-character-creation.js`
 - `src/export/solaris-export-core.js`
-- `src/export/solaris-import-core.js`
-- `src/export/solaris-foundry-export.js`
 
-Mudancas principais:
+## Como a Fase 4 Funciona
 
-- `attributes.esp` nao e mais exportado como atributo oficial.
-- `ESP` antigo fica preservado no `legacy`.
-- importacao nao converte `ESP` automaticamente para `MEN`.
-- se `ESP` for encontrado, o importador gera warning de compatibilidade.
-- Foundry Draft recebeu estrutura de validacao basica, sem usar APIs reais do Foundry.
+### Storage
+
+O novo storage usa `solaris.storage.v1` como chave raiz e guarda dados em um
+envelope versionado:
+
+- `schema`
+- `version`
+- `meta`
+- `data.characters`
+- `data.customLibraryContent`
+- `data.monsterSheets`
+- `data.shopPriceOverrides`
+- `data.settings`
+- `data.campaigns`
+- `data.backups`
+- `migration`
+- `legacy`
+
+As chaves antigas continuam sendo lidas:
+
+- `solaris.character.library.v1`
+- `solaris.custom.content.library.v1`
+- `solaris.shop.price.overrides.v1`
+- `solaris.monster.library.v1`
+
+### Migracao
+
+A migracao aceita:
+
+- array legado de fichas;
+- snapshot legado do app;
+- envelope `solaris-storage-v1`;
+- JSON string valido;
+- objeto ja parseado.
+
+JSON invalido retorna erro estruturado.
+
+### Backup
+
+O backup cria `solaris-backup-v1`, com:
+
+- `meta`
+- `payload.storage`
+- `checksum`
+- `warnings`
+- `legacy`
+
+A restauracao valida o schema, avisa quando o checksum nao confere e normaliza
+o conteudo pelo mesmo fluxo de migracao.
 
 ## Testes Criados/Atualizados
 
-Foi criado:
+Foram criados testes dedicados para:
 
-- `tests/solaris-schemas.test.mjs`
-
-Foi atualizado:
-
-- `tests/solaris-export.test.mjs`
-
-Os testes cobrem:
-
-- constantes oficiais dos schemas;
-- personagem minimo valido com `MEN`;
-- `ESP` nao obrigatorio;
-- warning quando `ESP` aparece;
-- warning se Cosmos aparece em `attributes`;
-- item, criatura, campanha, export bundle e Foundry Draft minimos;
-- exportacao sem `esp` como atributo oficial;
-- importacao sem migrar `ESP` para `MEN` automaticamente.
+- storage em memoria;
+- migracao de snapshot legado;
+- persistencia no envelope oficial;
+- leitura de chaves antigas;
+- preservacao de `ESP` em `legacy`;
+- ausencia de conversao automatica de `ESP` para `MEN`;
+- criacao de backup;
+- importacao/restauracao de backup;
+- warning de checksum divergente;
+- rotacao de backups.
 
 ## Validacao Realizada
 
-Comandos rodados com sucesso:
+Comandos executados com sucesso:
 
 ```bash
 npm test
@@ -150,19 +164,30 @@ node --check src/domain/solaris-combat-rules.js
 node --check src/domain/solaris-gm-rules.js
 node --check src/domain/solaris-lore-rules.js
 node --check src/schemas/solaris-schemas.js
-node --test tests/solaris-schemas.test.mjs
+node --check src/export/solaris-export-core.js
+node --check src/export/solaris-import-core.js
+node --check src/export/solaris-foundry-export.js
+node --check src/storage/solaris-storage.js
+node --check src/storage/solaris-migrations.js
+node --check src/storage/solaris-backup.js
+node --test tests/solaris-storage.test.mjs
+node --test tests/solaris-migrations.test.mjs
+node --test tests/solaris-backup.test.mjs
 git diff --check
 ```
 
 Resultado:
 
-- `npm test`: 182 testes passaram.
+- `npm test`: 203 testes passaram.
+- `node --test tests/solaris-storage.test.mjs`: 6 testes passaram.
+- `node --test tests/solaris-migrations.test.mjs`: 5 testes passaram.
+- `node --test tests/solaris-backup.test.mjs`: 6 testes passaram.
 - Todos os `node --check` passaram.
-- `git diff --check`: sem erro, apenas avisos normais de LF/CRLF no Windows.
+- `git diff --check`: sem erro; apenas avisos normais de LF/CRLF no Windows.
 
 ## Regras Importantes Para Proximas Etapas
 
-- Nao alterar mecanicas visuais ou UI quando a tarefa for apenas schema/documentacao.
+- Nao alterar mecanicas visuais ou UI quando a tarefa for apenas schema/storage.
 - Nao migrar `ESP` para `MEN` sem decisao manual.
 - Preservar dados antigos em `legacy` sempre que houver duvida.
 - Foundry deve continuar como destino de exportacao/importacao, nao como fonte oficial.
@@ -170,10 +195,6 @@ Resultado:
 
 ## Proximo Passo Recomendado
 
-Avancar para a proxima fase da exportacao/importacao:
-
-1. Refinar o formato `solaris-character-v1`.
-2. Criar validacao mais profunda por secao da ficha.
-3. Definir melhor `resources` para PV, Cosmos, Estresse e outros recursos.
-4. Preparar mapeamento Foundry Draft sem usar ainda APIs reais do Foundry.
-5. Manter compatibilidade total com fichas antigas.
+Integrar gradualmente o app visual ao novo `solaris-storage-v1`, primeiro em
+modo compatibilidade, mantendo leitura das chaves antigas e gerando backup antes
+de qualquer migracao persistida automaticamente.

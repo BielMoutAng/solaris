@@ -22,14 +22,14 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260630f";
+} from "./src/domain/solaris-domain-architecture.js?v=20260703a";
 import {
   EQUIPMENT_SCHEMA_VERSION,
-} from "./src/domain/solaris-equipment-rules.js?v=20260630f";
+} from "./src/domain/solaris-equipment-rules.js?v=20260703a";
 import {
   BESTIARY_SCHEMA_VERSION,
   normalizeMonsterEntry,
-} from "./src/domain/solaris-bestiary-rules.js?v=20260630f";
+} from "./src/domain/solaris-bestiary-rules.js?v=20260703a";
 import {
   CHARACTER_CREATION_CACHE_VERSION,
   CHARACTER_CREATION_SCHEMA_VERSION,
@@ -40,19 +40,19 @@ import {
   buildCreationChoicesSnapshot,
   buildProgressionHistoryEntry,
   createInitialAttributeRoll,
-} from "./src/domain/solaris-character-creation.js?v=20260630f";
+} from "./src/domain/solaris-character-creation.js?v=20260703a";
 import {
   createDefaultLoreState,
-} from "./src/domain/solaris-lore-rules.js?v=20260630f";
+} from "./src/domain/solaris-lore-rules.js?v=20260703a";
 import {
   exportSolarisCharacter,
-} from "./src/export/solaris-export-core.js";
+} from "./src/export/solaris-export-core.js?v=20260703a";
 import {
   importSolarisCharacter,
-} from "./src/export/solaris-import-core.js";
+} from "./src/export/solaris-import-core.js?v=20260703a";
 import {
   exportFoundryDraft,
-} from "./src/export/solaris-foundry-export.js";
+} from "./src/export/solaris-foundry-export.js?v=20260703a";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");

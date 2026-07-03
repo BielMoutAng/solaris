@@ -17,7 +17,7 @@
 
 ## Fase 3 - Exportacao/importacao base
 
-Status: iniciada em `0.6.0-alpha.29`.
+Status: concluida em `0.6.0-alpha.29`.
 
 - Exportar ficha para `solaris-character-v1`.
 - Importar `solaris-character-v1` e fichas legadas.
@@ -26,9 +26,19 @@ Status: iniciada em `0.6.0-alpha.29`.
 - Estabilizar `resources` como secao oficial para PV, Estresse e Cosmos.
 - Priorizar exportacao/importacao e validacao antes de novas telas.
 
+## Fase 4 - Persistencia e migracao dedicada
+
+Status: concluida em `0.6.0-alpha.30`.
+
+- Criar `solaris-storage-v1` como envelope dedicado de persistencia.
+- Migrar arrays e snapshots legados da Biblioteca sem apagar chaves antigas.
+- Preservar dados desconhecidos em `legacy`.
+- Manter `ESP` apenas como legado, sem conversao automatica para `MEN`.
+- Criar `solaris-backup-v1` para exportar/restaurar snapshots com checksum.
+- Testar storage, migracoes e backup sem depender do navegador real.
+
 ## Fases seguintes
 
-- Persistencia e migracoes dedicadas.
 - Ficha ativa mais modular.
 - Inventario fisico completo.
 - Municao e carregadores completos.

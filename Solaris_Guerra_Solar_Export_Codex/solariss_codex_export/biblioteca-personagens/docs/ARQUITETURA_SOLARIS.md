@@ -10,7 +10,8 @@ Biblioteca, sem virar o centro do projeto.
    `src/domain`.
 2. Dados oficiais: catalogos e livros carregados pela Biblioteca.
 3. Aplicacao/UI: `app.js`, `index.html` e `styles.css`.
-4. Persistencia local: localStorage hoje, camada dedicada em fase futura.
+4. Persistencia local: `solaris-storage-v1`, migracoes e backups em
+   `src/storage`, mantendo leitura de chaves antigas do localStorage.
 5. Schemas: contratos versionados em `src/schemas`.
 6. Exportacao/importacao: conversores em `src/export`.
 7. Adaptadores externos: Foundry Draft primeiro, modulo Foundry depois.
@@ -30,3 +31,6 @@ Biblioteca, sem virar o centro do projeto.
 
 Ficha legada da Biblioteca -> Solaris Character v1 -> Solaris Export Bundle v1
 -> Foundry Draft v1 -> futuro modulo importador Foundry.
+
+Persistencia local -> Solaris Storage v1 -> Solaris Backup v1 -> restauracao
+segura com migracao e preservacao de `legacy`.
