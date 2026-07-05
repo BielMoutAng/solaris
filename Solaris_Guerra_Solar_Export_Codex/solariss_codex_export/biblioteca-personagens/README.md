@@ -33,6 +33,17 @@ As fichas e bibliotecas criadas pelo usuario ficam salvas no armazenamento local
 do navegador ou do app desktop. Use exportar/importar dentro do proprio sistema
 para fazer backup ou passar fichas para outro computador.
 
+## Documentacao
+
+- `docs/MANUAL_AUTONOMIA_TECNICA_SOLARIS.md`: manual completo de estudos e
+  operacao autonoma para manter e evoluir a Biblioteca Solaris sem depender de
+  agentes de IA.
+- `docs/ARQUITETURA_SOLARIS.md`: arquitetura geral do projeto.
+- `docs/SOLARIS_DATA_SCHEMA.md`: contratos de dados, schemas, storage,
+  migracoes e compatibilidade.
+- `docs/ROADMAP_SOLARIS.md`: fases de evolucao da Biblioteca.
+- `docs/CHECKLIST_PUBLICACAO.md`: validacao antes de publicar.
+
 ## Modulos Mantidos
 
 - `app.js`: interface principal e fluxos da Biblioteca.
