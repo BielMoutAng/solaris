@@ -109,6 +109,7 @@ Regras de manutencao:
 - A ficha ativa ja possui camada modular em `src/ui`, normalizada para
   `solaris-character-v1`, com recursos oficiais em `resources` e `ESP`
   preservado somente em `legacy`.
-- A Fase 6 iniciou a consolidacao do inventario fisico em
+- A Fase 6 concluiu a consolidacao do inventario fisico em
   `src/domain/solaris-inventory-rules.js`, com `location`, cubos como
-  containers, ganchos, coldres, bandoleiras e view models de armazenamento.
+  containers, ganchos, coldres, bandoleiras, view models de armazenamento e
+  testes dedicados.

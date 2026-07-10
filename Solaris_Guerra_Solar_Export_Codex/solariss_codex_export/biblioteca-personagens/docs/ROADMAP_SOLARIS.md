@@ -72,7 +72,7 @@ Status: concluida em `0.6.0-alpha.32`.
 
 ## Fase 6 - Inventario fisico completo
 
-Status: iniciada em `0.6.0-alpha.33`.
+Status: concluida em `0.6.0-alpha.33`.
 
 - Criar `src/domain/solaris-inventory-rules.js` com regras puras de inventario
   fisico, sem DOM.

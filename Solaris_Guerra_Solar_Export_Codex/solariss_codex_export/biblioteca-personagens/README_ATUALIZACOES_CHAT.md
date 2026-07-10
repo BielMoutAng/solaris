@@ -17,7 +17,7 @@ sem virar o centro do projeto.
 - Cache web/PWA: `20260710a`
 - Branch enviada ao GitHub: `main`
 - Ultima tag enviada: `v0.6.0-alpha.33`
-- Ultima fase registrada: Fase 6 - Inventario fisico completo
+- Ultima fase registrada: Fase 6 - Inventario fisico completo concluida
 
 ## Decisao Oficial de Atributos
 
@@ -110,6 +110,8 @@ Foi criada a base estrutural do inventario fisico da ficha, preparando a
 Biblioteca Solaris para representar onde cada item esta no corpo, nos cubos,
 nos suportes e nos containers, sem implementar ainda a logica profunda de
 municao/carregadores.
+
+Status: concluida em `0.6.0-alpha.33`, cache `20260710a`.
 
 Mudancas centrais:
 
@@ -374,12 +376,12 @@ git diff --check
 
 Resultado:
 
-- `npm test`: 267 testes passaram.
+- `npm test`: 275 testes passaram.
 - `node --test tests/solaris-storage.test.mjs`: 6 testes passaram.
 - `node --test tests/solaris-migrations.test.mjs`: 5 testes passaram.
 - `node --test tests/solaris-backup.test.mjs`: 6 testes passaram.
 - `node --test tests/solaris-storage-integration.test.mjs`: 9 testes passaram.
-- `node --test tests/solaris-inventory-rules.test.mjs`: 22 testes passaram.
+- `node --test tests/solaris-inventory-rules.test.mjs`: 30 testes passaram.
 - `node --test tests/solaris-character-state.test.mjs`: 20 testes passaram.
 - `node --test tests/solaris-character-ui.test.mjs`: 13 testes passaram.
 - Todos os `node --check` passaram.
