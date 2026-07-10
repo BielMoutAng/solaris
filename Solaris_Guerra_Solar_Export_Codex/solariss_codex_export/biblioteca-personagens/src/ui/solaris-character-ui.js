@@ -13,6 +13,10 @@ import {
   listHolsterItems,
   listHookItems,
 } from "../domain/solaris-inventory-rules.js";
+import {
+  getCharacterAmmoSummary,
+  normalizeCharacterAmmoSystem,
+} from "../domain/solaris-ammo-rules.js";
 
 const ATTRIBUTE_LABELS = Object.freeze({
   for: "FOR",
@@ -207,6 +211,18 @@ export function getCharacterStorageViewModel(character = null) {
     backpacks: normalized?.inventory?.backpacks || [],
     quickAccess: getQuickAccessViewModel(normalized),
     summary: getCharacterInventorySummary(normalized),
+  };
+}
+
+export function getCharacterAmmoViewModel(character = null) {
+  const normalized = normalizeCharacterAmmoSystem(normalizeForView(character) || {});
+  const ammoSystem = normalized?.ammoSystem || {};
+  return {
+    schemaVersion: ammoSystem.schemaVersion || 1,
+    weapons: ammoSystem.loadedWeapons || [],
+    magazines: ammoSystem.magazines || [],
+    ammoStacks: ammoSystem.ammoStacks || [],
+    summary: getCharacterAmmoSummary(normalized),
   };
 }
 

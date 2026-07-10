@@ -1,6 +1,6 @@
 export const CHARACTER_CREATION_SCHEMA_VERSION = 2;
-export const CHARACTER_CREATION_CACHE_VERSION = "20260710a";
-export const SOLARIS_BIBLIOTECA_VERSION = "0.6.0-alpha.33";
+export const CHARACTER_CREATION_CACHE_VERSION = "20260710b";
+export const SOLARIS_BIBLIOTECA_VERSION = "0.6.0-alpha.34";
 
 export const CREATION_RULE_SOURCE = Object.freeze({
   book: "Livro 1 base do jogador.docx",
@@ -142,7 +142,6 @@ export function characterModifier(value) {
   const numeric = Number.isFinite(Number(value)) ? Number(value) : CREATION_ATTRIBUTE_BASE;
   return Math.floor((numeric - CREATION_ATTRIBUTE_MOD_BASE) / 2);
 }
-
 export function createInitialAttributeRoll(random = Math.random) {
   const rolls = Array.from({ length: 7 }, () => Math.floor(random() * 6) + 1);
   const discardedIndex = rolls.reduce((lowestIndex, value, index) => (

@@ -193,20 +193,26 @@ Exemplos:
 { "type": "attached", "parentId": "weapon_001", "slot": "magazine" }
 ```
 
-`attached` ja existe como estrutura de compatibilidade, mas a logica profunda
-de carregadores, municao e armas carregadas fica para a Fase 7.
+`attached` representa itens acoplados fisicamente a outro item, como um
+carregador conectado a uma arma.
 
 ### `ammoSystem`
 
-`ammoSystem` fica preparado nesta fase com:
+`ammoSystem` usa `schemaVersion: 1` e consolida a parte funcional de municao da
+ficha com:
 
 - `magazines`
 - `ammoStacks`
 - `loadedWeapons`
 
-A Fase 6 nao define regras finais de municao, carregador, recarga ou arma
-carregada. Esses campos existem para preservar dados e permitir a Fase 7 sem
-quebrar fichas antigas.
+`ammoStacks` representam pilhas de municao por tipo, quantidade e unidades de
+cubo ocupadas. `magazines` representam carregadores com capacidade, municao
+carregada, compatibilidade e possivel arma conectada. `loadedWeapons`
+representa o estado de municao das armas, incluindo fonte ativa, carregador
+acoplado, municao interna, modos de disparo e se a arma pode disparar.
+
+Dados antigos ou incompletos devem ser normalizados sem apagar campos
+desconhecidos; quando houver duvida, preservar em `legacy`.
 
 ### `derived`
 

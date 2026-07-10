@@ -1,37 +1,40 @@
-const STATIC_CACHE = "solaris-biblioteca-static-20260710a";
-const RUNTIME_CACHE = "solaris-biblioteca-runtime-20260710a";
+const STATIC_CACHE = "solaris-biblioteca-static-20260710b";
+const RUNTIME_CACHE = "solaris-biblioteca-runtime-20260710b";
 
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css?v=20260710a",
-  "./official-books-data.js?v=20260710a",
-  "./official-book5-catalog.js?v=20260710a",
-  "./official-rulebook-compendium.js?v=20260710a",
+  "./styles.css?v=20260710b",
+  "./official-books-data.js?v=20260710b",
+  "./official-book5-catalog.js?v=20260710b",
+  "./official-rulebook-compendium.js?v=20260710b",
   "./HumanisVitalHUD.js?v=20260606e",
-  "./app.js?v=20260710a",
-  "./src/domain/solaris-domain-architecture.js?v=20260710a",
-  "./src/domain/solaris-character-creation.js?v=20260710a",
-  "./src/domain/solaris-combat-rules.js?v=20260710a",
-  "./src/domain/solaris-equipment-rules.js?v=20260710a",
+  "./app.js?v=20260710b",
+  "./src/domain/solaris-domain-architecture.js?v=20260710b",
+  "./src/domain/solaris-domain-architecture.js",
+  "./src/domain/solaris-ammo-rules.js?v=20260710b",
+  "./src/domain/solaris-ammo-rules.js",
+  "./src/domain/solaris-character-creation.js?v=20260710b",
+  "./src/domain/solaris-combat-rules.js?v=20260710b",
+  "./src/domain/solaris-equipment-rules.js?v=20260710b",
   "./src/domain/solaris-inventory-rules.js",
-  "./src/domain/solaris-bestiary-rules.js?v=20260710a",
-  "./src/domain/solaris-gm-rules.js?v=20260710a",
-  "./src/domain/solaris-lore-rules.js?v=20260710a",
+  "./src/domain/solaris-bestiary-rules.js?v=20260710b",
+  "./src/domain/solaris-gm-rules.js?v=20260710b",
+  "./src/domain/solaris-lore-rules.js?v=20260710b",
   "./src/schemas/solaris-schemas.js",
   "./src/schemas/solaris-character.schema.js",
   "./src/schemas/solaris-item.schema.js",
   "./src/schemas/solaris-creature.schema.js",
   "./src/schemas/solaris-campaign.schema.js",
   "./src/schemas/solaris-export.schema.js",
-  "./src/export/solaris-export-core.js?v=20260710a",
-  "./src/export/solaris-import-core.js?v=20260710a",
-  "./src/export/solaris-foundry-export.js?v=20260710a",
-  "./src/storage/solaris-storage.js?v=20260710a",
-  "./src/storage/solaris-migrations.js?v=20260710a",
-  "./src/storage/solaris-backup.js?v=20260710a",
-  "./src/ui/solaris-character-state.js?v=20260710a",
-  "./src/ui/solaris-character-ui.js?v=20260710a",
+  "./src/export/solaris-export-core.js?v=20260710b",
+  "./src/export/solaris-import-core.js?v=20260710b",
+  "./src/export/solaris-foundry-export.js?v=20260710b",
+  "./src/storage/solaris-storage.js?v=20260710b",
+  "./src/storage/solaris-migrations.js?v=20260710b",
+  "./src/storage/solaris-backup.js?v=20260710b",
+  "./src/ui/solaris-character-state.js?v=20260710b",
+  "./src/ui/solaris-character-ui.js?v=20260710b",
   "./manifest.webmanifest",
   "./assets/icons/solaris-icon.svg",
   "./assets/icons/apple-touch-icon.png",
@@ -52,7 +55,6 @@ self.addEventListener("install", (event) => {
       .then(() => self.skipWaiting())
   );
 });
-
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches

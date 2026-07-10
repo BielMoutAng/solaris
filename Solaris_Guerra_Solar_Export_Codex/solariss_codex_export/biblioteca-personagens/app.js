@@ -1,35 +1,37 @@
 import {
   Character as DomainCharacter,
+  ENTITY_TYPES,
+  INVENTORY_SIZES,
+  LOCATION_KINDS,
+  definitionFromLegacyItem,
+  inferLegacyInventorySize,
+  migrateLegacyCharacterData,
+  reconcileLegacyArmorCatalog,
+} from "./src/domain/solaris-domain-architecture.js?v=20260710b";
+import {
   AMMO_CUBE_BULK,
   AMMO_KINDS,
-  ENTITY_TYPES,
   FEED_SYSTEMS,
   FIRE_MODE_IDS,
   FIRE_MODES,
-  INVENTORY_SIZES,
-  LOCATION_KINDS,
   ammoCubeUnitsFor,
   attachMagazineToWeapon,
   createMagazineInstance,
   createWeaponAmmoState,
-  definitionFromLegacyItem,
   detachMagazineFromWeapon,
   fireWeapon,
-  inferLegacyInventorySize,
   loadAmmoIntoMagazine,
-  migrateLegacyCharacterData,
   pumpWeapon,
-  reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260710a";
+} from "./src/domain/solaris-ammo-rules.js?v=20260710b";
 import {
   EQUIPMENT_SCHEMA_VERSION,
-} from "./src/domain/solaris-equipment-rules.js?v=20260710a";
+} from "./src/domain/solaris-equipment-rules.js?v=20260710b";
 import {
   BESTIARY_SCHEMA_VERSION,
   normalizeMonsterEntry,
-} from "./src/domain/solaris-bestiary-rules.js?v=20260710a";
+} from "./src/domain/solaris-bestiary-rules.js?v=20260710b";
 import {
   CHARACTER_CREATION_CACHE_VERSION,
   CHARACTER_CREATION_SCHEMA_VERSION,
@@ -40,19 +42,19 @@ import {
   buildCreationChoicesSnapshot,
   buildProgressionHistoryEntry,
   createInitialAttributeRoll,
-} from "./src/domain/solaris-character-creation.js?v=20260710a";
+} from "./src/domain/solaris-character-creation.js?v=20260710b";
 import {
   createDefaultLoreState,
-} from "./src/domain/solaris-lore-rules.js?v=20260710a";
+} from "./src/domain/solaris-lore-rules.js?v=20260710b";
 import {
   exportSolarisCharacter,
-} from "./src/export/solaris-export-core.js?v=20260710a";
+} from "./src/export/solaris-export-core.js?v=20260710b";
 import {
   importSolarisCharacter,
-} from "./src/export/solaris-import-core.js?v=20260710a";
+} from "./src/export/solaris-import-core.js?v=20260710b";
 import {
   exportFoundryDraft,
-} from "./src/export/solaris-foundry-export.js?v=20260710a";
+} from "./src/export/solaris-foundry-export.js?v=20260710b";
 import {
   initializeSolarisAppStorage,
   listStoredSolarisCharacters,
@@ -60,7 +62,7 @@ import {
   saveSolarisStorage,
   saveStoredSolarisCharacter,
   saveStoredSolarisCharacters,
-} from "./src/storage/solaris-storage.js?v=20260710a";
+} from "./src/storage/solaris-storage.js?v=20260710b";
 import {
   createCharacterState,
   getActiveCharacter,
@@ -69,11 +71,11 @@ import {
   markCharacterSaved,
   normalizeActiveCharacter,
   setActiveCharacter,
-} from "./src/ui/solaris-character-state.js?v=20260710a";
+} from "./src/ui/solaris-character-state.js?v=20260710b";
 import {
   getCharacterResourceViewModel,
   getCharacterSummary,
-} from "./src/ui/solaris-character-ui.js?v=20260710a";
+} from "./src/ui/solaris-character-ui.js?v=20260710b";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");

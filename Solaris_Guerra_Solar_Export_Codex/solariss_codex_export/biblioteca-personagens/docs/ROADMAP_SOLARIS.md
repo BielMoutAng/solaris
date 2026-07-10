@@ -154,11 +154,31 @@ Status: concluida em `0.6.0-alpha.33`.
   municao e carregadores fica para a Fase 7.
 - Preservar `ESP` em `legacy` sem migracao automatica.
 
+## Fase 7 - Municao, carregadores e armas carregadas
+
+Status: concluida em `0.6.0-alpha.34`.
+
+- Criar `src/domain/solaris-ammo-rules.js` com regras puras de municao,
+  carregadores e armas carregadas, sem DOM.
+- Normalizar pilhas de municao com tipo, quantidade e unidades de cubo.
+- Normalizar carregadores com capacidade, municao carregada, compatibilidade e
+  vinculo opcional a arma.
+- Normalizar armas carregadas com `ammoProfile`, `ammoState`, fonte ativa,
+  estado de disparo e compatibilidade de municao.
+- Permitir acoplar e desacoplar carregadores, carregar municao em carregador,
+  recarregar armas internas, disparar armas e acionar pump em armas que exigem
+  esse passo.
+- Integrar `ammoSystem` com inventario fisico, ficha ativa modular, view models
+  de UI, exportacao oficial e Foundry Draft.
+- Preservar `ESP` em `legacy` sem migracao automatica.
+- Manter a UI visual sem alteracao nesta fase.
+
 ## Roadmap Obrigatorio
 
 - Fase 6 - Inventario fisico completo. Status: concluida em
   `0.6.0-alpha.33`.
-- Fase 7 - Municao, carregadores e armas carregadas.
+- Fase 7 - Municao, carregadores e armas carregadas. Status: concluida em
+  `0.6.0-alpha.34`.
 - Fase 8 - Itens, habilidades e catalogos oficiais estruturados.
 - Fase 9 - Bestiario estruturado.
 - Fase 10 - Rolagens e combate completos na Biblioteca.

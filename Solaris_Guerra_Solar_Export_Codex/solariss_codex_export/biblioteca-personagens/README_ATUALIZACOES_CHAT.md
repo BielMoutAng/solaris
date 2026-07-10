@@ -55,15 +55,16 @@ completa.
 
 ## Versao Atual
 
-- App: `0.6.0-alpha.33`
-- Cache web/PWA: `20260710a`
+- App: `0.6.0-alpha.34`
+- Cache web/PWA: `20260710b`
 - Branch enviada ao GitHub: `main`
-- Ultima tag enviada: `v0.6.0-alpha.33`
-- Ultima fase registrada: Fase 6 - Inventario fisico completo concluida
+- Ultima tag enviada: `v0.6.0-alpha.34`
+- Ultima fase registrada: Fase 7 - Municao, carregadores e armas carregadas
+  concluida
 - Ultima decisao registrada: roadmap integrado Biblioteca Solaris -> Foundry
   Bridge -> Sistema Foundry Guerra Solar
-- Esta atualizacao altera apenas documentacao de rumo; app/cache/tag
-  permanecem em `0.6.0-alpha.33` / `20260710a`.
+- Esta atualizacao conclui a base funcional de municao e carregadores sem
+  alterar visualmente a interface.
 
 ## Decisao Oficial de Atributos
 
@@ -191,6 +192,35 @@ Mudancas centrais:
 - `ammoSystem` continua apenas preparado para a Fase 7.
 - `ESP` legado continua preservado em `legacy`, sem conversao automatica.
 
+### Fase 7 - Municao, Carregadores e Armas Carregadas
+
+Foi criada a base funcional de municao da Biblioteca Solaris, mantendo a regra
+de que a Biblioteca continua sendo a fonte oficial e que o Foundry so recebe um
+rascunho exportavel por enquanto.
+
+Status: concluida em `0.6.0-alpha.34`, cache `20260710b`.
+
+Mudancas centrais:
+
+- Criado `src/domain/solaris-ammo-rules.js` com regras puras, sem DOM.
+- Pilhas de municao agora sao normalizadas por tipo, quantidade e unidades de
+  cubo.
+- Carregadores agora sao normalizados com capacidade, municao carregada,
+  compatibilidade e vinculo opcional com arma.
+- Armas carregadas agora consolidam `ammoProfile`, `ammoState`, fonte ativa,
+  carregador acoplado, municao interna e estado de disparo.
+- Foram adicionadas operacoes de acoplar/desacoplar carregador, carregar
+  carregador, recarregar arma interna, disparar e acionar pump.
+- `normalizeActiveCharacter` agora garante `ammoSystem` funcional junto com
+  `equipment` e `inventory`.
+- `solaris-character-ui.js` ganhou view model de municao para uso futuro pela
+  interface.
+- A exportacao `solaris-character-v1` e o `solaris-foundry-draft-v1` passam a
+  preservar dados de municao, carregadores e armas carregadas.
+- `ESP` legado continua preservado em `legacy`, sem conversao automatica para
+  `MEN`.
+- A interface visual nao foi alterada nesta fase.
+
 ### Arquivos Criados
 
 - `src/storage/solaris-storage.js`
@@ -206,6 +236,8 @@ Mudancas centrais:
 - `tests/solaris-character-ui.test.mjs`
 - `src/domain/solaris-inventory-rules.js`
 - `tests/solaris-inventory-rules.test.mjs`
+- `src/domain/solaris-ammo-rules.js`
+- `tests/solaris-ammo-rules.test.mjs`
 
 ### Arquivos Alterados
 
@@ -222,7 +254,10 @@ Mudancas centrais:
 - `package-lock.json`
 - `src/domain/solaris-character-creation.js`
 - `src/domain/solaris-inventory-rules.js`
+- `src/domain/solaris-equipment-rules.js`
+- `src/domain/solaris-ammo-rules.js`
 - `src/export/solaris-export-core.js`
+- `src/export/solaris-foundry-export.js`
 - `src/schemas/solaris-schemas.js`
 - `src/export/solaris-import-core.js`
 - `src/storage/solaris-storage.js`
@@ -231,6 +266,8 @@ Mudancas centrais:
 - `src/ui/solaris-character-ui.js`
 - `tests/solaris-character-state.test.mjs`
 - `tests/solaris-character-ui.test.mjs`
+- `tests/solaris-ammo-rules.test.mjs`
+- `tests/solaris-export.test.mjs`
 
 ## Como a Fase 4 Funciona
 
@@ -398,6 +435,10 @@ Foram criados testes dedicados para:
 - cubos como containers com `contents`;
 - equipar/desequipar arma e armadura;
 - view models de inventario, equipamento, cubos e acesso rapido.
+- normalizacao de pilhas de municao, carregadores e armas carregadas;
+- acoplar/desacoplar carregador, recarregar, disparar e pump;
+- view model de municao;
+- exportacao de `ammoSystem` para schema oficial e Foundry Draft.
 
 ## Validacao Realizada
 
@@ -411,6 +452,7 @@ node --check src/domain/solaris-domain-architecture.js
 node --check src/domain/solaris-character-creation.js
 node --check src/domain/solaris-equipment-rules.js
 node --check src/domain/solaris-inventory-rules.js
+node --check src/domain/solaris-ammo-rules.js
 node --check src/domain/solaris-bestiary-rules.js
 node --check src/domain/solaris-combat-rules.js
 node --check src/domain/solaris-gm-rules.js
@@ -431,19 +473,21 @@ node --test tests/solaris-backup.test.mjs
 node --test tests/solaris-storage-integration.test.mjs
 node --test tests/solaris-character-state.test.mjs
 node --test tests/solaris-character-ui.test.mjs
+node --test tests/solaris-ammo-rules.test.mjs
 git diff --check
 ```
 
 Resultado:
 
-- `npm test`: 275 testes passaram.
+- `npm test`: 285 testes passaram.
 - `node --test tests/solaris-storage.test.mjs`: 6 testes passaram.
 - `node --test tests/solaris-migrations.test.mjs`: 5 testes passaram.
 - `node --test tests/solaris-backup.test.mjs`: 6 testes passaram.
 - `node --test tests/solaris-storage-integration.test.mjs`: 9 testes passaram.
 - `node --test tests/solaris-inventory-rules.test.mjs`: 30 testes passaram.
-- `node --test tests/solaris-character-state.test.mjs`: 20 testes passaram.
-- `node --test tests/solaris-character-ui.test.mjs`: 13 testes passaram.
+- `node --test tests/solaris-ammo-rules.test.mjs`: 8 testes passaram.
+- `node --test tests/solaris-character-state.test.mjs`: 21 testes passaram.
+- `node --test tests/solaris-character-ui.test.mjs`: 14 testes passaram.
 - Todos os `node --check` passaram.
 - `git diff --check`: sem erro; apenas avisos normais de LF/CRLF no Windows.
 
@@ -468,7 +512,8 @@ Resultado:
 
 - Fase 6 - Inventario fisico completo. Status: concluida em
   `0.6.0-alpha.33`.
-- Fase 7 - Municao, carregadores e armas carregadas.
+- Fase 7 - Municao, carregadores e armas carregadas. Status: concluida em
+  `0.6.0-alpha.34`.
 - Fase 8 - Itens, habilidades e catalogos oficiais estruturados.
 - Fase 9 - Bestiario estruturado.
 - Fase 10 - Rolagens e combate completos na Biblioteca.
@@ -489,5 +534,5 @@ Resultado:
 
 ## Proximo Passo Recomendado
 
-Seguir para a Fase 7: municao e carregadores completos, usando a base de
-`location` e `attached` criada na Fase 6.
+Seguir para a Fase 8: itens, habilidades e catalogos oficiais estruturados,
+usando a base de inventario fisico e `ammoSystem` criada nas Fases 6 e 7.

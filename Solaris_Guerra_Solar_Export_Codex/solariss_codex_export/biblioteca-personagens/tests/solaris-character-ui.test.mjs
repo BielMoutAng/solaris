@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   getCharacterAttributeViewModel,
+  getCharacterAmmoViewModel,
   getCharacterCombatViewModel,
   getCharacterDisplayName,
   getCharacterEquipmentSummary,
@@ -154,6 +155,35 @@ test("getCharacterStorageViewModel retorna armazenamento consolidado", () => {
   });
   assert.equal(storage.cubes.length, 1);
   assert.ok(storage.summary.totalItems >= 1);
+});
+
+test("getCharacterAmmoViewModel retorna armas carregadas e pilhas", () => {
+  const ammo = getCharacterAmmoViewModel({
+    ...character,
+    equipment: {
+      ...character.equipment,
+      weapons: [{
+        id: "weapon-ammo-ui",
+        name: "Rifle UI",
+        category: "weapon",
+        ammoProfile: {
+          feedSystem: "detachable-magazine",
+          defaultAmmoKind: "medium",
+          acceptedAmmoKinds: ["medium"],
+          defaultCapacity: 5,
+          fireModes: ["single"],
+        },
+      }],
+    },
+    inventory: {
+      looseItems: [{ id: "ammo-ui", category: "ammo", ammoKind: "medium", quantity: 10 }],
+      cubes: [],
+      credits: 0,
+    },
+  });
+  assert.equal(ammo.weapons.length, 1);
+  assert.equal(ammo.ammoStacks.length, 1);
+  assert.equal(ammo.summary.totalLooseAmmo, 10);
 });
 
 test("getCharacterValidationMessages retorna erros e warnings", () => {

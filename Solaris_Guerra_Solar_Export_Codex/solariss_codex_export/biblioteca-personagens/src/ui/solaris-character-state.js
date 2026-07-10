@@ -11,6 +11,9 @@ import {
 import {
   normalizeCharacterInventory,
 } from "../domain/solaris-inventory-rules.js";
+import {
+  normalizeCharacterAmmoSystem,
+} from "../domain/solaris-ammo-rules.js";
 
 const ATTRIBUTE_ALIASES = Object.freeze({
   FOR: "for",
@@ -211,7 +214,7 @@ function finalizeCharacter(character = {}) {
       ...(Object.keys(attributes.legacyAttributes).length ? { attributes: attributes.legacyAttributes } : {}),
     },
   };
-  const normalized = normalizeCharacterInventory(normalizedBase);
+  const normalized = normalizeCharacterAmmoSystem(normalizeCharacterInventory(normalizedBase));
   const validation = validateBasicCharacterShape(normalized);
   return {
     ...normalized,

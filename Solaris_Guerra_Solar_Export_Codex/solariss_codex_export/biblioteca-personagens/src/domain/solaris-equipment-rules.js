@@ -7,7 +7,7 @@ import {
   createMagazineInstance,
   createWeaponAmmoState,
   normalizeAmmoKind,
-} from "./solaris-domain-architecture.js";
+} from "./solaris-ammo-rules.js";
 
 import {
   COMBAT_DAMAGE_TYPES,

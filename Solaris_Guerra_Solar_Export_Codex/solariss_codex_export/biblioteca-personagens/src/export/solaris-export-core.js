@@ -12,8 +12,14 @@ import {
   listAllInventoryItems,
   normalizeCharacterInventory,
 } from "../domain/solaris-inventory-rules.js";
+import {
+  normalizeAmmoMagazine,
+  normalizeAmmoStack,
+  normalizeCharacterAmmoSystem,
+  normalizeLoadedWeapon,
+} from "../domain/solaris-ammo-rules.js";
 
-export const SOLARIS_EXPORT_APP_VERSION = "0.6.0-alpha.33";
+export const SOLARIS_EXPORT_APP_VERSION = "0.6.0-alpha.34";
 
 const clone = (value) => (typeof structuredClone === "function"
   ? structuredClone(value)
@@ -54,6 +60,47 @@ function normalizeItemType(item = {}) {
   return normalized || "utility";
 }
 
+function normalizeItemAmmo(item = {}) {
+  const type = normalizeItemType(item);
+  if (type === "ammo" || item.ammoStack || item.ammoKind) {
+    const stack = normalizeAmmoStack(item);
+    return {
+      kind: "ammo-stack",
+      ammoKind: stack.ammoKind,
+      quantity: stack.quantity,
+      cubeUnits: stack.cubeUnits,
+    };
+  }
+  if (type === "magazine" || item.ammoMagazine) {
+    const magazine = normalizeAmmoMagazine(item);
+    return {
+      kind: "magazine",
+      acceptedAmmoKinds: magazine.acceptedAmmoKinds,
+      loadedAmmoKind: magazine.loadedAmmoKind,
+      currentAmmo: magazine.currentAmmo,
+      capacity: magazine.capacity,
+      attachedToWeaponId: magazine.attachedToWeaponId,
+      cubeUnits: magazine.cubeUnits,
+    };
+  }
+  if (type === "weapon" || item.ammoState || item.ammoProfile) {
+    const weapon = normalizeLoadedWeapon(item);
+    return {
+      kind: "weapon-ammo",
+      feedSystem: weapon.feedSystem,
+      acceptedAmmoKinds: weapon.acceptedAmmoKinds,
+      defaultAmmoKind: weapon.defaultAmmoKind,
+      fireModes: weapon.fireModes,
+      attachedMagazineId: weapon.attachedMagazineId,
+      internalAmmo: clone(weapon.internalAmmo),
+      source: clone(weapon.source),
+      status: clone(weapon.status),
+      canFire: weapon.canFire,
+    };
+  }
+  return {};
+}
+
 export function normalizeSolarisItemForExport(item = {}, options = {}) {
   const source = isObject(item) ? item : {};
   const exported = {
@@ -85,6 +132,7 @@ export function normalizeSolarisItemForExport(item = {}, options = {}) {
       inCube: Boolean(source.inCube || source.location?.kind === "cube"),
     },
     quantity: numberValue(firstValue(source.quantity, source.amount), 1),
+    ammo: normalizeItemAmmo(source),
     price: numberValue(firstValue(source.price, source.cost), 0),
     weight: numberValue(firstValue(source.weightKg, source.weight), 0),
     description: textValue(firstValue(source.description, source.summary, source.effect), ""),
@@ -207,12 +255,7 @@ function normalizeEquipment(character = {}, inventory) {
 
 function normalizeAmmoSystem(character = {}) {
   const source = firstValue(character.ammoSystem, character.domainCharacter?.ammoSystem, {});
-  return {
-    ...clone(source),
-    magazines: arrayOf(source?.magazines),
-    ammoStacks: arrayOf(source?.ammoStacks),
-    loadedWeapons: arrayOf(source?.loadedWeapons),
-  };
+  return normalizeCharacterAmmoSystem({ ...character, ammoSystem: source }).ammoSystem;
 }
 
 export function exportSolarisCharacter(character = {}, options = {}) {

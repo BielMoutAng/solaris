@@ -52,6 +52,7 @@ Arquivos principais:
 - `src/domain/solaris-character-creation.js`
 - `src/domain/solaris-equipment-rules.js`
 - `src/domain/solaris-inventory-rules.js`
+- `src/domain/solaris-ammo-rules.js`
 - `src/domain/solaris-bestiary-rules.js`
 - `src/domain/solaris-combat-rules.js`
 - `src/domain/solaris-gm-rules.js`
@@ -67,6 +68,7 @@ Arquivos principais:
 - `src/ui/solaris-character-ui.js`
 - `tests/solaris-storage-integration.test.mjs`
 - `tests/solaris-inventory-rules.test.mjs`
+- `tests/solaris-ammo-rules.test.mjs`
 - `tests/solaris-character-state.test.mjs`
 - `tests/solaris-character-ui.test.mjs`
 - `electron-main.cjs`
@@ -90,6 +92,7 @@ node --check src/domain/solaris-domain-architecture.js
 node --check src/domain/solaris-character-creation.js
 node --check src/domain/solaris-equipment-rules.js
 node --check src/domain/solaris-inventory-rules.js
+node --check src/domain/solaris-ammo-rules.js
 node --check src/domain/solaris-bestiary-rules.js
 node --check src/domain/solaris-combat-rules.js
 node --check src/domain/solaris-gm-rules.js
@@ -105,20 +108,22 @@ node --check src/ui/solaris-character-state.js
 node --check src/ui/solaris-character-ui.js
 node --test tests/solaris-storage-integration.test.mjs
 node --test tests/solaris-inventory-rules.test.mjs
+node --test tests/solaris-ammo-rules.test.mjs
 node --test tests/solaris-character-state.test.mjs
 node --test tests/solaris-character-ui.test.mjs
 ```
 
 Versao atual:
 
-- App: `0.6.0-alpha.33`
-- Cache web: `20260710a`
+- App: `0.6.0-alpha.34`
+- Cache web: `20260710b`
 
 Roadmap obrigatorio daqui em diante:
 
 - Fase 6 - Inventario fisico completo. Status: concluida em
   `0.6.0-alpha.33`.
-- Fase 7 - Municao, carregadores e armas carregadas.
+- Fase 7 - Municao, carregadores e armas carregadas. Status: concluida em
+  `0.6.0-alpha.34`.
 - Fase 8 - Itens, habilidades e catalogos oficiais estruturados.
 - Fase 9 - Bestiario estruturado.
 - Fase 10 - Rolagens e combate completos na Biblioteca.
@@ -171,3 +176,7 @@ Regras de manutencao:
   `src/domain/solaris-inventory-rules.js`, com `location`, cubos como
   containers, ganchos, coldres, bandoleiras, view models de armazenamento e
   testes dedicados.
+- A Fase 7 concluiu a base funcional de municao, carregadores e armas
+  carregadas em `src/domain/solaris-ammo-rules.js`, com pilhas de municao,
+  carregadores, armas internas ou com magazine, disparo, recarga, pump,
+  resumo de municao, exportacao Foundry Draft e testes dedicados.

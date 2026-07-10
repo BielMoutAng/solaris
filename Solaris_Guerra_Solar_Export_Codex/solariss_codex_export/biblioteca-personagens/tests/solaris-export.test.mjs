@@ -45,9 +45,45 @@ const sampleCharacter = {
       itemId: "rifle-pulso",
       name: "Rifle de Pulso",
       category: "weapon",
+      ammoProfile: {
+        feedSystem: "detachable-magazine",
+        defaultAmmoKind: "medium",
+        acceptedAmmoKinds: ["medium"],
+        defaultCapacity: 5,
+        fireModes: ["single"],
+        magazineTemplateId: "rifle-pulso-mag",
+      },
+      ammoState: {
+        feedSystem: "detachable-magazine",
+        defaultAmmoKind: "medium",
+        acceptedAmmoKinds: ["medium"],
+        attachedMagazineId: "inv-mag",
+        fireModes: ["single"],
+      },
       damage: "1d10+2",
       crackLevel: 1,
       location: { kind: "equipped", slotId: "mainWeapon" },
+    },
+    {
+      uid: "inv-mag",
+      itemId: "rifle-pulso-mag",
+      name: "Carregador de Rifle",
+      category: "magazine",
+      templateId: "rifle-pulso-mag",
+      acceptedAmmoKinds: ["medium"],
+      loadedAmmoKind: "medium",
+      capacity: 5,
+      currentAmmo: 4,
+      location: { kind: "loose" },
+    },
+    {
+      uid: "inv-ammo",
+      itemId: "municao-media",
+      name: "Municao Media",
+      category: "ammo",
+      ammoKind: "medium",
+      quantity: 10,
+      location: { kind: "loose" },
     },
     {
       uid: "inv-armor",
@@ -100,6 +136,9 @@ test("exportSolarisCharacter serializes legacy Biblioteca character into officia
   assert.equal(exported.inventory.credits, 350);
   assert.equal(exported.equipment.weapons.length, 1);
   assert.equal(exported.equipment.armor.durability.cracks, 2);
+  assert.equal(exported.ammoSystem.loadedWeapons.length, 1);
+  assert.equal(exported.ammoSystem.magazines[0].currentAmmo, 4);
+  assert.equal(exported.ammoSystem.ammoStacks[0].quantity, 10);
   assert.equal(exported.abilities[0].schema, SOLARIS_ITEM_SCHEMA);
 });
 
@@ -122,7 +161,9 @@ test("importSolarisCharacter hydrates official schema back into legacy-compatibl
   assert.equal(imported.character.name, "Lyssara Kalar");
   assert.equal(imported.character.attributes.REF, 11);
   assert.equal(imported.character.pvCurrent, 18);
-  assert.equal(imported.character.inventory.length, 2);
+  assert.equal(imported.character.inventory.length, 4);
+  assert.ok(imported.character.inventory.some((entry) => entry.uid === "inv-mag"));
+  assert.ok(imported.character.inventory.some((entry) => entry.uid === "inv-ammo"));
 });
 
 test("importSolarisCharacter returns structured error for invalid JSON", () => {
@@ -184,5 +225,7 @@ test("exportFoundryDraft maps Solaris character to draft actor and items", () =>
   assert.equal(draft.actors[0].type, "character");
   assert.equal(draft.actors[0].system.identity.name, "Lyssara Kalar");
   assert.ok(draft.items.some((item) => item.type === "weapon"));
+  assert.ok(draft.items.some((item) => item.system.ammo?.kind === "weapon-ammo"));
+  assert.equal(draft.actor.system.ammoSystem.magazines[0].currentAmmo, 4);
   assert.ok(draft.mappingNotes.some((note) => note.includes("Biblioteca Solaris")));
 });

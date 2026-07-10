@@ -35,6 +35,7 @@ function toFoundryItem(item = {}) {
       tier: item.tier || "",
       tags: item.tags || [],
       rules: clone(item.rules || {}),
+      ammo: clone(item.ammo || {}),
       equip: clone(item.equip || {}),
       durability: clone(item.durability || {}),
       storage: clone(item.storage || {}),

@@ -193,6 +193,35 @@ test("ficha ativa exportavel preserva equipment inventory e ammoSystem", () => {
   assert.equal(normalized.ammoSystem.magazines.length, 1);
 });
 
+test("normalizeActiveCharacter consolida ammoSystem a partir de armas e municao", () => {
+  const normalized = normalizeActiveCharacter({
+    id: "char-ammo-state",
+    name: "Ammo State",
+    equipment: {
+      weapons: [{
+        id: "weapon-state",
+        name: "Rifle State",
+        category: "weapon",
+        ammoProfile: {
+          feedSystem: "detachable-magazine",
+          defaultAmmoKind: "medium",
+          acceptedAmmoKinds: ["medium"],
+          defaultCapacity: 5,
+          fireModes: ["single"],
+        },
+      }],
+    },
+    inventory: {
+      looseItems: [{ id: "ammo-state", category: "ammo", ammoKind: "medium", quantity: 8 }],
+      cubes: [],
+      credits: 0,
+    },
+  });
+  assert.equal(normalized.ammoSystem.loadedWeapons.length, 1);
+  assert.equal(normalized.ammoSystem.ammoStacks[0].quantity, 8);
+  assert.equal(normalized.ammoSystem.loadedWeapons[0].source.missing, true);
+});
+
 test("markCharacterDirty marca estado como alterado", () => {
   const state = markCharacterDirty(createCharacterState(legacyCharacter));
   assert.equal(isCharacterDirty(state), true);
