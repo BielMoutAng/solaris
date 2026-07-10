@@ -8,8 +8,50 @@ atual do projeto.
 Estamos trabalhando na Biblioteca Solaris / Guerra Solar.
 
 A Biblioteca Solaris continua sendo a fonte oficial dos dados do sistema. O
-Foundry VTT sera tratado apenas como destino futuro de exportacao/importacao,
-sem virar o centro do projeto.
+Foundry VTT e o destino final de jogo, mas nao substitui a Biblioteca nem vira
+a fonte oficial dos dados.
+
+O objetivo final do projeto e criar a Biblioteca Solaris completa e, a partir
+dela, criar um sistema jogavel de Guerra Solar no Foundry VTT. O usuario deve
+conseguir criar ou importar personagens da Biblioteca Solaris, abrir um mundo
+Guerra Solar no Foundry, criar personagens e criaturas, usar itens e
+habilidades, rolar testes oficiais, controlar combate e jogar uma sessao
+completa.
+
+## Produtos Conectados
+
+1. Biblioteca Solaris
+   - ficha;
+   - itens;
+   - inventario fisico;
+   - cubos;
+   - municao;
+   - habilidades;
+   - bestiario;
+   - regras;
+   - rolagens;
+   - HUD vital;
+   - storage;
+   - backup;
+   - exportacao/importacao.
+2. Solaris Foundry Bridge
+   - `solaris-character-v1`;
+   - `solaris-item-v1`;
+   - `solaris-creature-v1`;
+   - `solaris-export-bundle-v1`;
+   - `solaris-foundry-draft-v1`;
+   - importador/exportador.
+3. Sistema Foundry Guerra Solar
+   - `system.json`;
+   - Actors `character` e `npc`;
+   - Items `weapon`, `armor`, `ammo`, `magazine`, `container` e `ability`;
+   - fichas nativas;
+   - rolagens nativas;
+   - combate;
+   - condicoes;
+   - compendios;
+   - importador integrado;
+   - sessao jogavel.
 
 ## Versao Atual
 
@@ -18,6 +60,10 @@ sem virar o centro do projeto.
 - Branch enviada ao GitHub: `main`
 - Ultima tag enviada: `v0.6.0-alpha.33`
 - Ultima fase registrada: Fase 6 - Inventario fisico completo concluida
+- Ultima decisao registrada: roadmap integrado Biblioteca Solaris -> Foundry
+  Bridge -> Sistema Foundry Guerra Solar
+- Esta atualizacao altera apenas documentacao de rumo; app/cache/tag
+  permanecem em `0.6.0-alpha.33` / `20260710a`.
 
 ## Decisao Oficial de Atributos
 
@@ -39,6 +85,20 @@ Cosmos continua existindo como recurso/poder separado, mas nao como atributo
 base.
 
 ## O Que Foi Atualizado
+
+### Atualizacao de Direcao - Roadmap Integrado Foundry
+
+Foi registrada a nova direcao oficial do projeto: a Biblioteca Solaris segue
+como fonte oficial dos dados, enquanto o Foundry VTT passa a ser o destino final
+de jogo. O projeto agora deve ser conduzido como tres produtos conectados:
+
+- Biblioteca Solaris;
+- Solaris Foundry Bridge;
+- Sistema Foundry Guerra Solar.
+
+Tambem foi registrado o roadmap obrigatorio da Fase 6 ate a Fase 24, mantendo a
+Fase 6 como concluida e preparando a Fase 7 como o proximo passo: municao,
+carregadores e armas carregadas.
 
 ### Fase 4 - Persistencia e Migracao Dedicada
 
@@ -389,11 +449,43 @@ Resultado:
 
 ## Regras Importantes Para Proximas Etapas
 
-- Nao alterar mecanicas visuais ou UI quando a tarefa for apenas schema/storage.
+- Nao quebrar fichas antigas.
+- Nao apagar chaves legadas sem migracao segura e backup.
 - Nao migrar `ESP` para `MEN` sem decisao manual.
+- Atributos oficiais: `FOR`, `REF`, `CON`, `INT`, `PRE` e `MEN`.
+- Cosmos e recurso/poder separado, nao atributo base.
 - Preservar dados antigos em `legacy` sempre que houver duvida.
-- Foundry deve continuar como destino de exportacao/importacao, nao como fonte oficial.
+- Nao alterar valores oficiais sem fase especifica de revisao.
+- Preferir regras puras em `src/domain`.
+- `app.js` deve ser camada de interface/aplicacao, nao deposito de regra.
+- Foundry real so entra depois que a Biblioteca tiver dados estruturados.
 - A Biblioteca Solaris continua sendo o centro dos dados oficiais.
+- Toda fase deve atualizar `README_CONTEXTO_CHATGPT.md` e
+  `README_ATUALIZACOES_CHAT.md`.
+- Toda fase deve rodar `npm test`, `node --check` e `git diff --check`.
+
+## Roadmap Obrigatorio
+
+- Fase 6 - Inventario fisico completo. Status: concluida em
+  `0.6.0-alpha.33`.
+- Fase 7 - Municao, carregadores e armas carregadas.
+- Fase 8 - Itens, habilidades e catalogos oficiais estruturados.
+- Fase 9 - Bestiario estruturado.
+- Fase 10 - Rolagens e combate completos na Biblioteca.
+- Fase 11 - HUD vital funcional.
+- Fase 12 - Criador de personagem completo.
+- Fase 13 - Painel do mestre na Biblioteca.
+- Fase 14 - Foundry Draft completo.
+- Fase 15 - Modulo Foundry `solaris-importer`.
+- Fase 16 - Estrutura do sistema Foundry `guerra-solar`.
+- Fase 17 - Data Models do Foundry.
+- Fase 18 - Fichas nativas do Foundry.
+- Fase 19 - Rolagens nativas do Foundry.
+- Fase 20 - Combate nativo do Foundry.
+- Fase 21 - Compendios oficiais do Foundry.
+- Fase 22 - Importador integrado ao sistema Foundry.
+- Fase 23 - Cena jogavel piloto.
+- Fase 24 - Release do sistema Guerra Solar para Foundry.
 
 ## Proximo Passo Recomendado
 
