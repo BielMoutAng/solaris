@@ -8,6 +8,9 @@ import {
   SOLARIS_EXPORT_APP_VERSION,
   exportSolarisCharacter,
 } from "../export/solaris-export-core.js";
+import {
+  normalizeCharacterInventory,
+} from "../domain/solaris-inventory-rules.js";
 
 const ATTRIBUTE_ALIASES = Object.freeze({
   FOR: "for",
@@ -173,7 +176,7 @@ function finalizeCharacter(character = {}) {
   const resources = ensureResources(character.resources);
   const legacy = isObject(character.legacy) ? clone(character.legacy) : {};
   const attributes = ensureAttributes(character.attributes, legacy);
-  const normalized = {
+  const normalizedBase = {
     ...clone(character),
     schema: SOLARIS_CHARACTER_SCHEMA,
     id: textValue(character.id, "char-solaris"),
@@ -208,6 +211,7 @@ function finalizeCharacter(character = {}) {
       ...(Object.keys(attributes.legacyAttributes).length ? { attributes: attributes.legacyAttributes } : {}),
     },
   };
+  const normalized = normalizeCharacterInventory(normalizedBase);
   const validation = validateBasicCharacterShape(normalized);
   return {
     ...normalized,

@@ -22,14 +22,14 @@ import {
   reconcileLegacyArmorCatalog,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-domain-architecture.js?v=20260703c";
+} from "./src/domain/solaris-domain-architecture.js?v=20260710a";
 import {
   EQUIPMENT_SCHEMA_VERSION,
-} from "./src/domain/solaris-equipment-rules.js?v=20260703c";
+} from "./src/domain/solaris-equipment-rules.js?v=20260710a";
 import {
   BESTIARY_SCHEMA_VERSION,
   normalizeMonsterEntry,
-} from "./src/domain/solaris-bestiary-rules.js?v=20260703c";
+} from "./src/domain/solaris-bestiary-rules.js?v=20260710a";
 import {
   CHARACTER_CREATION_CACHE_VERSION,
   CHARACTER_CREATION_SCHEMA_VERSION,
@@ -40,19 +40,19 @@ import {
   buildCreationChoicesSnapshot,
   buildProgressionHistoryEntry,
   createInitialAttributeRoll,
-} from "./src/domain/solaris-character-creation.js?v=20260703c";
+} from "./src/domain/solaris-character-creation.js?v=20260710a";
 import {
   createDefaultLoreState,
-} from "./src/domain/solaris-lore-rules.js?v=20260703c";
+} from "./src/domain/solaris-lore-rules.js?v=20260710a";
 import {
   exportSolarisCharacter,
-} from "./src/export/solaris-export-core.js?v=20260703c";
+} from "./src/export/solaris-export-core.js?v=20260710a";
 import {
   importSolarisCharacter,
-} from "./src/export/solaris-import-core.js?v=20260703c";
+} from "./src/export/solaris-import-core.js?v=20260710a";
 import {
   exportFoundryDraft,
-} from "./src/export/solaris-foundry-export.js?v=20260703c";
+} from "./src/export/solaris-foundry-export.js?v=20260710a";
 import {
   initializeSolarisAppStorage,
   listStoredSolarisCharacters,
@@ -60,7 +60,7 @@ import {
   saveSolarisStorage,
   saveStoredSolarisCharacter,
   saveStoredSolarisCharacters,
-} from "./src/storage/solaris-storage.js?v=20260703c";
+} from "./src/storage/solaris-storage.js?v=20260710a";
 import {
   createCharacterState,
   getActiveCharacter,
@@ -69,11 +69,11 @@ import {
   markCharacterSaved,
   normalizeActiveCharacter,
   setActiveCharacter,
-} from "./src/ui/solaris-character-state.js?v=20260703c";
+} from "./src/ui/solaris-character-state.js?v=20260710a";
 import {
   getCharacterResourceViewModel,
   getCharacterSummary,
-} from "./src/ui/solaris-character-ui.js?v=20260703c";
+} from "./src/ui/solaris-character-ui.js?v=20260710a";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");

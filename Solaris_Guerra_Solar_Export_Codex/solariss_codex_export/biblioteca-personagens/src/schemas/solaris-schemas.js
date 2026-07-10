@@ -12,6 +12,20 @@ export const SOLARIS_OFFICIAL_ATTRIBUTES = Object.freeze(["for", "ref", "con", "
 export const SOLARIS_LEGACY_ATTRIBUTES = Object.freeze(["esp"]);
 export const SOLARIS_RESOURCE_KEYS = Object.freeze(["pv", "stress", "cosmos"]);
 export const SOLARIS_EXPORT_BUNDLE_TYPES = Object.freeze(["character", "item", "creature", "campaign", "mixed", "backup", "unknown"]);
+export const SOLARIS_INVENTORY_LOCATION_TYPES = Object.freeze([
+  "equipped",
+  "armor",
+  "hand",
+  "hook",
+  "holster",
+  "bandolier",
+  "cube",
+  "backpack",
+  "loose",
+  "attached",
+  "container",
+  "unknown",
+]);
 
 export const SOLARIS_ITEM_TYPES = Object.freeze([
   "weapon",
@@ -254,6 +268,7 @@ export function validateCharacterInventory(inventory) {
   else requireNumberLike(inventory.credits, "inventory.credits", errors);
   requireArrayIfPresent(inventory.unassigned, "inventory.unassigned", errors);
   requireArrayIfPresent(inventory.allItems, "inventory.allItems", errors);
+  requireArrayIfPresent(inventory.backpacks, "inventory.backpacks", errors);
 
   return result(errors);
 }

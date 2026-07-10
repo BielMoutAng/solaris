@@ -5,6 +5,14 @@ import {
   normalizeActiveCharacter,
   validateActiveCharacter,
 } from "./solaris-character-state.js";
+import {
+  getCharacterInventorySummary,
+  listAllInventoryItems,
+  listBandolierItems,
+  listCubeContents,
+  listHolsterItems,
+  listHookItems,
+} from "../domain/solaris-inventory-rules.js";
 
 const ATTRIBUTE_LABELS = Object.freeze({
   for: "FOR",
@@ -135,6 +143,70 @@ export function getCharacterEquipmentSummary(character = null) {
     looseItems: inventory.looseItems || [],
     cubes: inventory.cubes || [],
     credits: numberValue(inventory.credits, 0),
+  };
+}
+
+export function getCharacterInventoryViewModel(character = null) {
+  const normalized = normalizeForView(character);
+  const inventory = normalized?.inventory || {};
+  return {
+    looseItems: inventory.looseItems || [],
+    unassigned: inventory.unassigned || [],
+    allItems: listAllInventoryItems(normalized),
+    credits: numberValue(inventory.credits, 0),
+    summary: getCharacterInventorySummary(normalized),
+  };
+}
+
+export function getCharacterEquipmentViewModel(character = null) {
+  const normalized = normalizeForView(character);
+  const equipment = normalized?.equipment || {};
+  const activeWeaponId = equipment.activeWeaponId || "";
+  const weapons = equipment.weapons || [];
+  return {
+    armor: equipment.armor || null,
+    weapons,
+    activeWeaponId,
+    activeWeapon: weapons.find((weapon) => [weapon.id, weapon.uid, weapon.itemId].includes(activeWeaponId)) || null,
+    equippedItems: equipment.equippedItems || [],
+    hooks: equipment.hooks || [],
+    holsters: equipment.holsters || [],
+    bandoliers: equipment.bandoliers || [],
+  };
+}
+
+export function getCubeViewModels(character = null) {
+  const normalized = normalizeForView(character);
+  const cubes = normalized?.inventory?.cubes || [];
+  return cubes.map((cube) => {
+    const contents = listCubeContents(normalized, cube.id);
+    const capacity = numberValue(cube.capacity, 0);
+    return {
+      ...cube,
+      contents,
+      used: contents.length,
+      capacity,
+      percent: capacity > 0 ? percent(contents.length, capacity) : 0,
+    };
+  });
+}
+
+export function getQuickAccessViewModel(character = null) {
+  const normalized = normalizeForView(character);
+  return {
+    hooks: listHookItems(normalized),
+    holsters: listHolsterItems(normalized),
+    bandoliers: listBandolierItems(normalized),
+  };
+}
+
+export function getCharacterStorageViewModel(character = null) {
+  const normalized = normalizeForView(character);
+  return {
+    cubes: getCubeViewModels(normalized),
+    backpacks: normalized?.inventory?.backpacks || [],
+    quickAccess: getQuickAccessViewModel(normalized),
+    summary: getCharacterInventorySummary(normalized),
   };
 }
 

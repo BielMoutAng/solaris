@@ -8,8 +8,12 @@ import {
   validateBasicExportBundleShape,
   validateBasicItemShape,
 } from "../schemas/solaris-schemas.js";
+import {
+  listAllInventoryItems,
+  normalizeCharacterInventory,
+} from "../domain/solaris-inventory-rules.js";
 
-export const SOLARIS_EXPORT_APP_VERSION = "0.6.0-alpha.32";
+export const SOLARIS_EXPORT_APP_VERSION = "0.6.0-alpha.33";
 
 const clone = (value) => (typeof structuredClone === "function"
   ? structuredClone(value)
@@ -150,31 +154,54 @@ function normalizeSkills(character = {}) {
 }
 
 function normalizeInventory(character = {}) {
-  const rawEntries = Array.isArray(character.inventory)
-    ? character.inventory
-    : arrayOf(character.inventory?.allItems || character.inventory?.looseItems);
-  const entries = rawEntries.map((entry) => normalizeSolarisItemForExport(entry));
+  const physicalCharacter = normalizeCharacterInventory(character);
+  const physicalInventory = physicalCharacter.inventory || {};
+  const entries = listAllInventoryItems(physicalCharacter).map((entry) => normalizeSolarisItemForExport(entry));
+  const cubes = arrayOf(physicalInventory.cubes).map((cube) => ({
+    ...normalizeSolarisItemForExport(cube),
+    contents: arrayOf(cube.contents).map((entry) => normalizeSolarisItemForExport(entry)),
+    capacity: cube.capacity ?? null,
+  }));
+  const locationType = (entry) => textValue(firstValue(entry.storage?.location?.type, entry.storage?.location?.kind), "loose");
   return {
-    looseItems: entries.filter((entry) => !entry.storage.cubeUid && !entry.storage.supportSlot && !entry.equip.equipped),
-    unassigned: entries.filter((entry) => entry.storage.location?.kind === "unassigned"),
+    looseItems: entries.filter((entry) => locationType(entry) === "loose" && entry.type !== "cube"),
+    unassigned: entries.filter((entry) => ["unknown", "unassigned"].includes(locationType(entry))),
     allItems: entries,
-    cubes: entries.filter((entry) => entry.type === "cube"),
-    credits: numberValue(firstValue(character.inventory?.credits, character.currency, character.credits), 0),
+    cubes,
+    credits: numberValue(firstValue(physicalInventory.credits, character.currency, character.credits), 0),
   };
 }
 
 function normalizeEquipment(character = {}, inventory) {
+  const physicalEquipment = normalizeCharacterInventory(character).equipment || {};
   const weaponUid = textValue(character.equippedWeaponUid, "");
   const armorUid = textValue(character.equippedArmorUid, "");
   const allItems = inventory.allItems || [];
+  const exportContainer = (entry) => ({
+    ...normalizeSolarisItemForExport(entry),
+    supportType: entry.supportType || "",
+    contents: arrayOf(entry.contents).map((item) => normalizeSolarisItemForExport(item)),
+  });
   return {
-    armor: allItems.find((entry) => entry.id === armorUid || entry.legacy?.uid === armorUid) || null,
-    weapons: allItems.filter((entry) => entry.type === "weapon"),
-    activeWeaponId: weaponUid,
-    equippedItems: allItems.filter((entry) => entry.equip.equipped || [weaponUid, armorUid].includes(entry.legacy?.uid)),
-    hooks: allItems.filter((entry) => entry.storage.supportSlot === "gancho"),
-    holsters: allItems.filter((entry) => entry.storage.supportSlot === "coldre"),
-    bandoliers: allItems.filter((entry) => entry.storage.supportSlot === "bandoleira"),
+    armor: physicalEquipment.armor
+      ? normalizeSolarisItemForExport(physicalEquipment.armor)
+      : allItems.find((entry) => entry.id === armorUid || entry.legacy?.uid === armorUid) || null,
+    weapons: arrayOf(physicalEquipment.weapons).length
+      ? arrayOf(physicalEquipment.weapons).map((entry) => normalizeSolarisItemForExport(entry))
+      : allItems.filter((entry) => entry.type === "weapon"),
+    activeWeaponId: textValue(firstValue(physicalEquipment.activeWeaponId, weaponUid), ""),
+    equippedItems: arrayOf(physicalEquipment.equippedItems).length
+      ? arrayOf(physicalEquipment.equippedItems).map((entry) => normalizeSolarisItemForExport(entry))
+      : allItems.filter((entry) => entry.equip.equipped || [weaponUid, armorUid].includes(entry.legacy?.uid)),
+    hooks: arrayOf(physicalEquipment.hooks).length
+      ? arrayOf(physicalEquipment.hooks).map(exportContainer)
+      : allItems.filter((entry) => entry.storage.supportSlot === "gancho"),
+    holsters: arrayOf(physicalEquipment.holsters).length
+      ? arrayOf(physicalEquipment.holsters).map(exportContainer)
+      : allItems.filter((entry) => entry.storage.supportSlot === "coldre"),
+    bandoliers: arrayOf(physicalEquipment.bandoliers).length
+      ? arrayOf(physicalEquipment.bandoliers).map(exportContainer)
+      : allItems.filter((entry) => entry.storage.supportSlot === "bandoleira"),
   };
 }
 

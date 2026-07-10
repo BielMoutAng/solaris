@@ -27,6 +27,7 @@ Arquivos principais:
 - `src/domain/solaris-domain-architecture.js`
 - `src/domain/solaris-character-creation.js`
 - `src/domain/solaris-equipment-rules.js`
+- `src/domain/solaris-inventory-rules.js`
 - `src/domain/solaris-bestiary-rules.js`
 - `src/domain/solaris-combat-rules.js`
 - `src/domain/solaris-gm-rules.js`
@@ -41,6 +42,7 @@ Arquivos principais:
 - `src/ui/solaris-character-state.js`
 - `src/ui/solaris-character-ui.js`
 - `tests/solaris-storage-integration.test.mjs`
+- `tests/solaris-inventory-rules.test.mjs`
 - `tests/solaris-character-state.test.mjs`
 - `tests/solaris-character-ui.test.mjs`
 - `electron-main.cjs`
@@ -63,6 +65,7 @@ node --check sw.js
 node --check src/domain/solaris-domain-architecture.js
 node --check src/domain/solaris-character-creation.js
 node --check src/domain/solaris-equipment-rules.js
+node --check src/domain/solaris-inventory-rules.js
 node --check src/domain/solaris-bestiary-rules.js
 node --check src/domain/solaris-combat-rules.js
 node --check src/domain/solaris-gm-rules.js
@@ -77,14 +80,15 @@ node --check src/storage/solaris-backup.js
 node --check src/ui/solaris-character-state.js
 node --check src/ui/solaris-character-ui.js
 node --test tests/solaris-storage-integration.test.mjs
+node --test tests/solaris-inventory-rules.test.mjs
 node --test tests/solaris-character-state.test.mjs
 node --test tests/solaris-character-ui.test.mjs
 ```
 
 Versao atual:
 
-- App: `0.6.0-alpha.32`
-- Cache web: `20260703c`
+- App: `0.6.0-alpha.33`
+- Cache web: `20260710a`
 
 Regras de manutencao:
 
@@ -105,3 +109,6 @@ Regras de manutencao:
 - A ficha ativa ja possui camada modular em `src/ui`, normalizada para
   `solaris-character-v1`, com recursos oficiais em `resources` e `ESP`
   preservado somente em `legacy`.
+- A Fase 6 iniciou a consolidacao do inventario fisico em
+  `src/domain/solaris-inventory-rules.js`, com `location`, cubos como
+  containers, ganchos, coldres, bandoleiras e view models de armazenamento.

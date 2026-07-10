@@ -1,6 +1,6 @@
 export const CHARACTER_CREATION_SCHEMA_VERSION = 2;
-export const CHARACTER_CREATION_CACHE_VERSION = "20260703c";
-export const SOLARIS_BIBLIOTECA_VERSION = "0.6.0-alpha.32";
+export const CHARACTER_CREATION_CACHE_VERSION = "20260710a";
+export const SOLARIS_BIBLIOTECA_VERSION = "0.6.0-alpha.33";
 
 export const CREATION_RULE_SOURCE = Object.freeze({
   book: "Livro 1 base do jogador.docx",

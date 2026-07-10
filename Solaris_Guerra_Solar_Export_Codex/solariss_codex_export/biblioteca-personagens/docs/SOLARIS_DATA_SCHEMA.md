@@ -109,6 +109,105 @@ interface atual, como resumo, recursos, atributos, combate e equipamentos. Esses
 adaptadores nao fazem migracao agressiva, nao convertem `ESP` para `MEN` e nao
 tratam Cosmos como atributo base.
 
+### `equipment`
+
+`equipment` descreve o que esta pronto no corpo ou em suportes fisicos do
+personagem:
+
+- `armor`: armadura equipada, ou `null`;
+- `weapons`: armas equipadas/preparadas;
+- `activeWeaponId`: arma ativa;
+- `equippedItems`: itens genericos equipados;
+- `hooks`: ganchos e itens presos em ganchos;
+- `holsters`: coldres e itens presos em coldres;
+- `bandoliers`: bandoleiras e itens presos em bandoleiras.
+
+Ganchos, coldres e bandoleiras podem usar `contents` para listar os itens
+presos naquele suporte. A compatibilidade de tamanho/tipo ainda e permissiva
+nesta fase e sera refinada junto com regras futuras.
+
+### `inventory`
+
+`inventory` descreve armazenamento fisico:
+
+- `looseItems`: itens soltos;
+- `cubes`: cubos como containers fisicos;
+- `credits`: Luzentis;
+- `allItems`: lista consolidada para exportacao/compatibilidade;
+- `unassigned`: itens sem local definido;
+- `backpacks`: mochilas ou containers similares, quando existirem.
+
+Cubos usam o formato geral de item/container e podem conter:
+
+```json
+{
+  "id": "cube_001",
+  "name": "Cubo Simples",
+  "type": "cube",
+  "contents": [],
+  "capacity": null
+}
+```
+
+Se a capacidade oficial ainda nao estiver consolidada no dado importado, o app
+deve preservar o campo existente e nao bloquear movimentacao apenas por falta de
+capacidade.
+
+### `location`
+
+Todo item normalizado pode receber `location` para indicar onde esta fisicamente:
+
+```json
+{
+  "type": "loose",
+  "id": null,
+  "parentId": null,
+  "slot": null,
+  "index": null,
+  "metadata": {}
+}
+```
+
+Tipos iniciais:
+
+- `equipped`
+- `armor`
+- `hand`
+- `hook`
+- `holster`
+- `bandolier`
+- `cube`
+- `backpack`
+- `loose`
+- `attached`
+- `container`
+- `unknown`
+
+Exemplos:
+
+```json
+{ "type": "cube", "id": "cube_001" }
+```
+
+```json
+{ "type": "attached", "parentId": "weapon_001", "slot": "magazine" }
+```
+
+`attached` ja existe como estrutura de compatibilidade, mas a logica profunda
+de carregadores, municao e armas carregadas fica para a Fase 7.
+
+### `ammoSystem`
+
+`ammoSystem` fica preparado nesta fase com:
+
+- `magazines`
+- `ammoStacks`
+- `loadedWeapons`
+
+A Fase 6 nao define regras finais de municao, carregador, recarga ou arma
+carregada. Esses campos existem para preservar dados e permitir a Fase 7 sem
+quebrar fichas antigas.
+
 ### `derived`
 
 `derived` deve guardar valores calculados ou auxiliares, como:

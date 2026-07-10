@@ -13,11 +13,11 @@ sem virar o centro do projeto.
 
 ## Versao Atual
 
-- App: `0.6.0-alpha.32`
-- Cache web/PWA: `20260703c`
+- App: `0.6.0-alpha.33`
+- Cache web/PWA: `20260710a`
 - Branch enviada ao GitHub: `main`
-- Ultima tag enviada: `v0.6.0-alpha.32`
-- Ultima fase registrada: Fase 5 - Ficha ativa completa e modularizacao
+- Ultima tag enviada: `v0.6.0-alpha.33`
+- Ultima fase registrada: Fase 6 - Inventario fisico completo
 
 ## Decisao Oficial de Atributos
 
@@ -104,6 +104,31 @@ Mudancas centrais:
   exportar, duplicar, criar nova ficha e persistir silenciosamente.
 - A UI e as mecanicas foram preservadas; esta fase e estrutural.
 
+### Fase 6 - Inventario Fisico Completo
+
+Foi criada a base estrutural do inventario fisico da ficha, preparando a
+Biblioteca Solaris para representar onde cada item esta no corpo, nos cubos,
+nos suportes e nos containers, sem implementar ainda a logica profunda de
+municao/carregadores.
+
+Mudancas centrais:
+
+- Criado `src/domain/solaris-inventory-rules.js` com regras puras, sem DOM.
+- Criado modelo canonico `location` para itens fisicos.
+- Tipos iniciais de local: `equipped`, `armor`, `hand`, `hook`, `holster`,
+  `bandolier`, `cube`, `backpack`, `loose`, `attached`, `container` e
+  `unknown`.
+- Cubos passam a ser normalizados como containers com `contents`.
+- Ganchos, coldres e bandoleiras passam a existir como suportes fisicos.
+- Foram criadas funcoes para adicionar, remover, mover, equipar e desequipar
+  itens sem apagar dados desconhecidos.
+- `normalizeActiveCharacter` agora garante inventario fisico normalizado.
+- `solaris-character-ui.js` ganhou view models de inventario, equipamento,
+  armazenamento, cubos e acesso rapido.
+- A exportacao base preserva itens em cubos e suportes no inventario fisico.
+- `ammoSystem` continua apenas preparado para a Fase 7.
+- `ESP` legado continua preservado em `legacy`, sem conversao automatica.
+
 ### Arquivos Criados
 
 - `src/storage/solaris-storage.js`
@@ -117,6 +142,8 @@ Mudancas centrais:
 - `src/ui/solaris-character-ui.js`
 - `tests/solaris-character-state.test.mjs`
 - `tests/solaris-character-ui.test.mjs`
+- `src/domain/solaris-inventory-rules.js`
+- `tests/solaris-inventory-rules.test.mjs`
 
 ### Arquivos Alterados
 
@@ -132,7 +159,9 @@ Mudancas centrais:
 - `package.json`
 - `package-lock.json`
 - `src/domain/solaris-character-creation.js`
+- `src/domain/solaris-inventory-rules.js`
 - `src/export/solaris-export-core.js`
+- `src/schemas/solaris-schemas.js`
 - `src/export/solaris-import-core.js`
 - `src/storage/solaris-storage.js`
 - `src/storage/solaris-backup.js`
@@ -234,6 +263,48 @@ No `app.js`, a ficha ativa e sincronizada quando o usuario salva, carrega,
 duplica, importa, exporta, cria ficha nova, altera foto ou quando o app faz
 persistencia silenciosa.
 
+## Como a Fase 6 Funciona
+
+`src/domain/solaris-inventory-rules.js` transforma o inventario em uma estrutura
+fisica. Cada item pode carregar `location`, informando se esta solto, equipado,
+em armadura, em mao, em cubo, em gancho, em coldre, em bandoleira, em mochila,
+acoplado a outro item, dentro de container ou em local desconhecido.
+
+Funcoes centrais:
+
+- `normalizeCharacterInventory`
+- `normalizeInventoryItem`
+- `normalizeInventoryLocation`
+- `addItemToCharacterInventory`
+- `removeItemFromCharacterInventory`
+- `moveItemToLocation`
+- `equipCharacterItem`
+- `unequipCharacterItem`
+- `equipArmor`
+- `unequipArmor`
+- `equipWeapon`
+- `unequipWeapon`
+- `setActiveWeapon`
+- `listCubeContents`
+- `placeItemOnHook`
+- `placeItemInHolster`
+- `placeItemInBandolier`
+
+A ficha ativa modular chama essa normalizacao no fechamento da ficha. Assim,
+fichas antigas continuam abrindo, mas a estrutura nova ja fica disponivel para
+exportacao, futuras telas e futura ponte com Foundry.
+
+Os view models adicionados em `src/ui/solaris-character-ui.js` sao somente de
+leitura:
+
+- `getCharacterInventoryViewModel`
+- `getCharacterEquipmentViewModel`
+- `getCharacterStorageViewModel`
+- `getCubeViewModels`
+- `getQuickAccessViewModel`
+
+Eles nao alteram layout, DOM ou mecanicas oficiais.
+
 ## Testes Criados/Atualizados
 
 Foram criados testes dedicados para:
@@ -259,6 +330,12 @@ Foram criados testes dedicados para:
 - recursos oficiais PV, Estresse e Cosmos em `resources`;
 - adaptadores de UI para resumo, atributos, recursos, combate e equipamentos;
 - sincronizacao estrutural da ficha ativa sem depender do DOM.
+- normalizacao de inventario fisico;
+- localizacao de itens por `location`;
+- movimentacao de itens entre solto, cubo, gancho, coldre e bandoleira;
+- cubos como containers com `contents`;
+- equipar/desequipar arma e armadura;
+- view models de inventario, equipamento, cubos e acesso rapido.
 
 ## Validacao Realizada
 
@@ -271,6 +348,7 @@ node --check sw.js
 node --check src/domain/solaris-domain-architecture.js
 node --check src/domain/solaris-character-creation.js
 node --check src/domain/solaris-equipment-rules.js
+node --check src/domain/solaris-inventory-rules.js
 node --check src/domain/solaris-bestiary-rules.js
 node --check src/domain/solaris-combat-rules.js
 node --check src/domain/solaris-gm-rules.js
@@ -284,6 +362,7 @@ node --check src/storage/solaris-migrations.js
 node --check src/storage/solaris-backup.js
 node --check src/ui/solaris-character-state.js
 node --check src/ui/solaris-character-ui.js
+node --test tests/solaris-inventory-rules.test.mjs
 node --test tests/solaris-storage.test.mjs
 node --test tests/solaris-migrations.test.mjs
 node --test tests/solaris-backup.test.mjs
@@ -295,13 +374,14 @@ git diff --check
 
 Resultado:
 
-- `npm test`: 237 testes passaram.
+- `npm test`: 267 testes passaram.
 - `node --test tests/solaris-storage.test.mjs`: 6 testes passaram.
 - `node --test tests/solaris-migrations.test.mjs`: 5 testes passaram.
 - `node --test tests/solaris-backup.test.mjs`: 6 testes passaram.
 - `node --test tests/solaris-storage-integration.test.mjs`: 9 testes passaram.
-- `node --test tests/solaris-character-state.test.mjs`: 17 testes passaram.
-- `node --test tests/solaris-character-ui.test.mjs`: 8 testes passaram.
+- `node --test tests/solaris-inventory-rules.test.mjs`: 22 testes passaram.
+- `node --test tests/solaris-character-state.test.mjs`: 20 testes passaram.
+- `node --test tests/solaris-character-ui.test.mjs`: 13 testes passaram.
 - Todos os `node --check` passaram.
 - `git diff --check`: sem erro; apenas avisos normais de LF/CRLF no Windows.
 
@@ -315,6 +395,5 @@ Resultado:
 
 ## Proximo Passo Recomendado
 
-Seguir para a Fase 6: inventario fisico completo usando a ficha ativa modular,
-com foco em equipamentos, locais fisicos, municao, carregadores e preparacao
-mais rica para exportacao Foundry futura.
+Seguir para a Fase 7: municao e carregadores completos, usando a base de
+`location` e `attached` criada na Fase 6.

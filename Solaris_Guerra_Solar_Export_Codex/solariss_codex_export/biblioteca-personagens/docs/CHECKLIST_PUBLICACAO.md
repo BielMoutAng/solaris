@@ -22,6 +22,7 @@ node --check sw.js
 node --check src/domain/solaris-domain-architecture.js
 node --check src/domain/solaris-character-creation.js
 node --check src/domain/solaris-equipment-rules.js
+node --check src/domain/solaris-inventory-rules.js
 node --check src/domain/solaris-bestiary-rules.js
 node --check src/domain/solaris-combat-rules.js
 node --check src/domain/solaris-gm-rules.js
@@ -41,6 +42,7 @@ node --test tests/solaris-storage.test.mjs
 node --test tests/solaris-migrations.test.mjs
 node --test tests/solaris-backup.test.mjs
 node --test tests/solaris-storage-integration.test.mjs
+node --test tests/solaris-inventory-rules.test.mjs
 node --test tests/solaris-character-state.test.mjs
 node --test tests/solaris-character-ui.test.mjs
 ```

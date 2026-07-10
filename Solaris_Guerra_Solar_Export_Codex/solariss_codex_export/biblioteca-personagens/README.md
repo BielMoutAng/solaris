@@ -51,6 +51,8 @@ para fazer backup ou passar fichas para outro computador.
   equipamentos e migracoes.
 - `src/domain/solaris-character-creation.js`: criacao e progressao.
 - `src/domain/solaris-equipment-rules.js`: regras de equipamentos.
+- `src/domain/solaris-inventory-rules.js`: regras puras de inventario fisico,
+  localizacao de itens, cubos e suportes.
 - `src/domain/solaris-bestiary-rules.js`: bestiario, ataques e loot.
 - `src/domain/solaris-combat-rules.js`: regras puras de combate usadas pela
   ficha e pelos monstros.
@@ -82,6 +84,7 @@ node --check sw.js
 node --check src/domain/solaris-domain-architecture.js
 node --check src/domain/solaris-character-creation.js
 node --check src/domain/solaris-equipment-rules.js
+node --check src/domain/solaris-inventory-rules.js
 node --check src/domain/solaris-bestiary-rules.js
 node --check src/domain/solaris-combat-rules.js
 node --check src/domain/solaris-gm-rules.js
@@ -96,11 +99,12 @@ node --check src/storage/solaris-backup.js
 node --check src/ui/solaris-character-state.js
 node --check src/ui/solaris-character-ui.js
 node --test tests/solaris-storage-integration.test.mjs
+node --test tests/solaris-inventory-rules.test.mjs
 node --test tests/solaris-character-state.test.mjs
 node --test tests/solaris-character-ui.test.mjs
 ```
 
 ## Versao
 
-Versao atual: `0.6.0-alpha.32`
-Cache web atual: `20260703c`
+Versao atual: `0.6.0-alpha.33`
+Cache web atual: `20260710a`

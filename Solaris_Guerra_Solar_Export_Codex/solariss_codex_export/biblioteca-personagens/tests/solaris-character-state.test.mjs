@@ -145,6 +145,54 @@ test("normalizeActiveCharacter cria equipment/inventory/ammoSystem minimos", () 
   assert.deepEqual(normalized.ammoSystem.magazines, []);
 });
 
+test("normalizeActiveCharacter garante inventario fisico minimo", () => {
+  const normalized = normalizeActiveCharacter({ id: "char-inventory-minimo", name: "Minimo" });
+  assert.deepEqual(normalized.equipment.holsters, []);
+  assert.deepEqual(normalized.inventory.cubes, []);
+  assert.deepEqual(normalized.inventory.backpacks, []);
+  assert.deepEqual(normalized.ammoSystem.loadedWeapons, []);
+});
+
+test("updateActiveCharacterSection preserva inventory", () => {
+  const state = createCharacterState({
+    ...legacyCharacter,
+    inventory: {
+      credits: 99,
+      looseItems: [{ id: "item-preservado", name: "Item Preservado" }],
+      cubes: [{ id: "cube-preservado", name: "Cubo Preservado", type: "cube", contents: [] }],
+    },
+  });
+  const updated = updateActiveCharacterSection(state, "identity", { name: "Lyssara Atualizada" });
+  assert.equal(updated.activeCharacter.inventory.credits, 99);
+  assert.ok(updated.activeCharacter.inventory.looseItems.some((item) => item.id === "item-preservado"));
+  assert.ok(updated.activeCharacter.inventory.cubes.some((cube) => cube.id === "cube-preservado"));
+});
+
+test("ficha ativa exportavel preserva equipment inventory e ammoSystem", () => {
+  const normalized = normalizeActiveCharacter({
+    id: "char-exportavel",
+    name: "Exportavel",
+    equipment: {
+      weapons: [{ id: "weapon-export", name: "Rifle", type: "weapon" }],
+      hooks: [{ id: "hook-export", name: "Gancho", contents: [{ id: "item-gancho", name: "Item no Gancho" }] }],
+    },
+    inventory: {
+      credits: 10,
+      looseItems: [{ id: "item-export", name: "Item Exportavel" }],
+      cubes: [{ id: "cube-export", name: "Cubo", type: "cube", contents: [{ id: "item-cubo", name: "Item no Cubo" }] }],
+    },
+    ammoSystem: {
+      magazines: [{ id: "mag-1" }],
+      ammoStacks: [{ id: "ammo-1" }],
+      loadedWeapons: [{ id: "loaded-1" }],
+    },
+  });
+  assert.ok(normalized.equipment.weapons.some((weapon) => weapon.id === "weapon-export"));
+  assert.ok(normalized.inventory.allItems.some((item) => item.id === "item-cubo"));
+  assert.ok(normalized.inventory.allItems.some((item) => item.id === "item-gancho"));
+  assert.equal(normalized.ammoSystem.magazines.length, 1);
+});
+
 test("markCharacterDirty marca estado como alterado", () => {
   const state = markCharacterDirty(createCharacterState(legacyCharacter));
   assert.equal(isCharacterDirty(state), true);

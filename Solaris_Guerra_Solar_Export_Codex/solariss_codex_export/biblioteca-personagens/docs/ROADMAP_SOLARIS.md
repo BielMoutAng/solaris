@@ -70,10 +70,28 @@ Status: concluida em `0.6.0-alpha.32`.
 - Integrar salvar, carregar, importar, exportar e persistencia silenciosa da
   UI atual ao estado modular.
 
+## Fase 6 - Inventario fisico completo
+
+Status: iniciada em `0.6.0-alpha.33`.
+
+- Criar `src/domain/solaris-inventory-rules.js` com regras puras de inventario
+  fisico, sem DOM.
+- Consolidar localizacao fisica de itens por `location.type`, incluindo
+  equipado, armadura, maos, gancho, coldre, bandoleira, cubo, mochila, solto,
+  acoplado, container e desconhecido.
+- Tratar cubos como containers fisicos com `contents`.
+- Preparar ganchos, coldres e bandoleiras como suportes de acesso fisico.
+- Equipar e desequipar armaduras, armas e itens genericos sem apagar dados.
+- Integrar a normalizacao de inventario com a ficha ativa modular.
+- Criar view models de inventario, equipamento, armazenamento, cubos e acesso
+  rapido para uso gradual pela interface.
+- Preservar `ammoSystem` apenas como estrutura preparada; a logica profunda de
+  municao e carregadores fica para a Fase 7.
+- Preservar `ESP` em `legacy` sem migracao automatica.
+
 ## Fases seguintes
 
-- Inventario fisico completo.
-- Municao e carregadores completos.
+- Fase 7 - Municao e carregadores completos.
 - Itens, skills e bestiario totalmente estruturados.
 - Foundry Draft mais rico.
 - Modulo importador Foundry.
