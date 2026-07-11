@@ -19,7 +19,7 @@ import {
   normalizeLoadedWeapon,
 } from "../domain/solaris-ammo-rules.js";
 
-export const SOLARIS_EXPORT_APP_VERSION = "0.6.0-alpha.34";
+export const SOLARIS_EXPORT_APP_VERSION = "0.6.0-alpha.35";
 
 const clone = (value) => (typeof structuredClone === "function"
   ? structuredClone(value)

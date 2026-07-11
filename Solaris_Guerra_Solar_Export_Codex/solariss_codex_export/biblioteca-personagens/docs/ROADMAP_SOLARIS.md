@@ -173,13 +173,34 @@ Status: concluida em `0.6.0-alpha.34`.
 - Preservar `ESP` em `legacy` sem migracao automatica.
 - Manter a UI visual sem alteracao nesta fase.
 
+## Fase 8 - Itens, habilidades e catalogos oficiais estruturados
+
+Status: concluida em `0.6.0-alpha.35`.
+
+- Criar `src/domain/solaris-catalog-rules.js` com regras puras de catalogo,
+  sem DOM.
+- Estruturar o catalogo oficial do Livro 5 por colecoes: armas, armaduras,
+  itens comuns, armazenamento, cubos, chips modificadores, mods e habilidades
+  cosmicas.
+- Normalizar entradas com id oficial, colecao, tipo, tier, tags, preco, peso,
+  quantidade, fonte, detalhes completos e mecanicas estruturadas.
+- Criar indice, filtros e ordenacao por texto, colecao, tier, preco e tags.
+- Preparar detalhes padronizados para janelas de dois cliques.
+- Converter entradas de catalogo para `solaris-item-v1`, reconhecendo tambem
+  `container` e `mod` como tipos oficiais de item.
+- Integrar as habilidades cosmicas do app ao catalogo estruturado sem quebrar
+  IDs antigos de fichas salvas.
+- Preservar `ESP` em `legacy` sem migracao automatica.
+- Manter a UI visual sem alteracao nesta fase.
+
 ## Roadmap Obrigatorio
 
 - Fase 6 - Inventario fisico completo. Status: concluida em
   `0.6.0-alpha.33`.
 - Fase 7 - Municao, carregadores e armas carregadas. Status: concluida em
   `0.6.0-alpha.34`.
-- Fase 8 - Itens, habilidades e catalogos oficiais estruturados.
+- Fase 8 - Itens, habilidades e catalogos oficiais estruturados. Status:
+  concluida em `0.6.0-alpha.35`.
 - Fase 9 - Bestiario estruturado.
 - Fase 10 - Rolagens e combate completos na Biblioteca.
 - Fase 11 - HUD vital funcional.

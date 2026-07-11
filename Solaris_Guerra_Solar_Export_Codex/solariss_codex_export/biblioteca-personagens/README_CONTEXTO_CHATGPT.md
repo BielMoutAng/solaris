@@ -53,6 +53,7 @@ Arquivos principais:
 - `src/domain/solaris-equipment-rules.js`
 - `src/domain/solaris-inventory-rules.js`
 - `src/domain/solaris-ammo-rules.js`
+- `src/domain/solaris-catalog-rules.js`
 - `src/domain/solaris-bestiary-rules.js`
 - `src/domain/solaris-combat-rules.js`
 - `src/domain/solaris-gm-rules.js`
@@ -69,6 +70,7 @@ Arquivos principais:
 - `tests/solaris-storage-integration.test.mjs`
 - `tests/solaris-inventory-rules.test.mjs`
 - `tests/solaris-ammo-rules.test.mjs`
+- `tests/solaris-catalog-rules.test.mjs`
 - `tests/solaris-character-state.test.mjs`
 - `tests/solaris-character-ui.test.mjs`
 - `electron-main.cjs`
@@ -93,6 +95,7 @@ node --check src/domain/solaris-character-creation.js
 node --check src/domain/solaris-equipment-rules.js
 node --check src/domain/solaris-inventory-rules.js
 node --check src/domain/solaris-ammo-rules.js
+node --check src/domain/solaris-catalog-rules.js
 node --check src/domain/solaris-bestiary-rules.js
 node --check src/domain/solaris-combat-rules.js
 node --check src/domain/solaris-gm-rules.js
@@ -109,14 +112,15 @@ node --check src/ui/solaris-character-ui.js
 node --test tests/solaris-storage-integration.test.mjs
 node --test tests/solaris-inventory-rules.test.mjs
 node --test tests/solaris-ammo-rules.test.mjs
+node --test tests/solaris-catalog-rules.test.mjs
 node --test tests/solaris-character-state.test.mjs
 node --test tests/solaris-character-ui.test.mjs
 ```
 
 Versao atual:
 
-- App: `0.6.0-alpha.34`
-- Cache web: `20260710b`
+- App: `0.6.0-alpha.35`
+- Cache web: `20260710c`
 
 Roadmap obrigatorio daqui em diante:
 
@@ -124,7 +128,8 @@ Roadmap obrigatorio daqui em diante:
   `0.6.0-alpha.33`.
 - Fase 7 - Municao, carregadores e armas carregadas. Status: concluida em
   `0.6.0-alpha.34`.
-- Fase 8 - Itens, habilidades e catalogos oficiais estruturados.
+- Fase 8 - Itens, habilidades e catalogos oficiais estruturados. Status:
+  concluida em `0.6.0-alpha.35`.
 - Fase 9 - Bestiario estruturado.
 - Fase 10 - Rolagens e combate completos na Biblioteca.
 - Fase 11 - HUD vital funcional.
@@ -180,3 +185,8 @@ Regras de manutencao:
   carregadas em `src/domain/solaris-ammo-rules.js`, com pilhas de municao,
   carregadores, armas internas ou com magazine, disparo, recarga, pump,
   resumo de municao, exportacao Foundry Draft e testes dedicados.
+- A Fase 8 concluiu a primeira camada oficial de catalogos estruturados em
+  `src/domain/solaris-catalog-rules.js`, cobrindo armas, armaduras, itens,
+  armazenamento, cubos, chips modificadores, mods e habilidades cosmicas com
+  indice, filtros, detalhes para dois cliques e conversao para
+  `solaris-item-v1`.

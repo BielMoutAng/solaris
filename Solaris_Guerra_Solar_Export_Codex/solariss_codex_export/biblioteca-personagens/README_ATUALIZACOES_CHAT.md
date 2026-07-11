@@ -55,16 +55,16 @@ completa.
 
 ## Versao Atual
 
-- App: `0.6.0-alpha.34`
-- Cache web/PWA: `20260710b`
+- App: `0.6.0-alpha.35`
+- Cache web/PWA: `20260710c`
 - Branch enviada ao GitHub: `main`
-- Ultima tag enviada: `v0.6.0-alpha.34`
-- Ultima fase registrada: Fase 7 - Municao, carregadores e armas carregadas
+- Ultima tag enviada: `v0.6.0-alpha.35`
+- Ultima fase registrada: Fase 8 - Itens, habilidades e catalogos oficiais estruturados
   concluida
 - Ultima decisao registrada: roadmap integrado Biblioteca Solaris -> Foundry
   Bridge -> Sistema Foundry Guerra Solar
-- Esta atualizacao conclui a base funcional de municao e carregadores sem
-  alterar visualmente a interface.
+- Esta atualizacao conclui a primeira camada oficial de catalogos estruturados
+  sem alterar visualmente a interface.
 
 ## Decisao Oficial de Atributos
 
@@ -221,6 +221,35 @@ Mudancas centrais:
   `MEN`.
 - A interface visual nao foi alterada nesta fase.
 
+### Fase 8 - Itens, Habilidades e Catalogos Oficiais Estruturados
+
+Foi criada a primeira camada canonica de catalogos oficiais da Biblioteca
+Solaris, mantendo a Biblioteca como fonte oficial e preparando a futura
+exportacao para compendios/itens do Foundry sem implementar Foundry real ainda.
+
+Status: concluida em `0.6.0-alpha.35`, cache `20260710c`.
+
+Mudancas centrais:
+
+- Criado `src/domain/solaris-catalog-rules.js` com regras puras, sem DOM.
+- O catalogo oficial do Livro 5 agora e estruturado em colecoes: armas,
+  armaduras, itens comuns, armazenamento, cubos, chips modificadores, mods e
+  habilidades cosmicas.
+- Cada entrada passa a ter schema, id oficial, colecao, tipo, tier, tags,
+  preco, peso, quantidade, detalhes completos e metadados de fonte.
+- Foram criados indice, filtros por texto/tier/preco/tags/colecao e ordenacao
+  por nome, preco ou tier.
+- Foram criados detalhes padronizados para janelas de dois cliques.
+- Foram criados adaptadores para converter entradas de catalogo em
+  `solaris-item-v1`.
+- `solaris-item-v1` agora reconhece `container` e `mod` como tipos validos.
+- As habilidades cosmicas que estavam duplicadas em `app.js` passaram a sair
+  da camada de catalogo, preservando os nomes oficiais acentuados e os IDs
+  antigos usados por fichas salvas.
+- O service worker passou a cachear o novo modulo de catalogo para uso
+  offline/PWA.
+- A interface visual nao foi alterada nesta fase.
+
 ### Arquivos Criados
 
 - `src/storage/solaris-storage.js`
@@ -238,6 +267,8 @@ Mudancas centrais:
 - `tests/solaris-inventory-rules.test.mjs`
 - `src/domain/solaris-ammo-rules.js`
 - `tests/solaris-ammo-rules.test.mjs`
+- `src/domain/solaris-catalog-rules.js`
+- `tests/solaris-catalog-rules.test.mjs`
 
 ### Arquivos Alterados
 
@@ -256,6 +287,7 @@ Mudancas centrais:
 - `src/domain/solaris-inventory-rules.js`
 - `src/domain/solaris-equipment-rules.js`
 - `src/domain/solaris-ammo-rules.js`
+- `src/domain/solaris-catalog-rules.js`
 - `src/export/solaris-export-core.js`
 - `src/export/solaris-foundry-export.js`
 - `src/schemas/solaris-schemas.js`
@@ -267,6 +299,7 @@ Mudancas centrais:
 - `tests/solaris-character-state.test.mjs`
 - `tests/solaris-character-ui.test.mjs`
 - `tests/solaris-ammo-rules.test.mjs`
+- `tests/solaris-catalog-rules.test.mjs`
 - `tests/solaris-export.test.mjs`
 
 ## Como a Fase 4 Funciona
@@ -439,6 +472,9 @@ Foram criados testes dedicados para:
 - acoplar/desacoplar carregador, recarregar, disparar e pump;
 - view model de municao;
 - exportacao de `ammoSystem` para schema oficial e Foundry Draft.
+- catalogos oficiais estruturados para armas, armaduras, itens,
+  armazenamento, cubos, chips modificadores, mods e habilidades cosmicas;
+- indice, filtros, detalhes completos e conversao para `solaris-item-v1`.
 
 ## Validacao Realizada
 
@@ -453,6 +489,7 @@ node --check src/domain/solaris-character-creation.js
 node --check src/domain/solaris-equipment-rules.js
 node --check src/domain/solaris-inventory-rules.js
 node --check src/domain/solaris-ammo-rules.js
+node --check src/domain/solaris-catalog-rules.js
 node --check src/domain/solaris-bestiary-rules.js
 node --check src/domain/solaris-combat-rules.js
 node --check src/domain/solaris-gm-rules.js
@@ -474,18 +511,20 @@ node --test tests/solaris-storage-integration.test.mjs
 node --test tests/solaris-character-state.test.mjs
 node --test tests/solaris-character-ui.test.mjs
 node --test tests/solaris-ammo-rules.test.mjs
+node --test tests/solaris-catalog-rules.test.mjs
 git diff --check
 ```
 
 Resultado:
 
-- `npm test`: 285 testes passaram.
+- `npm test`: 295 testes passaram.
 - `node --test tests/solaris-storage.test.mjs`: 6 testes passaram.
 - `node --test tests/solaris-migrations.test.mjs`: 5 testes passaram.
 - `node --test tests/solaris-backup.test.mjs`: 6 testes passaram.
 - `node --test tests/solaris-storage-integration.test.mjs`: 9 testes passaram.
 - `node --test tests/solaris-inventory-rules.test.mjs`: 30 testes passaram.
 - `node --test tests/solaris-ammo-rules.test.mjs`: 8 testes passaram.
+- `node --test tests/solaris-catalog-rules.test.mjs`: 10 testes passaram.
 - `node --test tests/solaris-character-state.test.mjs`: 21 testes passaram.
 - `node --test tests/solaris-character-ui.test.mjs`: 14 testes passaram.
 - Todos os `node --check` passaram.
@@ -514,7 +553,8 @@ Resultado:
   `0.6.0-alpha.33`.
 - Fase 7 - Municao, carregadores e armas carregadas. Status: concluida em
   `0.6.0-alpha.34`.
-- Fase 8 - Itens, habilidades e catalogos oficiais estruturados.
+- Fase 8 - Itens, habilidades e catalogos oficiais estruturados. Status:
+  concluida em `0.6.0-alpha.35`.
 - Fase 9 - Bestiario estruturado.
 - Fase 10 - Rolagens e combate completos na Biblioteca.
 - Fase 11 - HUD vital funcional.
@@ -534,5 +574,6 @@ Resultado:
 
 ## Proximo Passo Recomendado
 
-Seguir para a Fase 8: itens, habilidades e catalogos oficiais estruturados,
-usando a base de inventario fisico e `ammoSystem` criada nas Fases 6 e 7.
+Seguir para a Fase 9: bestiario estruturado, usando a mesma estrategia de
+catalogo oficial, detalhes completos, indice/filtros e conversao para
+`solaris-creature-v1`.

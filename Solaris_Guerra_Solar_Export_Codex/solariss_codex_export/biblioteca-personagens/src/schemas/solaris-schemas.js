@@ -33,6 +33,8 @@ export const SOLARIS_ITEM_TYPES = Object.freeze([
   "ammo",
   "magazine",
   "cube",
+  "container",
+  "mod",
   "consumable",
   "utility",
   "tool",

@@ -250,6 +250,60 @@ Campos principais:
 - `description`
 - `legacy`
 
+Tipos oficiais aceitos em `solaris-item-v1` incluem `weapon`, `armor`,
+`ammo`, `magazine`, `cube`, `container`, `mod`, `consumable`, `utility`,
+`tool`, `implant`, `ability` e `misc`.
+
+## Catalogo Oficial
+
+`catalogEntry` e o formato interno usado pela Biblioteca Solaris para
+estruturar conteudo oficial antes de converter para `solaris-item-v1`.
+
+Campos principais:
+
+- `schema`
+- `schemaVersion`
+- `id`
+- `officialId`
+- `collection`
+- `collectionLabel`
+- `type`
+- `subtype`
+- `name`
+- `tier`
+- `rarity`
+- `tags`
+- `summary`
+- `description`
+- `price`
+- `weight`
+- `quantity`
+- `mechanics`
+- `details`
+- `source`
+- `officialData`
+- `legacy`
+
+Colecoes oficiais iniciais:
+
+- `weapons`
+- `armors`
+- `items`
+- `storage`
+- `cubes`
+- `modifierChips`
+- `mods`
+- `cosmicSpells`
+
+Regras de compatibilidade:
+
+- `catalogEntry` nao substitui `solaris-item-v1`; ele e a origem estruturada
+  para loja, biblioteca, detalhes e futura exportacao para compendios.
+- Entradas convertidas para `solaris-item-v1` devem preservar `officialId`,
+  `source`, `officialData` e dados desconhecidos em `legacy`.
+- `ESP` encontrado em dados antigos continua preservado em `legacy`, sem
+  migracao automatica para `MEN`.
+
 ## Storage
 
 `solaris-storage-v1` e o envelope dedicado para persistencia local da

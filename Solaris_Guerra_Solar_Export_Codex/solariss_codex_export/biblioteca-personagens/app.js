@@ -7,7 +7,7 @@ import {
   inferLegacyInventorySize,
   migrateLegacyCharacterData,
   reconcileLegacyArmorCatalog,
-} from "./src/domain/solaris-domain-architecture.js?v=20260710b";
+} from "./src/domain/solaris-domain-architecture.js?v=20260710c";
 import {
   AMMO_CUBE_BULK,
   AMMO_KINDS,
@@ -24,14 +24,17 @@ import {
   pumpWeapon,
   reloadInternalWeapon,
   resolveActiveAmmoSource,
-} from "./src/domain/solaris-ammo-rules.js?v=20260710b";
+} from "./src/domain/solaris-ammo-rules.js?v=20260710c";
 import {
   EQUIPMENT_SCHEMA_VERSION,
-} from "./src/domain/solaris-equipment-rules.js?v=20260710b";
+} from "./src/domain/solaris-equipment-rules.js?v=20260710c";
+import {
+  createOfficialCosmicSpellCatalog,
+} from "./src/domain/solaris-catalog-rules.js?v=20260710c";
 import {
   BESTIARY_SCHEMA_VERSION,
   normalizeMonsterEntry,
-} from "./src/domain/solaris-bestiary-rules.js?v=20260710b";
+} from "./src/domain/solaris-bestiary-rules.js?v=20260710c";
 import {
   CHARACTER_CREATION_CACHE_VERSION,
   CHARACTER_CREATION_SCHEMA_VERSION,
@@ -42,19 +45,19 @@ import {
   buildCreationChoicesSnapshot,
   buildProgressionHistoryEntry,
   createInitialAttributeRoll,
-} from "./src/domain/solaris-character-creation.js?v=20260710b";
+} from "./src/domain/solaris-character-creation.js?v=20260710c";
 import {
   createDefaultLoreState,
-} from "./src/domain/solaris-lore-rules.js?v=20260710b";
+} from "./src/domain/solaris-lore-rules.js?v=20260710c";
 import {
   exportSolarisCharacter,
-} from "./src/export/solaris-export-core.js?v=20260710b";
+} from "./src/export/solaris-export-core.js?v=20260710c";
 import {
   importSolarisCharacter,
-} from "./src/export/solaris-import-core.js?v=20260710b";
+} from "./src/export/solaris-import-core.js?v=20260710c";
 import {
   exportFoundryDraft,
-} from "./src/export/solaris-foundry-export.js?v=20260710b";
+} from "./src/export/solaris-foundry-export.js?v=20260710c";
 import {
   initializeSolarisAppStorage,
   listStoredSolarisCharacters,
@@ -62,7 +65,7 @@ import {
   saveSolarisStorage,
   saveStoredSolarisCharacter,
   saveStoredSolarisCharacters,
-} from "./src/storage/solaris-storage.js?v=20260710b";
+} from "./src/storage/solaris-storage.js?v=20260710c";
 import {
   createCharacterState,
   getActiveCharacter,
@@ -71,11 +74,11 @@ import {
   markCharacterSaved,
   normalizeActiveCharacter,
   setActiveCharacter,
-} from "./src/ui/solaris-character-state.js?v=20260710b";
+} from "./src/ui/solaris-character-state.js?v=20260710c";
 import {
   getCharacterResourceViewModel,
   getCharacterSummary,
-} from "./src/ui/solaris-character-ui.js?v=20260710b";
+} from "./src/ui/solaris-character-ui.js?v=20260710c";
 
 const ATTRIBUTES = ["FOR", "REF", "CON", "MEN", "PRE", "INT"];
 const QUICK_TEST_ATTRIBUTES = ATTRIBUTES.filter((attr) => attr !== "CON");
@@ -1066,84 +1069,22 @@ const weaponData = Array.isArray(OFFICIAL_BOOK5.catalog.weapons) ? OFFICIAL_BOOK
 const armorData = Array.isArray(OFFICIAL_BOOK5.catalog.armors) ? OFFICIAL_BOOK5.catalog.armors : [];
 const equipmentModData = Array.isArray(OFFICIAL_BOOK5.catalog.mods) ? OFFICIAL_BOOK5.catalog.mods : [];
 
-const cosmicSpellRows = [
-  [1, "Rajada Cósmica", "1d6 de dano energético, ignora 1 CA. Alcance 10 m.", "Instantânea"],
-  [1, "Impulso Cinético", "Empurra inimigo 2 m; FOR CD 10 ou cai.", "Instantânea"],
-  [1, "Fôlego Vital", "Cura 1d4 PV ou remove 1 Estresse.", "Instantânea"],
-  [1, "Reflexo Instintivo", "+2 CA até o próximo turno.", "1 rodada"],
-  [1, "Sentir Presença", "Detecta criaturas/fontes em 15 m.", "1 rodada"],
-  [1, "Clarão Mental", "Ilumina 10 m, inimigos sofrem -2 no próximo ataque.", "1 rodada"],
-  [1, "Toque de Gravidade", "Alvo tem movimento alterado em +/-2 m.", "1 rodada"],
-  [1, "Escudo Cósmico", "Reduz 1d4 de dano do próximo ataque.", "1 turno"],
-  [1, "Voz Interior", "Comunicação mental com 1 alvo em 15 m.", "1 rodada"],
-  [1, "Tiro de luz", "1d4 de dano com alcance de 15 m.", "Instantânea"],
-  [1, "Bola de esporos", "Cria nuvem circular de esporos de 3 m, causando 1d4 por turno a quem passar ali.", "Instantânea"],
-  [2, "Explosão Cósmica", "2d6 de dano energético em área de 3 m.", "Instantânea"],
-  [2, "Cura Cósmica", "Cura 2d6 PV em 1 aliado.", "Instantânea"],
-  [2, "Impacto Estelar", "Próximo ataque recebe +2d6 de dano.", "1 turno"],
-  [2, "Telecinese Menor", "Move objeto/inimigo leve, até 50 kg, em 5 m. Pode desarmar.", "1 rodada"],
-  [2, "Armadura Etérea", "Concede +3 CA.", "1 turno"],
-  [2, "Lança de Luz", "Invoca lança de energia em campo, alcance 20 m, dura 6 rodadas, dano 2d8.", "6 turnos"],
-  [2, "Correntes Etéreas", "Energia prende 1 alvo em 5 m. FOR CD 13 ou fica imobilizado.", "1 turno"],
-  [2, "Espinhos do chão", "Área circular de 5 m causa 1d6+2 por turno e reduz movimento pela metade.", "1 rodada"],
-  [3, "Tempestade de Energia", "3d8 de dano energético em área de 5 m.", "Instantânea"],
-  [3, "Regeneração Cósmica", "Cura 3d6 PV e remove 2 Estresse de 1 aliado.", "Instantânea"],
-  [3, "Campo de Gravidade", "Área de 6 m: inimigos têm movimento reduzido à metade.", "1 rodada"],
-  [3, "Dominação Mental", "Alvo em até 10 m faz JPC com PRE CD 15; em falha, fica sob influência por 1 turno.", "1 turno"],
-  [3, "Armadura Estelar", "+4 CA e resistência a 1d4 por ataque, dura 3 turnos.", "3 turnos"],
-  [3, "Invocação da Fera Abatida", "Ritual prévio com sangue. Invoca fera F/E/D já abatida, com metade do PV, por 1d4 turnos.", "1d4 turnos"],
-  [4, "Nova de Ruína", "4d8 dano energético em área raio 6 m. Ignora 2 CA.", "Instantânea"],
-  [4, "Domo Prismático", "Domo raio 4 m: aliados dentro ganham +3 CA e reduzem 1d4 de dano energético por ataque.", "3 turnos"],
-  [4, "Ruptura Gravitacional", "Área raio 6 m: inimigos ficam com movimento pela metade e testes de REF têm -2.", "1 rodada"],
-  [4, "Marca do Eclipse", "Marca 1 alvo a 20 m: ataques contra ele ganham +2 para acertar e ignoram 2 CA.", "3 turnos"],
-  [4, "Salto Astral", "Teleporta até 20 m em linha de visão e pode levar 1 aliado adjacente; ganha +2 CA contra o próximo ataque.", "Instantânea"],
-  [4, "Purga Sináptica", "Em 1 aliado a 10 m: remove 2 condições.", "Instantânea"],
-  [4, "Correntes de Luz Maior", "Até 2 alvos a 15 m fazem FOR CD 15; falha imobiliza e causa 2d6 energético no início do turno.", "2 turnos"],
-  [4, "Sentinela Prismática", "Invoca sentinela com CA 13, PV 4d8 e ataque 1d10 energético.", "3 turnos"],
-  [4, "Olho do Vazio", "Ganha Visão Cósmica 30 m, detecta assinaturas cósmicas e tem vantagem em Percepção/Busca.", "1 cena"],
-  [4, "Reforço Vital Avançado", "Cura 4d6 PV e remove 2 Estresse de 1 alvo a 10 m.", "Instantânea"],
-  [6, "Tempestade de Fragmentos", "6d8 energético em área raio 8 m; alvos atingidos ficam -1 CA até o próximo turno.", "Instantânea"],
-  [6, "Muralha de Luz Densa", "Cria parede 10 m x 2 m que dá cobertura pesada +4 CA e bloqueia projéteis comuns.", "3 turnos"],
-  [6, "Âncora Gravitacional", "Área raio 6 m: inimigos não podem correr e teleportes na área falham.", "2 turnos"],
-  [6, "Selo de Dissipação", "Remove até 3 efeitos numa área raio 4 m.", "Instantânea"],
-  [6, "Passo Entre Fendas", "Teleporta até 35 m e pode atravessar 1 parede fina durante o salto.", "Instantânea"],
-  [6, "Circuito da Coragem", "Até 3 aliados a 10 m: -1 Estresse, +1 contra medo/terror e +1 CA.", "1 cena"],
-  [6, "Lança Perfurante do Sol Morto", "Ataque em linha 20 m: 4d10 energético, ignora 3 CA e atravessa 1 alvo secundário.", "Instantânea"],
-  [6, "Tecido Reparador", "Cura 6d6 PV e remove 1 condição de 1 alvo a 10 m.", "Instantânea"],
-  [6, "Espectro Guardião", "Invoca guardião CA 14, PV 6d8, ataque 1d12 e intercepta 1 ataque por turno.", "3 turnos"],
-  [6, "Pulso de Interferência", "Área raio 6 m: inimigos sofrem -2 no ataque à distância e equipamentos ficam Jammed por 1 turno.", "1 rodada"],
-  [8, "Colapso de Singularidade", "Área raio 8 m: puxa inimigos 3 m ao centro e causa 8d8 concussão/energético.", "Instantânea"],
-  [8, "Cúpula de Estase", "Domo raio 4 m: inimigos ficam Lentos, com 1 ação ou 1 movimento por turno.", "2 turnos"],
-  [8, "Ressonância Blindada", "Você e 2 aliados ganham +4 CA e redução de dano 1d6 por acerto.", "3 turnos"],
-  [8, "Cadeia de Julgamento", "1 alvo faz JPC com MEN; falha atordoa e causa 4d8, parcial aplica -2 CA.", "1 turno"],
-  [8, "Portal de Extração", "Teleporta você e até 2 aliados a 3 m para um ponto visto a 60 m.", "Instantânea"],
-  [8, "Reanimação de Campo", "Alvo a 10 m em 0 PV volta com 2d12 PV e sofre uma consequência definida pelo mestre por 1 cena.", "Instantânea"],
-  [8, "Chuva Prismática", "Área raio 10 m: 6d10 energético. Falha em REF CD 14 deixa Cego até o próximo turno.", "Instantânea"],
-  [8, "Vínculo de Comando", "Assume comando de 1 drone, torreta ou robô por 3 turnos.", "3 turnos"],
-  [8, "Reescrita de Probabilidade", "3 aliados a 10 m podem rerrolar 1 teste e ficar com o melhor.", "1 cena"],
-  [8, "Passagem no Vazio", "Fica Intangível a dano físico comum, toma metade e atravessa criaturas/obstáculos finos.", "2 turnos"],
-  [10, "Extinção Local", "Explosão controlada raio 12 m: 10d10 energético. Estruturas sofrem dano total.", "Instantânea"],
-  [10, "Tempo Fraturado", "Ganha +1 ação no turno atual, sem repetir a mesma ação de ataque.", "Instantânea"],
-  [10, "Cárcere de Luz Absoluta", "Prende 1 alvo em estase: não age, não se move e não recebe cura.", "2 turnos"],
-  [10, "Muralha do Fim", "Barreira raio 6 m ao redor de você bloqueia 2 acertos por turno.", "2 turnos"],
-  [10, "Reconstituição Total", "Cura 10d6 PV, remove todas as condições e reduz -3 Estresse.", "Instantânea"],
-  [10, "Olho de Uryon", "Revela invisibilidade, disfarces, campos, portas ocultas, assinaturas cósmicas e rotas de rede locais em 30 m.", "1 cena"],
-  [10, "Dilúvio Antimatéria", "Linha 30 m: 8d12 energético + perfurante, ignora 5 CA e atravessa cobertura média.", "Instantânea"],
-  [10, "Pacto do Guardião Ancestral", "Invoca guardião maior CA 15, PV 10d8, 2 ataques por turno e proteção +3 CA.", "3 turnos"],
-  [10, "Rasgo de Realidade", "Abre fenda de 8 m; quem atravessa sai em ponto visto a 100 m.", "2 turnos"],
-  [10, "Apagamento do Medo", "Até 4 aliados removem Medo/Terror, reduzem -4 Estresse e ganham vantagem em JPC com PRE.", "1 cena"],
-];
-
-const cosmicSpellData = cosmicSpellRows.map(([cost, name, summary, duration]) => ({
-  id: `magia-${dataSlug(name)}`,
+const cosmicSpellData = createOfficialCosmicSpellCatalog().map((spell) => ({
+  id: `magia-${dataSlug(spell.name)}`,
   category: "cosmos",
-  name,
-  cost,
-  duration,
-  summary,
-  tags: ["cosmos", `custo ${cost}`],
+  name: spell.name,
+  cost: spell.cost,
+  duration: spell.duration,
+  tier: spell.tier,
+  summary: spell.summary,
+  tags: uniqueTags([...(spell.tags || []), "cosmos", `custo ${spell.cost}`]),
+  officialData: spell.officialData,
+  source: spell.source?.label || "Livro 5, Capitulo 11 - Habilidades Cosmicas",
+  schemaVersion: spell.schemaVersion,
+  officialId: spell.officialId,
+  bookId: spell.source?.bookId || "book5",
+  bookTitle: spell.source?.bookTitle || "Livro 5 - Itens, Equipamentos e Habilidades",
 }));
-
 const modifierChipData = (Array.isArray(OFFICIAL_BOOK5.catalog.modifierChips)
   ? OFFICIAL_BOOK5.catalog.modifierChips
   : []
